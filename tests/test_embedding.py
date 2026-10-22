@@ -6,7 +6,7 @@ from __future__ import annotations
 import httpx
 import pytest
 
-from inherited.embedding import AzureOpenAIEmbedder, EmbeddingError
+from fli.embedding import AzureOpenAIEmbedder, EmbeddingError
 
 
 def make(handler, **kwargs):
@@ -19,8 +19,13 @@ def make(handler, **kwargs):
         return "aad-token"
 
     embedder = AzureOpenAIEmbedder(
-        endpoint="https://aoai.example.invalid", deployment="emb", token_provider=token,
-        http=httpx.AsyncClient(transport=httpx.MockTransport(handler)), dimensions=3, sleep=sleep, **kwargs,
+        endpoint="https://aoai.example.invalid",
+        deployment="emb",
+        token_provider=token,
+        http=httpx.AsyncClient(transport=httpx.MockTransport(handler)),
+        dimensions=3,
+        sleep=sleep,
+        **kwargs,
     )
     return embedder, sleeps
 

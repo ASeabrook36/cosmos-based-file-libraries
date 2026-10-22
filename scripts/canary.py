@@ -12,7 +12,7 @@ docs/build-plan.md Phase 0:
    (with and without the library as partition-key prefix) until it stops reading every
    chunk, for up to ``--index-wait-minutes``, and records how long that took.
 3. Runs 20 vector-only and 20 hybrid searches through the float16 query path
-   (``inherited/query.py``; spec §8 step 3), and the exact (brute-force) version of each.
+   (``src/fli/query.py``; spec §8 step 3), and the exact (brute-force) version of each.
 4. Asserts: no null scores; the index is engaged (each vector-only search costs under
    100 RU and retrieves far fewer documents than were loaded); mean recall@10 of at least
    0.95 against exact search, for vector-only searches.
@@ -75,8 +75,8 @@ REPO = Path(__file__).resolve().parent.parent
 if str(REPO) not in sys.path:  # run as `python scripts/canary.py` from anywhere
     sys.path.insert(0, str(REPO))
 
-from inherited.chunking import Chunker, default_tokenizer, split_sentences  # noqa: E402
-from inherited.query import (  # noqa: E402
+from fli.chunking import Chunker, default_tokenizer, split_sentences  # noqa: E402
+from fli.query import (  # noqa: E402
     STORED_DTYPE,
     SearchFilters,
     check_query,
@@ -444,7 +444,7 @@ class Throttle:
     async def run(self, call: Callable[[], Any]) -> Any:
         from azure.cosmos.exceptions import CosmosHttpResponseError
 
-        from inherited.http import backoff_seconds
+        from fli.http import backoff_seconds
 
         for attempt in range(THROTTLE_ATTEMPTS):
             try:
@@ -487,7 +487,7 @@ class CorpusChunk:
 
 
 async def read_corpus(directory: Path, target: int) -> tuple[list[dict[str, Any]], list[CorpusChunk], str]:
-    from inherited.extraction import extract
+    from fli.extraction import extract
 
     chunker = Chunker(default_tokenizer())
     files = sorted(p for p in directory.rglob("*") if p.is_file() and p.suffix.lower().lstrip(".") in CORPUS_TYPES)
@@ -836,7 +836,7 @@ async def run(args: argparse.Namespace) -> int:
     from azure.cosmos.aio import CosmosClient
     from azure.identity.aio import DefaultAzureCredential
 
-    from inherited.embedding import AzureOpenAIEmbedder
+    from fli.embedding import AzureOpenAIEmbedder
 
     cosmos_endpoint = _require_env("COSMOS_ENDPOINT")
     database_name = os.environ.get("COSMOS_DATABASE") or "fli"

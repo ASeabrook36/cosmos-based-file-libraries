@@ -36,13 +36,13 @@ from __future__ import annotations
 import asyncio
 import base64
 import time
-from typing import Any, Awaitable, Callable
+from collections.abc import Awaitable, Callable
+from typing import Any
 
 import httpx
 
-from .http import parse_retry_after
-
 from .extraction import OcrError
+from .http import parse_retry_after
 
 API_VERSION = "2024-11-30"
 SCOPE = "https://cognitiveservices.azure.com/.default"
@@ -50,9 +50,19 @@ SERVER_ERROR_CODES = {"InternalServerError", "ServiceUnavailable", "Timeout", "I
 
 
 class DocumentIntelligenceReader:
-    def __init__(self, *, endpoint: str, token_provider: Callable[[], Awaitable[str]], http: httpx.AsyncClient, max_pages: int,
-                 max_bytes: int, timeout_seconds: float = 180.0, api_version: str = API_VERSION,
-                 sleep: Callable[[float], Awaitable[None]] = asyncio.sleep, clock: Callable[[], float] = time.monotonic) -> None:
+    def __init__(
+        self,
+        *,
+        endpoint: str,
+        token_provider: Callable[[], Awaitable[str]],
+        http: httpx.AsyncClient,
+        max_pages: int,
+        max_bytes: int,
+        timeout_seconds: float = 180.0,
+        api_version: str = API_VERSION,
+        sleep: Callable[[float], Awaitable[None]] = asyncio.sleep,
+        clock: Callable[[], float] = time.monotonic,
+    ) -> None:
         if max_pages < 1 or max_bytes < 1:
             raise ValueError("OCR bounds must be positive")
         self.endpoint = endpoint.rstrip("/")
@@ -71,7 +81,9 @@ class DocumentIntelligenceReader:
         deadline = self._clock() + self.timeout
         url = f"{self.endpoint}/documentintelligence/documentModels/prebuilt-read:analyze"
         params = {"api-version": self.api_version, "pages": f"1-{self.max_pages}"}
-        response = await self._send("POST", url, params=params, json={"base64Source": base64.b64encode(data).decode("ascii")})
+        response = await self._send(
+            "POST", url, params=params, json={"base64Source": base64.b64encode(data).decode("ascii")}
+        )
         if response.status_code != 202:
             raise _http_error(response, "analyze")
         location = response.headers.get("Operation-Location")
@@ -116,4 +128,8 @@ def _http_error(response: httpx.Response, stage: str) -> OcrError:
     status = response.status_code
     code = str(((_json(response).get("error") or {}).get("code")) or status)
     transient = status in (401, 403, 404, 408, 429) or status >= 500
-    return OcrError(f"ocr_{stage}_{status}:{code}", transient=transient, retry_after=parse_retry_after(response.headers.get("Retry-After")))
+    return OcrError(
+        f"ocr_{stage}_{status}:{code}",
+        transient=transient,
+        retry_after=parse_retry_after(response.headers.get("Retry-After")),
+    )

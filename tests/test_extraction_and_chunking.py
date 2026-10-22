@@ -6,9 +6,9 @@ import io
 
 import pytest
 
-from inherited.chunking import ApproxTokenizer, Chunker, chunking_version_for, split_sentences
-from inherited.extraction import OLE_MAGIC, Section, classify_unreadable, extract
-from inherited.enums import ExtractionMethod
+from fli.chunking import ApproxTokenizer, Chunker, chunking_version_for, split_sentences
+from fli.enums import ExtractionMethod
+from fli.extraction import OLE_MAGIC, Section, classify_unreadable, extract
 
 
 def docx_bytes() -> bytes:
@@ -54,7 +54,8 @@ def pdf_with_text(text: str = "orion signal in a pdf") -> bytes:
     objects = [
         b"<< /Type /Catalog /Pages 2 0 R >>",
         b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
-        b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>",
+        b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R "
+        b"/Resources << /Font << /F1 5 0 R >> >> >>",
         b"<< /Length " + str(len(stream)).encode() + b" >>\nstream\n" + stream + b"\nendstream",
         b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
     ]
@@ -116,7 +117,9 @@ async def test_pdf_without_text_needs_ocr_and_uses_the_bounded_fallback():
             return "scanned orion text", 1
 
     result = await extract(blank_pdf(), filename="scan.pdf", ocr=FakeOcr())
-    assert result.outcome == "ok" and result.ocr_applied and result.method == ExtractionMethod.DOCUMENT_INTELLIGENCE_READ
+    assert (
+        result.outcome == "ok" and result.ocr_applied and result.method == ExtractionMethod.DOCUMENT_INTELLIGENCE_READ
+    )
     native = await extract(pdf_with_text(), filename="a.pdf", ocr=FakeOcr())
     assert native.ocr_applied is False and FakeOcr.calls == 1  # OCR only when no text layer
 
@@ -164,7 +167,9 @@ TOK = ApproxTokenizer()
 
 
 def long_section(sentences: int = 120, heading: str | None = "Section") -> Section:
-    body = " ".join(f"Sentence number {i} talks about the orion signal and its quarterly review cadence." for i in range(sentences))
+    body = " ".join(
+        f"Sentence number {i} talks about the orion signal and its quarterly review cadence." for i in range(sentences)
+    )
     return Section(heading, body)
 
 
@@ -176,7 +181,7 @@ def test_chunks_are_deterministic_bounded_and_overlapping():
     assert [c.index for c in first] == list(range(len(first)))
     assert len(first) > 3
     assert all(c.token_count <= 500 for c in first)
-    for a, b in zip(first, first[1:]):
+    for a, b in zip(first, first[1:], strict=False):
         tail = split_sentences(a.text.split("\n", 1)[1])[-1]
         assert tail in b.text  # at least one trailing sentence carried forward
 
@@ -184,7 +189,7 @@ def test_chunks_are_deterministic_bounded_and_overlapping():
 def test_overlap_is_at_most_fifty_tokens_of_whole_sentences():
     chunker = Chunker(TOK)
     chunks = chunker.chunk([long_section()])
-    for a, b in zip(chunks, chunks[1:]):
+    for a, b in zip(chunks, chunks[1:], strict=False):
         a_sentences = split_sentences(a.text.split("\n", 1)[1])
         b_sentences = split_sentences(b.text.split("\n", 1)[1])
         shared = [s for s in b_sentences if s in a_sentences]
@@ -225,8 +230,10 @@ def test_unknown_document_kind_is_refused():
 
 
 def test_chunks_carry_their_section_location():
-    sections = [Section("Intro", "First page text about orion.", {"page": 1}),
-                Section("Intro", "Second page text about orion.", {"page": 2})]
+    sections = [
+        Section("Intro", "First page text about orion.", {"page": 1}),
+        Section("Intro", "Second page text about orion.", {"page": 2}),
+    ]
     chunks = Chunker(TOK).chunk(sections)
     assert [c.location for c in chunks] == [{"page": 1}, {"page": 2}]
 
@@ -267,6 +274,8 @@ def test_approx_tokenizer_round_trips():
     assert TOK.decode(TOK.encode(text)) == text
 
 
-@pytest.mark.parametrize("text,expected", [("One. Two! Three?", 3), ("First para.\n\nSecond para", 2), ("e.g. lower case stays", 1)])
+@pytest.mark.parametrize(
+    "text,expected", [("One. Two! Three?", 3), ("First para.\n\nSecond para", 2), ("e.g. lower case stays", 1)]
+)
 def test_sentence_splitter(text, expected):
     assert len(split_sentences(text)) == expected

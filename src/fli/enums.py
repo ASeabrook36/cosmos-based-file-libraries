@@ -1,4 +1,4 @@
-"""Shared constants for the inherited modules."""
+"""Shared constants for extraction and chunking."""
 
 from __future__ import annotations
 

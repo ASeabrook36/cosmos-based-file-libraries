@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from inherited.query import QueryError, SearchFilters, check_query, render_search, to_float16_query
+from fli.query import QueryError, SearchFilters, check_query, render_search, to_float16_query
 from scripts.canary import (
     MAX_INDEXED_SEARCH_RU,
     QUERIES_PER_KIND,

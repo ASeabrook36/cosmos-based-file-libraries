@@ -49,7 +49,7 @@ def test_chunks_vector_settings_are_the_specified_ones():
 
 
 def test_query_module_dtype_matches_the_stored_dtype():
-    from inherited.query import STORED_DTYPE
+    from fli.query import STORED_DTYPE
 
     assert STORED_DTYPE == load("chunks")["vectorEmbeddingPolicy"]["vectorEmbeddings"][0]["dataType"]
 

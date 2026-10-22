@@ -142,7 +142,11 @@ def _pptx(data: bytes) -> list[Section]:
     deck = Presentation(io.BytesIO(data))
     sections: list[Section] = []
     for number, slide in enumerate(deck.slides, start=1):
-        title = slide.shapes.title.text.strip() if slide.shapes.title is not None and slide.shapes.title.has_text_frame else None
+        title = (
+            slide.shapes.title.text.strip()
+            if slide.shapes.title is not None and slide.shapes.title.has_text_frame
+            else None
+        )
         texts = []
         for shape in slide.shapes:
             if shape.has_text_frame and shape is not slide.shapes.title:
@@ -241,7 +245,9 @@ async def extract(data: bytes, *, filename: str, content_type: str = "", ocr: Oc
             try:
                 sections, pages = _pdf(data)
             except PermissionError:
-                return Extracted("categorical", categorical_reason="password_protected", method=ExtractionMethod.UNSUPPORTED)
+                return Extracted(
+                    "categorical", categorical_reason="password_protected", method=ExtractionMethod.UNSUPPORTED
+                )
             if sections:
                 return Extracted("ok", sections, page_count=pages)
             return await _ocr_fallback(data, "application/pdf", ocr, pages)
@@ -249,7 +255,12 @@ async def extract(data: bytes, *, filename: str, content_type: str = "", ocr: Oc
             return await _ocr_fallback(data, content_type or f"image/{ext}", ocr, 1)
         if ext in TEXT_TYPES or content_type.startswith("text/plain") or content_type == "text/markdown":
             text = data.decode("utf-8", errors="replace")
-            return Extracted("ok", _markdown(text) if ext in ("md", "markdown") else ([Section(None, text.strip())] if text.strip() else []))
+            return Extracted(
+                "ok",
+                _markdown(text)
+                if ext in ("md", "markdown")
+                else ([Section(None, text.strip())] if text.strip() else []),
+            )
         if ext in ("html", "htm", "aspx") or content_type.startswith("text/html"):
             return Extracted("ok", _html(data.decode("utf-8", errors="replace")))
         if data[:8] == OLE_MAGIC:
@@ -261,23 +272,56 @@ async def extract(data: bytes, *, filename: str, content_type: str = "", ocr: Oc
         raise  # a transient OCR failure retries; it is never classified as unreadable content
     except Exception as exc:  # noqa: BLE001 — a parser crash on successfully-read content
         outcome, reason = classify_unreadable(data)
-        return Extracted(outcome, categorical_reason=reason, failure_reason=f"parser:{type(exc).__name__}", method=ExtractionMethod.UNSUPPORTED)
+        return Extracted(
+            outcome,
+            categorical_reason=reason,
+            failure_reason=f"parser:{type(exc).__name__}",
+            method=ExtractionMethod.UNSUPPORTED,
+        )
 
 
 async def _ocr_fallback(data: bytes, content_type: str, ocr: OcrClient | None, pages: int | None) -> Extracted:
     if ocr is None:
-        return Extracted("needs_ocr", page_count=pages, unsupported_reason="no_text_layer_and_ocr_disabled", method=ExtractionMethod.UNSUPPORTED)
+        return Extracted(
+            "needs_ocr",
+            page_count=pages,
+            unsupported_reason="no_text_layer_and_ocr_disabled",
+            method=ExtractionMethod.UNSUPPORTED,
+        )
     if pages is not None and pages > ocr.max_pages:  # bounded fallback: never a partial read of a longer document
-        return Extracted("unsupported", page_count=pages, unsupported_reason="ocr_page_limit_exceeded", method=ExtractionMethod.UNSUPPORTED)
+        return Extracted(
+            "unsupported",
+            page_count=pages,
+            unsupported_reason="ocr_page_limit_exceeded",
+            method=ExtractionMethod.UNSUPPORTED,
+        )
     try:
         text, analysed = await ocr.read(data, content_type)
     except OcrError as exc:
         if exc.transient:
             raise
-        return Extracted("failed", page_count=pages, unsupported_reason=exc.code, failure_reason=f"ocr:{exc.code}",
-                         method=ExtractionMethod.DOCUMENT_INTELLIGENCE_READ, ocr_applied=True)
+        return Extracted(
+            "failed",
+            page_count=pages,
+            unsupported_reason=exc.code,
+            failure_reason=f"ocr:{exc.code}",
+            method=ExtractionMethod.DOCUMENT_INTELLIGENCE_READ,
+            ocr_applied=True,
+        )
     if not text.strip():
-        return Extracted("unsupported", page_count=analysed, unsupported_reason="ocr_returned_no_text",
-                         method=ExtractionMethod.DOCUMENT_INTELLIGENCE_READ, ocr_applied=True, usage_units=analysed)
-    return Extracted("ok", [Section(None, text.strip())], method=ExtractionMethod.DOCUMENT_INTELLIGENCE_READ, ocr_applied=True,
-                     page_count=analysed, usage_units=analysed)
+        return Extracted(
+            "unsupported",
+            page_count=analysed,
+            unsupported_reason="ocr_returned_no_text",
+            method=ExtractionMethod.DOCUMENT_INTELLIGENCE_READ,
+            ocr_applied=True,
+            usage_units=analysed,
+        )
+    return Extracted(
+        "ok",
+        [Section(None, text.strip())],
+        method=ExtractionMethod.DOCUMENT_INTELLIGENCE_READ,
+        ocr_applied=True,
+        page_count=analysed,
+        usage_units=analysed,
+    )

@@ -25,8 +25,9 @@ from __future__ import annotations
 import math
 import re
 import struct
+from collections.abc import Sequence
 from dataclasses import dataclass, field
-from typing import Any, Sequence
+from typing import Any
 
 FLOAT16_MIN_NORMAL = 2.0**-14  # smallest positive normal float16; anything smaller is subnormal
 STORED_DTYPE = "float16"  # must equal cosmos/chunks.container.json vectorEmbeddings[0].dataType
@@ -123,8 +124,9 @@ def _any_of(column: str, prefix: str, values: Sequence[str], params: list[dict[s
     return f"{column} IN ({', '.join(names)})"
 
 
-def render_search(library_id: str, query_vector_f16: Sequence[float], terms: Sequence[str], filters: SearchFilters,
-                  fetch: int) -> RenderedQuery:
+def render_search(
+    library_id: str, query_vector_f16: Sequence[float], terms: Sequence[str], filters: SearchFilters, fetch: int
+) -> RenderedQuery:
     """The spec §8 query. ``query_vector_f16`` must already be ``to_float16_query`` output."""
     if not library_id:
         raise QueryError("a search names exactly one library")
@@ -143,12 +145,16 @@ def render_search(library_id: str, query_vector_f16: Sequence[float], terms: Seq
         params += [{"name": "@pFrom", "value": filters.period.start}, {"name": "@pTo", "value": filters.period.end}]
     if filters.authored_between:
         where.append("c.authoredAt >= @aFrom AND c.authoredAt < @aTo")
-        params += [{"name": "@aFrom", "value": filters.authored_between.start},
-                   {"name": "@aTo", "value": filters.authored_between.end}]
+        params += [
+            {"name": "@aFrom", "value": filters.authored_between.start},
+            {"name": "@aTo", "value": filters.authored_between.end},
+        ]
     if filters.uploaded_between:
         where.append("c.uploadedAt >= @uFrom AND c.uploadedAt < @uTo")
-        params += [{"name": "@uFrom", "value": filters.uploaded_between.start},
-                   {"name": "@uTo", "value": filters.uploaded_between.end}]
+        params += [
+            {"name": "@uFrom", "value": filters.uploaded_between.start},
+            {"name": "@uTo", "value": filters.uploaded_between.end},
+        ]
     if filters.authors:
         where.append(_any_of("c.author", "au", filters.authors, params))
     for i, tag in enumerate(filters.tags):
@@ -176,7 +182,9 @@ def render_search(library_id: str, query_vector_f16: Sequence[float], terms: Seq
 
 def check_query(sql: str) -> None:
     """Raise if a rendered chunks query breaks an invariant. Use it in tests and at runtime."""
-    match = re.match(r"^\s*SELECT\s+TOP\s+(\d+)\s+(.*?)\s+FROM\s+c\s+WHERE\s+(.*)$", sql, flags=re.IGNORECASE | re.DOTALL)
+    match = re.match(
+        r"^\s*SELECT\s+TOP\s+(\d+)\s+(.*?)\s+FROM\s+c\s+WHERE\s+(.*)$", sql, flags=re.IGNORECASE | re.DOTALL
+    )
     if not match:
         raise QueryError("chunks queries must be SELECT TOP n … FROM c WHERE …")
     projection, rest = match.group(2), match.group(3)
@@ -184,7 +192,9 @@ def check_query(sql: str) -> None:
         raise QueryError("the embedding is never selected")
     if len(re.findall(r"c\.libraryId\s*=\s*@libraryId\b", rest)) != 1:
         raise QueryError("exactly one c.libraryId equality is required")
-    if re.search(r"c\.libraryId\s+(IN|<>|!=)|\bOR\b[^)]*c\.libraryId|c\.libraryId[^)]*\bOR\b", rest, flags=re.IGNORECASE):
+    if re.search(
+        r"c\.libraryId\s+(IN|<>|!=)|\bOR\b[^)]*c\.libraryId|c\.libraryId[^)]*\bOR\b", rest, flags=re.IGNORECASE
+    ):
         raise QueryError("never IN, OR or inequality on c.libraryId")
     if "VectorDistance" in rest and f"'dataType': '{STORED_DTYPE}'" not in rest:
         raise QueryError(f"VectorDistance must declare dataType {STORED_DTYPE}")

@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from inherited.query import (
+from fli.query import (
     FLOAT16_MIN_NORMAL,
     STORED_DTYPE,
     DateRange,
@@ -20,7 +20,7 @@ from inherited.query import (
     to_float16_query,
 )
 
-REPO = Path(__file__).resolve().parents[2]
+REPO = Path(__file__).resolve().parents[1]
 VECTOR = to_float16_query([0.1, -0.2, 0.3])
 
 
@@ -48,24 +48,35 @@ def test_hybrid_query_shape():
     q = render_search("lib-1", VECTOR, ["margin", "emea"], SearchFilters(), fetch=16)
     assert q.sql.startswith("SELECT TOP 16 ")
     assert "WHERE c.libraryId = @libraryId " in q.sql
-    assert "ORDER BY RANK RRF(VectorDistance(c.embedding, @queryVector, false, {'dataType': 'float16'}), " \
-           "FullTextScore(c.text, @t0, @t1))" in q.sql
+    assert (
+        "ORDER BY RANK RRF(VectorDistance(c.embedding, @queryVector, false, {'dataType': 'float16'}), "
+        "FullTextScore(c.text, @t0, @t1))" in q.sql
+    )
     assert "embedding," not in q.sql.split(" FROM ")[0]
     assert "filterPriority" not in q.sql and "searchListSizeMultiplier" not in q.sql
 
 
 def test_vector_only_when_no_terms():
     q = render_search("lib-1", VECTOR, [], SearchFilters(), fetch=8)
-    assert "RRF" not in q.sql and q.sql.endswith("ORDER BY VectorDistance(c.embedding, @queryVector, false, {'dataType': 'float16'})")
+    assert "RRF" not in q.sql and q.sql.endswith(
+        "ORDER BY VectorDistance(c.embedding, @queryVector, false, {'dataType': 'float16'})"
+    )
 
 
 def test_filters_render_as_parameters():
-    filters = SearchFilters(period=DateRange("2025-10-01", "2025-12-31"), authors=("Jane Doe",), tags=("region=EMEA", "topic=margin"),
-                            file_types=("pdf", "pptx"), content_kinds=("image",))
+    filters = SearchFilters(
+        period=DateRange("2025-10-01", "2025-12-31"),
+        authors=("Jane Doe",),
+        tags=("region=EMEA", "topic=margin"),
+        file_types=("pdf", "pptx"),
+        content_kinds=("image",),
+    )
     q = render_search("lib-1", VECTOR, ["margin"], filters, fetch=8)
     assert "c.periodStart <= @pTo AND c.periodEnd >= @pFrom" in q.sql
     assert "ARRAY_CONTAINS(c.facets, @tag0) AND ARRAY_CONTAINS(c.facets, @tag1)" in q.sql
-    assert "c.author IN (@au0)" in q.sql and "c.fileType IN (@ft0, @ft1)" in q.sql and "c.contentKind IN (@ck0)" in q.sql
+    assert (
+        "c.author IN (@au0)" in q.sql and "c.fileType IN (@ft0, @ft1)" in q.sql and "c.contentKind IN (@ck0)" in q.sql
+    )
     values = {p["name"]: p["value"] for p in q.parameters}
     assert values["@tag0"] == "region=EMEA" and values["@pFrom"] == "2025-10-01" and values["@libraryId"] == "lib-1"
     assert "EMEA" not in q.sql and "Jane" not in q.sql  # values never interpolated
@@ -87,16 +98,19 @@ def test_an_unconverted_query_vector_is_refused():
         render_search("lib-1", [0.1, 1e-6], [], SearchFilters(), fetch=8)
 
 
-@pytest.mark.parametrize("sql", [
-    "SELECT c.id FROM c WHERE c.libraryId = @libraryId",  # no TOP
-    "SELECT TOP 8 c.id, c.embedding FROM c WHERE c.libraryId = @libraryId",  # embedding selected
-    "SELECT TOP 8 * FROM c WHERE c.libraryId = @libraryId",
-    "SELECT TOP 8 c.id FROM c WHERE c.fileType = @ft0",  # no library
-    "SELECT TOP 8 c.id FROM c WHERE c.libraryId IN (@a, @b)",  # several libraries
-    "SELECT TOP 8 c.id FROM c WHERE c.libraryId = @libraryId OR c.libraryId = @other",
-    "SELECT TOP 8 c.id FROM c WHERE c.libraryId = @libraryId "
-    "ORDER BY VectorDistance(c.embedding, @queryVector, false, {'dataType': 'float32'})",  # wrong dtype: scans
-])
+@pytest.mark.parametrize(
+    "sql",
+    [
+        "SELECT c.id FROM c WHERE c.libraryId = @libraryId",  # no TOP
+        "SELECT TOP 8 c.id, c.embedding FROM c WHERE c.libraryId = @libraryId",  # embedding selected
+        "SELECT TOP 8 * FROM c WHERE c.libraryId = @libraryId",
+        "SELECT TOP 8 c.id FROM c WHERE c.fileType = @ft0",  # no library
+        "SELECT TOP 8 c.id FROM c WHERE c.libraryId IN (@a, @b)",  # several libraries
+        "SELECT TOP 8 c.id FROM c WHERE c.libraryId = @libraryId OR c.libraryId = @other",
+        "SELECT TOP 8 c.id FROM c WHERE c.libraryId = @libraryId "
+        "ORDER BY VectorDistance(c.embedding, @queryVector, false, {'dataType': 'float32'})",  # wrong dtype: scans
+    ],
+)
 def test_check_query_rejects_each_broken_invariant(sql):
     with pytest.raises(QueryError):
         check_query(sql)

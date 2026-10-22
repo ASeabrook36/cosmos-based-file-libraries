@@ -18,8 +18,9 @@ from __future__ import annotations
 
 import asyncio
 import time
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
-from typing import Any, Awaitable, Callable, TypeVar
+from typing import Any, TypeVar
 
 from .http import backoff_seconds
 
@@ -100,8 +101,14 @@ class Governor:
             self.concurrency_limit = max(1, self.concurrency_limit // 2)
             self._consecutive = 0
         self._paused_until = max(self._paused_until, self.clock() + wait)
-        self._emit("governor.throttle", waitSeconds=round(wait, 3), consecutive=consecutive, cooldown=entered_cooldown,
-                   concurrencyLimit=self.concurrency_limit, **context)
+        self._emit(
+            "governor.throttle",
+            waitSeconds=round(wait, 3),
+            consecutive=consecutive,
+            cooldown=entered_cooldown,
+            concurrencyLimit=self.concurrency_limit,
+            **context,
+        )
         return wait
 
     def record_success(self) -> None:
@@ -115,9 +122,16 @@ class Governor:
             self._emit("governor.recovered", concurrencyLimit=self.concurrency_limit)
 
     def snapshot(self) -> dict[str, Any]:
-        return {"workload": self.name, "requests": self.requests, "throttled": self.throttled, "cooldowns": self.cooldowns,
-                "concurrencyLimit": self.concurrency_limit, "maxConcurrency": self.max_concurrency, "spent": self.spent,
-                "inCooldown": self.in_cooldown}
+        return {
+            "workload": self.name,
+            "requests": self.requests,
+            "throttled": self.throttled,
+            "cooldowns": self.cooldowns,
+            "concurrencyLimit": self.concurrency_limit,
+            "maxConcurrency": self.max_concurrency,
+            "spent": self.spent,
+            "inCooldown": self.in_cooldown,
+        }
 
     def _emit(self, name: str, **fields: Any) -> None:
         if self.on_event is not None:

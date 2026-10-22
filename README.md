@@ -26,7 +26,7 @@ It removes the limit that prompted it. Azure AI Search allows 200 indexes per se
 | `src/fli/` | The application package: `fli-api` and `fli-worker` entry points | Whoever builds it |
 | `scripts/canary.py` | Proves a newly deployed account's vector and hybrid search work (CLAUDE.md rule 11) | Whoever deploys it |
 | `records/` | Canary records, committed | Reviewers |
-| `inherited/` | Tested building blocks carried over from the earlier work: extraction, OCR, chunking, embeddings, the search query rules | Whoever builds Phase 0 and Phase 1 |
+| `src/fli/` | The application package. `extraction`, `chunking`, `docintel`, `embedding`, `governor`, `http` and `query` were moved here from the earlier work in Phase 1 | Whoever builds Phase 1 onwards |
 | `CLAUDE.md` | Rules for coding agents working in this repo | Coding agents |
 
 ## Getting started

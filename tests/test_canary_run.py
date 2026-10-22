@@ -176,11 +176,11 @@ def fakes(monkeypatch):
     import azure.cosmos.aio
     import azure.identity.aio
 
-    import inherited.embedding
+    import fli.embedding
 
     monkeypatch.setattr(azure.cosmos.aio, "CosmosClient", FakeCosmosClient)
     monkeypatch.setattr(azure.identity.aio, "DefaultAzureCredential", FakeCredential)
-    monkeypatch.setattr(inherited.embedding, "AzureOpenAIEmbedder", FakeEmbedder)
+    monkeypatch.setattr(fli.embedding, "AzureOpenAIEmbedder", FakeEmbedder)
     monkeypatch.setattr(canary, "MIN_CHUNKS", 50)  # the repo's own docs: real text, about 80 chunks
     monkeypatch.setattr(canary, "INDEX_POLL_SECONDS", 0)
     for name, value in {

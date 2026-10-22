@@ -7,7 +7,7 @@ environments); no key is used. The returned dimension is checked against the con
 because the Cosmos vector policy's dimension is fixed at container creation (spec §4).
 
 Search embeds the query with this client and then converts it with
-``inherited.query.to_float16_query`` before querying the float16 index (spec §8 step 3).
+``fli.query.to_float16_query`` before querying the float16 index (spec §8 step 3).
 
 Verification boundary: tested against a fake transport whose response shape follows the
 Azure OpenAI embeddings REST reference (``data[].embedding``, ``data[].index``,
@@ -17,8 +17,9 @@ Azure OpenAI embeddings REST reference (``data[].embedding``, ``data[].index``,
 from __future__ import annotations
 
 import asyncio
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
-from typing import Awaitable, Callable, Protocol
+from typing import Protocol
 
 import httpx
 
@@ -79,6 +80,7 @@ class AzureOpenAIEmbedder:
         for attempt in range(self.max_attempts):
             token = await self.token_provider()
             self.usage.requests += 1
+
             async def post(token: str = token) -> httpx.Response:  # bound now, not at call time
                 return await self.http.post(
                     url,
@@ -113,10 +115,16 @@ class AzureOpenAIEmbedder:
                     self.usage.throttled += 1
                 wait = parse_retry_after(response.headers.get("Retry-After"))
                 if attempt + 1 == self.max_attempts:
-                    raise EmbeddingError(f"embedding failed after {self.max_attempts} attempts", throttled=response.status_code == 429, retry_after=wait)
+                    raise EmbeddingError(
+                        f"embedding failed after {self.max_attempts} attempts",
+                        throttled=response.status_code == 429,
+                        retry_after=wait,
+                    )
                 self.usage.retries += 1
                 if self.governor:  # the governor's pause is enforced on the next run(); do not wait twice
-                    self.governor.record_throttle(wait, status=response.status_code, resourceType="embeddings", requestClass="POST")
+                    self.governor.record_throttle(
+                        wait, status=response.status_code, resourceType="embeddings", requestClass="POST"
+                    )
                     continue
                 await self.sleep(min(self.max_wait_seconds, wait if wait is not None else backoff_seconds(attempt)))
                 continue

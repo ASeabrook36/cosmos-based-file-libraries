@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import email.utils
 import random
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 
 def parse_retry_after(value: str | None, *, now: datetime | None = None) -> float | None:
@@ -29,8 +29,8 @@ def parse_retry_after(value: str | None, *, now: datetime | None = None) -> floa
     except (TypeError, ValueError):
         return None
     if parsed.tzinfo is None:
-        parsed = parsed.replace(tzinfo=timezone.utc)
-    now = now or datetime.now(timezone.utc)
+        parsed = parsed.replace(tzinfo=UTC)
+    now = now or datetime.now(UTC)
     return max(0.0, (parsed - now).total_seconds())
 
 
