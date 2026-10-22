@@ -26,23 +26,30 @@ def chunk(doc: str, generation: int, index: int = 0) -> dict:
     return {"id": chunk_id(doc, generation, index), "documentId": doc, "generation": generation}
 
 
-def test_generation_check_drops_replaced_deleted_and_unfinished_documents():
+def test_generation_check_drops_replaced_deleted_and_never_committed_documents():
     documents = {
         "replaced": {"status": "ready", "activeGeneration": 2},
         "deleted": {"status": "deleting", "activeGeneration": 1},
-        "processing": {"status": "processing", "activeGeneration": 1, "pendingGeneration": 2},
+        "first-upload": {"status": "processing", "activeGeneration": None, "pendingGeneration": 1},
         "current": {"status": "ready", "activeGeneration": 1},
     }
     chunks = [
         chunk("replaced", 1),  # old generation, still stored until the purge runs
         chunk("replaced", 2),
         chunk("deleted", 1),
-        chunk("processing", 2),  # being written: not visible until commit
+        chunk("first-upload", 1),  # half-written: nothing is active yet
         chunk("current", 1),
         chunk("ghost", 1),  # no document record at all
     ]
     kept = filter_visible(chunks, documents, limit=10)
     assert [c["id"] for c in kept] == ["replaced:2:0", "current:1:0"]
+
+
+@pytest.mark.parametrize("status", ["queued", "processing", "failed"])
+def test_the_old_version_stays_searchable_while_a_replacement_is_pending_or_after_it_fails(status):
+    document = {"status": status, "activeGeneration": 1, "pendingGeneration": 2 if status != "failed" else None}
+    assert is_visible(chunk("d", 1), document)
+    assert not is_visible(chunk("d", 2), document)  # the new generation's chunks, partly written
 
 
 def test_a_commit_switches_visibility_to_the_new_generation():

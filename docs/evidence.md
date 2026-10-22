@@ -1,6 +1,6 @@
 # Evidence: why the design is what it is
 
-*Version 0.3: Phase 0 measurements added, 2026-10-22.*
+*Version 0.4, 2026-10-22: E26 (search visibility). Version 0.3: Phase 0 measurements added.*
 
 Most decisions in `spec.md` rest on measurements from earlier work on these Cosmos features, made on live Azure in 2026. That work built a retrieval index in which each owner (a person) had their own body of content, and every search named whose content to search. That is structurally this project's problem: an owner there plays the role a library plays here. The numbers are recorded here so this repository stands on its own.
 
@@ -242,6 +242,12 @@ Two consequences:
 - **Any measurement of search cost must first wait for the index.** The canary polls until a search stops scanning, and records how long it took. A first canary run that searched after 30 seconds failed for exactly this reason.
 
 The partition-key prefix (`partition_key=[libraryId]` on a hierarchical key) made no difference to whether or when the index engaged. Only a new container was measured. How long a new library in an already-populated container takes is unmeasured (N12).
+
+### E26. Search visibility follows `activeGeneration`, not `status` · Inference (design consistency)
+
+Spec 0.3 had search return only documents whose `status` was `ready`, and set `status: processing` at the start of every reprocess. A replaced document therefore vanished from search while its new version was processed, contradicting the rule that the old generation stays searchable until the new one commits (`spec.md` §7.8). A failed replacement would have hidden the document until someone re-uploaded it.
+
+The fix: visibility depends only on `activeGeneration` (and `deleting`). `activeGeneration` is `null` until the first generation commits, so half-written chunks of a first upload are never visible either. Not measured; it follows from the spec's own rules. The unit tests in `tests/test_ids_and_generation.py` encode it.
 
 ## Not proven
 

@@ -1,6 +1,6 @@
 # Specification: File Library Index
 
-*Version 0.3, 2026-10-22. Working name. Status: Phase 0 complete (the Cosmos configuration is proven at small scale); the application is not built. Every design choice here that rests on a measurement is traced in `evidence.md`.*
+*Version 0.4, 2026-10-22. Working name. Status: Phase 0 complete (the Cosmos configuration is proven at small scale); the application is not built. Every design choice here that rests on a measurement is traced in `evidence.md`.*
 
 ## 1. Scope
 
@@ -122,10 +122,10 @@ Partition key `/libraryId`. `id` equals `documentId` (a GUID).
 | `id`, `documentId`, `libraryId` | string | |
 | `fileName`, `contentType`, `fileType`, `sizeBytes`, `sha256` | | `fileType` is the normalized extension: `pdf`, `docx`, `pptx`, `xlsx`, `txt`, `md`, `html`, `csv`, `eml`, `msg`, `image` |
 | `blobPath` | string | `{libraryId}/{documentId}/original/{fileName}` |
-| `status` | `queued` \| `processing` \| `ready` \| `failed` \| `deleting` | |
+| `status` | `queued` \| `processing` \| `ready` \| `failed` \| `deleting` | The outcome of the latest processing attempt. It does not decide what search returns, except `deleting`; `activeGeneration` does (§8 step 6) |
 | `statusDetail` | string | For `failed`: `encrypted`, `password_protected`, `unsupported_file_type`, `ocr_page_limit_exceeded`, `parser_error`, … |
-| `activeGeneration` | int | The generation search may return. Starts at 1 |
-| `pendingGeneration` | int \| null | The generation being written |
+| `activeGeneration` | int \| null | The generation search may return. `null` until the first generation commits, so a document's chunks are never searchable half-written |
+| `pendingGeneration` | int \| null | The generation being written. The first upload sets it to 1 |
 | `uploadedAt`, `uploadedBy` | | System time; `uploadedBy` for audit only |
 | `authoredAt`, `authoredAtSuspect` | datetime, bool | From file metadata. `authoredAtSuspect` is set when many documents in the library share one timestamp, which marks a bulk migration rather than real authorship |
 | `author` | string \| null | |
@@ -324,7 +324,7 @@ One Service Bus queue, `ingest`, with sessions enabled and `SessionId = libraryI
 | `purgeLibrary` | `libraryId` | Delete every document, chunk and blob, then the library |
 | `proposeDescription` | `libraryId` | Regenerate the library description proposal |
 
-A message whose `generation` is lower than the document's `pendingGeneration`/`activeGeneration`, or whose document is `deleting`, is completed without work. After the last delivery attempt fails, the worker marks the document `failed` with the reason before the message dead-letters.
+A message whose `generation` is lower than the document's `pendingGeneration`/`activeGeneration`, or whose document is `deleting`, is completed without work. After the last delivery attempt fails, the worker marks the document `failed` with the reason before the message dead-letters. `activeGeneration` is left as it was: a failed replacement keeps the previous version searchable, and a failed first upload has nothing searchable.
 
 ### 7.2 Processing a document
 
@@ -336,7 +336,7 @@ A message whose `generation` is lower than the document's `pendingGeneration`/`a
 6. Propose tags, period and author (§9.1).
 7. Embed every chunk's `text` with the embedding deployment, in batches of 16, honouring `Retry-After` on 429.
 8. Upsert all chunks of generation G. Writes share one cap across the whole worker, `COSMOS_WRITE_CONCURRENCY` (default 2), not a cap per document. On a 429 that outlasts the SDK's own retries, wait `x-ms-retry-after-ms` and retry. Eight concurrent writers exhausted the SDK's retries on serverless within about 100 writes (`evidence.md` E10). Deterministic ids make retries safe.
-9. Commit: set `activeGeneration: G`, `pendingGeneration: null`, `status: ready`, counts. From this moment search returns generation G and ignores older ones (§8 step 6).
+9. Commit: set `activeGeneration: G`, `pendingGeneration: null`, `status: ready`, counts. Until this moment search keeps returning the previous generation, if any; from it, search returns generation G and ignores older ones (§8 step 6).
 10. If G > 1, enqueue `purgeDocument` with `belowGeneration: G`.
 11. Recompute the library's `tagVocabulary` and `stats` from the `documents` container (a single-partition query). Enqueue `proposeDescription` when the library has changed by 10 documents or 24 hours since the last proposal.
 
@@ -424,7 +424,7 @@ ORDER BY RANK RRF(
 | `fileTypes` | `c.fileType IN (…)` |
 | `contentKinds` | `c.contentKind IN (…)` |
 
-6. **Check generations.** Collect the distinct `documentId`s in the results and point-read their document records (same partition, about 1 RU each, in parallel). Drop any chunk whose document is not `ready` or whose `generation` ≠ `activeGeneration`. This hides replaced and deleted documents the moment their record changes, before the background purge runs. Keep the first `top`.
+6. **Check generations.** Collect the distinct `documentId`s in the results and point-read their document records (same partition, about 1 RU each, in parallel). Drop any chunk whose document is missing or `deleting`, or whose `generation` ≠ `activeGeneration`. Status is otherwise ignored: while a replacement is `queued` or `processing`, or after it has `failed`, the previous generation is still the active one and stays searchable (§7.8). This hides replaced and deleted documents the moment their record changes, before the background purge runs. Keep the first `top`.
 7. **Neighbours** (when `includeNeighbors`, text results only): one query per document, scoped to the full partition key, for `chunkIndex` ± 1 in the active generation.
 8. **Images:** for `image` results, issue a 15-minute read-only user-delegation SAS link to `imageRef`.
 9. **Coverage:** fill `coverage` (§6.3), including notes for filters that exclude documents lacking the field.
