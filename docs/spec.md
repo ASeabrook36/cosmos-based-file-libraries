@@ -1,6 +1,6 @@
 # Specification: File Library Index
 
-*Version 0.2, 2026-10-22. Working name. Status: Phase 0 complete (the Cosmos configuration is proven at small scale); the application is not built. Every design choice here that rests on a measurement is traced in `evidence.md`.*
+*Version 0.3, 2026-10-22. Working name. Status: Phase 0 complete (the Cosmos configuration is proven at small scale); the application is not built. Every design choice here that rests on a measurement is traced in `evidence.md`.*
 
 ## 1. Scope
 
@@ -80,7 +80,7 @@ All service-to-service calls use managed identity (`DefaultAzureCredential`). No
 | Identity | Roles |
 |---|---|
 | API and worker (one user-assigned identity is fine) | Cosmos DB Built-in Data Contributor (data-plane role assignment on the account); Storage Blob Data Contributor and Storage Blob Delegator (to issue short-lived read links); Azure Service Bus Data Sender and Data Receiver; Cognitive Services OpenAI User; Cognitive Services User (Document Intelligence) |
-| Platform service principal | The app role `Platform.Caller` on the index's API app registration. Nothing else. |
+| Platform service principal (production, Phase 5) | The app role `Platform.Caller` on the index's API app registration. Nothing else. The prototype uses the static key instead (§5 rule 1) |
 | Operator (demo only, optional) | The same roles as the API and worker, so `scripts/canary.py` and local runs work under the operator's own sign-in. Granted by `infra/main.bicep` when `operatorPrincipalId` is set; leave it empty in production |
 
 ## 4. Cosmos data model
@@ -167,9 +167,9 @@ A fact that never changes cannot go stale, so the index holds exactly one: a per
 
 **Rules:**
 
-1. **Only the platform can call the index.** Every request carries an Entra bearer token for the index's API app registration with the app role `Platform.Caller`. Only the platform's service principal holds it. Agents and users never hold credentials to the index, so the `X-Agent-Id` header on a request can be trusted.
+1. **Only the platform can call the index.** Agents and users never hold credentials to the index, so the `X-Agent-Id` header on a request can be trusted. **Production:** every request carries an Entra bearer token for the index's API app registration with the app role `Platform.Caller`, held only by the platform's service principal (Phase 5). **Prototype:** the platform is trusted by deployment. The API listens on the local machine and requires a static key (`AUTH_MODE=dev`, refused unless `ENVIRONMENT=local`). The platform authenticates its own users and decides who may see and add to which libraries, including exposing a personal library only to the agent it was created for; the index does none of that.
 2. **Creating a library fixes its kind.** `kind: personal` requires `boundAgentId`; `kind: shared` forbids it. Neither field can change afterwards: `PATCH` with either returns `400 immutable_field`. Making a personal library shared means copying it into a new shared library (not in v1), never flipping the field.
-3. **Search checks the binding.** Before searching, the index reads the library record (a point read, about 1 RU). It refuses when:
+3. **Search checks the binding.** Even though the platform exposes a personal library only to its own agent, the index re-checks as a backstop. Before searching, the index reads the library record (a point read, about 1 RU). It refuses when:
    - the library does not exist or is `deleting` → `404 library_not_found`;
    - the library is `personal` and `X-Agent-Id` ≠ `boundAgentId` → `403 library_not_bound_to_agent`, logged as a security event.
 4. **The platform's attach screen for official agents lists only shared libraries** (`GET /v1/libraries?kind=shared`). Rule 3 is the backstop: a wrong attachment created by a platform bug returns nothing.
@@ -354,11 +354,11 @@ A message whose `generation` is lower than the document's `pendingGeneration`/`a
 | PNG, JPEG, GIF, WEBP, TIFF, BMP | Image path only (§7.5); OCR text from the vision description |
 | Legacy DOC, PPT, XLS | `failed`, `unsupported_file_type` in v1 |
 
-`authoredAt` and `author` come from document core properties (Office), PDF metadata, or email headers. Start from `inherited/extraction.py` (§13), which already does native-first extraction with OCR fallback, detects encrypted and password-protected files, and records page, slide and sheet locations.
+`authoredAt` and `author` come from document core properties (Office), PDF metadata, or email headers. Start from `src/fli/extraction.py` (§13), which already does native-first extraction with OCR fallback, detects encrypted and password-protected files, and records page, slide and sheet locations.
 
 ### 7.4 Chunking
 
-Section-aware chunks of about 500 tokens with about 50 tokens of overlap, measured with the `cl100k_base` tokenizer (the one `text-embedding-3-large` uses). Overlap is whole trailing sentences; a sentence is split only if it alone exceeds the target. Headings are carried into every chunk of their section. An email of 700 tokens or fewer is one chunk. Spreadsheet chunks break on row boundaries. Start from `inherited/chunking.py` (§13), and record `chunkingVersion` on every chunk.
+Section-aware chunks of about 500 tokens with about 50 tokens of overlap, measured with the `cl100k_base` tokenizer (the one `text-embedding-3-large` uses). Overlap is whole trailing sentences; a sentence is split only if it alone exceeds the target. Headings are carried into every chunk of their section. An email of 700 tokens or fewer is one chunk. Spreadsheet chunks break on row boundaries. Start from `src/fli/chunking.py` (§13), and record `chunkingVersion` on every chunk.
 
 ### 7.5 Images
 
@@ -458,8 +458,8 @@ The routing report is a saved Log Analytics query, per library over 30 days: sea
 | Variable | Default | Notes |
 |---|---|---|
 | `ENVIRONMENT` | — | `local`, `demo` or `prod` |
-| `AUTH_MODE` | `entra` | `dev` accepts a static key from `DEV_API_KEY`; the API refuses to start in `dev` mode unless `ENVIRONMENT=local` |
-| `API_AUDIENCE`, `API_TENANT_ID`, `CALLER_APP_ROLE` | —, —, `Platform.Caller` | |
+| `AUTH_MODE` | `entra` | `dev` accepts a static key from `DEV_API_KEY`; the API refuses to start in `dev` mode unless `ENVIRONMENT=local`. `entra` is not built until Phase 5: the API refuses to start in it |
+| `API_AUDIENCE`, `API_TENANT_ID`, `CALLER_APP_ROLE` | —, —, `Platform.Caller` | Phase 5 (`entra` mode) |
 | `COSMOS_ENDPOINT`, `COSMOS_DATABASE` | —, `fli` | |
 | `BLOB_ACCOUNT_URL`, `BLOB_CONTAINER` | —, `files` | |
 | `SERVICEBUS_NAMESPACE`, `SERVICEBUS_QUEUE` | —, `ingest` | |
@@ -503,15 +503,13 @@ Azure OpenAI calls (embeddings, image descriptions, proposals) are billed separa
 
 ## 13. Inherited code
 
-`inherited/` holds tested building blocks carried over from earlier work on these Cosmos features. `inherited/README.md` lists what each does, what was changed in adaptation, and what is still to build.
+These modules were carried over from earlier work on these Cosmos features and moved into the application package in Phase 1, with their tests.
 
 | Path | Use |
 |---|---|
-| `inherited/extraction.py` | Native-first extraction for DOCX, PPTX, XLSX, PDF, Markdown, HTML; encrypted and password-protected detection; OCR fallback; page, slide and sheet locations |
-| `inherited/docintel.py` | Document Intelligence `prebuilt-read` client with bounded pages and failure mapping |
-| `inherited/chunking.py` | The section-aware 500/50 chunker with versioning and locations |
-| `inherited/embedding.py`, `governor.py`, `http.py` | Batched Azure OpenAI embeddings with `Retry-After` handling and workload pacing |
-| `inherited/query.py` | The §8 search SQL, the float16 query conversion, and `check_query` enforcing the invariants |
-| `inherited/bicep/` | Account and container Bicep; containers load `cosmos/*.json` |
-
-Phase 1 moves these into the application package with their tests.
+| `src/fli/extraction.py` | Native-first extraction for DOCX, PPTX, XLSX, CSV, PDF, Markdown, HTML, EML; encrypted and password-protected detection; OCR fallback; page, slide, sheet and row locations; author and date metadata |
+| `src/fli/docintel.py` | Document Intelligence `prebuilt-read` client with bounded pages and failure mapping |
+| `src/fli/chunking.py` | The section-aware 500/50 chunker with versioning and locations |
+| `src/fli/embedding.py`, `governor.py`, `http.py` | Batched Azure OpenAI embeddings with `Retry-After` handling and workload pacing |
+| `src/fli/query.py` | The §8 search SQL, the float16 query conversion, and `check_query` enforcing the invariants |
+| `infra/` | Account and container Bicep; containers load `cosmos/*.json` |

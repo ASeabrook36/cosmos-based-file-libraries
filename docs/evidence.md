@@ -100,7 +100,7 @@ With that change, the same searches cost about 25 RU and read about 0.06% of the
 
 *Phase 0* confirmed it on this configuration. With the index engaged, the float16 path cost 14.9–15.5 RU and read 50 of 1,500 chunks. The same search declaring `float32` still read all 1,500 at 113.8 RU, the cost of brute force.
 
-An earlier rule said to declare `float32` for the query vector, because omitting the declaration returned no scores. That rule is wrong for float16 indexes. `inherited/query.py` implements the correct path and refuses the wrong one.
+An earlier rule said to declare `float32` for the query vector, because omitting the declaration returned no scores. That rule is wrong for float16 indexes. `src/fli/query.py` implements the correct path and refuses the wrong one.
 
 ### E9. `indexingSearchListSize` 300 · Measured (narrowly)
 

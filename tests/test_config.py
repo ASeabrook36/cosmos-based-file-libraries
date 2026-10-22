@@ -8,6 +8,8 @@ from fastapi.testclient import TestClient
 from fli.api import create_app
 from fli.config import ConfigError, Settings
 
+LOCAL_DEV = {"ENVIRONMENT": "local", "AUTH_MODE": "dev", "DEV_API_KEY": "k"}
+
 
 def test_defaults_follow_the_spec():
     s = Settings.from_env({"ENVIRONMENT": "demo"})
@@ -42,5 +44,5 @@ def test_embedding_dimensions_must_match_the_vector_policy():
 
 
 def test_healthz():
-    client = TestClient(create_app(Settings.from_env({"ENVIRONMENT": "local"})))
+    client = TestClient(create_app(Settings.from_env(LOCAL_DEV)))
     assert client.get("/healthz").json() == {"status": "ok"}

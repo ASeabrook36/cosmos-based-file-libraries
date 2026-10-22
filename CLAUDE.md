@@ -11,7 +11,7 @@ Each one prevents a failure that was measured, not imagined.
 1. **Every vector or hybrid query has `SELECT TOP n`.** Reject query construction without it. (Cosmos may read far more than needed otherwise.)
 2. **Every query on `chunks` filters `c.libraryId = @libraryId` by equality on exactly one value.** Never `IN`, `OR` or a join across libraries. Several libraries means several queries. (E4: an `IN` list across shard values cost about 300× more. E5: omitting the value cost about 220× more.)
 3. **The library id in a search always comes from the URL path the platform called, never from agent-supplied tool arguments.**
-4. **Query vectors for the float16 index are converted before use:** round each value to float16, set values with magnitude below 2⁻¹⁴ to 0, and declare `{'dataType': 'float16'}` in `VectorDistance`. Never declare `float32` against this index: it silently turns an indexed search into a full scan (E8). `inherited/query.py` implements the conversion and the check.
+4. **Query vectors for the float16 index are converted before use:** round each value to float16, set values with magnitude below 2⁻¹⁴ to 0, and declare `{'dataType': 'float16'}` in `VectorDistance`. Never declare `float32` against this index: it silently turns an indexed search into a full scan (E8). `src/fli/query.py` implements the conversion and the check.
 5. **Never select `c.embedding`.**
 6. **Leave `filterPriority`, `searchListSizeMultiplier` and RRF weights at their defaults** unless an evaluation run justifies a change (E13).
 

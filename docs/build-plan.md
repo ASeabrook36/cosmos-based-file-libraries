@@ -1,6 +1,6 @@
 # Build plan
 
-*Version 0.2, 2026-10-22: Phase 0 passed; its findings are folded into Phases 0, 4 and the risks.*
+*Version 0.3, 2026-10-22: Entra authentication moved from Phase 1 to Phase 5 (the platform authenticates its users; the prototype uses a static local key). Version 0.2: Phase 0 passed; its findings are folded into Phases 0, 4 and the risks.*
 
 The plan is ordered to reach something demonstrable as early as possible:
 
@@ -51,15 +51,15 @@ The first build of this exact Cosmos configuration happens here (`evidence.md` N
 
 **Build**
 
-- **Authentication:** Entra bearer validation with the app role, plus a `dev` mode that refuses to start outside `ENVIRONMENT=local`.
+- **Caller check:** a static key (`AUTH_MODE=dev`) that refuses to start outside `ENVIRONMENT=local`. No Entra in the prototype: the platform authenticates users and decides which libraries they and their agents see (`spec.md` §5). Entra validation is Phase 5.
 - **Libraries:** the endpoints in `spec.md` §6.1, with the personal-library rules of §5.
-- **Documents:** upload → Blob → queue → worker → `ready`, for PDF, DOCX, PPTX, XLSX, CSV, TXT, MD, HTML and EML. Start from the extraction, OCR, chunking, embedding and query modules in `inherited/` (`spec.md` §13), and move them into the application package with their tests. Generations and deterministic chunk ids from the start.
+- **Documents:** upload → Blob → queue → worker → `ready`, for PDF, DOCX, PPTX, XLSX, CSV, TXT, MD, HTML and EML. Start from the extraction, OCR, chunking, embedding and query modules (moved from `inherited/` into `src/fli` with their tests, `spec.md` §13). Generations and deterministic chunk ids from the start.
 - **Search:** `spec.md` §8 in full. That includes the float16 query conversion, hybrid SQL, filters, the generation check, neighbours and coverage.
 - **Tool:** `GET …/tool` (`spec.md` §6.4).
 
 **Unit tests that must exist**
 
-- Every rendered vector or hybrid query has `TOP`, declares `float16`, filters `c.libraryId` by equality on one value, and never selects `c.embedding`. Build these as static checks on the query builder; `inherited/query.py` `check_query` already does.
+- Every rendered vector or hybrid query has `TOP`, declares `float16`, filters `c.libraryId` by equality on one value, and never selects `c.embedding`. Build these as static checks on the query builder; `src/fli/query.py` `check_query` already does.
 - float16 conversion: rounding, and flushing values below 2⁻¹⁴ to 0.
 - A personal library searched with another agent's id returns `403`. `PATCH` of `kind` or `boundAgentId` returns `400`.
 - Chunk ids are deterministic. A retried ingest overwrites rather than duplicates.
@@ -138,7 +138,7 @@ These come after the demo, in roughly this order:
 1. **Infrastructure:**
    - Provisioned autoscale. Convert the demo account (one-way) or deploy a fresh production account.
    - Deploy to Container Apps.
-   - App registration and app role for the real platform.
+   - App registration and app role for the real platform, and Entra bearer validation (`Platform.Caller`) in place of the static key (`spec.md` §5 rule 1).
 2. **Platform integration:**
    - Replace the Streamlit stand-in with calls from the real platform: library lifecycle, uploads, tool attachment, search, usage reports.
    - Run the personal-agent lifecycle end to end: create a personal agent, create its library, then delete both.
