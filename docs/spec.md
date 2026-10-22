@@ -81,6 +81,7 @@ All service-to-service calls use managed identity (`DefaultAzureCredential`). No
 |---|---|
 | API and worker (one user-assigned identity is fine) | Cosmos DB Built-in Data Contributor (data-plane role assignment on the account); Storage Blob Data Contributor and Storage Blob Delegator (to issue short-lived read links); Azure Service Bus Data Sender and Data Receiver; Cognitive Services OpenAI User; Cognitive Services User (Document Intelligence) |
 | Platform service principal | The app role `Platform.Caller` on the index's API app registration. Nothing else. |
+| Operator (demo only, optional) | The same roles as the API and worker, so `scripts/canary.py` and local runs work under the operator's own sign-in. Granted by `infra/main.bicep` when `operatorPrincipalId` is set; leave it empty in production |
 
 ## 4. Cosmos data model
 

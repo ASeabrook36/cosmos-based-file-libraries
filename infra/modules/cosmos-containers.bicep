@@ -65,6 +65,11 @@ resource containers 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containe
   parent: database
   name: definition.body.id
   properties: {
+    // Bicep's type for this API version lacks quantizerType (the spherical
+    // quantizer is preview) and warns; ARM passes the property through.
+    // scripts/canary.py reads the stored definition back and fails if the
+    // service dropped or changed it.
+    #disable-next-line BCP037
     resource: definition.body
     // Supplying autoscaleSettings against a serverless account is rejected.
     options: capacityMode == 'serverless'

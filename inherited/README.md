@@ -15,14 +15,13 @@ This folder is **reference and starting material**, not the application. Phase 1
 | `governor.py` | Per-workload concurrency limits and pacing with cooldown on repeated throttling | §7.6 |
 | `http.py` | `Retry-After` parsing and jittered backoff | — |
 | `query.py` | The search SQL of spec §8 with its invariants enforced, the float16 query-vector conversion, and `check_query` for use in tests and at runtime | §8 |
-| `bicep/cosmos-account.bicep` | One organization's account and database | §3 |
-| `bicep/cosmos-containers.bicep` | The three containers, loaded from `cosmos/*.json` | §4 |
+| `../infra/modules/cosmos-*.bicep` | Moved to `infra/` in Phase 0: one organization's account, database and containers | §3, §4 |
 | `tests/` | 63 tests | — |
 
 ## Status
 
 - **Python modules:** tested against fakes (`python -m pytest inherited/tests` from the repo root; dependencies in `requirements.txt`). Extraction, OCR, chunking and embeddings were exercised in their earlier form; the location fields, speaker notes and `query.py` are new here and covered only by these tests. Nothing here has run against live Azure in this form.
-- **Bicep:** adapted from definitions that deployed successfully, but not deployed or compiled in this form. Phase 0 deploys it and the canary proves it.
+- **Bicep:** moved to `infra/modules/` in Phase 0 and compiled there; not yet deployed in this form. Phase 0 deploys it and the canary proves it.
 
 ## What changed in adaptation, and why
 
@@ -36,4 +35,3 @@ This folder is **reference and starting material**, not the application. Phase 1
 - Images embedded in DOCX and PPTX, and the image pipeline (`spec.md` §7.5). `extraction.py` still sends standalone images to OCR; the application should send them to the image pipeline instead.
 - EML and MSG extraction, and author and date metadata (`spec.md` §7.3).
 - The Cosmos client code: writing chunks, generations, the generation check, and neighbours (`spec.md` §7–§8).
-- `scripts/canary.py` (`docs/build-plan.md` Phase 0).

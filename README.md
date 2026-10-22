@@ -11,7 +11,7 @@ A search service that stores agent file libraries in Azure Cosmos DB instead of 
 
 It removes the limit that prompted it. Azure AI Search allows 200 indexes per service on the S2 and S3 tiers, and the current design uses one index per library. Here a library is a value stored on each record, not an object the service counts, so the number of libraries has no design limit.
 
-**Status:** specification only; nothing is built yet. The design rests on earlier measurements of these Cosmos features on live Azure (2026). `docs/evidence.md` traces each decision to them and lists what is not yet proven.
+**Status:** Phase 0 (`docs/build-plan.md`): scaffold, Bicep and canary are built; the canary has not yet run against a deployed account. The design rests on earlier measurements of these Cosmos features on live Azure (2026). `docs/evidence.md` traces each decision to them and lists what is not yet proven.
 
 ## What's here
 
@@ -22,7 +22,11 @@ It removes the limit that prompted it. Azure AI Search allows 200 indexes per se
 | `docs/build-plan.md` | Build order, demo-first, with an exit check per phase and the demo script | Whoever builds it |
 | `docs/evidence.md` | Each decision, the measurement behind it, and what is not proven | Reviewers, and anyone challenging a decision |
 | `cosmos/*.json` | The three Cosmos container definitions, ready to deploy | Infrastructure code |
-| `inherited/` | Tested building blocks carried over from the earlier work: extraction, OCR, chunking, embeddings, the search query rules, Bicep | Whoever builds Phase 0 and Phase 1 |
+| `infra/` | Bicep for one organization's deployment, and how to deploy it | Whoever deploys it |
+| `src/fli/` | The application package: `fli-api` and `fli-worker` entry points | Whoever builds it |
+| `scripts/canary.py` | Proves a newly deployed account's vector and hybrid search work (CLAUDE.md rule 11) | Whoever deploys it |
+| `records/` | Canary records, committed | Reviewers |
+| `inherited/` | Tested building blocks carried over from the earlier work: extraction, OCR, chunking, embeddings, the search query rules | Whoever builds Phase 0 and Phase 1 |
 | `CLAUDE.md` | Rules for coding agents working in this repo | Coding agents |
 
 ## Getting started
@@ -30,4 +34,12 @@ It removes the limit that prompted it. Azure AI Search allows 200 indexes per se
 1. Read `docs/spec.md`.
 2. Start `docs/build-plan.md` Phase 0. Its canary proves the Cosmos configuration before any application code depends on it.
 
-`inherited/` holds tested code to start from (`docs/spec.md` §13; `inherited/README.md`). Run its tests with `python -m pytest inherited/tests` after `pip install -r inherited/requirements.txt`.
+Set up and run every test (Python 3.12 or later):
+
+```bash
+python3.12 -m venv .venv && .venv/bin/pip install -e '.[dev]'
+.venv/bin/python -m pytest
+.venv/bin/ruff check . && .venv/bin/ruff format --check .
+```
+
+To deploy and run the canary, follow `infra/README.md`.
