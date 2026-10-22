@@ -45,6 +45,8 @@ eval "$(python scripts/deployment_env.py -g <RESOURCE_GROUP>)"
 python scripts/canary.py --corpus <CORPUS_DIR>
 ```
 
+Check the corpus first with `python scripts/canary.py --corpus <CORPUS_DIR> --count-only`, which needs no Azure.
+
 The corpus is a directory of real documents (PDF, DOCX, PPTX, XLSX, CSV, TXT, MD, HTML) that together give at least 1,200 chunks. 1,500 chunks is about 750,000 tokens, or roughly 600–800 pages of prose. Scanned PDFs are skipped, because the canary does no OCR. Public annual reports in the demo's domain work well, and can be reused as the demo corpus.
 
 The canary prints each check and writes `records/canary-<UTC timestamp>.json`. **The Phase 0 exit check is a passing run with that record committed.**

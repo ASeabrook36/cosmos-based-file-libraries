@@ -187,3 +187,12 @@ def test_hybrid_queries_use_rrf_and_vector_queries_declare_float16(fakes, tmp_pa
     assert sum("ORDER BY RANK RRF(" in q for q in vector) == 2 * canary.QUERIES_PER_KIND  # hybrid + exact hybrid
     assert sum("'float32'" in q for q in vector) == 1  # only the documented trap
     assert all("'float16'" in q for q in vector if "'float32'" not in q)
+
+
+def test_count_only_reads_the_corpus_without_azure(monkeypatch, capsys):
+    monkeypatch.delenv("COSMOS_ENDPOINT", raising=False)
+    monkeypatch.setattr(canary, "MIN_CHUNKS", 50)
+    assert canary.main(["--corpus", str(REPO / "docs"), "--count-only"]) == 0
+    monkeypatch.setattr(canary, "MIN_CHUNKS", 10_000)
+    assert canary.main(["--corpus", str(REPO / "docs"), "--count-only"]) == 1
+    assert "need at least 10000" in capsys.readouterr().err

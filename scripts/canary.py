@@ -29,6 +29,7 @@ them to ``operatorPrincipalId``).
 
 Usage, from the repo root::
 
+    python scripts/canary.py --corpus ~/canary-corpus --count-only   # is the corpus big enough? no Azure
     python scripts/canary.py --corpus ~/canary-corpus
     python scripts/canary.py --cleanup <libraryId>   # remove a run kept with --keep or left by a crash
 
@@ -949,6 +950,16 @@ async def cleanup(library_id: str) -> int:
         await credential.close()
 
 
+async def count_corpus(directory: Path, target: int) -> int:
+    documents, chunks, version = await read_corpus(directory, target)
+    for doc in documents:
+        log(f"{doc['fileName'] if 'fileName' in doc else doc['fileIndex']}: {doc['outcome']}, {doc['chunks']} chunks")
+    enough = len(chunks) >= MIN_CHUNKS
+    stop = " (stopped at the target)" if len(chunks) >= target else ""
+    log(f"{len(chunks)} chunks{stop}, {version}: {'enough' if enough else f'need at least {MIN_CHUNKS}'}")
+    return 0 if enough else 1
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument(
@@ -960,12 +971,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--records-dir", type=Path, default=REPO / "records")
     parser.add_argument("--keep", action="store_true", help="keep the canary library instead of deleting it")
     parser.add_argument("--cleanup", metavar="LIBRARY_ID", help="delete a kept canary library, then exit")
+    parser.add_argument("--count-only", action="store_true", help="count the corpus's chunks without touching Azure")
     args = parser.parse_args(argv)
     try:
         if args.cleanup:
             return asyncio.run(cleanup(args.cleanup))
         if not args.corpus:
             parser.error("--corpus is required")
+        if args.count_only:
+            return asyncio.run(count_corpus(args.corpus, args.target_chunks))
         return asyncio.run(run(args))
     except CanaryError as exc:
         log(f"error: {exc}")
