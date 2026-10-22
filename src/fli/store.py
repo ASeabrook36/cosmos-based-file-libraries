@@ -36,6 +36,7 @@ class LibraryStore(Protocol):
     async def create(self, record: Record) -> Record: ...
     async def replace(self, record: Record) -> Record: ...
     async def list(self, *, kind: str | None, status: str | None) -> list[Record]: ...
+    async def delete(self, library_id: str) -> None: ...
 
 
 class DocumentStore(Protocol):
@@ -43,6 +44,7 @@ class DocumentStore(Protocol):
     async def create(self, record: Record) -> Record: ...
     async def replace(self, record: Record) -> Record: ...
     async def list(self, library_id: str, *, status: str | None, facet: str | None) -> list[Record]: ...
+    async def delete(self, library_id: str, document_id: str) -> None: ...
 
 
 def library_list_query(kind: str | None, status: str | None) -> tuple[str, list[dict[str, Any]]]:
@@ -101,6 +103,14 @@ class _CosmosContainer:
         except CosmosAccessConditionFailedError as exc:
             raise Conflict(record["id"]) from exc
 
+    async def delete(self, item_id: str, partition_key: str) -> None:
+        from azure.cosmos.exceptions import CosmosResourceNotFoundError
+
+        try:
+            await self._c.delete_item(item_id, partition_key=partition_key)
+        except CosmosResourceNotFoundError:  # already gone: a retried purge
+            pass
+
     async def query(self, sql: str, params: list[dict[str, Any]], partition_key: str | None) -> list[Record]:
         items = self._c.query_items(sql, parameters=params, partition_key=partition_key)
         return [item async for item in items]
@@ -123,6 +133,9 @@ class CosmosLibraryStore:
         sql, params = library_list_query(kind, status)
         return await self._c.query(sql, params, None)  # cross-partition: the attach screen only
 
+    async def delete(self, library_id: str) -> None:
+        await self._c.delete(library_id, library_id)
+
 
 class CosmosDocumentStore:
     def __init__(self, container: Any) -> None:
@@ -140,6 +153,9 @@ class CosmosDocumentStore:
     async def list(self, library_id: str, *, status: str | None, facet: str | None) -> list[Record]:
         sql, params = document_list_query(library_id, status, facet)
         return await self._c.query(sql, params, library_id)
+
+    async def delete(self, library_id: str, document_id: str) -> None:
+        await self._c.delete(document_id, library_id)
 
 
 class _Memory:
@@ -193,6 +209,9 @@ class MemoryLibraryStore:
             if (kind is None or r.get("kind") == kind) and (status is None or r.get("status") == status)
         ]
 
+    async def delete(self, library_id: str) -> None:
+        self.m.items.pop((library_id, library_id), None)
+
 
 class MemoryDocumentStore:
     def __init__(self) -> None:
@@ -215,3 +234,6 @@ class MemoryDocumentStore:
             and (status is None or r.get("status") == status)
             and (facet is None or facet in r.get("facets", []))
         ]
+
+    async def delete(self, library_id: str, document_id: str) -> None:
+        self.m.items.pop((library_id, document_id), None)
