@@ -36,8 +36,9 @@ import email.utils
 import io
 import re
 import zipfile
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta, timezone
 from html.parser import HTMLParser
 from typing import Any, Literal, Protocol
 
@@ -123,6 +124,14 @@ def _utc(value: datetime | None) -> datetime | None:
     return value.replace(tzinfo=UTC) if value.tzinfo is None else value.astimezone(UTC)
 
 
+def _metadata(read: Callable[[], tuple[str | None, datetime | None]]) -> tuple[str | None, datetime | None]:
+    """Author and date are optional: a malformed property block must never fail the document."""
+    try:
+        return read()
+    except Exception:  # noqa: BLE001
+        return None, None
+
+
 def _clean(value: object) -> str | None:
     text = str(value).strip() if value else ""
     return text or None
@@ -139,7 +148,7 @@ def _docx(data: bytes) -> tuple[list[Section], tuple[str | None, datetime | None
 
     document = docx.Document(io.BytesIO(data))
     props = document.core_properties
-    meta = (_clean(props.author), _utc(props.created))
+    meta = _metadata(lambda: (_clean(props.author), _utc(props.created)))
     sections: list[Section] = []
     heading: str | None = None
     buffer: list[str] = []
@@ -162,9 +171,13 @@ def _docx(data: bytes) -> tuple[list[Section], tuple[str | None, datetime | None
             rows = []
             for row in Table(child, document).rows:
                 cells: list[str] = []
-                for cell in row.cells:  # merged cells repeat; keep the first of each run
+                seen: set[int] = set()
+                for cell in row.cells:  # a merged cell is returned once per grid column it spans
+                    if id(cell._tc) in seen:
+                        continue
+                    seen.add(id(cell._tc))
                     text = cell.text.strip()
-                    if text and text not in cells[-1:]:
+                    if text:
                         cells.append(text)
                 if cells:
                     rows.append(" | ".join(cells))
@@ -179,7 +192,7 @@ def _pptx(data: bytes) -> tuple[list[Section], tuple[str | None, datetime | None
     from pptx import Presentation
 
     deck = Presentation(io.BytesIO(data))
-    meta = (_clean(deck.core_properties.author), _utc(deck.core_properties.created))
+    meta = _metadata(lambda: (_clean(deck.core_properties.author), _utc(deck.core_properties.created)))
     sections: list[Section] = []
     for number, slide in enumerate(deck.slides, start=1):
         title = (
@@ -206,22 +219,26 @@ def _rows_to_sections(name: str, rows: list[list[str]]) -> list[Section]:
     """Render rows as ``Header: value`` lines, ROWS_PER_SECTION at a time (spec §7.3).
 
     The first non-empty row is the header. Every line names its column, so a chunk is
-    readable on its own and the header is effectively repeated in every chunk.
+    readable on its own and the header is effectively repeated in every chunk. Row numbers
+    are the sheet's own (1-based, blank rows counted), so a citation finds the row.
     """
-    rows = [r for r in rows if any(c.strip() for c in r)]
-    if len(rows) < 2:
-        return [Section(name, "\n".join(" | ".join(r) for r in rows), {"sheet": name})] if rows else []
-    header = [h.strip() or f"column {i + 1}" for i, h in enumerate(rows[0])]
+    numbered = [(n, r) for n, r in enumerate(rows, start=1) if any(c.strip() for c in r)]
+    if len(numbered) < 2:
+        return [Section(name, " | ".join(numbered[0][1]), {"sheet": name})] if numbered else []
+    header = [h.strip() or f"column {i + 1}" for i, h in enumerate(numbered[0][1])]
     sections: list[Section] = []
-    body = rows[1:]
+    body = numbered[1:]
     for start in range(0, len(body), ROWS_PER_SECTION):
         group = body[start : start + ROWS_PER_SECTION]
         lines = []
-        for offset, row in enumerate(group):
-            cells = [f"{header[i] if i < len(header) else f'column {i + 1}'}: {c.strip()}" for i, c in enumerate(row)]
-            lines.append(f"Row {start + offset + 2}. " + "; ".join(c for c in cells if not c.endswith(": ")))
-        # row numbers are 1-based and count the header as row 1
-        location = {"sheet": name, "rowStart": start + 2, "rowEnd": start + len(group) + 1}
+        for number, row in group:
+            cells = [
+                f"{header[i] if i < len(header) else f'column {i + 1}'}: {c.strip()}"
+                for i, c in enumerate(row)
+                if c.strip()
+            ]
+            lines.append(f"Row {number}. " + "; ".join(cells))
+        location = {"sheet": name, "rowStart": group[0][0], "rowEnd": group[-1][0]}
         sections.append(Section(name, "\n".join(lines), location))
     return sections
 
@@ -235,7 +252,7 @@ def _xlsx(data: bytes) -> tuple[list[Section], tuple[str | None, datetime | None
         rows = [["" if v is None else str(v) for v in row] for row in sheet.iter_rows(values_only=True)]
         sections.extend(_rows_to_sections(sheet.title, rows))
     props = workbook.properties
-    return sections, (_clean(props.creator), _utc(props.created))
+    return sections, _metadata(lambda: (_clean(props.creator), _utc(props.created)))
 
 
 def _csv(text: str, filename: str) -> list[Section]:
@@ -247,14 +264,20 @@ def _csv(text: str, filename: str) -> list[Section]:
     return _rows_to_sections(name, list(csv.reader(io.StringIO(text.lstrip("\ufeff")), dialect)))
 
 
-def _pdf_date(raw: str | None) -> datetime | None:
-    """Parse a PDF date string, ``D:YYYYMMDDHHmmSS`` with an optional zone, or None."""
-    match = re.match(r"D:(\d{4})(\d{2})?(\d{2})?(\d{2})?(\d{2})?(\d{2})?", raw or "")
+_PDF_DATE = re.compile(r"D:(\d{4})(\d{2})?(\d{2})?(\d{2})?(\d{2})?(\d{2})?(?:([Zz+-])(\d{2})?'?(\d{2})?)?")
+
+
+def _pdf_date(raw: object) -> datetime | None:
+    """Parse a PDF date, ``D:YYYYMMDDHHmmSSOHH'mm`` (every part after the year optional), to UTC."""
+    match = _PDF_DATE.match(str(raw or ""))
     if not match:
         return None
-    parts = [int(g) if g else d for g, d in zip(match.groups(), (0, 1, 1, 0, 0, 0), strict=True)]
+    groups = match.groups()
+    parts = [int(g) if g else d for g, d in zip(groups[:6], (0, 1, 1, 0, 0, 0), strict=True)]
+    sign, hours, minutes = groups[6], int(groups[7] or 0), int(groups[8] or 0)
+    offset = timedelta(hours=hours, minutes=minutes) * (-1 if sign == "-" else 1)
     try:
-        return datetime(*parts, tzinfo=UTC)
+        return datetime(*parts, tzinfo=timezone(offset) if sign in ("+", "-") else UTC).astimezone(UTC)
     except ValueError:
         return None
 
@@ -274,8 +297,12 @@ def _pdf(data: bytes) -> tuple[list[Section], int, tuple[str | None, datetime | 
         text = (page.extract_text() or "").strip()
         if text:
             sections.append(Section(None, text, {"page": number}))
-    info = reader.metadata
-    meta = (_clean(info.author), _pdf_date(info.get("/CreationDate"))) if info else (None, None)
+
+    def read_meta() -> tuple[str | None, datetime | None]:
+        info = reader.metadata
+        return (_clean(info.author), _pdf_date(info.get("/CreationDate"))) if info else (None, None)
+
+    meta = _metadata(read_meta)
     return sections, len(reader.pages), meta
 
 
@@ -302,7 +329,8 @@ def _markdown(text: str) -> list[Section]:
 class _HtmlSections(HTMLParser):
     """Collects visible text, starting a new section at each heading (h1-h6)."""
 
-    _SKIP = {"script", "style", "noscript", "template", "head"}
+    # Not "head": a page that never closes <head> would lose its whole body.
+    _SKIP = {"script", "style", "noscript", "template", "title"}
     _BREAK = {"p", "div", "li", "br", "tr", "section", "article", "table", "ul", "ol", "blockquote", "pre"}
 
     def __init__(self) -> None:
@@ -355,15 +383,17 @@ def _html(text: str) -> list[Section]:
 
 def _eml(data: bytes) -> tuple[list[Section], tuple[str | None, datetime | None]]:
     message = email.message_from_bytes(data, policy=email.policy.default)
-    sender = message.get("From")
-    author = None
-    if sender:
-        name, address = email.utils.parseaddr(str(sender))
-        author = _clean(name or address)
-    try:
-        parsed = email.utils.parsedate_to_datetime(str(message["Date"])) if message["Date"] else None
-    except (TypeError, ValueError):
-        parsed = None
+
+    def read_meta() -> tuple[str | None, datetime | None]:
+        sender, date = message.get("From"), message.get("Date")
+        name, address = email.utils.parseaddr(str(sender)) if sender else ("", "")
+        try:
+            parsed = email.utils.parsedate_to_datetime(str(date)) if date else None
+        except (TypeError, ValueError):
+            parsed = None
+        return _clean(name or address), _utc(parsed)
+
+    author, authored_at = _metadata(read_meta)
     lines = [
         f"{label}: {message[key]}"
         for label, key in (("From", "From"), ("To", "To"), ("Cc", "Cc"), ("Date", "Date"))
@@ -372,7 +402,10 @@ def _eml(data: bytes) -> tuple[list[Section], tuple[str | None, datetime | None]
     body_part = message.get_body(preferencelist=("plain", "html"))
     body = ""
     if body_part is not None:
-        content = body_part.get_content()
+        try:
+            content = body_part.get_content()
+        except (LookupError, UnicodeError):  # unknown or wrong declared charset
+            content = (body_part.get_payload(decode=True) or b"").decode("utf-8", errors="replace")
         if body_part.get_content_type() == "text/html":
             content = "\n".join(s.text for s in _html(content))
         body = str(content).strip()
@@ -381,7 +414,7 @@ def _eml(data: bytes) -> tuple[list[Section], tuple[str | None, datetime | None]
         lines.append("Attachments: " + ", ".join(attachments))
     text = "\n".join(lines) + ("\n\n" + body if body else "")
     subject = _clean(message["Subject"])
-    return ([Section(subject, text)] if text.strip() else []), (author, _utc(parsed))
+    return ([Section(subject, text)] if text.strip() else []), (author, authored_at)
 
 
 TEXT_TYPES = {"txt", "md", "markdown", "json", "log"}
@@ -434,6 +467,10 @@ async def extract(data: bytes, *, filename: str, content_type: str = "", ocr: Oc
     except OcrError:
         raise  # a transient OCR failure retries; it is never classified as unreadable content
     except Exception as exc:  # noqa: BLE001 — a parser crash on successfully-read content
+        if ext not in ("docx", "pptx", "xlsx", "pdf"):  # text formats cannot be encrypted containers
+            return Extracted(
+                "failed", failure_reason=f"parser:{type(exc).__name__}", method=ExtractionMethod.UNSUPPORTED
+            )
         outcome, reason = classify_unreadable(data)
         return Extracted(
             outcome,

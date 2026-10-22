@@ -366,3 +366,60 @@ async def test_docx_tables_stay_under_their_heading_in_document_order():
         ("Costs", "Summary line.\nitem | cost\norion | 42"),
         ("Risks", "None known."),
     ]
+
+
+async def test_row_numbers_are_the_sheets_own_when_blank_rows_exist():
+    result = await extract(b"a,b\n\n1,2\n\n\n3,4\n", filename="x.csv")
+    assert result.sections[0].text.splitlines() == ["Row 3. a: 1; b: 2", "Row 6. a: 3; b: 4"]
+    assert result.sections[0].location == {"sheet": "x", "rowStart": 3, "rowEnd": 6}
+
+
+async def test_html_without_a_closing_head_keeps_its_body_and_drops_the_title():
+    result = await extract(b"<html><head><title>T</title><body><h1>H</h1><p>Body text.</p>", filename="a.html")
+    assert [(s.heading, s.text) for s in result.sections] == [("H", "Body text.")]
+
+
+async def test_eml_with_an_unknown_charset_is_read_not_called_encrypted():
+    raw = b"From: a@example.org\nSubject: s\nContent-Type: text/plain; charset=x-unknown-8bit\n\nplain words\n"
+    result = await extract(raw, filename="m.eml")
+    assert result.outcome == "ok" and "plain words" in result.text
+
+
+async def test_a_text_format_parser_crash_is_a_parser_failure_not_encryption():
+    result = await extract(
+        b"a,b\n" + b'"' + b"x" * 200_000 + b'"\n', filename="big-field.csv"
+    )  # over csv's field limit
+    assert result.outcome == "failed" and result.failure_reason == "parser:Error"
+
+
+async def test_docx_merged_cells_appear_once_but_equal_neighbours_are_kept():
+    import docx
+
+    doc = docx.Document()
+    table = doc.add_table(rows=2, cols=3)
+    table.cell(0, 0).merge(table.cell(0, 1)).text = "Merged"
+    table.cell(0, 2).text = "Other"
+    for c in range(3):
+        table.cell(1, c).text = "Yes"
+    buf = io.BytesIO()
+    doc.save(buf)
+    result = await extract(buf.getvalue(), filename="a.docx")
+    assert result.sections[0].text == "Merged | Other\nYes | Yes | Yes"
+
+
+@pytest.mark.parametrize(
+    "raw,expected",
+    [
+        ("D:20250311093000+01'00'", "2025-03-11T08:30:00+00:00"),
+        ("D:20250311093000-05'30", "2025-03-11T15:00:00+00:00"),
+        ("D:20250311093000Z", "2025-03-11T09:30:00+00:00"),
+        ("D:2025", "2025-01-01T00:00:00+00:00"),
+        ("garbage", None),
+        ("D:20251399", None),
+    ],
+)
+def test_pdf_dates_honour_their_zone(raw, expected):
+    from fli.extraction import _pdf_date
+
+    parsed = _pdf_date(raw)
+    assert (parsed.isoformat() if parsed else None) == expected

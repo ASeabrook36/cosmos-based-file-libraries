@@ -60,3 +60,17 @@ def test_api_error_body_shape():
     err = library_not_found("L1")
     assert isinstance(err, ApiError) and err.status == 404
     assert err.body() == {"error": {"code": "library_not_found", "message": "library L1 does not exist"}}
+
+
+@pytest.mark.parametrize(
+    "name,expected",
+    [
+        ("../../other-lib/x.pdf", "x.pdf"),
+        ("C:\\Users\\me\\report.docx", "report.docx"),
+        ("..", "file"),
+        ("a\x00b\nc.txt", "abc.txt"),
+        ("Q4 review.pptx", "Q4 review.pptx"),
+    ],
+)
+def test_uploaded_names_cannot_leave_the_document_prefix(name, expected):
+    assert original_blob_path("L", "D", name) == f"L/D/original/{expected}"
