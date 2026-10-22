@@ -1,6 +1,6 @@
 # Specification: File Library Index
 
-*Version 0.1, 2026-10-22. Working name. Status: specification; nothing is built. Every design choice here that rests on a measurement is traced in `evidence.md`.*
+*Version 0.2, 2026-10-22. Working name. Status: Phase 0 complete (the Cosmos configuration is proven at small scale); the application is not built. Every design choice here that rests on a measurement is traced in `evidence.md`.*
 
 ## 1. Scope
 
@@ -335,7 +335,7 @@ A message whose `generation` is lower than the document's `pendingGeneration`/`a
 5. Extract and describe images (§7.5).
 6. Propose tags, period and author (§9.1).
 7. Embed every chunk's `text` with the embedding deployment, in batches of 16, honouring `Retry-After` on 429.
-8. Upsert all chunks of generation G, at most 8 concurrent writes per document. Deterministic ids make retries safe.
+8. Upsert all chunks of generation G. Writes share one cap across the whole worker, `COSMOS_WRITE_CONCURRENCY` (default 2), not a cap per document. On a 429 that outlasts the SDK's own retries, wait `x-ms-retry-after-ms` and retry. Eight concurrent writers exhausted the SDK's retries on serverless within about 100 writes (`evidence.md` E10). Deterministic ids make retries safe.
 9. Commit: set `activeGeneration: G`, `pendingGeneration: null`, `status: ready`, counts. From this moment search returns generation G and ignores older ones (§8 step 6).
 10. If G > 1, enqueue `purgeDocument` with `belowGeneration: G`.
 11. Recompute the library's `tagVocabulary` and `stats` from the `documents` container (a single-partition query). Enqueue `proposeDescription` when the library has changed by 10 documents or 24 hours since the last proposal.
@@ -372,7 +372,7 @@ Describing and then embedding keeps one vector space, lets keyword search work o
 
 ### 7.6 Concurrency and throttling
 
-Cosmos throttles with HTTP 429 when a partition's throughput is exceeded. The SDK retries; the worker additionally backs off on repeated 429s. Ingestion is the expensive side (about 91 RU per chunk written), so the session lanes (§7.1) and per-document write cap (§7.2 step 8) together keep ingestion below the container's ceiling, leaving room for searches.
+Cosmos throttles with HTTP 429 when a partition's throughput is exceeded. The SDK retries; the worker additionally retries 429s that outlast the SDK's retries, and backs off on repeated ones. Ingestion is the expensive side (about 144 RU per chunk written at float16, `evidence.md` E10), so the session lanes (§7.1) decide which library's work runs next, and the worker-wide write cap (§7.2 step 8) keeps ingestion below the container's ceiling, leaving room for searches. On a provisioned account, raise `COSMOS_WRITE_CONCURRENCY` with the configured throughput.
 
 ### 7.7 Metadata changes
 
@@ -430,7 +430,9 @@ ORDER BY RANK RRF(
 9. **Coverage:** fill `coverage` (§6.3), including notes for filters that exclude documents lacking the field.
 10. Emit the `library_search` telemetry event (§9.3). Return.
 
-Results are ordered by the fused rank Cosmos returns. Repeated identical searches can return slightly different top results, because each Cosmos replica builds its own index. Tests compare against exact-search references with recall, never against fixed result lists.
+Results are ordered by the fused rank Cosmos returns. Repeated identical searches can return slightly different top results, because each Cosmos replica builds its own index. Tests compare against exact-search references with recall, never against fixed result lists. Only vector-only searches have an exact reference: inside `RRF`, the brute-force flag changes nothing (`evidence.md` E24).
+
+The vector index engages minutes after writes (`evidence.md` E25). Until it does, searches on newly written chunks still return correct results, but scan the library and cost accordingly. Nothing in search waits for the index.
 
 ## 9. Enhancements
 
@@ -467,6 +469,7 @@ The routing report is a saved Log Analytics query, per library over 30 days: sea
 | `UPLOAD_MAX_BYTES` | `104857600` | |
 | `IMAGE_MIN_PIXELS`, `IMAGE_MIN_BYTES`, `IMAGE_MAX_PER_DOCUMENT` | `16384`, `10240`, `50` | |
 | `INGEST_MAX_CONCURRENT_SESSIONS` | `8` | |
+| `COSMOS_WRITE_CONCURRENCY` | `2` | Chunk writes in flight across the whole worker (§7.2 step 8). 2 suits serverless (`evidence.md` E10) |
 | `SEARCH_DEFAULT_TOP`, `SEARCH_MAX_TOP` | `8`, `20` | |
 | `APPLICATIONINSIGHTS_CONNECTION_STRING` | — | |
 
@@ -476,13 +479,13 @@ The routing report is a saved Log Analytics query, per library over 30 days: sea
 
 **Production:** provisioned autoscale. Two reasons: serverless's ceiling cannot be raised, so a large admin upload would slow every agent's searches in the organization for its duration; and serverless carries no SLA. Autoscale bills each hour at the highest throughput used, with a floor of 10% of the configured maximum. Starting points to tune: `chunks` 4,000 RU/s maximum, `documents` and `libraries` 1,000 each. A serverless account converts to provisioned one way only, so the demo account can be promoted.
 
-**Measured unit costs** (source project, float32 vectors, one physical partition, serverless at about $0.25 per million RU; see `evidence.md`):
+**Measured unit costs** (serverless at about $0.25 per million RU; see `evidence.md`). "Source" is the earlier project: float32 vectors, 600,000 chunks on one physical partition. "Phase 0" is this project's canary: this exact configuration, one 1,500-chunk library.
 
 | Item | Figure |
 |---|---|
-| Storage | About 17.9 GB per million chunks at float32; float16 cut storage by 46%, so about 9.7 GB per million |
-| Writing | About 91 RU per chunk, full-text index included: about $23 per million chunks |
-| Searching | About 7 RU typical, 54–69 RU at p95, per search |
+| Storage | Source: about 17.9 GB per million chunks at float32. float16 cut storage by 46%, so about 9.7 GB per million |
+| Writing | Phase 0: about 144 RU per chunk at float16, full-text index included, so about $36 per million chunks. Source: 91 RU at float32 |
+| Searching | Phase 0: about 15 RU per vector search on a 1,500-chunk library once the index engages, 114 RU before; about 4 RU per hybrid search. Source: about 7 RU typical, 54–69 RU at p95, on libraries up to 100,000 chunks |
 
 Azure OpenAI calls (embeddings, image descriptions, proposals) are billed separately and will likely exceed the Cosmos cost.
 

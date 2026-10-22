@@ -1,6 +1,6 @@
 # Evidence: why the design is what it is
 
-*Version 0.2.*
+*Version 0.3: Phase 0 measurements added, 2026-10-22.*
 
 Most decisions in `spec.md` rest on measurements from earlier work on these Cosmos features, made on live Azure in 2026. That work built a retrieval index in which each owner (a person) had their own body of content, and every search named whose content to search. That is structurally this project's problem: an owner there plays the role a library plays here. The numbers are recorded here so this repository stands on its own.
 
@@ -15,6 +15,14 @@ Most decisions in `spec.md` rest on measurements from earlier work on these Cosm
 - Corpus: real text (public reference abstracts) embedded with `text-embedding-3-large` at 3,072 dimensions. These were not workplace documents, and nothing measured image descriptions.
 - Each lever was adopted on a single build.
 - Unless stated otherwise, the data sat on one physical partition of a serverless account.
+
+**About the Phase 0 measurements**
+
+Entries marked *Phase 0* come from this project's own canary (`scripts/canary.py`), run on 2026-10-22 against a freshly deployed serverless account with exactly the `cosmos/*.json` containers. The records are `records/canary-20261022T185556Z.json` (failed: it searched before the index engaged) and `records/canary-20261022T201837Z.json` (passed).
+
+- Corpus: two public company annual reports (PDF), 1,500 chunks and 571,623 tokens, embedded with `text-embedding-3-large` at 3,072 dimensions.
+- One library: the whole container was 1,500 vectors.
+- Queries: 20 vector-only and 20 hybrid searches, each a real sentence taken from the corpus.
 
 ## Decisions
 
@@ -90,6 +98,8 @@ The fix:
 
 With that change, the same searches cost about 25 RU and read about 0.06% of the population.
 
+*Phase 0* confirmed it on this configuration. With the index engaged, the float16 path cost 14.9–15.5 RU and read 50 of 1,500 chunks. The same search declaring `float32` still read all 1,500 at 113.8 RU, the cost of brute force.
+
 An earlier rule said to declare `float32` for the query vector, because omitting the declaration returned no scores. That rule is wrong for float16 indexes. `inherited/query.py` implements the correct path and refuses the wrong one.
 
 ### E9. `indexingSearchListSize` 300 · Measured (narrowly)
@@ -108,6 +118,12 @@ It was measured with the product quantizer only, never with spherical or float16
 - During bulk loads, about half of all requests were throttled (HTTP 429).
 - Searches share that ceiling. Hence the per-library queue lanes and the write caps in `spec.md` §7.
 
+*Phase 0*, on float16 vectors with the full-text index:
+
+- **About 144 RU per chunk written** (143.5 averaged over 1,499 upserts), not 91. That is about $36 per million chunks on serverless.
+- **Two concurrent writers** sustained 26.7 chunks per second with no throttling.
+- **Eight concurrent writers** were throttled hard enough to exhaust the SDK's own 429 retries (sub-status 3200) within about 100 writes. The SDK's retries are not enough on their own; the writer must cap concurrency for the whole container and retry 429s itself, honouring `x-ms-retry-after-ms`.
+
 ### E11. Storage per million chunks · Measured
 
 About 17.9 GB per million chunks at float32, with text and the full-text index included. Applying E7's −46% gives about 9.7 GB at float16. That combined figure is arithmetic, not a measurement.
@@ -118,6 +134,8 @@ About 17.9 GB per million chunks at float32, with text and the full-text index i
 - Searches filtered on an ordinary field switched from scanning to using the index somewhere between 660 and 1,525 matching documents.
 - Smaller scopes are scanned. E6's small-scope misses imply those scans compare compressed vectors rather than full-precision ones; this is an inference.
 - Microsoft documents that DiskANN needs at least 1,000 vectors before the index is used. The shard-routed result suggests that applies per container rather than per shard, which is not documented.
+
+*Phase 0*: with 1,500 vectors in one library, Cosmos's index-utilization report named the vector index it used as **`QuantizedFlat`, sharded on `/libraryId`**, not a DiskANN graph traversal. A search read 50 chunks for 15 RU, against 114 RU for brute force, with recall@10 of 1.0 against exact search (19 of 20 top-10 lists identical in order). This confirms the inference above: small scopes compare compressed vectors rather than walk the graph. At what library size Cosmos switches to the DiskANN graph is not yet measured (N11).
 
 ### E13. Leave `filterPriority` at its default · Measured
 
@@ -187,6 +205,8 @@ Hybrid queries (`ORDER BY RANK RRF(VectorDistance(…), FullTextScore(…))`) ex
 
 Their ranking quality was never measured. The local Cosmos emulator rejects `FullTextScore`, so hybrid can only be tested against a real account.
 
+*Phase 0*: with the library as partition-key prefix, each hybrid search came back in a single HTTP response, charged 3.91 RU, retrieved 10 documents and reported no vector index used. That held for all 20 queries, whatever their terms. See E24 for why its quality cannot be checked against an exact reference.
+
 ### E22. Capacity mode follows traffic shape · Measured and Vendor
 
 - **Serverless** suits intermittent traffic and costs nothing idle. Its ceiling cannot be raised, it carries an SLO rather than an SLA, and it runs in a single region.
@@ -202,16 +222,40 @@ The index stores no permissions, and the system of record is checked live. A sta
 
 This project applies the principle to agent–library attachments. The platform owns them, and the index holds only the immutable personal-library binding, which cannot go stale.
 
+### E24. There is no exact reference for a hybrid search · Measured (Phase 0)
+
+Forcing brute force with `VectorDistance(…, true, …)` inside `ORDER BY RANK RRF(…)` changed nothing observable. All 20 such searches cost exactly what their normal versions cost, retrieved the same documents and returned the same results. Outside `RRF` the same flag raised a vector search from 15 RU to 114 RU and read every chunk.
+
+So recall "against exact search" is meaningful for vector-only searches only. The canary records hybrid agreement with the brute-force variant but does not assert it. Hybrid ranking quality has to come from an evaluation set with known answers (N3; `build-plan.md` Phase 5).
+
+### E25. The vector index engages minutes after writes · Measured (Phase 0) and Vendor
+
+Microsoft documents that vector indexing is asynchronous. On a new container, after loading 1,500 chunks in 56 seconds:
+
+- every vector search scanned all 1,500 chunks at about 114 RU for 5½ minutes;
+- the same search without the partition-key prefix started using the index at 339 seconds, and with the prefix one poll later, at 369 seconds;
+- from then on, searches cost about 15 RU.
+
+Two consequences:
+
+- **Results stay correct while the index catches up.** Search just costs what a scan of that library costs. For a small library that is cheap; a 1,500-chunk scan is 114 RU.
+- **Any measurement of search cost must first wait for the index.** The canary polls until a search stops scanning, and records how long it took. A first canary run that searched after 30 seconds failed for exactly this reason.
+
+The partition-key prefix (`partition_key=[libraryId]` on a hierarchical key) made no difference to whether or when the index engaged. Only a new container was measured. How long a new library in an already-populated container takes is unmeasured (N12).
+
 ## Not proven
 
 These are the honest limits of the evidence. Phase 0 and Phase 4 of `build-plan.md` are designed to close the first ones.
 
-- **N1. This exact configuration has never been built.** float16, spherical, `indexingSearchListSize` 300, a shard key and hybrid search have each been measured, but never together. The Phase 0 canary is the first build.
+- **N1. ~~This exact configuration has never been built.~~ Built and passing at small scale (Phase 0).** float16, spherical, `indexingSearchListSize` 300, a shard key and hybrid search deployed together, and their stored definitions match `cosmos/*.json`. The canary passed at 1,500 chunks in one library (E8, E12, E25). What remains open is behaviour at scale (N11).
 - **N2. Library-only sharding is inferred.** The measurements cover type plus owner, not owner alone. Library alone means one query per search instead of one per document type. Small libraries are scanned either way (E12), so the open question is large shared libraries (10,000–100,000+ chunks). A comparison run on such libraries settles it.
 - **N3. Hybrid ranking quality is unmeasured** (E21).
 - **N4. One physical partition only.** Everything was measured with the data on a single physical partition. A container spanning many partitions, at roughly 5 million chunks and up, is unmeasured. Each search should still reach one partition, since the library leads the key.
 - **N5. Spherical is preview** (E6). Product quantization is the GA fallback, at somewhat lower recall.
 - **N6. Microsoft asks to be contacted.** Microsoft's documentation tells users of vector search on containers with hierarchical partition keys to contact the Cosmos DB team so the account can be configured. Treat Microsoft's confirmation as a production prerequisite.
 - **N7. Not workplace content.** No measurement used workplace documents, spreadsheets, emails or image descriptions. The demo corpus (`build-plan.md`) should include all of them.
-- **N8. float16 write cost was not measured separately.** The 91 RU per chunk figure is from float32 builds.
+- **N8. ~~float16 write cost was not measured separately.~~ Measured in Phase 0:** about 144 RU per chunk, not the 91 measured on float32 builds (E10).
 - **N9. Proposal quality is untested.** Nothing measures how good AI-proposed descriptions and tags are; the review-and-accept step exists for that reason.
+- **N10. float16 is not in Microsoft's documented data types.** In October 2026, Microsoft's vector-indexing documentation lists `float32`, `int8` and `uint8`. A float16 container deployed, kept its definition and passed the canary, but its support status is unconfirmed. Ask Microsoft together with N6, before production. The fallback is float32 in a new container (E16).
+- **N11. The DiskANN graph has not been observed in use.** At 1,500 vectors, Cosmos used the vector index in its `QuantizedFlat` mode (E12). The library size at which it walks the DiskANN graph, and that graph's cost and recall on this configuration, are unmeasured. `build-plan.md` Phase 4's large libraries should report the index type Cosmos used.
+- **N12. Index lag for a new library in a populated container is unmeasured.** E25 measured a new container. A personal library created in a container that already holds a million chunks may engage faster or slower.

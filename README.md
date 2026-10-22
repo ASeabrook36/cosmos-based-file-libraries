@@ -11,7 +11,7 @@ A search service that stores agent file libraries in Azure Cosmos DB instead of 
 
 It removes the limit that prompted it. Azure AI Search allows 200 indexes per service on the S2 and S3 tiers, and the current design uses one index per library. Here a library is a value stored on each record, not an object the service counts, so the number of libraries has no design limit.
 
-**Status:** Phase 0 (`docs/build-plan.md`): scaffold, Bicep and canary are built; the canary has not yet run against a deployed account. The design rests on earlier measurements of these Cosmos features on live Azure (2026). `docs/evidence.md` traces each decision to them and lists what is not yet proven.
+**Status:** Phase 0 (`docs/build-plan.md`) passed: the Cosmos configuration deployed and passed its canary at small scale (`records/`; findings in `docs/evidence.md`). The application is not built yet. The design rests on earlier measurements of these Cosmos features on live Azure (2026). `docs/evidence.md` traces each decision to them and lists what is not yet proven.
 
 ## What's here
 

@@ -15,7 +15,7 @@ docs/build-plan.md Phase 0:
    (``inherited/query.py``; spec §8 step 3), and the exact (brute-force) version of each.
 4. Asserts: no null scores; the index is engaged (each vector-only search costs under
    100 RU and retrieves far fewer documents than were loaded); mean recall@10 of at least
-   0.95 against exact search, for both kinds.
+   0.95 against exact search, for vector-only searches.
 5. Runs one search that declares ``float32`` with an unconverted vector, and records whether
    it scans (E8). Recorded, not asserted: it documents the trap.
 6. Writes ``records/canary-<UTC timestamp>.json``. The record holds metrics only: no query
@@ -26,9 +26,14 @@ pipeline's ``raw_response_hook``. The SDK's ``response_hook`` misses the compone
 of a hybrid search: the first live run recorded one response per hybrid search, and its
 hybrid charges were meaningless.
 
-The index-engagement thresholds apply to vector-only searches. Hybrid searches are checked
-for execution, results and recall; their cost is recorded but not asserted, because nothing
-has measured what a healthy hybrid search costs (E21, N3).
+The index-engagement thresholds and recall apply to vector-only searches. Hybrid searches are
+checked for execution and results; their cost is recorded but not asserted (E21, N3). Each is
+also run with ``VectorDistance(…, true, …)`` and the agreement recorded, but not asserted:
+the first passing run showed that inside ``RRF`` the brute-force flag changes neither cost nor
+results, so there is no exact hybrid reference to compare against (E24).
+
+Records name no account, subscription, tenant or machine: no endpoint is written, and GUID
+paths in Cosmos's index-utilization reports are replaced with ``<internal>``.
 
 Authentication is ``DefaultAzureCredential``: run ``az login`` as a principal holding the
 Cosmos DB Built-in Data Contributor and Cognitive Services OpenAI User roles (the Bicep grants
@@ -54,6 +59,7 @@ import json
 import os
 import platform
 import random
+import re
 import statistics
 import subprocess
 import sys
@@ -159,14 +165,32 @@ def float32_trap_variant(sql: str) -> str:
     return sql.replace(_VECTOR_F16, _VECTOR_F16.replace(f"'{STORED_DTYPE}'", "'float32'"))
 
 
+_GUID = re.compile(r"[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}")
+
+
+def _scrub_guids(value: Any) -> Any:
+    if isinstance(value, str):
+        return _GUID.sub("<internal>", value)
+    if isinstance(value, list):
+        return [_scrub_guids(v) for v in value]
+    if isinstance(value, dict):
+        return {k: _scrub_guids(v) for k, v in value.items()}
+    return value
+
+
 def decode_index_utilization(header: str | None) -> Any:
-    """``x-ms-cosmos-index-utilization`` is base64-encoded JSON. Undecodable values are kept raw."""
+    """``x-ms-cosmos-index-utilization`` is base64-encoded JSON. Undecodable values are dropped.
+
+    Cosmos lists some indexes under GUID paths whose meaning is undocumented and which may be
+    specific to the account, so they become ``"<internal>"`` before anything is recorded.
+    """
     if not header:
         return None
     try:
-        return json.loads(base64.b64decode(header).decode("utf-8"))
+        report = json.loads(base64.b64decode(header).decode("utf-8"))
     except (ValueError, UnicodeDecodeError):
-        return header[:500]
+        return "undecodable"
+    return _scrub_guids(report)
 
 
 def chunk_id(document_id: str, generation: int, chunk_index: int) -> str:
@@ -323,19 +347,27 @@ def evaluate(
         )
     )
 
-    for kind, found, exact in (("vector", vector, exact_vector), ("hybrid", hybrid, exact_hybrid)):
-        reference = {m.query: m.result_ids for m in exact if not m.error}
-        recalls = [recall_at_k(m.result_ids, reference[m.query]) for m in found if not m.error and m.query in reference]
-        mean = statistics.fmean(recalls) if recalls else 0.0
-        checks.append(
-            Check(
-                f"{kind}_recall_at_{K}",
-                len(recalls) == QUERIES_PER_KIND and mean >= RECALL_FLOOR,
-                {"mean": round(mean, 4), "min": round(min(recalls), 4) if recalls else None, "queries": len(recalls)},
-                f"mean recall@{K} >= {RECALL_FLOOR} against exact search",
-            )
+    agreement = agreement_at_k(vector, exact_vector)
+    checks.append(
+        Check(
+            f"vector_recall_at_{K}",
+            agreement["queries"] == QUERIES_PER_KIND and agreement["mean"] >= RECALL_FLOOR,
+            agreement,
+            f"mean recall@{K} >= {RECALL_FLOOR} against exact search",
         )
+    )
     return checks
+
+
+def agreement_at_k(found: Sequence[SearchMeasurement], reference: Sequence[SearchMeasurement]) -> dict[str, Any]:
+    """Mean and minimum recall@K of ``found`` against ``reference``, query by query."""
+    by_query = {m.query: m.result_ids for m in reference if not m.error}
+    recalls = [recall_at_k(m.result_ids, by_query[m.query]) for m in found if not m.error and m.query in by_query]
+    return {
+        "mean": round(statistics.fmean(recalls), 4) if recalls else 0.0,
+        "min": round(min(recalls), 4) if recalls else None,
+        "queries": len(recalls),
+    }
 
 
 def _summary(values: Sequence[float]) -> dict[str, Any]:
@@ -845,7 +877,7 @@ async def run(args: argparse.Namespace) -> int:
         "startedAt": now,
         "libraryId": library_id,
         "gitCommit": _git_commit(),
-        "account": {"endpoint": cosmos_endpoint, "database": database_name},
+        "account": {"database": database_name},  # no endpoint: it names the account
         "embedding": {"deployment": deployment, "model": EMBEDDING_MODEL, "dimensions": dimensions},
         "client": {"python": platform.python_version(), "azureCosmos": cosmos_version},
         "thresholds": {
@@ -1072,6 +1104,14 @@ async def run(args: argparse.Namespace) -> int:
                 },
             }
             record["searches"]["throttledRetries"] = search_throttle.count
+            # Recorded, not asserted: inside RRF the brute-force flag changed nothing on the first
+            # passing run, so this is not a comparison against an exact reference (E24).
+            record["searches"]["hybridVsBruteForceVariant"] = agreement_at_k(hybrid_ms, exact_hybrid_ms) | {
+                "sameChargeAndRetrieved": sum(
+                    (a.request_charge, a.retrieved_document_count) == (b.request_charge, b.retrieved_document_count)
+                    for a, b in zip(hybrid_ms, exact_hybrid_ms, strict=True)
+                )
+            }
             record["checks"] = [asdict(c) for c in checks]
             record["passed"] = all(c.passed for c in checks)
 

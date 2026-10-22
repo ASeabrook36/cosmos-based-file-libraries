@@ -205,8 +205,10 @@ def test_canary_runs_end_to_end_and_records_metrics_only(fakes, tmp_path, keep):
         "index_engaged_charge",
         "index_engaged_retrieved",
         "vector_recall_at_10",
-        "hybrid_recall_at_10",
     }
+    assert "hybrid_recall_at_10" not in {c["name"] for c in record["checks"]}
+    assert record["searches"]["hybridVsBruteForceVariant"]["queries"] == canary.QUERIES_PER_KIND
+    assert "endpoint" not in record["account"] and "fake.documents.azure.com" not in path.read_text()
     assert record["float32Trap"]["scanned"] is True
     assert len(record["searches"]["vector"]) == len(record["searches"]["hybrid"]) == canary.QUERIES_PER_KIND
     assert record["storedVector"]["dimensions"] == 3072

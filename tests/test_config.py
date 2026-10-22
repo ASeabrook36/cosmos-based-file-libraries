@@ -15,6 +15,7 @@ def test_defaults_follow_the_spec():
     assert s.cosmos_database == "fli" and s.blob_container == "files" and s.servicebus_queue == "ingest"
     assert s.aoai_embedding_dimensions == 3072
     assert (s.search_default_top, s.search_max_top) == (8, 20)
+    assert s.cosmos_write_concurrency == 2
 
 
 @pytest.mark.parametrize("environment", ["demo", "prod"])

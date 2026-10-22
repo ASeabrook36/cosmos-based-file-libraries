@@ -186,7 +186,7 @@ def test_evaluate_fails_low_recall_null_scores_errors_and_a_small_corpus():
     broken[2].error = "HTTP 400"
     broken[2].result_ids = []
     checks = _passing(hybrid=broken)
-    assert not checks["searches_executed"].passed and not checks["hybrid_recall_at_10"].passed
+    assert not checks["searches_executed"].passed and "hybrid_recall_at_10" not in checks
 
 
 def test_evaluate_fails_definition_and_crud_problems():
@@ -282,5 +282,8 @@ def test_decode_index_utilization():
 
     report = {"UtilizedSingleIndexes": [{"IndexSpec": "/libraryId ASC"}]}
     assert decode_index_utilization(base64.b64encode(json.dumps(report).encode()).decode()) == report
-    assert decode_index_utilization("not base64 json") == "not base64 json"
+    assert decode_index_utilization("not base64 json") == "undecodable"
+    guid = {"UtilizedSingleIndexes": [{"IndexSpec": '/"00000000-1111-2222-3333-444444444444"/?'}]}
+    encoded = base64.b64encode(json.dumps(guid).encode()).decode()
+    assert decode_index_utilization(encoded) == {"UtilizedSingleIndexes": [{"IndexSpec": '/"<internal>"/?'}]}
     assert decode_index_utilization(None) is None

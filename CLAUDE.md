@@ -35,7 +35,8 @@ Each one prevents a failure that was measured, not imagined.
 
 - **Unit tests** cover the query builder, the float16 conversion, the permission rules, chunk-id determinism and the generation check. Make the query-builder checks static: render the SQL and assert on it.
 - **The local Cosmos emulator rejects `FullTextScore`** (E21). Test hybrid SQL as text locally. Test its behaviour against a real account in the canary and in integration runs.
-- **Never assert an exact list of search results.** Results vary slightly between identical searches, because each replica builds its own index (E14). Assert recall against an exact search instead: `VectorDistance(…, true, …)` forces brute force.
+- **Never assert an exact list of search results.** Results vary slightly between identical searches, because each replica builds its own index (E14). Assert recall against an exact search instead: `VectorDistance(…, true, …)` forces brute force. That works for vector-only searches only; inside `RRF` the flag has no effect, so hybrid searches have no exact reference (E24).
+- **Wait for the vector index before measuring search cost against a live account.** It engages minutes after writes, and until then every search scans (E25).
 - **Never use random vectors or filler text as test data for search quality** (E14).
 
 ## Conventions

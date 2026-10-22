@@ -1,6 +1,6 @@
 # Build plan
 
-*Version 0.1, 2026-10-22.*
+*Version 0.2, 2026-10-22: Phase 0 passed; its findings are folded into Phases 0, 4 and the risks.*
 
 The plan is ordered to reach something demonstrable as early as possible:
 
@@ -11,6 +11,8 @@ The plan is ordered to reach something demonstrable as early as possible:
 Each phase ends with an exit check that must pass before the next phase starts.
 
 ## Phase 0: Foundations and the canary
+
+**Status: passed on 2026-10-22.** The record is `records/canary-20261022T201837Z.json`, and the findings are in `evidence.md` (E8, E10, E12, E21, E24, E25; N1, N8, N10–N12).
 
 The first build of this exact Cosmos configuration happens here (`evidence.md` N1), so this phase proves the configuration works before any application code depends on it.
 
@@ -30,12 +32,12 @@ The first build of this exact Cosmos configuration happens here (`evidence.md` N
   - one user-assigned managed identity with the roles in `spec.md` §3, including the Cosmos data-plane role assignment.
 - `scripts/canary.py`, run against a freshly deployed account:
   1. Write, read and query a record in each container.
-  2. Load about 1,500 chunks of real text, embedded with the real model, into one test library. Use real text: random vectors are invalid test data (`evidence.md` E14).
+  2. Load about 1,500 chunks of real text, embedded with the real model, into one test library. Use real text: random vectors are invalid test data (`evidence.md` E14). Then wait until a vector search stops scanning: the index engages minutes after writes (E25).
   3. Run 20 vector-only and 20 hybrid searches using the float16 query path (`spec.md` §8 step 3).
   4. Assert:
      - no null scores;
      - the index is engaged: request charge in tens of RU, and the retrieved-document count from the query metrics far below 1,500;
-     - recall@10 of at least 0.95 against exact search (`VectorDistance(…, true, …)` forces brute force).
+     - recall@10 of at least 0.95 against exact search for vector-only searches (`VectorDistance(…, true, …)` forces brute force). Hybrid searches have no exact reference, because the flag has no effect inside `RRF` (E24); the canary records their agreement with the brute-force variant without asserting it.
   5. Run one search that declares `float32` and record that it scans. This documents the trap.
   6. Write the results to `records/canary-<UTC timestamp>.json`.
 
@@ -114,13 +116,20 @@ The demo needs something playing the platform's role. Build a small Streamlit ap
   - Create three large shared libraries of 10,000+ chunks.
   - Measure per-search request charge and latency on a sample of small and large libraries, before and after loading the 1,000.
   - Write a one-page report.
-  - At about 100,000 chunks, expect roughly $2–3 of Cosmos writes on serverless plus embedding cost, and about 75 minutes of loading, because a serverless container writes about 22 chunks per second.
+  - At about 100,000 chunks (about 38 million tokens at Phase 0's 381 tokens per chunk), expect:
+    - about $3.60 of Cosmos writes on serverless, at about 144 RU per chunk (E10);
+    - about an hour of writing, at about 27 chunks per second with two writers;
+    - embedding as the real bottleneck: over 4 hours at the default 150,000 tokens per minute. Raise `embeddingCapacity` in `infra/main.bicep`, within the subscription's quota, before loading. At 1,000,000 tokens per minute it takes about 40 minutes.
+  - Record the vector index type Cosmos reports (`x-ms-cosmos-index-utilization`) for each library size. Phase 0 saw `QuantizedFlat` at 1,500 chunks. The large libraries should show whether, and from what size, Cosmos walks the DiskANN graph (N11).
+  - Measure how long a newly created library takes to stop scanning in a container that is already populated (N12).
+  - Wait for the index before measuring search cost (E25).
 - **Routing telemetry (enhancement 3):** `library_search` and `search_usage` events, the usage endpoint, the saved Log Analytics query, and `GET …/routing-report`. Show it in the demo app.
 
 **Exit check**
 
 - The report shows more than 200 libraries in one container.
 - Per-search cost on a given library is the same, within run-to-run variation, before and after the 1,000 were added.
+- The report states the vector index type Cosmos used on small and large libraries.
 
 ## Phase 5: Toward production
 
@@ -187,5 +196,8 @@ Use material you are allowed to use, such as public company reports, public stat
 | The spherical quantizer or float16 fails to create, or fails the canary | Recreate the account. Use the product quantizer and float32, record the change, and keep going |
 | Hybrid ranking is worse than vector-only on the evaluation set | A configuration flag for vector-only search; tune RRF weights later |
 | Throttling during demo-day uploads on serverless | Load the demo corpus beforehand, or run the demo on a provisioned account |
+| A library searched straight after upload scans until the index engages, about 6 minutes in Phase 0 (E25) | Results stay correct; only cost rises. Load demo libraries well before the demo. Measure the lag in a populated container in Phase 4 |
+| DiskANN does not engage on large libraries, or costs more than expected (N11) | Phase 4 measures it. `QuantizedFlat` at 15 RU on a 1,500-chunk library is already acceptable for small libraries |
+| float16 turns out to be unsupported (N10) | float32 in a new container, rebuilt from stored text (E16). Phase 0 measured float16 working |
 | Azure OpenAI quota (embedding tokens per minute) slows bulk loads | Batch, back off on 429, request more quota |
 | Image description cost | The skip rules and per-document cap in `spec.md` §7.5 |
