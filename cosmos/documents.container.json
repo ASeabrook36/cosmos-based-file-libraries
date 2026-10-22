@@ -1,0 +1,28 @@
+{
+  "id": "documents",
+  "partitionKey": {
+    "paths": [
+      "/libraryId"
+    ],
+    "kind": "Hash",
+    "version": 2
+  },
+  "indexingPolicy": {
+    "indexingMode": "consistent",
+    "includedPaths": [
+      { "path": "/libraryId/?" },
+      { "path": "/status/?" },
+      { "path": "/fileName/?" },
+      { "path": "/fileType/?" },
+      { "path": "/sha256/?" },
+      { "path": "/uploadedAt/?" },
+      { "path": "/author/?" },
+      { "path": "/periodStart/?" },
+      { "path": "/periodEnd/?" },
+      { "path": "/facets/[]/?" }
+    ],
+    "excludedPaths": [
+      { "path": "/*" }
+    ]
+  }
+}

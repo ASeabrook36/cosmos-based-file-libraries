@@ -1,0 +1,23 @@
+{
+  "id": "libraries",
+  "partitionKey": {
+    "paths": [
+      "/libraryId"
+    ],
+    "kind": "Hash",
+    "version": 2
+  },
+  "indexingPolicy": {
+    "indexingMode": "consistent",
+    "includedPaths": [
+      { "path": "/libraryId/?" },
+      { "path": "/kind/?" },
+      { "path": "/status/?" },
+      { "path": "/boundAgentId/?" },
+      { "path": "/name/?" }
+    ],
+    "excludedPaths": [
+      { "path": "/*" }
+    ]
+  }
+}
