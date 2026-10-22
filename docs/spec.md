@@ -1,6 +1,6 @@
 # Specification: File Library Index
 
-*Version 0.4, 2026-10-22. Working name. Status: Phase 0 complete (the Cosmos configuration is proven at small scale); the application is not built. Every design choice here that rests on a measurement is traced in `evidence.md`.*
+*Version 0.5, 2026-10-22. Working name. Status: Phase 0 complete (the Cosmos configuration is proven at small scale); the application is not built. Every design choice here that rests on a measurement is traced in `evidence.md`.*
 
 ## 1. Scope
 
@@ -320,7 +320,7 @@ One Service Bus queue, `ingest`, with sessions enabled and `SessionId = libraryI
 |---|---|---|
 | `ingest` | `libraryId, documentId, generation` | Process a document (§7.2) |
 | `retag` | `libraryId, documentId` | Copy the document's metadata to its chunks by patch |
-| `purgeDocument` | `libraryId, documentId, belowGeneration?` | Delete chunks (all, or older generations) |
+| `purgeDocument` | `libraryId, documentId` | Delete every chunk of the document that is neither its `activeGeneration` nor its `pendingGeneration`. If the document is `deleting` or gone, delete all its chunks, then its blobs, then its record. Safe because one library's messages never run concurrently (session order) |
 | `purgeLibrary` | `libraryId` | Delete every document, chunk and blob, then the library |
 | `proposeDescription` | `libraryId` | Regenerate the library description proposal |
 
@@ -337,7 +337,7 @@ A message whose `generation` is lower than the document's `pendingGeneration`/`a
 7. Embed every chunk's `text` with the embedding deployment, in batches of 16, honouring `Retry-After` on 429.
 8. Upsert all chunks of generation G. Writes share one cap across the whole worker, `COSMOS_WRITE_CONCURRENCY` (default 2), not a cap per document. On a 429 that outlasts the SDK's own retries, wait `x-ms-retry-after-ms` and retry. Eight concurrent writers exhausted the SDK's retries on serverless within about 100 writes (`evidence.md` E10). Deterministic ids make retries safe.
 9. Commit: set `activeGeneration: G`, `pendingGeneration: null`, `status: ready`, counts. Until this moment search keeps returning the previous generation, if any; from it, search returns generation G and ignores older ones (§8 step 6).
-10. If G > 1, enqueue `purgeDocument` with `belowGeneration: G`.
+10. If G > 1, enqueue `purgeDocument`. It also runs after a generation is abandoned (the document was deleted or replaced while G was written) and after a final failure, so half-written chunks never linger.
 11. Recompute the library's `tagVocabulary` and `stats` from the `documents` container (a single-partition query). Enqueue `proposeDescription` when the library has changed by 10 documents or 24 hours since the last proposal.
 
 ### 7.3 Extraction
@@ -380,7 +380,7 @@ Cosmos throttles with HTTP 429 when a partition's throughput is exceeded. The SD
 
 ### 7.8 Deletion and replacement
 
-- **Document delete:** set `status: deleting` (search drops its chunks immediately, §8 step 6), then `purgeDocument`, then delete the blob and the document record.
+- **Document delete:** set `status: deleting` (search drops its chunks immediately, §8 step 6), then `purgeDocument`, which deletes the chunks, the blobs and the document record.
 - **Replacement (`PUT …/content`):** new blob version, `generation + 1`, `ingest`. The old generation stays searchable until the new one commits, then is purged.
 - **Library delete:** set `status: deleting` (search refused immediately, §5), then `purgeLibrary`.
 

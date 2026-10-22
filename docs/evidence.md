@@ -249,6 +249,8 @@ Spec 0.3 had search return only documents whose `status` was `ready`, and set `s
 
 The fix: visibility depends only on `activeGeneration` (and `deleting`). `activeGeneration` is `null` until the first generation commits, so half-written chunks of a first upload are never visible either. Not measured; it follows from the spec's own rules. The unit tests in `tests/test_ids_and_generation.py` encode it.
 
+The purge follows the same rule. Spec 0.4 purged generations below the committed one, which missed chunks written by a generation that was abandoned or failed after the last commit. `purgeDocument` now deletes every generation that is neither active nor pending, which is safe because messages for one library are processed one at a time (§7.1).
+
 ## Not proven
 
 These are the honest limits of the evidence. Phase 0 and Phase 4 of `build-plan.md` are designed to close the first ones.
