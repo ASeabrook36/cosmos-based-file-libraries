@@ -1,0 +1,4882 @@
+{
+  "canary": "phase-0",
+  "startedAt": "2026-10-22T20:18:37.157113Z",
+  "libraryId": "5748ea20-a52d-4f00-8a4f-69b67dfb066f",
+  "gitCommit": "b35f1b6019d4482357206965069f41f363e56022",
+  "account": {
+    "database": "fli"
+  },
+  "embedding": {
+    "deployment": "text-embedding-3-large",
+    "model": "text-embedding-3-large",
+    "dimensions": 3072,
+    "seconds": 256.4,
+    "promptTokens": 571623,
+    "throttled": 14
+  },
+  "client": {
+    "python": "3.14.3",
+    "azureCosmos": "4.17.1"
+  },
+  "thresholds": {
+    "targetChunks": 1500,
+    "minChunks": 1200,
+    "k": 10,
+    "recallFloor": 0.95,
+    "maxIndexedSearchRu": 100.0,
+    "maxRetrievedFraction": 0.2,
+    "querySeed": 20261022,
+    "indexWaitMinutes": 20,
+    "indexPollSeconds": 30
+  },
+  "corpus": {
+    "files": [
+      {
+        "fileIndex": 0,
+        "fileType": "pdf",
+        "sizeBytes": 20706059,
+        "sha256": "90b21028e1616c41c7d73c3e996fd6128d837a41b38d432286e991aed3fbd9a1",
+        "outcome": "ok",
+        "chunks": 1410
+      },
+      {
+        "fileIndex": 1,
+        "fileType": "pdf",
+        "sizeBytes": 16949978,
+        "sha256": "c15d7a38b41d7baef49e78a9db9bbb1deaeec685ec160d1b7478c062eef8d6f2",
+        "outcome": "ok",
+        "chunks": 90
+      }
+    ],
+    "chunks": 1500,
+    "tokens": 571623,
+    "chunkingVersion": "chunking-v1.0",
+    "querySource": "corpus-sentences"
+  },
+  "storedVector": {
+    "dimensions": 3072,
+    "maxAbsDiffFromFloat16Rounding": 5.6624412536621094e-05
+  },
+  "load": {
+    "chunks": 1500,
+    "documents": 2,
+    "seconds": 56.2,
+    "chunksPerSecond": 26.7,
+    "chunkRequestCharge": 215103.1,
+    "ruPerChunk": 143.5,
+    "documentRequestCharge": 8.6,
+    "concurrentWrites": 2,
+    "throttledRetries": 0
+  },
+  "indexWait": {
+    "engaged": true,
+    "secondsToEngage": 369,
+    "waitMinutes": 20,
+    "retrievedLimit": 300.0,
+    "polls": [
+      {
+        "seconds": 1,
+        "prefix": {
+          "requestCharge": 113.76,
+          "retrieved": 1500.0,
+          "error": null,
+          "indexUtilization": {
+            "UtilizedSingleIndexes": [
+              {
+                "FilterExpression": "",
+                "IndexSpec": "/libraryId/?",
+                "FilterPreciseSet": true,
+                "IndexPreciseSet": true,
+                "IndexImpactScore": "High"
+              },
+              {
+                "FilterExpression": "",
+                "IndexSpec": "/\"<internal>\"/?",
+                "FilterPreciseSet": true,
+                "IndexPreciseSet": true,
+                "IndexImpactScore": "High"
+              }
+            ],
+            "PotentialSingleIndexes": [],
+            "UtilizedCompositeIndexes": [],
+            "PotentialCompositeIndexes": [],
+            "PotentialVectorIndexes": [
+              {
+                "IndexSpec": {
+                  "Path": "/embedding/?",
+                  "VectorIndexType": "DiskANN"
+                },
+                "IndexPreciseSet": true,
+                "IndexImpactScore": "High"
+              }
+            ]
+          }
+        },
+        "noPrefix": {
+          "requestCharge": 102.77,
+          "retrieved": 1500.0,
+          "error": null,
+          "indexUtilization": {
+            "UtilizedSingleIndexes": [
+              {
+                "FilterExpression": "",
+                "IndexSpec": "/libraryId/?",
+                "FilterPreciseSet": true,
+                "IndexPreciseSet": true,
+                "IndexImpactScore": "High"
+              }
+            ],
+            "PotentialSingleIndexes": [],
+            "UtilizedCompositeIndexes": [],
+            "PotentialCompositeIndexes": [],
+            "PotentialVectorIndexes": [
+              {
+                "IndexSpec": {
+                  "Path": "/embedding/?",
+                  "VectorIndexType": "DiskANN"
+                },
+                "IndexPreciseSet": true,
+                "IndexImpactScore": "High"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "seconds": 31,
+        "prefix": {
+          "requestCharge": 113.76,
+          "retrieved": 1500.0,
+          "error": null
+        },
+        "noPrefix": {
+          "requestCharge": 102.77,
+          "retrieved": 1500.0,
+          "error": null
+        }
+      },
+      {
+        "seconds": 62,
+        "prefix": {
+          "requestCharge": 113.76,
+          "retrieved": 1500.0,
+          "error": null
+        },
+        "noPrefix": {
+          "requestCharge": 102.77,
+          "retrieved": 1500.0,
+          "error": null
+        }
+      },
+      {
+        "seconds": 93,
+        "prefix": {
+          "requestCharge": 113.76,
+          "retrieved": 1500.0,
+          "error": null
+        },
+        "noPrefix": {
+          "requestCharge": 102.77,
+          "retrieved": 1500.0,
+          "error": null
+        }
+      },
+      {
+        "seconds": 124,
+        "prefix": {
+          "requestCharge": 113.76,
+          "retrieved": 1500.0,
+          "error": null
+        },
+        "noPrefix": {
+          "requestCharge": 102.77,
+          "retrieved": 1500.0,
+          "error": null
+        }
+      },
+      {
+        "seconds": 154,
+        "prefix": {
+          "requestCharge": 113.76,
+          "retrieved": 1500.0,
+          "error": null
+        },
+        "noPrefix": {
+          "requestCharge": 102.77,
+          "retrieved": 1500.0,
+          "error": null
+        }
+      },
+      {
+        "seconds": 185,
+        "prefix": {
+          "requestCharge": 113.76,
+          "retrieved": 1500.0,
+          "error": null
+        },
+        "noPrefix": {
+          "requestCharge": 102.77,
+          "retrieved": 1500.0,
+          "error": null
+        }
+      },
+      {
+        "seconds": 216,
+        "prefix": {
+          "requestCharge": 113.76,
+          "retrieved": 1500.0,
+          "error": null
+        },
+        "noPrefix": {
+          "requestCharge": 102.77,
+          "retrieved": 1500.0,
+          "error": null
+        }
+      },
+      {
+        "seconds": 246,
+        "prefix": {
+          "requestCharge": 113.76,
+          "retrieved": 1500.0,
+          "error": null
+        },
+        "noPrefix": {
+          "requestCharge": 102.77,
+          "retrieved": 1500.0,
+          "error": null
+        }
+      },
+      {
+        "seconds": 277,
+        "prefix": {
+          "requestCharge": 113.76,
+          "retrieved": 1500.0,
+          "error": null
+        },
+        "noPrefix": {
+          "requestCharge": 102.77,
+          "retrieved": 1500.0,
+          "error": null
+        }
+      },
+      {
+        "seconds": 308,
+        "prefix": {
+          "requestCharge": 113.76,
+          "retrieved": 1500.0,
+          "error": null
+        },
+        "noPrefix": {
+          "requestCharge": 102.77,
+          "retrieved": 1500.0,
+          "error": null
+        }
+      },
+      {
+        "seconds": 339,
+        "prefix": {
+          "requestCharge": 113.76,
+          "retrieved": 1500.0,
+          "error": null
+        },
+        "noPrefix": {
+          "requestCharge": 14.99,
+          "retrieved": 50.0,
+          "error": null
+        }
+      },
+      {
+        "seconds": 369,
+        "prefix": {
+          "requestCharge": 15.25,
+          "retrieved": 50.0,
+          "error": null,
+          "indexUtilization": {
+            "UtilizedSingleIndexes": [
+              {
+                "FilterExpression": "",
+                "IndexSpec": "/libraryId/?",
+                "FilterPreciseSet": true,
+                "IndexPreciseSet": true,
+                "IndexImpactScore": "High"
+              },
+              {
+                "FilterExpression": "",
+                "IndexSpec": "/\"<internal>\"/?",
+                "FilterPreciseSet": true,
+                "IndexPreciseSet": true,
+                "IndexImpactScore": "High"
+              }
+            ],
+            "PotentialSingleIndexes": [],
+            "UtilizedCompositeIndexes": [],
+            "PotentialCompositeIndexes": [],
+            "UtilizedVectorIndexes": [
+              {
+                "IndexSpec": {
+                  "Path": "/embedding/?",
+                  "ShardKeys": [
+                    "/libraryId"
+                  ],
+                  "VectorIndexType": "QuantizedFlat"
+                },
+                "IndexPreciseSet": true,
+                "IndexImpactScore": "High"
+              }
+            ]
+          }
+        },
+        "noPrefix": {
+          "requestCharge": 15.09,
+          "retrieved": 50.0,
+          "error": null,
+          "indexUtilization": {
+            "UtilizedSingleIndexes": [
+              {
+                "FilterExpression": "",
+                "IndexSpec": "/libraryId/?",
+                "FilterPreciseSet": true,
+                "IndexPreciseSet": true,
+                "IndexImpactScore": "High"
+              }
+            ],
+            "PotentialSingleIndexes": [],
+            "UtilizedCompositeIndexes": [],
+            "PotentialCompositeIndexes": [],
+            "UtilizedVectorIndexes": [
+              {
+                "IndexSpec": {
+                  "Path": "/embedding/?",
+                  "ShardKeys": [
+                    "/libraryId"
+                  ],
+                  "VectorIndexType": "QuantizedFlat"
+                },
+                "IndexPreciseSet": true,
+                "IndexImpactScore": "High"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "float32Trap": {
+    "kind": "float32-trap",
+    "query": 0,
+    "request_charge": 113.76,
+    "retrieved_document_count": 1500.0,
+    "output_document_count": 10.0,
+    "http_responses": 1,
+    "result_ids": [
+      "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:529",
+      "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:509",
+      "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:527",
+      "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:591",
+      "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:587",
+      "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:590",
+      "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:508",
+      "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:586",
+      "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:598",
+      "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:532"
+    ],
+    "null_scores": 0,
+    "lexical_terms": 0,
+    "flushed_subnormals": 0,
+    "throttled": 0,
+    "index_utilization": {
+      "UtilizedSingleIndexes": [
+        {
+          "FilterExpression": "",
+          "IndexSpec": "/libraryId/?",
+          "FilterPreciseSet": true,
+          "IndexPreciseSet": true,
+          "IndexImpactScore": "High"
+        },
+        {
+          "FilterExpression": "",
+          "IndexSpec": "/\"<internal>\"/?",
+          "FilterPreciseSet": true,
+          "IndexPreciseSet": true,
+          "IndexImpactScore": "High"
+        }
+      ],
+      "PotentialSingleIndexes": [],
+      "UtilizedCompositeIndexes": [],
+      "PotentialCompositeIndexes": [],
+      "PotentialVectorIndexes": [
+        {
+          "IndexSpec": {
+            "Path": "/embedding/?",
+            "VectorIndexType": "DiskANN"
+          },
+          "IndexPreciseSet": true,
+          "IndexImpactScore": "High"
+        }
+      ]
+    },
+    "measured_by": "raw_response_hook",
+    "milliseconds": 122.3,
+    "error": null,
+    "scanned": true,
+    "comparedWithVectorQuery0": {
+      "requestCharge": 15.25,
+      "retrievedDocumentCount": 50.0
+    }
+  },
+  "searches": {
+    "vector": [
+      {
+        "kind": "vector",
+        "query": 0,
+        "request_charge": 15.25,
+        "retrieved_document_count": 50.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:529",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:509",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:527",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:591",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:587",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:590",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:508",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:586",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:598",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:532"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 8,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "UtilizedVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "ShardKeys": [
+                  "/libraryId"
+                ],
+                "VectorIndexType": "QuantizedFlat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 101.2,
+        "error": null
+      },
+      {
+        "kind": "vector",
+        "query": 1,
+        "request_charge": 15.04,
+        "retrieved_document_count": 50.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:895",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:897",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:768",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:896",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:894",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:906",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:903",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:900",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:908",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:909"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 8,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "UtilizedVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "ShardKeys": [
+                  "/libraryId"
+                ],
+                "VectorIndexType": "QuantizedFlat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 108.3,
+        "error": null
+      },
+      {
+        "kind": "vector",
+        "query": 2,
+        "request_charge": 15.35,
+        "retrieved_document_count": 50.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:211",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:358",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:359",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:361",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:379",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:210",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:732",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:221",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:976",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:374"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 17,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "UtilizedVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "ShardKeys": [
+                  "/libraryId"
+                ],
+                "VectorIndexType": "QuantizedFlat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 119.2,
+        "error": null
+      },
+      {
+        "kind": "vector",
+        "query": 3,
+        "request_charge": 15.47,
+        "retrieved_document_count": 50.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:447",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:396",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:959",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:395",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:393",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:454",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:392",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:399",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:450",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:394"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 13,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "UtilizedVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "ShardKeys": [
+                  "/libraryId"
+                ],
+                "VectorIndexType": "QuantizedFlat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 114.9,
+        "error": null
+      },
+      {
+        "kind": "vector",
+        "query": 4,
+        "request_charge": 15.32,
+        "retrieved_document_count": 50.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:566",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:511",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:525",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:531",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:524",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:530",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:540",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:512",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:557",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:509"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 13,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "UtilizedVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "ShardKeys": [
+                  "/libraryId"
+                ],
+                "VectorIndexType": "QuantizedFlat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 113.1,
+        "error": null
+      },
+      {
+        "kind": "vector",
+        "query": 5,
+        "request_charge": 15.26,
+        "retrieved_document_count": 50.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:265",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:259",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:264",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:258",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:999",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1048",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1051",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1055",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:266",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:253"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 12,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "UtilizedVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "ShardKeys": [
+                  "/libraryId"
+                ],
+                "VectorIndexType": "QuantizedFlat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 112.2,
+        "error": null
+      },
+      {
+        "kind": "vector",
+        "query": 6,
+        "request_charge": 14.91,
+        "retrieved_document_count": 50.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1398",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1288",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1294",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1330",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1381",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1334",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1386",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1391",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1385",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1390"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 8,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "UtilizedVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "ShardKeys": [
+                  "/libraryId"
+                ],
+                "VectorIndexType": "QuantizedFlat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 118.0,
+        "error": null
+      },
+      {
+        "kind": "vector",
+        "query": 7,
+        "request_charge": 15.4,
+        "retrieved_document_count": 50.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1176",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1214",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1203",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1170",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1204",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:306",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1177",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1205",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1215",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1167"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 12,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "UtilizedVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "ShardKeys": [
+                  "/libraryId"
+                ],
+                "VectorIndexType": "QuantizedFlat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 110.2,
+        "error": null
+      },
+      {
+        "kind": "vector",
+        "query": 8,
+        "request_charge": 15.35,
+        "retrieved_document_count": 50.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:430",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:608",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:470",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:467",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:609",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:469",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:333",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:435",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:468",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:465"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 10,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "UtilizedVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "ShardKeys": [
+                  "/libraryId"
+                ],
+                "VectorIndexType": "QuantizedFlat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 111.8,
+        "error": null
+      },
+      {
+        "kind": "vector",
+        "query": 9,
+        "request_charge": 15.41,
+        "retrieved_document_count": 50.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "8dec38ba-f8aa-499e-a3b3-b2f1bb6b1bc8:1:68",
+          "8dec38ba-f8aa-499e-a3b3-b2f1bb6b1bc8:1:67",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1037",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:542",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1028",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1032",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:274",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:996",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:37",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:250"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 15,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "UtilizedVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "ShardKeys": [
+                  "/libraryId"
+                ],
+                "VectorIndexType": "QuantizedFlat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 128.4,
+        "error": null
+      },
+      {
+        "kind": "vector",
+        "query": 10,
+        "request_charge": 15.3,
+        "retrieved_document_count": 50.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "8dec38ba-f8aa-499e-a3b3-b2f1bb6b1bc8:1:18",
+          "8dec38ba-f8aa-499e-a3b3-b2f1bb6b1bc8:1:17",
+          "8dec38ba-f8aa-499e-a3b3-b2f1bb6b1bc8:1:5",
+          "8dec38ba-f8aa-499e-a3b3-b2f1bb6b1bc8:1:33",
+          "8dec38ba-f8aa-499e-a3b3-b2f1bb6b1bc8:1:15",
+          "8dec38ba-f8aa-499e-a3b3-b2f1bb6b1bc8:1:6",
+          "8dec38ba-f8aa-499e-a3b3-b2f1bb6b1bc8:1:47",
+          "8dec38ba-f8aa-499e-a3b3-b2f1bb6b1bc8:1:45",
+          "8dec38ba-f8aa-499e-a3b3-b2f1bb6b1bc8:1:27",
+          "8dec38ba-f8aa-499e-a3b3-b2f1bb6b1bc8:1:53"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 8,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "UtilizedVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "ShardKeys": [
+                  "/libraryId"
+                ],
+                "VectorIndexType": "QuantizedFlat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 148.3,
+        "error": null
+      },
+      {
+        "kind": "vector",
+        "query": 11,
+        "request_charge": 15.25,
+        "retrieved_document_count": 50.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:599",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:600",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:601",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:610",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:312",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:982",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:995",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:991",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:658"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 14,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "UtilizedVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "ShardKeys": [
+                  "/libraryId"
+                ],
+                "VectorIndexType": "QuantizedFlat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 131.7,
+        "error": null
+      },
+      {
+        "kind": "vector",
+        "query": 12,
+        "request_charge": 15.26,
+        "retrieved_document_count": 50.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1230",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:934",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1231",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1229",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:935",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:863",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:682",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:365",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1233",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:50"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 16,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "UtilizedVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "ShardKeys": [
+                  "/libraryId"
+                ],
+                "VectorIndexType": "QuantizedFlat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 123.1,
+        "error": null
+      },
+      {
+        "kind": "vector",
+        "query": 13,
+        "request_charge": 15.31,
+        "retrieved_document_count": 50.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:833",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:700",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:838",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:644",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:645",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:684",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:828",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:698",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:697",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:701"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 12,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "UtilizedVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "ShardKeys": [
+                  "/libraryId"
+                ],
+                "VectorIndexType": "QuantizedFlat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 131.4,
+        "error": null
+      },
+      {
+        "kind": "vector",
+        "query": 14,
+        "request_charge": 15.36,
+        "retrieved_document_count": 50.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1211",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1212",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1210",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:338",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1209",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1201",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:990",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:958",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1277",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:339"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 11,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "UtilizedVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "ShardKeys": [
+                  "/libraryId"
+                ],
+                "VectorIndexType": "QuantizedFlat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 126.3,
+        "error": null
+      },
+      {
+        "kind": "vector",
+        "query": 15,
+        "request_charge": 15.23,
+        "retrieved_document_count": 50.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:550",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:738",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:46",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1258",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:649",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:149",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:49",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:556",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:547",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:561"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 10,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "UtilizedVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "ShardKeys": [
+                  "/libraryId"
+                ],
+                "VectorIndexType": "QuantizedFlat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 133.9,
+        "error": null
+      },
+      {
+        "kind": "vector",
+        "query": 16,
+        "request_charge": 15.15,
+        "retrieved_document_count": 50.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:850",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:603",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:35",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:66",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:62",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:61",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:840",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:922",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1251",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:65"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 10,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "UtilizedVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "ShardKeys": [
+                  "/libraryId"
+                ],
+                "VectorIndexType": "QuantizedFlat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 126.9,
+        "error": null
+      },
+      {
+        "kind": "vector",
+        "query": 17,
+        "request_charge": 15.43,
+        "retrieved_document_count": 50.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:326",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1154",
+          "8dec38ba-f8aa-499e-a3b3-b2f1bb6b1bc8:1:66",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1147",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1166",
+          "8dec38ba-f8aa-499e-a3b3-b2f1bb6b1bc8:1:65",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:590",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1146",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:335",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:334"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 14,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "UtilizedVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "ShardKeys": [
+                  "/libraryId"
+                ],
+                "VectorIndexType": "QuantizedFlat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 127.7,
+        "error": null
+      },
+      {
+        "kind": "vector",
+        "query": 18,
+        "request_charge": 15.48,
+        "retrieved_document_count": 50.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:959",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1201",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:353",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:388",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:305",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:394",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:304",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1203",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:395",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:393"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 13,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "UtilizedVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "ShardKeys": [
+                  "/libraryId"
+                ],
+                "VectorIndexType": "QuantizedFlat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 141.4,
+        "error": null
+      },
+      {
+        "kind": "vector",
+        "query": 19,
+        "request_charge": 14.92,
+        "retrieved_document_count": 50.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1372",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1377",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1376",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1371",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1386",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1391",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1387",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1388",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1393",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1392"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 8,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "UtilizedVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "ShardKeys": [
+                  "/libraryId"
+                ],
+                "VectorIndexType": "QuantizedFlat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 136.3,
+        "error": null
+      }
+    ],
+    "exactVector": [
+      {
+        "kind": "exact-vector",
+        "query": 0,
+        "request_charge": 113.56,
+        "retrieved_document_count": 1500.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:529",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:509",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:527",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:591",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:587",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:590",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:508",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:586",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:598",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:532"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "PotentialVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "VectorIndexType": "Flat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 244.1,
+        "error": null
+      },
+      {
+        "kind": "exact-vector",
+        "query": 1,
+        "request_charge": 113.46,
+        "retrieved_document_count": 1500.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:895",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:897",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:768",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:896",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:894",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:906",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:903",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:900",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:908",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:909"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "PotentialVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "VectorIndexType": "Flat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 220.2,
+        "error": null
+      },
+      {
+        "kind": "exact-vector",
+        "query": 2,
+        "request_charge": 113.6,
+        "retrieved_document_count": 1500.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:211",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:358",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:359",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:361",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:379",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:210",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:732",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:221",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:976",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:374"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "PotentialVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "VectorIndexType": "Flat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 231.4,
+        "error": null
+      },
+      {
+        "kind": "exact-vector",
+        "query": 3,
+        "request_charge": 113.62,
+        "retrieved_document_count": 1500.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:447",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:396",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:959",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:395",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:393",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:454",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:392",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:399",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:450",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:394"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "PotentialVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "VectorIndexType": "Flat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 227.6,
+        "error": null
+      },
+      {
+        "kind": "exact-vector",
+        "query": 4,
+        "request_charge": 113.53,
+        "retrieved_document_count": 1500.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:566",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:511",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:525",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:531",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:524",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:530",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:540",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:512",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:557",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:509"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "PotentialVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "VectorIndexType": "Flat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 231.0,
+        "error": null
+      },
+      {
+        "kind": "exact-vector",
+        "query": 5,
+        "request_charge": 113.56,
+        "retrieved_document_count": 1500.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:265",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:259",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:264",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:258",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:999",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1048",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1055",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1051",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:266",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:253"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "PotentialVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "VectorIndexType": "Flat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 227.7,
+        "error": null
+      },
+      {
+        "kind": "exact-vector",
+        "query": 6,
+        "request_charge": 113.47,
+        "retrieved_document_count": 1500.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1398",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1288",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1294",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1330",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1381",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1334",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1386",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1391",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1385",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1390"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "PotentialVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "VectorIndexType": "Flat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 226.3,
+        "error": null
+      },
+      {
+        "kind": "exact-vector",
+        "query": 7,
+        "request_charge": 113.56,
+        "retrieved_document_count": 1500.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1176",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1214",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1203",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1170",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1204",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:306",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1177",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1205",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1215",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1167"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "PotentialVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "VectorIndexType": "Flat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 241.0,
+        "error": null
+      },
+      {
+        "kind": "exact-vector",
+        "query": 8,
+        "request_charge": 113.53,
+        "retrieved_document_count": 1500.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:430",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:608",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:470",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:467",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:609",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:469",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:333",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:435",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:468",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:465"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "PotentialVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "VectorIndexType": "Flat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 270.1,
+        "error": null
+      },
+      {
+        "kind": "exact-vector",
+        "query": 9,
+        "request_charge": 113.58,
+        "retrieved_document_count": 1500.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "8dec38ba-f8aa-499e-a3b3-b2f1bb6b1bc8:1:68",
+          "8dec38ba-f8aa-499e-a3b3-b2f1bb6b1bc8:1:67",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1037",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:542",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1028",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1032",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:274",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:996",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:37",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:250"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "PotentialVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "VectorIndexType": "Flat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 264.4,
+        "error": null
+      },
+      {
+        "kind": "exact-vector",
+        "query": 10,
+        "request_charge": 113.57,
+        "retrieved_document_count": 1500.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "8dec38ba-f8aa-499e-a3b3-b2f1bb6b1bc8:1:18",
+          "8dec38ba-f8aa-499e-a3b3-b2f1bb6b1bc8:1:17",
+          "8dec38ba-f8aa-499e-a3b3-b2f1bb6b1bc8:1:5",
+          "8dec38ba-f8aa-499e-a3b3-b2f1bb6b1bc8:1:33",
+          "8dec38ba-f8aa-499e-a3b3-b2f1bb6b1bc8:1:15",
+          "8dec38ba-f8aa-499e-a3b3-b2f1bb6b1bc8:1:6",
+          "8dec38ba-f8aa-499e-a3b3-b2f1bb6b1bc8:1:47",
+          "8dec38ba-f8aa-499e-a3b3-b2f1bb6b1bc8:1:45",
+          "8dec38ba-f8aa-499e-a3b3-b2f1bb6b1bc8:1:27",
+          "8dec38ba-f8aa-499e-a3b3-b2f1bb6b1bc8:1:53"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "PotentialVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "VectorIndexType": "Flat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 252.8,
+        "error": null
+      },
+      {
+        "kind": "exact-vector",
+        "query": 11,
+        "request_charge": 113.53,
+        "retrieved_document_count": 1500.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:599",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:600",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:601",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:610",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:312",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:982",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:995",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:991",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:658"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "PotentialVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "VectorIndexType": "Flat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 247.2,
+        "error": null
+      },
+      {
+        "kind": "exact-vector",
+        "query": 12,
+        "request_charge": 113.61,
+        "retrieved_document_count": 1500.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1230",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:934",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1231",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1229",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:935",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:863",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:682",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:365",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1233",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:50"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "PotentialVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "VectorIndexType": "Flat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 252.6,
+        "error": null
+      },
+      {
+        "kind": "exact-vector",
+        "query": 13,
+        "request_charge": 113.61,
+        "retrieved_document_count": 1500.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:833",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:700",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:838",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:644",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:645",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:684",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:828",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:698",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:697",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:701"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "PotentialVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "VectorIndexType": "Flat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 248.9,
+        "error": null
+      },
+      {
+        "kind": "exact-vector",
+        "query": 14,
+        "request_charge": 113.54,
+        "retrieved_document_count": 1500.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1211",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1212",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1210",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:338",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1209",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1201",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:990",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:958",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1277",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:339"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "PotentialVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "VectorIndexType": "Flat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 233.1,
+        "error": null
+      },
+      {
+        "kind": "exact-vector",
+        "query": 15,
+        "request_charge": 113.49,
+        "retrieved_document_count": 1500.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:550",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:738",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:46",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1258",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:649",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:149",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:49",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:556",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:547",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:561"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "PotentialVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "VectorIndexType": "Flat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 250.3,
+        "error": null
+      },
+      {
+        "kind": "exact-vector",
+        "query": 16,
+        "request_charge": 113.56,
+        "retrieved_document_count": 1500.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:850",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:603",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:35",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:66",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:62",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:61",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:840",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:922",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1251",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:65"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "PotentialVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "VectorIndexType": "Flat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 250.4,
+        "error": null
+      },
+      {
+        "kind": "exact-vector",
+        "query": 17,
+        "request_charge": 113.58,
+        "retrieved_document_count": 1500.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:326",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1154",
+          "8dec38ba-f8aa-499e-a3b3-b2f1bb6b1bc8:1:66",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1147",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1166",
+          "8dec38ba-f8aa-499e-a3b3-b2f1bb6b1bc8:1:65",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:590",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1146",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:335",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:334"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "PotentialVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "VectorIndexType": "Flat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 248.8,
+        "error": null
+      },
+      {
+        "kind": "exact-vector",
+        "query": 18,
+        "request_charge": 113.63,
+        "retrieved_document_count": 1500.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:959",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1201",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:353",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:388",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:305",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:394",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:304",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1203",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:395",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:393"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "PotentialVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "VectorIndexType": "Flat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 266.6,
+        "error": null
+      },
+      {
+        "kind": "exact-vector",
+        "query": 19,
+        "request_charge": 113.47,
+        "retrieved_document_count": 1500.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1372",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1377",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1376",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1371",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1386",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1391",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1387",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1388",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1393",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1392"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": [],
+          "PotentialVectorIndexes": [
+            {
+              "IndexSpec": {
+                "Path": "/embedding/?",
+                "VectorIndexType": "Flat"
+              },
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ]
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 267.1,
+        "error": null
+      }
+    ],
+    "hybrid": [
+      {
+        "kind": "hybrid",
+        "query": 0,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 16,
+        "flushed_subnormals": 12,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 138.1,
+        "error": null
+      },
+      {
+        "kind": "hybrid",
+        "query": 1,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 16,
+        "flushed_subnormals": 16,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 111.8,
+        "error": null
+      },
+      {
+        "kind": "hybrid",
+        "query": 2,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 16,
+        "flushed_subnormals": 15,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 124.8,
+        "error": null
+      },
+      {
+        "kind": "hybrid",
+        "query": 3,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 16,
+        "flushed_subnormals": 13,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 98.1,
+        "error": null
+      },
+      {
+        "kind": "hybrid",
+        "query": 4,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 16,
+        "flushed_subnormals": 11,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 101.3,
+        "error": null
+      },
+      {
+        "kind": "hybrid",
+        "query": 5,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 14,
+        "flushed_subnormals": 12,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 91.3,
+        "error": null
+      },
+      {
+        "kind": "hybrid",
+        "query": 6,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 14,
+        "flushed_subnormals": 14,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 89.4,
+        "error": null
+      },
+      {
+        "kind": "hybrid",
+        "query": 7,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 16,
+        "flushed_subnormals": 8,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 93.1,
+        "error": null
+      },
+      {
+        "kind": "hybrid",
+        "query": 8,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 11,
+        "flushed_subnormals": 16,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 89.1,
+        "error": null
+      },
+      {
+        "kind": "hybrid",
+        "query": 9,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 16,
+        "flushed_subnormals": 11,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 89.5,
+        "error": null
+      },
+      {
+        "kind": "hybrid",
+        "query": 10,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 16,
+        "flushed_subnormals": 5,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 86.0,
+        "error": null
+      },
+      {
+        "kind": "hybrid",
+        "query": 11,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 16,
+        "flushed_subnormals": 12,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 90.2,
+        "error": null
+      },
+      {
+        "kind": "hybrid",
+        "query": 12,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 16,
+        "flushed_subnormals": 13,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 92.0,
+        "error": null
+      },
+      {
+        "kind": "hybrid",
+        "query": 13,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 16,
+        "flushed_subnormals": 14,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 86.2,
+        "error": null
+      },
+      {
+        "kind": "hybrid",
+        "query": 14,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 11,
+        "flushed_subnormals": 7,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 88.7,
+        "error": null
+      },
+      {
+        "kind": "hybrid",
+        "query": 15,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 13,
+        "flushed_subnormals": 7,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 92.0,
+        "error": null
+      },
+      {
+        "kind": "hybrid",
+        "query": 16,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 7,
+        "flushed_subnormals": 7,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 93.2,
+        "error": null
+      },
+      {
+        "kind": "hybrid",
+        "query": 17,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 16,
+        "flushed_subnormals": 13,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 85.9,
+        "error": null
+      },
+      {
+        "kind": "hybrid",
+        "query": 18,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 13,
+        "flushed_subnormals": 9,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 91.3,
+        "error": null
+      },
+      {
+        "kind": "hybrid",
+        "query": 19,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 16,
+        "flushed_subnormals": 14,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 403.8,
+        "error": null
+      }
+    ],
+    "exactHybrid": [
+      {
+        "kind": "exact-hybrid",
+        "query": 0,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 125.3,
+        "error": null
+      },
+      {
+        "kind": "exact-hybrid",
+        "query": 1,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 122.5,
+        "error": null
+      },
+      {
+        "kind": "exact-hybrid",
+        "query": 2,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 111.0,
+        "error": null
+      },
+      {
+        "kind": "exact-hybrid",
+        "query": 3,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 108.0,
+        "error": null
+      },
+      {
+        "kind": "exact-hybrid",
+        "query": 4,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 88.0,
+        "error": null
+      },
+      {
+        "kind": "exact-hybrid",
+        "query": 5,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 91.2,
+        "error": null
+      },
+      {
+        "kind": "exact-hybrid",
+        "query": 6,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 88.5,
+        "error": null
+      },
+      {
+        "kind": "exact-hybrid",
+        "query": 7,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 92.2,
+        "error": null
+      },
+      {
+        "kind": "exact-hybrid",
+        "query": 8,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 92.7,
+        "error": null
+      },
+      {
+        "kind": "exact-hybrid",
+        "query": 9,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 87.4,
+        "error": null
+      },
+      {
+        "kind": "exact-hybrid",
+        "query": 10,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 92.7,
+        "error": null
+      },
+      {
+        "kind": "exact-hybrid",
+        "query": 11,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 88.1,
+        "error": null
+      },
+      {
+        "kind": "exact-hybrid",
+        "query": 12,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 90.3,
+        "error": null
+      },
+      {
+        "kind": "exact-hybrid",
+        "query": 13,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 82.5,
+        "error": null
+      },
+      {
+        "kind": "exact-hybrid",
+        "query": 14,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 94.3,
+        "error": null
+      },
+      {
+        "kind": "exact-hybrid",
+        "query": 15,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 92.9,
+        "error": null
+      },
+      {
+        "kind": "exact-hybrid",
+        "query": 16,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 88.1,
+        "error": null
+      },
+      {
+        "kind": "exact-hybrid",
+        "query": 17,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 85.6,
+        "error": null
+      },
+      {
+        "kind": "exact-hybrid",
+        "query": 18,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 87.6,
+        "error": null
+      },
+      {
+        "kind": "exact-hybrid",
+        "query": 19,
+        "request_charge": 3.91,
+        "retrieved_document_count": 10.0,
+        "output_document_count": 10.0,
+        "http_responses": 1,
+        "result_ids": [
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:0",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:1",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:3",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:2",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:4",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:5",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:7",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:6",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:8",
+          "1e284c7d-f01c-4a36-981b-6a8f9590be52:1:9"
+        ],
+        "null_scores": 0,
+        "lexical_terms": 0,
+        "flushed_subnormals": 0,
+        "throttled": 0,
+        "index_utilization": {
+          "UtilizedSingleIndexes": [
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/libraryId/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            },
+            {
+              "FilterExpression": "",
+              "IndexSpec": "/\"<internal>\"/?",
+              "FilterPreciseSet": true,
+              "IndexPreciseSet": true,
+              "IndexImpactScore": "High"
+            }
+          ],
+          "PotentialSingleIndexes": [],
+          "UtilizedCompositeIndexes": [],
+          "PotentialCompositeIndexes": []
+        },
+        "measured_by": "raw_response_hook",
+        "milliseconds": 95.9,
+        "error": null
+      }
+    ],
+    "summary": {
+      "vectorCharge": {
+        "n": 20,
+        "min": 14.91,
+        "median": 15.3,
+        "max": 15.48
+      },
+      "hybridCharge": {
+        "n": 20,
+        "min": 3.91,
+        "median": 3.91,
+        "max": 3.91
+      },
+      "exactVectorCharge": {
+        "n": 20,
+        "min": 113.46,
+        "median": 113.56,
+        "max": 113.63
+      },
+      "vectorRetrieved": {
+        "n": 20,
+        "min": 50.0,
+        "median": 50.0,
+        "max": 50.0
+      },
+      "hybridRetrieved": {
+        "n": 20,
+        "min": 10.0,
+        "median": 10.0,
+        "max": 10.0
+      },
+      "exactVectorRetrieved": {
+        "n": 20,
+        "min": 1500.0,
+        "median": 1500.0,
+        "max": 1500.0
+      }
+    },
+    "throttledRetries": 0
+  },
+  "checks": [
+    {
+      "name": "container_definitions_match",
+      "passed": true,
+      "observed": {},
+      "rule": "stored definitions contain cosmos/*.json"
+    },
+    {
+      "name": "crud_libraries",
+      "passed": true,
+      "observed": "ok",
+      "rule": "write, read and query one record"
+    },
+    {
+      "name": "crud_documents",
+      "passed": true,
+      "observed": "ok",
+      "rule": "write, read and query one record"
+    },
+    {
+      "name": "crud_chunks",
+      "passed": true,
+      "observed": "ok",
+      "rule": "write, read and query one record"
+    },
+    {
+      "name": "corpus_large_enough",
+      "passed": true,
+      "observed": 1500,
+      "rule": ">= 1200 chunks loaded"
+    },
+    {
+      "name": "searches_executed",
+      "passed": true,
+      "observed": "ok",
+      "rule": "20 vector-only and 20 hybrid searches, and their exact references, all ran"
+    },
+    {
+      "name": "no_empty_results",
+      "passed": true,
+      "observed": "ok",
+      "rule": "every search returns results"
+    },
+    {
+      "name": "no_null_scores",
+      "passed": true,
+      "observed": 0,
+      "rule": "every vector-only result has a distance"
+    },
+    {
+      "name": "index_engaged_charge",
+      "passed": true,
+      "observed": {
+        "n": 20,
+        "min": 14.91,
+        "median": 15.3,
+        "max": 15.48
+      },
+      "rule": "every vector-only search < 100 RU"
+    },
+    {
+      "name": "index_engaged_retrieved",
+      "passed": true,
+      "observed": {
+        "n": 20,
+        "min": 50.0,
+        "median": 50.0,
+        "max": 50.0,
+        "missingMetrics": 0,
+        "limit": 300.0
+      },
+      "rule": "every vector-only search retrieves < 0.2 x chunks loaded"
+    },
+    {
+      "name": "vector_recall_at_10",
+      "passed": true,
+      "observed": {
+        "mean": 1.0,
+        "min": 1.0,
+        "queries": 20
+      },
+      "rule": "mean recall@10 >= 0.95 against exact search"
+    },
+    {
+      "name": "hybrid_recall_at_10",
+      "passed": true,
+      "observed": {
+        "mean": 1.0,
+        "min": 1.0,
+        "queries": 20
+      },
+      "rule": "mean recall@10 >= 0.95 against exact search"
+    }
+  ],
+  "passed": true,
+  "cleanedUp": true,
+  "finishedAt": "2026-10-22T20:30:55.407727Z",
+  "redactions": {
+    "date": "2026-10-22",
+    "removed": [
+      "account.endpoint (named the Cosmos account)",
+      "83 GUID index paths in index-utilization reports, replaced with <internal> (possibly account-specific)"
+    ],
+    "note": "Identifying details removed after the run; every measurement is unchanged.",
+    "gitCommit": "was d1bf428, rewritten as b35f1b6 when identifiers were removed from branch history; the code is identical"
+  }
+}
