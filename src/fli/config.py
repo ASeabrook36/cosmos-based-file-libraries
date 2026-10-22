@@ -20,6 +20,9 @@ AuthMode = Literal["entra", "dev"]
 
 ENVIRONMENTS: tuple[Environment, ...] = ("local", "demo", "prod")
 AUTH_MODES: tuple[AuthMode, ...] = ("entra", "dev")
+# Recorded on libraries and chunks for rebuilds (spec §4.1, E16). The deployment name is a setting;
+# the model behind it is fixed by the vector policy.
+EMBEDDING_MODEL = "text-embedding-3-large"
 
 
 class ConfigError(RuntimeError):
