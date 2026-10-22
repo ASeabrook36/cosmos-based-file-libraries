@@ -198,14 +198,15 @@ def test_evaluate_fails_definition_and_crud_problems():
     assert not checks["container_definitions_match"].passed
 
 
-def test_deployment_env_exports_only_setting_outputs():
+def test_deployment_env_restores_mangled_output_names():
     from scripts.deployment_env import exports
 
+    # Names as `az deployment group show` really returns them (observed 2026-10-22).
     outputs = {
-        "COSMOS_ENDPOINT": {"type": "String", "value": "https://a.documents.azure.com:443/"},
-        "AOAI_EMBEDDING_DIMENSIONS": {"type": "Int", "value": 3072},
-        "COSMOS_CONTAINERS": {"type": "Array", "value": ["chunks"]},
-        "APPLICATIONINSIGHTS_CONNECTION_STRING": {
+        "cosmoS_ENDPOINT": {"type": "String", "value": "https://a.documents.azure.com:443/"},
+        "aoaI_EMBEDDING_DIMENSIONS": {"type": "Int", "value": 3072},
+        "cosmoS_CONTAINERS": {"type": "Array", "value": ["chunks"]},
+        "applicationinsightS_CONNECTION_STRING": {
             "type": "String",
             "value": "InstrumentationKey=x;IngestionEndpoint=y",
         },

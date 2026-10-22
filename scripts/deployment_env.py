@@ -16,11 +16,13 @@ import sys
 
 
 def exports(outputs: dict) -> list[str]:
+    """Scalar outputs as exports. The CLI mangles output names (``COSMOS_ENDPOINT`` comes back as
+    ``cosmoS_ENDPOINT``), so names are upper-cased back to the spec §10 form."""
     lines = []
-    for name, entry in sorted(outputs.items()):
+    for name, entry in sorted(outputs.items(), key=lambda item: item[0].upper()):
         value = entry.get("value")
-        if name.isupper() and isinstance(value, str | int):
-            lines.append(f"export {name}={shlex.quote(str(value))}")
+        if isinstance(value, str | int) and not isinstance(value, bool):
+            lines.append(f"export {name.upper()}={shlex.quote(str(value))}")
     return lines
 
 
@@ -37,7 +39,11 @@ def main() -> int:
     if result.returncode != 0:
         print(result.stderr.strip(), file=sys.stderr)
         return result.returncode
-    print("\n".join(exports(json.loads(result.stdout) or {})))
+    lines = exports(json.loads(result.stdout) or {})
+    if not any(line.startswith("export COSMOS_ENDPOINT=") for line in lines):
+        print(f"deployment {args.name!r} in {args.resource_group} has no COSMOS_ENDPOINT output", file=sys.stderr)
+        return 1
+    print("\n".join(lines))
     return 0
 
 
