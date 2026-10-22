@@ -96,7 +96,7 @@ async def test_pptx_and_xlsx_are_extracted():
     deck = await extract(pptx_bytes(), filename="deck.pptx")
     assert deck.outcome == "ok" and deck.sections[0].heading == "Roadmap" and "orion" in deck.text
     sheet = await extract(xlsx_bytes(), filename="budget.xlsx")
-    assert sheet.outcome == "ok" and sheet.sections[0].heading == "Budget" and "orion | 42" in sheet.text
+    assert sheet.outcome == "ok" and sheet.sections[0].heading == "Budget" and "item: orion; cost: 42" in sheet.text
 
 
 async def test_pdf_with_text_layer_is_native():
@@ -244,7 +244,7 @@ async def test_pdf_pptx_and_xlsx_sections_carry_locations():
     deck = await extract(pptx_bytes(), filename="deck.pptx")
     assert deck.sections[0].location == {"slide": 1}
     sheet = await extract(xlsx_bytes(), filename="budget.xlsx")
-    assert sheet.sections[0].location == {"sheet": "Budget"}
+    assert sheet.sections[0].location == {"sheet": "Budget", "rowStart": 2, "rowEnd": 2}
 
 
 async def test_pptx_speaker_notes_are_extracted():
@@ -279,3 +279,90 @@ def test_approx_tokenizer_round_trips():
 )
 def test_sentence_splitter(text, expected):
     assert len(split_sentences(text)) == expected
+
+
+async def test_csv_rows_are_header_value_lines_with_row_locations():
+    rows = "year,country,gdp\n" + "\n".join(f"{2000 + i},Wales,{i}" for i in range(60))
+    result = await extract(rows.encode(), filename="data/gdp.csv")
+    assert result.outcome == "ok" and [s.location["rowStart"] for s in result.sections] == [2, 27, 52]
+    assert result.sections[0].location == {"sheet": "gdp", "rowStart": 2, "rowEnd": 26}
+    assert result.sections[-1].location["rowEnd"] == 61  # header is row 1, 60 data rows
+    assert "year: 2000; country: Wales; gdp: 0" in result.sections[0].text
+    assert all(s.heading == "gdp" for s in result.sections)
+
+
+async def test_csv_handles_semicolons_bom_and_blank_cells():
+    result = await extract("\ufeffa;b\n1;\n;2\n".encode(), filename="x.csv")
+    assert result.sections[0].text.splitlines() == ["Row 2. a: 1", "Row 3. b: 2"]
+
+
+EML = (
+    b"From: Jane Doe <jane@example.org>\nTo: team@example.org\nSubject: Q4 margin\n"
+    b"Date: Tue, 11 Mar 2025 09:30:00 +0100\nContent-Type: text/plain; charset=utf-8\n\nMargins fell in EMEA.\n"
+)
+
+
+async def test_eml_has_subject_heading_headers_and_authoring_metadata():
+    result = await extract(EML, filename="m.eml")
+    assert result.outcome == "ok" and result.sections[0].heading == "Q4 margin"
+    assert "From: Jane Doe <jane@example.org>" in result.text and "Margins fell in EMEA." in result.text
+    assert result.author == "Jane Doe"
+    assert result.authored_at is not None and result.authored_at.isoformat() == "2025-03-11T08:30:00+00:00"
+
+
+async def test_eml_html_only_body_and_attachment_names():
+    raw = (
+        b"From: a@example.org\nSubject: Report\nMIME-Version: 1.0\nContent-Type: multipart/mixed; boundary=b\n\n"
+        b"--b\nContent-Type: text/html\n\n<p>Hello <b>there</b></p>\n"
+        b'--b\nContent-Type: application/pdf\nContent-Disposition: attachment; filename="q4.pdf"\n\nxx\n--b--\n'
+    )
+    result = await extract(raw, filename="m.eml")
+    assert "Hello there" in result.text and "Attachments: q4.pdf" in result.text and result.author == "a@example.org"
+
+
+async def test_eml_with_bad_date_still_extracts():
+    result = await extract(b"Subject: s\nDate: not a date\n\nbody", filename="m.eml")
+    assert result.outcome == "ok" and result.authored_at is None
+
+
+async def test_html_headings_become_sections_and_scripts_are_dropped():
+    html = (
+        b"<html><head><title>t</title></head><body><script>x()</script>"
+        b"<p>Intro text.</p><h2>Methods</h2><p>We did it.</p></body></html>"
+    )
+    result = await extract(html, filename="a.html")
+    assert [(s.heading, s.text) for s in result.sections] == [(None, "Intro text."), ("Methods", "We did it.")]
+
+
+async def test_office_and_pdf_metadata_are_returned():
+    import docx
+
+    doc = docx.Document()
+    doc.core_properties.author = "Sam Lee"
+    doc.add_paragraph("hello")
+    buf = io.BytesIO()
+    doc.save(buf)
+    result = await extract(buf.getvalue(), filename="a.docx")
+    assert result.author == "Sam Lee" and result.authored_at is not None and result.authored_at.tzinfo is not None
+    assert (await extract(pdf_with_text(), filename="a.pdf")).author is None  # no metadata: None, not ""
+
+
+async def test_docx_tables_stay_under_their_heading_in_document_order():
+    import docx
+
+    doc = docx.Document()
+    doc.add_heading("Costs", level=1)
+    doc.add_paragraph("Summary line.")
+    table = doc.add_table(rows=2, cols=2)
+    for r, row in enumerate([["item", "cost"], ["orion", "42"]]):
+        for c, value in enumerate(row):
+            table.cell(r, c).text = value
+    doc.add_heading("Risks", level=1)
+    doc.add_paragraph("None known.")
+    buf = io.BytesIO()
+    doc.save(buf)
+    result = await extract(buf.getvalue(), filename="a.docx")
+    assert [(s.heading, s.text) for s in result.sections] == [
+        ("Costs", "Summary line.\nitem | cost\norion | 42"),
+        ("Risks", "None known."),
+    ]
