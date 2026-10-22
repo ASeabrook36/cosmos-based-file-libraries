@@ -8,7 +8,9 @@ docs/build-plan.md Phase 0:
    and queries a record in each container.
 2. Loads about 1,500 chunks of real text, from a corpus directory you supply, embedded with
    the real model, into one new test library. Random vectors and filler text are invalid
-   test data (E14).
+   test data (E14). DiskANN indexing is asynchronous, so it then polls one vector search
+   (with and without the library as partition-key prefix) until it stops reading every
+   chunk, for up to ``--index-wait-minutes``, and records how long that took.
 3. Runs 20 vector-only and 20 hybrid searches through the float16 query path
    (``inherited/query.py``; spec §8 step 3), and the exact (brute-force) version of each.
 4. Asserts: no null scores; the index is engaged (each vector-only search costs under
@@ -18,6 +20,11 @@ docs/build-plan.md Phase 0:
    it scans (E8). Recorded, not asserted: it documents the trap.
 6. Writes ``records/canary-<UTC timestamp>.json``. The record holds metrics only: no query
    text and no chunk text (CLAUDE.md rule 12).
+
+Charges and query metrics are summed over every HTTP response of a search, through the
+pipeline's ``raw_response_hook``. The SDK's ``response_hook`` misses the component requests
+of a hybrid search: the first live run recorded one response per hybrid search, and its
+hybrid charges were meaningless.
 
 The index-engagement thresholds apply to vector-only searches. Hybrid searches are checked
 for execution, results and recall; their cost is recorded but not asserted, because nothing
@@ -41,6 +48,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import base64
 import hashlib
 import json
 import os
@@ -83,6 +91,7 @@ MAX_RETRIEVED_FRACTION = 0.2  # of the chunks loaded; the indexed path read abou
 # A serverless container saturates at about two concurrent writers (E10). The first live run,
 # at 8 (the spec §7.2 per-document cap), exhausted the SDK's own 429 retries within seconds.
 WRITE_CONCURRENCY = 2
+INDEX_POLL_SECONDS = 30
 THROTTLE_ATTEMPTS = 12  # our retries on 429, on top of the SDK's
 MAX_THROTTLE_WAIT_SECONDS = 30.0
 QUERY_SEED = 20261022
@@ -148,6 +157,16 @@ def float32_trap_variant(sql: str) -> str:
     if _VECTOR_F16 not in sql:
         raise CanaryError("no float16 VectorDistance to replace")
     return sql.replace(_VECTOR_F16, _VECTOR_F16.replace(f"'{STORED_DTYPE}'", "'float32'"))
+
+
+def decode_index_utilization(header: str | None) -> Any:
+    """``x-ms-cosmos-index-utilization`` is base64-encoded JSON. Undecodable values are kept raw."""
+    if not header:
+        return None
+    try:
+        return json.loads(base64.b64decode(header).decode("utf-8"))
+    except (ValueError, UnicodeDecodeError):
+        return header[:500]
 
 
 def chunk_id(document_id: str, generation: int, chunk_index: int) -> str:
@@ -221,12 +240,14 @@ class SearchMeasurement:
     request_charge: float = 0.0
     retrieved_document_count: float | None = None
     output_document_count: float | None = None
-    backend_pages: int = 0
+    http_responses: int = 0
     result_ids: list[str] = field(default_factory=list)
     null_scores: int = 0
     lexical_terms: int = 0
     flushed_subnormals: int = 0
     throttled: int = 0  # 429s that outlasted the SDK's retries and were retried here
+    index_utilization: Any = None  # Cosmos's own report, from x-ms-cosmos-index-utilization
+    measured_by: str = "raw_response_hook"  # or "response_hook", which misses hybrid components
     milliseconds: float = 0.0
     error: str | None = None
 
@@ -351,6 +372,30 @@ class ResponseTally:
             self.saw_metrics = True
             for key, value in parse_query_metrics(raw).items():
                 self.metrics[key] = self.metrics.get(key, 0.0) + value
+
+
+class RawTally:
+    """A ``raw_response_hook``: every HTTP response of one call, including each component
+    request of a hybrid search, which ``ResponseTally`` as a ``response_hook`` misses."""
+
+    def __init__(self) -> None:
+        self.request_charge = 0.0
+        self.responses = 0
+        self.metrics: dict[str, float] = {}
+        self.saw_metrics = False
+        self.index_utilization: Any = None
+
+    def __call__(self, pipeline_response: Any) -> None:
+        headers = pipeline_response.http_response.headers
+        self.responses += 1
+        self.request_charge += float(headers.get("x-ms-request-charge", 0) or 0)
+        raw = headers.get("x-ms-documentdb-query-metrics")
+        if raw:
+            self.saw_metrics = True
+            for key, value in parse_query_metrics(raw).items():
+                self.metrics[key] = self.metrics.get(key, 0.0) + value
+        if self.index_utilization is None:
+            self.index_utilization = decode_index_utilization(headers.get("x-ms-cosmos-index-utilization"))
 
 
 class Throttle:
@@ -540,19 +585,31 @@ async def run_query(
     throttle: Throttle,
     *,
     scored: bool,
+    prefix_partition_key: bool = True,
 ) -> SearchMeasurement:
-    """Run one search. Charge and metrics are those of the attempt that succeeded."""
+    """Run one search. Charge and metrics are those of the attempt that succeeded.
+
+    ``prefix_partition_key=False`` sends the same query with the library only in ``WHERE``,
+    to tell whether routing by the hierarchical key's prefix changes how Cosmos runs it.
+    """
     from azure.cosmos.exceptions import CosmosHttpResponseError
 
-    tally = ResponseTally()
+    tally, fallback = RawTally(), ResponseTally()
+    routing = {"partition_key": [library_id]} if prefix_partition_key else {}
 
     async def attempt() -> list[dict[str, Any]]:
-        nonlocal tally
-        tally = ResponseTally()
+        nonlocal tally, fallback
+        tally, fallback = RawTally(), ResponseTally()
         return [
             item
             async for item in container.query_items(
-                sql, parameters=parameters, partition_key=[library_id], populate_query_metrics=True, response_hook=tally
+                sql,
+                parameters=parameters,
+                populate_query_metrics=True,
+                populate_index_metrics=True,
+                raw_response_hook=tally,
+                response_hook=fallback,
+                **routing,
             )
         ]
 
@@ -565,15 +622,97 @@ async def run_query(
         items = []
     measurement.throttled = throttle.count - before
     measurement.milliseconds = round((time.perf_counter() - started) * 1000, 1)
-    measurement.request_charge = round(tally.request_charge, 2)
-    measurement.backend_pages = tally.pages
-    if tally.saw_metrics:
-        measurement.retrieved_document_count = tally.metrics.get("retrievedDocumentCount")
-        measurement.output_document_count = tally.metrics.get("outputDocumentCount")
+    if tally.responses:
+        charge, responses, metrics, saw_metrics = (
+            tally.request_charge,
+            tally.responses,
+            tally.metrics,
+            tally.saw_metrics,
+        )
+        measurement.index_utilization = tally.index_utilization
+    else:  # the pipeline hook saw nothing: fall back, and say so in the record
+        charge, responses, metrics, saw_metrics = (
+            fallback.request_charge,
+            fallback.pages,
+            fallback.metrics,
+            fallback.saw_metrics,
+        )
+        measurement.measured_by = "response_hook"
+    measurement.request_charge = round(charge, 2)
+    measurement.http_responses = responses
+    if saw_metrics:
+        measurement.retrieved_document_count = metrics.get("retrievedDocumentCount")
+        measurement.output_document_count = metrics.get("outputDocumentCount")
+    if not measurement.error and responses == 0:
+        measurement.error = "no responses reached either hook; charges unmeasured"
     measurement.result_ids = [item["id"] for item in items]
     if scored:
         measurement.null_scores = sum(1 for item in items if item.get("score") is None)
     return measurement
+
+
+async def wait_for_index(
+    container: Any,
+    library_id: str,
+    query_vector: list[float],
+    loaded: int,
+    throttle: Throttle,
+    minutes: float,
+    *,
+    sleep: Callable[[float], Any] = asyncio.sleep,
+    clock: Callable[[], float] = time.monotonic,
+) -> dict[str, Any]:
+    """Poll one vector search until it stops reading every chunk, or time runs out.
+
+    DiskANN indexing is asynchronous (Microsoft's vector-search documentation); the first live
+    run searched 30 seconds after loading and every search scanned. Each poll also runs the
+    query without the partition-key prefix, so a routing effect shows up in the record.
+    """
+    query = render_search(library_id, to_float16_query(query_vector), [], SearchFilters(), K)
+    check_query(query.sql)
+    sql = scored_variant(query.sql)
+    limit = MAX_RETRIEVED_FRACTION * loaded
+    start = clock()
+    polls: list[dict[str, Any]] = []
+
+    def summary(m: SearchMeasurement, with_index: bool) -> dict[str, Any]:
+        out = {"requestCharge": m.request_charge, "retrieved": m.retrieved_document_count, "error": m.error}
+        return out | ({"indexUtilization": m.index_utilization} if with_index else {})
+
+    while True:
+        n = len(polls)
+        prefix = await run_query(
+            container, sql, query.parameters, library_id, SearchMeasurement("index-poll", n), throttle, scored=True
+        )
+        cross = await run_query(
+            container,
+            sql,
+            query.parameters,
+            library_id,
+            SearchMeasurement("index-poll-no-prefix", n),
+            throttle,
+            scored=True,
+            prefix_partition_key=False,
+        )
+        elapsed = clock() - start
+        engaged = prefix.retrieved_document_count is not None and prefix.retrieved_document_count < limit
+        done = engaged or elapsed >= minutes * 60
+        polls.append(
+            {
+                "seconds": round(elapsed),
+                "prefix": summary(prefix, n == 0 or done),
+                "noPrefix": summary(cross, n == 0 or done),
+            }
+        )
+        log(
+            f"  index poll {n + 1} at {elapsed:.0f}s: {prefix.request_charge} RU, retrieved"
+            f" {prefix.retrieved_document_count} (without prefix: {cross.request_charge} RU,"
+            f" retrieved {cross.retrieved_document_count})"
+        )
+        if done:
+            return {"engaged": engaged, "secondsToEngage": round(elapsed) if engaged else None,
+                    "waitMinutes": minutes, "retrievedLimit": limit, "polls": polls}  # fmt: skip
+        await sleep(INDEX_POLL_SECONDS)
 
 
 async def check_definitions(database: Any) -> dict[str, list[str]]:
@@ -717,7 +856,8 @@ async def run(args: argparse.Namespace) -> int:
             "maxIndexedSearchRu": MAX_INDEXED_SEARCH_RU,
             "maxRetrievedFraction": MAX_RETRIEVED_FRACTION,
             "querySeed": QUERY_SEED,
-            "settleSeconds": args.settle_seconds,
+            "indexWaitMinutes": args.index_wait_minutes,
+            "indexPollSeconds": INDEX_POLL_SECONDS,
         },
         "corpus": {
             "files": [{k: v for k, v in d.items() if k not in ("fileName", "documentId")} for d in documents],
@@ -815,12 +955,17 @@ async def run(args: argparse.Namespace) -> int:
                 f" {load_throttle.count} throttled retries"
             )
 
-            if args.settle_seconds:
-                log(f"waiting {args.settle_seconds}s before searching")
-                await asyncio.sleep(args.settle_seconds)
+            raw_vectors = await embedder.embed([*vector_queries, *hybrid_queries])
+            log(f"waiting for the vector index (up to {args.index_wait_minutes:g} minutes)")
+            record["indexWait"] = await wait_for_index(
+                chunks_container, library_id, raw_vectors[0], len(bodies), search_throttle, args.index_wait_minutes
+            )
+            if record["indexWait"]["engaged"]:
+                log(f"  index engaged after {record['indexWait']['secondsToEngage']}s")
+            else:
+                log("  index never engaged; searching anyway so the record shows the scan")
 
             log("step 3: 20 vector-only and 20 hybrid searches, each with its exact reference")
-            raw_vectors = await embedder.embed([*vector_queries, *hybrid_queries])
             vector_ms: list[SearchMeasurement] = []
             exact_vector_ms: list[SearchMeasurement] = []
             hybrid_ms: list[SearchMeasurement] = []
@@ -1035,7 +1180,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
     parser.add_argument("--queries", type=Path, help="optional file of real questions, one per line (20 or 40)")
     parser.add_argument("--target-chunks", type=int, default=TARGET_CHUNKS)
-    parser.add_argument("--settle-seconds", type=int, default=30, help="pause between loading and searching")
+    parser.add_argument(
+        "--index-wait-minutes", type=float, default=20, help="how long to wait for the vector index to engage"
+    )
     parser.add_argument("--records-dir", type=Path, default=REPO / "records")
     parser.add_argument("--keep", action="store_true", help="keep the canary library instead of deleting it")
     parser.add_argument("--cleanup", metavar="LIBRARY_ID", help="delete a kept canary library, then exit")

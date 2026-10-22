@@ -272,3 +272,15 @@ async def test_throttle_gives_up_and_never_retries_other_errors():
     with pytest.raises(CosmosHttpResponseError):
         await throttle.run(forbidden)
     assert throttle.count == 0
+
+
+def test_decode_index_utilization():
+    import base64
+    import json
+
+    from scripts.canary import decode_index_utilization
+
+    report = {"UtilizedSingleIndexes": [{"IndexSpec": "/libraryId ASC"}]}
+    assert decode_index_utilization(base64.b64encode(json.dumps(report).encode()).decode()) == report
+    assert decode_index_utilization("not base64 json") == "not base64 json"
+    assert decode_index_utilization(None) is None

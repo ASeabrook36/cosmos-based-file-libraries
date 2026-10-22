@@ -55,5 +55,6 @@ The canary prints each check and writes `records/canary-<UTC timestamp>.json`. *
 
 - Container definitions don't match: the service stored something other than `cosmos/*.json`. Check `quantizerType` first. Bicep has no type for it, so it is passed through unchecked.
 - `401`/`403` from Cosmos or Azure OpenAI: role assignments have not propagated yet. Wait and rerun.
-- Index not engaged, or low recall: recreate the account and rerun (`docs/evidence.md` E17). If it fails again, fall back to the product quantizer and float32 (`docs/build-plan.md` Phase 0, "If it fails"). That needs a new container.
+- Index not engaged: DiskANN builds asynchronously, so the canary polls one search for up to `--index-wait-minutes` (default 20) before searching. The record's `indexWait.polls` show each poll's charge and retrieved count, with and without the partition-key prefix, plus Cosmos's index-utilization report. If it never engages, recreate the account and rerun (`docs/evidence.md` E17).
+- Low recall: recreate the account and rerun. If it fails again, fall back to the product quantizer and float32 (`docs/build-plan.md` Phase 0, "If it fails"). That needs a new container.
 - An interrupted run leaves its test library behind. The canary prints the command that removes it: `python scripts/canary.py --cleanup <libraryId>`.

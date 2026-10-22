@@ -54,14 +54,27 @@ def throttled():
     return exc
 
 
+def raw_response(headers: dict) -> SimpleNamespace:
+    return SimpleNamespace(http_response=SimpleNamespace(headers=headers))
+
+
 class FakeContainer:
-    """Throttles every 7th write and every 5th search once, as serverless does under load (E10)."""
+    """Throttles every 7th write and every 5th search once, as serverless does under load (E10).
+
+    The vector index engages only after ``scans_before_index`` indexed searches have scanned,
+    like an asynchronous DiskANN build. A hybrid search answers in two HTTP responses, one per
+    component, and only the raw hook sees both.
+    """
+
+    scans_before_index = 2
 
     def __init__(self, name: str, store: dict):
         self.name = name
         self.items = store.setdefault(name, {})
         self.queries: list[str] = []
         self.calls = 0
+        self.indexed_searches = 0
+        self.prefix_routed = 0
 
     async def read(self):
         return json.loads((REPO / "cosmos" / f"{self.name}.container.json").read_text()) | {"_rid": "x"}
@@ -81,14 +94,24 @@ class FakeContainer:
     async def delete_item(self, item, partition_key):
         del self.items[item]
 
-    def query_items(self, sql, parameters=None, partition_key=None, populate_query_metrics=None, response_hook=None):
+    raw_hook_works = True
+
+    def query_items(self, sql, parameters=None, partition_key=None, raw_response_hook=None, response_hook=None, **kw):
+        if not self.raw_hook_works:
+            raw_response_hook = None
         params = {p["name"]: p["value"] for p in parameters or []}
         rows = [i for i in self.items.values() if i.get("libraryId") == params["@libraryId"]]
 
         self.calls += 1
         throttle_this = "VectorDistance" in sql and self.calls % 5 == 0
+        exact = ", true," in sql
+        hybrid = "RRF(" in sql
+        indexed = "VectorDistance" in sql and not exact and not hybrid and "'float32'" not in sql
         if not throttle_this:
             self.queries.append(sql)  # queries that ran, not retried attempts
+            self.indexed_searches += indexed
+            self.prefix_routed += partition_key is not None and "VectorDistance" in sql
+        scanning = not indexed or self.indexed_searches <= self.scans_before_index
 
         async def gen():
             if throttle_this:
@@ -99,11 +122,15 @@ class FakeContainer:
                 query = params["@queryVector"]
                 top = int(sql.split()[2])
                 scored = sorted(rows, key=lambda r: -sum(a * b for a, b in zip(r["embedding"], query, strict=True)))
-                exact = ", true," in sql
-                if response_hook:
-                    retrieved = len(rows) if exact or "'float32'" in sql else 7
-                    metrics = f"retrievedDocumentCount={retrieved};outputDocumentCount={top}"
-                    charge = "4000" if exact else "12.5"
+                retrieved = len(rows) if scanning and not hybrid else 7
+                metrics = f"retrievedDocumentCount={retrieved};outputDocumentCount={top}"
+                charge = "4000" if exact else ("2" if hybrid else ("114" if scanning else "12.5"))
+                if raw_response_hook:
+                    for _ in range(2 if hybrid else 1):
+                        raw_response_hook(
+                            raw_response({"x-ms-request-charge": charge, "x-ms-documentdb-query-metrics": metrics})
+                        )
+                if response_hook:  # like the SDK: hybrid components never reach it
                     response_hook({"x-ms-request-charge": charge, "x-ms-documentdb-query-metrics": metrics}, None)
                 for r in scored[:top]:
                     yield {"id": r["id"], "score": 0.5}
@@ -155,6 +182,7 @@ def fakes(monkeypatch):
     monkeypatch.setattr(azure.identity.aio, "DefaultAzureCredential", FakeCredential)
     monkeypatch.setattr(inherited.embedding, "AzureOpenAIEmbedder", FakeEmbedder)
     monkeypatch.setattr(canary, "MIN_CHUNKS", 50)  # the repo's own docs: real text, about 80 chunks
+    monkeypatch.setattr(canary, "INDEX_POLL_SECONDS", 0)
     for name, value in {
         "COSMOS_ENDPOINT": "https://fake.documents.azure.com:443/",
         "AOAI_ENDPOINT": "https://fake.openai.azure.com/",
@@ -165,7 +193,7 @@ def fakes(monkeypatch):
 
 @pytest.mark.parametrize("keep", [False, True])
 def test_canary_runs_end_to_end_and_records_metrics_only(fakes, tmp_path, keep):
-    argv = ["--corpus", str(REPO / "docs"), "--settle-seconds", "0", "--records-dir", str(tmp_path)]
+    argv = ["--corpus", str(REPO / "docs"), "--index-wait-minutes", "5", "--records-dir", str(tmp_path)]
     assert canary.main([*argv, "--keep"] if keep else argv) == 0
 
     [path] = tmp_path.glob("canary-*.json")
@@ -183,6 +211,11 @@ def test_canary_runs_end_to_end_and_records_metrics_only(fakes, tmp_path, keep):
     assert len(record["searches"]["vector"]) == len(record["searches"]["hybrid"]) == canary.QUERIES_PER_KIND
     assert record["storedVector"]["dimensions"] == 3072
     assert record["load"]["throttledRetries"] > 0 and record["searches"]["throttledRetries"] > 0
+    wait = record["indexWait"]
+    assert wait["engaged"] is True and len(wait["polls"]) == 2  # poll 1 scans twice, poll 2 engages
+    assert wait["polls"][0]["prefix"]["retrieved"] == wait["polls"][0]["noPrefix"]["retrieved"] > 7
+    assert {m["http_responses"] for m in record["searches"]["hybrid"]} == {2}
+    assert {m["request_charge"] for m in record["searches"]["hybrid"]} == {4.0}
 
     # No chunk text, query text or file names reach the committed record (CLAUDE.md rule 12).
     raw = path.read_text()
@@ -202,12 +235,24 @@ def test_canary_runs_end_to_end_and_records_metrics_only(fakes, tmp_path, keep):
 
 
 def test_hybrid_queries_use_rrf_and_vector_queries_declare_float16(fakes, tmp_path):
-    canary.main(["--corpus", str(REPO / "docs"), "--settle-seconds", "0", "--records-dir", str(tmp_path)])
+    canary.main(["--corpus", str(REPO / "docs"), "--index-wait-minutes", "5", "--records-dir", str(tmp_path)])
     sent = FakeCosmosClient.last.database.containers["chunks"].queries
     vector = [q for q in sent if "VectorDistance" in q]
     assert sum("ORDER BY RANK RRF(" in q for q in vector) == 2 * canary.QUERIES_PER_KIND  # hybrid + exact hybrid
     assert sum("'float32'" in q for q in vector) == 1  # only the documented trap
     assert all("'float16'" in q for q in vector if "'float32'" not in q)
+
+
+def test_an_index_that_never_engages_fails_and_records_the_scan(fakes, tmp_path, monkeypatch):
+    monkeypatch.setattr(FakeContainer, "scans_before_index", 10**9)
+    argv = ["--corpus", str(REPO / "docs"), "--index-wait-minutes", "0", "--records-dir", str(tmp_path)]
+    assert canary.main(argv) == 1
+    [path] = tmp_path.glob("canary-*.json")
+    record = json.loads(path.read_text())
+    checks = {c["name"]: c for c in record["checks"]}
+    assert not checks["index_engaged_charge"]["passed"] and not checks["index_engaged_retrieved"]["passed"]
+    assert record["indexWait"]["engaged"] is False and len(record["indexWait"]["polls"]) == 1
+    assert record["cleanedUp"] is True
 
 
 def test_count_only_reads_the_corpus_without_azure(monkeypatch, capsys):
@@ -217,3 +262,12 @@ def test_count_only_reads_the_corpus_without_azure(monkeypatch, capsys):
     monkeypatch.setattr(canary, "MIN_CHUNKS", 10_000)
     assert canary.main(["--corpus", str(REPO / "docs"), "--count-only"]) == 1
     assert "need at least 10000" in capsys.readouterr().err
+
+
+def test_falls_back_to_response_hook_and_says_so(fakes, tmp_path, monkeypatch):
+    monkeypatch.setattr(FakeContainer, "raw_hook_works", False)
+    argv = ["--corpus", str(REPO / "docs"), "--index-wait-minutes", "5", "--records-dir", str(tmp_path)]
+    assert canary.main(argv) == 0
+    [path] = tmp_path.glob("canary-*.json")
+    hybrid = json.loads(path.read_text())["searches"]["hybrid"]
+    assert {m["measured_by"] for m in hybrid} == {"response_hook"} and {m["http_responses"] for m in hybrid} == {1}
