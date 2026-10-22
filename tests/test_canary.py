@@ -216,3 +216,59 @@ def test_deployment_env_restores_mangled_output_names():
         "export APPLICATIONINSIGHTS_CONNECTION_STRING='InstrumentationKey=x;IngestionEndpoint=y'",
         "export COSMOS_ENDPOINT=https://a.documents.azure.com:443/",
     ]
+
+
+def _throttled(retry_after_ms: str | None = None):
+    from azure.cosmos.exceptions import CosmosHttpResponseError
+
+    exc = CosmosHttpResponseError(status_code=429, message="Request rate is large")
+    exc.headers = {"x-ms-retry-after-ms": retry_after_ms} if retry_after_ms else {}
+    return exc
+
+
+async def test_throttle_retries_429_honouring_retry_after():
+    from scripts.canary import Throttle
+
+    waits: list[float] = []
+
+    async def sleep(seconds: float) -> None:
+        waits.append(seconds)
+
+    failures = [_throttled("250"), _throttled()]
+
+    async def call():
+        if failures:
+            raise failures.pop(0)
+        return "ok"
+
+    throttle = Throttle(sleep=sleep)
+    assert await throttle.run(call) == "ok"
+    assert throttle.count == 2 and waits[0] == 0.25 and 0.1 <= waits[1] <= 30
+
+
+async def test_throttle_gives_up_and_never_retries_other_errors():
+    from azure.cosmos.exceptions import CosmosHttpResponseError
+
+    from scripts.canary import THROTTLE_ATTEMPTS, Throttle
+
+    async def sleep(seconds: float) -> None:
+        pass
+
+    calls = 0
+
+    async def always_throttled():
+        nonlocal calls
+        calls += 1
+        raise _throttled("1")
+
+    with pytest.raises(CosmosHttpResponseError):
+        await Throttle(sleep=sleep).run(always_throttled)
+    assert calls == THROTTLE_ATTEMPTS
+
+    async def forbidden():
+        raise CosmosHttpResponseError(status_code=403, message="Forbidden")
+
+    throttle = Throttle(sleep=sleep)
+    with pytest.raises(CosmosHttpResponseError):
+        await throttle.run(forbidden)
+    assert throttle.count == 0

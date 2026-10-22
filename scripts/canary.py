@@ -80,7 +80,11 @@ K = 10
 RECALL_FLOOR = 0.95
 MAX_INDEXED_SEARCH_RU = 100.0  # "tens of RU"; a scan of this library costs thousands (E8)
 MAX_RETRIEVED_FRACTION = 0.2  # of the chunks loaded; the indexed path read about 0.06% in E8
-WRITE_CONCURRENCY = 8  # spec §7.2 step 8
+# A serverless container saturates at about two concurrent writers (E10). The first live run,
+# at 8 (the spec §7.2 per-document cap), exhausted the SDK's own 429 retries within seconds.
+WRITE_CONCURRENCY = 2
+THROTTLE_ATTEMPTS = 12  # our retries on 429, on top of the SDK's
+MAX_THROTTLE_WAIT_SECONDS = 30.0
 QUERY_SEED = 20261022
 CORPUS_TYPES = {"pdf", "docx", "pptx", "xlsx", "csv", "txt", "md", "html", "htm"}
 EMBEDDING_MODEL = "text-embedding-3-large"
@@ -222,6 +226,7 @@ class SearchMeasurement:
     null_scores: int = 0
     lexical_terms: int = 0
     flushed_subnormals: int = 0
+    throttled: int = 0  # 429s that outlasted the SDK's retries and were retried here
     milliseconds: float = 0.0
     error: str | None = None
 
@@ -346,6 +351,38 @@ class ResponseTally:
             self.saw_metrics = True
             for key, value in parse_query_metrics(raw).items():
                 self.metrics[key] = self.metrics.get(key, 0.0) + value
+
+
+class Throttle:
+    """Retries a Cosmos call on 429 after the SDK's own retries give up.
+
+    Waits ``x-ms-retry-after-ms`` when the service sends it, else a jittered backoff, and
+    counts every retry so the record shows how throttled the run was (E10).
+    """
+
+    def __init__(self, sleep: Callable[[float], Any] = asyncio.sleep) -> None:
+        self.count = 0
+        self._sleep = sleep
+
+    async def run(self, call: Callable[[], Any]) -> Any:
+        from azure.cosmos.exceptions import CosmosHttpResponseError
+
+        from inherited.http import backoff_seconds
+
+        for attempt in range(THROTTLE_ATTEMPTS):
+            try:
+                return await call()
+            except CosmosHttpResponseError as exc:
+                if exc.status_code != 429 or attempt + 1 == THROTTLE_ATTEMPTS:
+                    raise
+                self.count += 1
+                hint = (exc.headers or {}).get("x-ms-retry-after-ms")
+                try:
+                    wait = float(hint) / 1000 if hint is not None else backoff_seconds(attempt)
+                except ValueError:
+                    wait = backoff_seconds(attempt)
+                await self._sleep(min(MAX_THROTTLE_WAIT_SECONDS, max(wait, 0.1)))
+        raise CanaryError("unreachable")
 
 
 class TokenCache:
@@ -500,23 +537,33 @@ async def run_query(
     parameters: list[dict[str, Any]],
     library_id: str,
     measurement: SearchMeasurement,
+    throttle: Throttle,
     *,
     scored: bool,
 ) -> SearchMeasurement:
+    """Run one search. Charge and metrics are those of the attempt that succeeded."""
     from azure.cosmos.exceptions import CosmosHttpResponseError
 
     tally = ResponseTally()
-    started = time.perf_counter()
-    try:
-        items = [
+
+    async def attempt() -> list[dict[str, Any]]:
+        nonlocal tally
+        tally = ResponseTally()
+        return [
             item
             async for item in container.query_items(
                 sql, parameters=parameters, partition_key=[library_id], populate_query_metrics=True, response_hook=tally
             )
         ]
+
+    before = throttle.count
+    started = time.perf_counter()
+    try:
+        items = await throttle.run(attempt)
     except CosmosHttpResponseError as exc:
         measurement.error = f"HTTP {exc.status_code} {(exc.message or '')[:300]}"
         items = []
+    measurement.throttled = throttle.count - before
     measurement.milliseconds = round((time.perf_counter() - started) * 1000, 1)
     measurement.request_charge = round(tally.request_charge, 2)
     measurement.backend_pages = tally.pages
@@ -542,7 +589,9 @@ async def check_definitions(database: Any) -> dict[str, list[str]]:
     return problems
 
 
-async def write_all(container: Any, bodies: Sequence[dict[str, Any]], progress: Callable[[int], None]) -> float:
+async def write_all(
+    container: Any, bodies: Sequence[dict[str, Any]], throttle: Throttle, progress: Callable[[int], None]
+) -> float:
     gate = asyncio.Semaphore(WRITE_CONCURRENCY)
     charge = 0.0
     done = 0
@@ -551,7 +600,7 @@ async def write_all(container: Any, bodies: Sequence[dict[str, Any]], progress: 
         nonlocal charge, done
         tally = ResponseTally()
         async with gate:
-            await container.upsert_item(body, response_hook=tally)
+            await throttle.run(lambda: container.upsert_item(body, response_hook=tally))
         charge += tally.request_charge
         done += 1
         if done % 100 == 0:
@@ -561,14 +610,16 @@ async def write_all(container: Any, bodies: Sequence[dict[str, Any]], progress: 
     return charge
 
 
-async def crud_probe(container: Any, body: dict[str, Any], partition_key: Any, library_id: str) -> str | None:
+async def crud_probe(
+    container: Any, body: dict[str, Any], partition_key: Any, library_id: str, throttle: Throttle
+) -> str | None:
     """Write, point-read and query one record. ``None`` on success, else what failed."""
     try:
-        await container.upsert_item(body)
+        await throttle.run(lambda: container.upsert_item(body))
     except Exception as exc:  # noqa: BLE001
         return f"write: {type(exc).__name__}: {str(exc)[:200]}"
     try:
-        read = await container.read_item(body["id"], partition_key=partition_key)
+        read = await throttle.run(lambda: container.read_item(body["id"], partition_key=partition_key))
         if read["id"] != body["id"]:
             return "read: wrong record"
     except Exception as exc:  # noqa: BLE001
@@ -707,6 +758,7 @@ async def run(args: argparse.Namespace) -> int:
             libraries = database.get_container_client("libraries")
             docs_container = database.get_container_client("documents")
             chunks_container = database.get_container_client("chunks")
+            load_throttle, search_throttle = Throttle(), Throttle()
 
             log(f"step 1: write, read and query one record per container (library {library_id})")
             log(f"  if this run is interrupted: python scripts/canary.py --cleanup {library_id}")
@@ -716,10 +768,12 @@ async def run(args: argparse.Namespace) -> int:
             ]
             doc_bodies = [document_record(library_id, d, now, chunking_version) for d in loaded_docs]
             crud = {
-                "libraries": await crud_probe(libraries, library_record(library_id, now), library_id, library_id),
-                "documents": await crud_probe(docs_container, doc_bodies[0], library_id, library_id),
+                "libraries": await crud_probe(
+                    libraries, library_record(library_id, now), library_id, library_id, load_throttle
+                ),
+                "documents": await crud_probe(docs_container, doc_bodies[0], library_id, library_id, load_throttle),
                 "chunks": await crud_probe(
-                    chunks_container, bodies[0], [library_id, bodies[0]["documentId"]], library_id
+                    chunks_container, bodies[0], [library_id, bodies[0]["documentId"]], library_id, load_throttle
                 ),
             }
             for name, problem in crud.items():
@@ -740,8 +794,10 @@ async def run(args: argparse.Namespace) -> int:
 
             log(f"step 2: loading {len(bodies)} chunks, {WRITE_CONCURRENCY} concurrent writes")
             t0 = time.perf_counter()
-            doc_charge = await write_all(docs_container, doc_bodies[1:], lambda n: None)
-            chunk_charge = await write_all(chunks_container, bodies[1:], lambda n: log(f"  {n} chunks written"))
+            doc_charge = await write_all(docs_container, doc_bodies[1:], load_throttle, lambda n: None)
+            chunk_charge = await write_all(
+                chunks_container, bodies[1:], load_throttle, lambda n: log(f"  {n} chunks written")
+            )
             seconds = time.perf_counter() - t0
             record["load"] = {
                 "chunks": len(bodies),
@@ -751,8 +807,13 @@ async def run(args: argparse.Namespace) -> int:
                 "chunkRequestCharge": round(chunk_charge, 1),
                 "ruPerChunk": round(chunk_charge / max(1, len(bodies) - 1), 1),
                 "documentRequestCharge": round(doc_charge, 1),
+                "concurrentWrites": WRITE_CONCURRENCY,
+                "throttledRetries": load_throttle.count,
             }
-            log(f"  loaded in {seconds:.0f}s, {record['load']['ruPerChunk']} RU per chunk")
+            log(
+                f"  loaded in {seconds:.0f}s, {record['load']['ruPerChunk']} RU per chunk,"
+                f" {load_throttle.count} throttled retries"
+            )
 
             if args.settle_seconds:
                 log(f"waiting {args.settle_seconds}s before searching")
@@ -774,6 +835,7 @@ async def run(args: argparse.Namespace) -> int:
                     query.parameters,
                     library_id,
                     SearchMeasurement("vector", i, flushed_subnormals=flushed),
+                    search_throttle,
                     scored=True,
                 )
                 vector_ms.append(m)
@@ -784,6 +846,7 @@ async def run(args: argparse.Namespace) -> int:
                         query.parameters,
                         library_id,
                         SearchMeasurement("exact-vector", i),
+                        search_throttle,
                         scored=False,
                     )
                 )
@@ -800,6 +863,7 @@ async def run(args: argparse.Namespace) -> int:
                         SearchMeasurement(
                             "hybrid", i, lexical_terms=len(terms), flushed_subnormals=float16_flush_count(raw)
                         ),
+                        search_throttle,
                         scored=False,
                     )
                 )
@@ -810,6 +874,7 @@ async def run(args: argparse.Namespace) -> int:
                         query.parameters,
                         library_id,
                         SearchMeasurement("exact-hybrid", i),
+                        search_throttle,
                         scored=False,
                     )
                 )
@@ -826,6 +891,7 @@ async def run(args: argparse.Namespace) -> int:
                 trap_params,
                 library_id,
                 SearchMeasurement("float32-trap", 0),
+                search_throttle,
                 scored=True,
             )
             record["float32Trap"] = asdict(trap) | {
@@ -860,6 +926,7 @@ async def run(args: argparse.Namespace) -> int:
                     "exactVectorRetrieved": _summary([m.retrieved_document_count or 0 for m in exact_vector_ms]),
                 },
             }
+            record["searches"]["throttledRetries"] = search_throttle.count
             record["checks"] = [asdict(c) for c in checks]
             record["passed"] = all(c.passed for c in checks)
 
@@ -892,13 +959,14 @@ async def purge(database: Any, library_id: str) -> int:
     from azure.cosmos.exceptions import CosmosResourceNotFoundError
 
     gate = asyncio.Semaphore(WRITE_CONCURRENCY)
+    throttle = Throttle()
     deleted = 0
 
     async def delete(container: Any, item_id: str, partition_key: Any) -> None:
         nonlocal deleted
         async with gate:
             try:
-                await container.delete_item(item_id, partition_key=partition_key)
+                await throttle.run(lambda: container.delete_item(item_id, partition_key=partition_key))
                 deleted += 1
             except CosmosResourceNotFoundError:
                 pass

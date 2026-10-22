@@ -46,16 +46,30 @@ class FakeCredential:
         pass
 
 
+def throttled():
+    from azure.cosmos.exceptions import CosmosHttpResponseError
+
+    exc = CosmosHttpResponseError(status_code=429, message="Request rate is large")
+    exc.headers = {"x-ms-retry-after-ms": "1"}
+    return exc
+
+
 class FakeContainer:
+    """Throttles every 7th write and every 5th search once, as serverless does under load (E10)."""
+
     def __init__(self, name: str, store: dict):
         self.name = name
         self.items = store.setdefault(name, {})
         self.queries: list[str] = []
+        self.calls = 0
 
     async def read(self):
         return json.loads((REPO / "cosmos" / f"{self.name}.container.json").read_text()) | {"_rid": "x"}
 
     async def upsert_item(self, body, response_hook=None):
+        self.calls += 1
+        if self.calls % 7 == 0:
+            raise throttled()
         self.items[body["id"]] = body
         if response_hook:
             response_hook({"x-ms-request-charge": "91"}, body)
@@ -68,11 +82,17 @@ class FakeContainer:
         del self.items[item]
 
     def query_items(self, sql, parameters=None, partition_key=None, populate_query_metrics=None, response_hook=None):
-        self.queries.append(sql)
         params = {p["name"]: p["value"] for p in parameters or []}
         rows = [i for i in self.items.values() if i.get("libraryId") == params["@libraryId"]]
 
+        self.calls += 1
+        throttle_this = "VectorDistance" in sql and self.calls % 5 == 0
+        if not throttle_this:
+            self.queries.append(sql)  # queries that ran, not retried attempts
+
         async def gen():
+            if throttle_this:
+                raise throttled()
             if "VectorDistance" in sql:
                 assert re.match(r"SELECT TOP \d+ ", sql) and "c.libraryId = @libraryId" in sql
                 assert " c.embedding," not in sql
@@ -162,6 +182,7 @@ def test_canary_runs_end_to_end_and_records_metrics_only(fakes, tmp_path, keep):
     assert record["float32Trap"]["scanned"] is True
     assert len(record["searches"]["vector"]) == len(record["searches"]["hybrid"]) == canary.QUERIES_PER_KIND
     assert record["storedVector"]["dimensions"] == 3072
+    assert record["load"]["throttledRetries"] > 0 and record["searches"]["throttledRetries"] > 0
 
     # No chunk text, query text or file names reach the committed record (CLAUDE.md rule 12).
     raw = path.read_text()
