@@ -27,6 +27,7 @@ Images, metadata filters and proposals are Phase 3. The design rests on earlier 
 | `docs/spec.md` | What to build: components, data model, permissions, API, ingestion, search | Whoever builds it |
 | `docs/build-plan.md` | Build order, demo-first, with an exit check per phase and the demo script | Whoever builds it |
 | `docs/evidence.md` | Each decision, the measurement behind it, and what is not proven | Reviewers, and anyone challenging a decision |
+| `docs/review-response.md` | Each finding of the independent architecture review, its class, and what was done | Reviewers |
 | `cosmos/*.json` | The three Cosmos container definitions, ready to deploy | Infrastructure code |
 | `infra/` | Bicep for one organization's deployment, and how to deploy it | Whoever deploys it |
 | `src/fli/` | The application package: `fli-api` and `fli-worker` entry points | Whoever builds it |

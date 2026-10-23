@@ -1,6 +1,6 @@
 # Build plan
 
-*Version 0.5, 2026-10-22: Phase 2 passed (adapted exit check). Version 0.4: search is vector-only by default; hybrid is a setting, because routed by partition key it does not rank (`evidence.md` E27). Version 0.3: Entra authentication moved from Phase 1 to Phase 5 (the platform authenticates its users; the prototype uses a static local key). Version 0.2: Phase 0 passed; its findings are folded into Phases 0, 4 and the risks.*
+*Version 0.6, 2026-10-23: the independent review's findings and their later-phase items, recorded in `review-response.md`. Version 0.5, 2026-10-22: Phase 2 passed (adapted exit check). Version 0.4: search is vector-only by default; hybrid is a setting, because routed by partition key it does not rank (`evidence.md` E27). Version 0.3: Entra authentication moved from Phase 1 to Phase 5 (the platform authenticates its users; the prototype uses a static local key). Version 0.2: Phase 0 passed; its findings are folded into Phases 0, 4 and the risks.*
 
 The plan is ordered to reach something demonstrable as early as possible:
 
