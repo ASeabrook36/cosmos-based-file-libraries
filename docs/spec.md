@@ -1,6 +1,6 @@
 # Specification: File Library Index
 
-*Version 0.6, 2026-10-22. Working name. Status: Phase 0 complete (the Cosmos configuration is proven at small scale); the application is not built. Every design choice here that rests on a measurement is traced in `evidence.md`.*
+*Version 0.6, 2026-10-22. Working name. Status: Phase 1 complete (upload, ingestion and vector search run end to end on the demo account); Phases 2–5 are not built. Every design choice here that rests on a measurement is traced in `evidence.md`.*
 
 ## 1. Scope
 

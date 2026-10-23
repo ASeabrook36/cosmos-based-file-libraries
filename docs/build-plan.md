@@ -49,6 +49,8 @@ The first build of this exact Cosmos configuration happens here (`evidence.md` N
 
 ## Phase 1: The core path
 
+**Status: passed on 2026-10-23.** The record is `records/phase1-exit-20261023T013913Z.json`: 20 real documents (PDF, DOCX, CSV, TXT, MD, HTML, EML; 5,535 chunks) reached `ready`, 11 REST searches returned relevant chunks with file names and locations at 10.6–16.5 RU, and a personal library refused another agent with `403`. PPTX and XLSX were left out of the live corpus and are covered by unit tests only. The first run (`records/phase1-exit-20261023T012726Z.json`) found that hybrid search routed by partition key does not rank (`evidence.md` E27); search is vector-only by default since. Entra authentication moved to Phase 5.
+
 **Build**
 
 - **Caller check:** a static key (`AUTH_MODE=dev`) that refuses to start outside `ENVIRONMENT=local`. No Entra in the prototype: the platform authenticates users and decides which libraries they and their agents see (`spec.md` §5). Entra validation is Phase 5.
