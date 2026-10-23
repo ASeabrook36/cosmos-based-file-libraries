@@ -12,6 +12,7 @@ from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 
 from fli.auth import check_auth_supported
+from fli.blobs import AzureBlobs, BlobStore
 from fli.config import ConfigError, Settings
 from fli.errors import ApiError
 from fli.queue import Queue, ServiceBusQueue
@@ -30,11 +31,12 @@ def _invalid(exc: RequestValidationError | ValidationError) -> JSONResponse:
 async def _azure(app: FastAPI) -> AsyncIterator[None]:
     """Connect to Cosmos and Service Bus with the managed identity (CLAUDE.md rule 13)."""
     settings: Settings = app.state.settings
-    if not (settings.cosmos_endpoint and settings.servicebus_namespace):
-        raise ConfigError("COSMOS_ENDPOINT and SERVICEBUS_NAMESPACE are required")
+    if not (settings.cosmos_endpoint and settings.servicebus_namespace and settings.blob_account_url):
+        raise ConfigError("COSMOS_ENDPOINT, SERVICEBUS_NAMESPACE and BLOB_ACCOUNT_URL are required")
     from azure.cosmos.aio import CosmosClient
     from azure.identity.aio import DefaultAzureCredential
     from azure.servicebus.aio import ServiceBusClient
+    from azure.storage.blob.aio import BlobServiceClient
 
     async with AsyncExitStack() as stack:
         credential = await stack.enter_async_context(DefaultAzureCredential())
@@ -44,6 +46,10 @@ async def _azure(app: FastAPI) -> AsyncIterator[None]:
             ServiceBusClient(f"{settings.servicebus_namespace}.servicebus.windows.net", credential=credential)
         )
         sender = await stack.enter_async_context(bus.get_queue_sender(settings.servicebus_queue))
+        blob_service = await stack.enter_async_context(
+            BlobServiceClient(settings.blob_account_url, credential=credential)
+        )
+        app.state.blobs = AzureBlobs(blob_service.get_container_client(settings.blob_container))
         app.state.libraries = CosmosLibraryStore(database.get_container_client("libraries"))
         app.state.documents = CosmosDocumentStore(database.get_container_client("documents"))
         app.state.queue = ServiceBusQueue(sender)
@@ -56,12 +62,13 @@ def create_app(
     libraries: LibraryStore | None = None,
     documents: DocumentStore | None = None,
     queue: Queue | None = None,
+    blobs: BlobStore | None = None,
 ) -> FastAPI:
-    """Build the API. Pass all three stores for tests; pass none to connect to Azure at startup."""
+    """Build the API. Pass every service for tests; pass none to connect to Azure at startup."""
     check_auth_supported(settings)
-    injected = (libraries, documents, queue)
+    injected = (libraries, documents, queue, blobs)
     if any(x is not None for x in injected) and not all(x is not None for x in injected):
-        raise ValueError("pass libraries, documents and queue together, or none of them")
+        raise ValueError("pass libraries, documents, queue and blobs together, or none of them")
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
@@ -74,7 +81,7 @@ def create_app(
     app = FastAPI(title="File Library Index", version="0.1.0", lifespan=lifespan)
     app.state.settings = settings
     if libraries is not None:
-        app.state.libraries, app.state.documents, app.state.queue = libraries, documents, queue
+        app.state.libraries, app.state.documents, app.state.queue, app.state.blobs = injected
 
     @app.exception_handler(ApiError)
     async def api_error(_: Request, exc: ApiError) -> JSONResponse:
@@ -92,9 +99,11 @@ def create_app(
     async def healthz() -> dict[str, str]:
         return {"status": "ok"}
 
+    from fli.api import documents as document_routes
     from fli.api import libraries as library_routes
 
     app.include_router(library_routes.router)
+    app.include_router(document_routes.router)
     return app
 
 

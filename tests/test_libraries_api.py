@@ -8,6 +8,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from fli.api import create_app
+from fli.blobs import MemoryBlobs
 from fli.config import Settings
 from fli.errors import ApiError
 from fli.permissions import check_search_allowed
@@ -22,7 +23,7 @@ AUTH = {"Authorization": f"Bearer {KEY}"}
 def ctx():
     libraries, queue = MemoryLibraryStore(), MemoryQueue()
     settings = Settings.from_env({"ENVIRONMENT": "local", "AUTH_MODE": "dev", "DEV_API_KEY": KEY})
-    app = create_app(settings, libraries=libraries, documents=MemoryDocumentStore(), queue=queue)
+    app = create_app(settings, libraries=libraries, documents=MemoryDocumentStore(), queue=queue, blobs=MemoryBlobs())
     client = TestClient(app, headers=AUTH)
     return client, libraries, queue
 
