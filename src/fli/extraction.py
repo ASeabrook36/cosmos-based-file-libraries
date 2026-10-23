@@ -418,6 +418,7 @@ def _eml(data: bytes) -> tuple[list[Section], tuple[str | None, datetime | None]
 
 
 TEXT_TYPES = {"txt", "md", "markdown", "json", "log"}
+LEGACY_OFFICE = {"doc", "ppt", "xls"}  # unsupported in v1 (spec §7.3), whatever content type is declared
 IMAGE_TYPES = {"png", "jpg", "jpeg", "tif", "tiff", "bmp"}
 
 
@@ -444,6 +445,10 @@ async def extract(data: bytes, *, filename: str, content_type: str = "", ocr: Oc
             return await _ocr_fallback(data, "application/pdf", ocr, pages)
         if ext in IMAGE_TYPES:
             return await _ocr_fallback(data, content_type or f"image/{ext}", ocr, 1)
+        if ext in LEGACY_OFFICE:
+            return Extracted(
+                "unsupported", unsupported_reason="unsupported_file_type", method=ExtractionMethod.UNSUPPORTED
+            )
         if ext == "eml" or content_type == "message/rfc822":
             sections, (author, authored_at) = _eml(data)
             return Extracted("ok", sections, author=author, authored_at=authored_at)
