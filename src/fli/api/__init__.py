@@ -79,6 +79,7 @@ async def _azure(app: FastAPI) -> AsyncIterator[None]:
             app.state.documents,
             CosmosChunkReader(database.get_container_client("chunks")),
             embedder,
+            mode=settings.search_mode,
         )
         yield
 

@@ -132,7 +132,9 @@ class FakeContainer:
                         )
                 if response_hook:  # like the SDK: hybrid components never reach it
                     response_hook({"x-ms-request-charge": charge, "x-ms-documentdb-query-metrics": metrics}, None)
-                for r in scored[:top]:
+                # Like Cosmos: a RANK-ordered query routed by partition key comes back unranked (E27).
+                ordered = rows if hybrid and partition_key is not None else scored
+                for r in ordered[:top]:
                     yield {"id": r["id"], "score": 0.5}
             elif "c.id = @id" in sql:
                 for r in rows:
@@ -273,3 +275,12 @@ def test_falls_back_to_response_hook_and_says_so(fakes, tmp_path, monkeypatch):
     [path] = tmp_path.glob("canary-*.json")
     hybrid = json.loads(path.read_text())["searches"]["hybrid"]
     assert {m["measured_by"] for m in hybrid} == {"response_hook"} and {m["http_responses"] for m in hybrid} == {1}
+
+
+def test_the_canary_fails_if_hybrid_searches_are_routed_by_partition_key(fakes, tmp_path, monkeypatch):
+    monkeypatch.setattr(canary, "partition_key_for", lambda sql, library_id: [library_id])
+    argv = ["--corpus", str(REPO / "docs"), "--index-wait-minutes", "5", "--records-dir", str(tmp_path)]
+    assert canary.main(argv) != 0
+    [path] = tmp_path.glob("canary-*.json")
+    checks = {c["name"]: c for c in json.loads(path.read_text())["checks"]}
+    assert checks["hybrid_ranks"]["passed"] is False

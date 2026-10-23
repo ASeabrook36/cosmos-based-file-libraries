@@ -10,6 +10,9 @@
 10. A metrics-only log line. Query text and chunk text are never logged (CLAUDE.md rule 12).
 
 Phase 1 runs no metadata filters; Phase 3 adds them (the query builder already renders them).
+
+``SEARCH_MODE`` chooses step 4-5: ``vector`` (the default) or ``hybrid``. Hybrid ranks only when
+sent without a partition key, and then costs about ten times more (evidence.md E27).
 """
 
 from __future__ import annotations
@@ -25,7 +28,15 @@ from typing import Any, Protocol
 from fli.embedding import Embedder
 from fli.generation import filter_visible
 from fli.permissions import check_search_allowed
-from fli.query import MAX_FETCH, RenderedQuery, SearchFilters, lexical_terms, render_search, to_float16_query
+from fli.query import (
+    MAX_FETCH,
+    RenderedQuery,
+    SearchFilters,
+    lexical_terms,
+    partition_key_for,
+    render_search,
+    to_float16_query,
+)
 from fli.store import DocumentStore, LibraryStore, Record
 
 log = logging.getLogger("fli.search")
@@ -55,9 +66,10 @@ class CosmosChunkReader:
         self._c = container
 
     async def search(self, library_id: str, query: RenderedQuery, cost: QueryCost) -> list[Record]:
-        items = self._c.query_items(
-            query.sql, parameters=query.parameters, partition_key=[library_id], raw_response_hook=cost
-        )
+        routing: dict[str, Any] = {}
+        if (key := partition_key_for(query.sql, library_id)) is not None:
+            routing["partition_key"] = key
+        items = self._c.query_items(query.sql, parameters=query.parameters, raw_response_hook=cost, **routing)
         return [item async for item in items]
 
     async def neighbors(
@@ -102,6 +114,7 @@ class Searcher:
     documents: DocumentStore
     chunks: ChunkReader
     embedder: Embedder
+    mode: str = "vector"  # SEARCH_MODE: "vector" or "hybrid"
 
     async def search(self, library_id: str, agent_id: str | None, request: SearchRequest) -> dict[str, Any]:
         started = time.perf_counter()
@@ -110,9 +123,8 @@ class Searcher:
         assert library is not None
 
         [vector] = await self.embedder.embed([request.query])
-        rendered = render_search(
-            library_id, to_float16_query(vector), lexical_terms(request.query), request.filters, fetch_size(request.top)
-        )
+        terms = lexical_terms(request.query) if self.mode == "hybrid" else []
+        rendered = render_search(library_id, to_float16_query(vector), terms, request.filters, fetch_size(request.top))
         cost = QueryCost()
         cosmos_started = time.perf_counter()
         candidates = await self.chunks.search(library_id, rendered, cost)
@@ -165,6 +177,7 @@ class Searcher:
                 "libraryId": library_id,
                 "libraryKind": library.get("kind"),
                 "agentId": agent_id,
+                "mode": self.mode,
                 "top": request.top,
                 "candidates": len(candidates),
                 "resultCount": len(results),

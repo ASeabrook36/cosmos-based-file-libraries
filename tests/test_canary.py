@@ -145,7 +145,7 @@ def _passing(**overrides):
         "definition_problems": {"libraries": [], "documents": [], "chunks": []},
         "vector": [_ms("vector", i, ids) for i in range(QUERIES_PER_KIND)],
         "exact_vector": [_ms("exact-vector", i, ids, 2000, 1500) for i in range(QUERIES_PER_KIND)],
-        "hybrid": [_ms("hybrid", i, ids, 300, 1500) for i in range(QUERIES_PER_KIND)],
+        "hybrid": [_ms("hybrid", i, [f"{i}-{j}" for j in range(10)], 300, 1500) for i in range(QUERIES_PER_KIND)],
         "exact_hybrid": [_ms("exact-hybrid", i, ids, 3000, 1500) for i in range(QUERIES_PER_KIND)],
     }
     kwargs.update(overrides)
@@ -287,3 +287,10 @@ def test_decode_index_utilization():
     encoded = base64.b64encode(json.dumps(guid).encode()).decode()
     assert decode_index_utilization(encoded) == {"UtilizedSingleIndexes": [{"IndexSpec": '/"<internal>"/?'}]}
     assert decode_index_utilization(None) is None
+
+
+def test_evaluate_fails_hybrid_searches_that_do_not_rank():
+    ids = [str(i) for i in range(10)]
+    unranked = [_ms("hybrid", i, ids, 3.91, 10) for i in range(QUERIES_PER_KIND)]  # the Phase 0 pattern (E27)
+    checks = _passing(hybrid=unranked)
+    assert not checks["hybrid_ranks"].passed and checks["hybrid_ranks"].observed["distinctResultLists"] == 1

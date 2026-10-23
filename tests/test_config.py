@@ -58,3 +58,10 @@ def test_healthz():
 )
 def test_servicebus_host_accepts_a_namespace_or_its_host_name(value, host):
     assert Settings.from_env({"ENVIRONMENT": "demo", "SERVICEBUS_NAMESPACE": value}).servicebus_host == host
+
+
+def test_search_mode_defaults_to_vector_and_is_checked():
+    assert Settings.from_env({"ENVIRONMENT": "demo"}).search_mode == "vector"
+    assert Settings.from_env({"ENVIRONMENT": "demo", "SEARCH_MODE": "hybrid"}).search_mode == "hybrid"
+    with pytest.raises(ConfigError, match="SEARCH_MODE"):
+        Settings.from_env({"ENVIRONMENT": "demo", "SEARCH_MODE": "keyword"})

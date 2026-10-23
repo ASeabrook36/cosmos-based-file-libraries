@@ -17,9 +17,11 @@ from typing import Literal
 
 Environment = Literal["local", "demo", "prod"]
 AuthMode = Literal["entra", "dev"]
+SearchMode = Literal["vector", "hybrid"]
 
 ENVIRONMENTS: tuple[Environment, ...] = ("local", "demo", "prod")
 AUTH_MODES: tuple[AuthMode, ...] = ("entra", "dev")
+SEARCH_MODES: tuple[SearchMode, ...] = ("vector", "hybrid")
 # Recorded on libraries and chunks for rebuilds (spec §4.1, E16). The deployment name is a setting;
 # the model behind it is fixed by the vector policy.
 EMBEDDING_MODEL = "text-embedding-3-large"
@@ -68,6 +70,7 @@ class Settings:
     cosmos_write_concurrency: int = 2  # worker-wide; 2 suits serverless (evidence.md E10)
     search_default_top: int = 8
     search_max_top: int = 20
+    search_mode: SearchMode = "vector"  # evidence.md E27: hybrid ranks only off the partition key, at ~10x the cost
 
     @property
     def servicebus_host(self) -> str | None:
@@ -115,6 +118,7 @@ class Settings:
             cosmos_write_concurrency=_int(env, "COSMOS_WRITE_CONCURRENCY", 2),
             search_default_top=_int(env, "SEARCH_DEFAULT_TOP", 8),
             search_max_top=_int(env, "SEARCH_MAX_TOP", 20),
+            search_mode=env.get("SEARCH_MODE") or "vector",  # type: ignore[arg-type]
         )
         settings.check()
         return settings
@@ -131,5 +135,7 @@ class Settings:
             raise ConfigError("AOAI_EMBEDDING_DIMENSIONS must equal the chunks vector policy (3072)")
         if self.cosmos_write_concurrency < 1:
             raise ConfigError("COSMOS_WRITE_CONCURRENCY must be at least 1")
+        if self.search_mode not in SEARCH_MODES:
+            raise ConfigError(f"SEARCH_MODE must be one of {', '.join(SEARCH_MODES)}")
         if not 1 <= self.search_default_top <= self.search_max_top <= 20:
             raise ConfigError("need 1 <= SEARCH_DEFAULT_TOP <= SEARCH_MAX_TOP <= 20")

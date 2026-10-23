@@ -15,6 +15,9 @@ Every rule here prevents a failure that was measured on live Cosmos (docs/eviden
 * ``c.embedding`` is never selected.
 * ``filterPriority``, ``searchListSizeMultiplier`` and RRF weights are left at their
   defaults (E13).
+* A query ordered by ``RANK`` (hybrid or full-text) is never sent with a partition key. The
+  Python SDK then skips the query plan that ranking needs, and Cosmos returns the first
+  ``TOP`` items unranked, silently (E27). ``partition_key_for`` decides the routing.
 
 Hybrid queries cannot run on the local Cosmos emulator (it rejects ``FullTextScore``); test
 the SQL as text locally and its behaviour against a real account (E21).
@@ -54,6 +57,20 @@ _TERM_RE = re.compile(r"[0-9A-Za-z]+")
 
 class QueryError(ValueError):
     pass
+
+
+_RANK_ORDER = re.compile(r"\bORDER\s+BY\s+RANK\b", re.IGNORECASE)
+
+
+def partition_key_for(sql: str, library_id: str) -> list[str] | None:
+    """How to route a chunks query: by the library prefix of the partition key, or not at all.
+
+    Vector-only queries are routed to the library's partition (one HTTP response, measured
+    working: E8, E12). Queries ordered by ``RANK`` must not be: with a partition key the SDK
+    sends them without the query plan and Cosmos returns them unranked (E27). They name the
+    library in ``WHERE`` only, and the SDK runs its hybrid pipeline.
+    """
+    return None if _RANK_ORDER.search(sql) else [library_id]
 
 
 def to_float16_query(vector: Sequence[float]) -> list[float]:

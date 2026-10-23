@@ -82,6 +82,7 @@ from fli.query import (  # noqa: E402
     check_query,
     float16_flush_count,
     lexical_terms,
+    partition_key_for,
     render_search,
     to_float16_query,
 )
@@ -344,6 +345,17 @@ def evaluate(
             bool(retrieved) and len(known) == len(retrieved) and max(known) < limit,
             _summary(known) | {"missingMetrics": len(retrieved) - len(known), "limit": limit},
             f"every vector-only search retrieves < {MAX_RETRIEVED_FRACTION:g} x chunks loaded",
+        )
+    )
+
+    ranked = [tuple(m.result_ids) for m in hybrid if not m.error]
+    distinct = len(set(ranked))
+    checks.append(
+        Check(
+            "hybrid_ranks",
+            bool(ranked) and distinct >= max(2, len(ranked) // 2),
+            {"distinctResultLists": distinct, "searches": len(ranked)},
+            "different questions get different hybrid results (an unranked hybrid returns the same TOP n, E27)",
         )
     )
 
@@ -627,7 +639,9 @@ async def run_query(
     from azure.cosmos.exceptions import CosmosHttpResponseError
 
     tally, fallback = RawTally(), ResponseTally()
-    routing = {"partition_key": [library_id]} if prefix_partition_key else {}
+    # A RANK-ordered (hybrid) query is never routed by partition key: it would run unranked (E27).
+    key = partition_key_for(sql, library_id)
+    routing = {"partition_key": key} if prefix_partition_key and key is not None else {}
 
     async def attempt() -> list[dict[str, Any]]:
         nonlocal tally, fallback

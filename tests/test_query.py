@@ -119,3 +119,13 @@ def test_check_query_rejects_each_broken_invariant(sql):
 def test_lexical_terms_are_lowercase_deduplicated_and_capped():
     assert lexical_terms("Margin, EMEA margin; Q4-2025") == ["margin", "emea", "q4", "2025"]
     assert len(lexical_terms(" ".join(f"w{i}" for i in range(40)))) == 16
+
+
+def test_rank_ordered_queries_are_never_routed_by_partition_key():
+    from fli.query import partition_key_for
+
+    hybrid = render_search("lib-1", VECTOR, ["margin"], SearchFilters(), fetch=8)
+    vector_only = render_search("lib-1", VECTOR, [], SearchFilters(), fetch=8)
+    assert partition_key_for(hybrid.sql, "lib-1") is None  # E27: routed, it comes back unranked
+    assert partition_key_for(vector_only.sql, "lib-1") == ["lib-1"]
+    assert partition_key_for("SELECT TOP 5 c.id FROM c WHERE c.libraryId = @libraryId order  by rank X", "l") is None

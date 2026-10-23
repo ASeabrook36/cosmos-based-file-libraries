@@ -53,7 +53,7 @@ async def test_search_returns_chunks_with_citations_and_coverage(ctx):
     assert "embedding" not in first and "score" not in first
 
 
-async def test_the_query_obeys_the_invariants(ctx):
+async def test_the_default_vector_query_obeys_the_invariants(ctx):
     client, s, worker = ctx
     lib, _ = await library_with_document(client, s, worker)
     search(client, lib, top=8)
@@ -61,11 +61,47 @@ async def test_the_query_obeys_the_invariants(ctx):
     params = {p["name"]: p["value"] for p in query.parameters}
     assert routed_to == lib and params["@libraryId"] == lib  # the library comes from the path
     assert query.sql.startswith("SELECT TOP 16 ")  # min(2 x top, 40)
-    assert "{'dataType': 'float16'}" in query.sql and "ORDER BY RANK RRF(" in query.sql
+    assert query.sql.endswith("ORDER BY VectorDistance(c.embedding, @queryVector, false, {'dataType': 'float16'})")
+    assert "RRF" not in query.sql and not any(p.startswith("@t") for p in params)
     assert params["@queryVector"][2] == 0.0  # the subnormal was flushed (rule 4)
-    assert [params[f"@t{i}"] for i in range(3)] == ["why", "did", "emea"]
     search(client, lib, top=20)
     assert s.reader.queries[-1][1].sql.startswith("SELECT TOP 40 ")
+
+
+async def test_hybrid_mode_adds_the_lexical_terms(ctx):
+    client, s, worker = ctx
+    lib, _ = await library_with_document(client, s, worker)
+    client.app.state.searcher.mode = "hybrid"
+    search(client, lib, top=8)
+    query = s.reader.queries[-1][1]
+    params = {p["name"]: p["value"] for p in query.parameters}
+    assert "ORDER BY RANK RRF(" in query.sql and "{'dataType': 'float16'}" in query.sql
+    assert [params[f"@t{i}"] for i in range(3)] == ["why", "did", "emea"]
+
+
+async def test_the_cosmos_reader_routes_vector_queries_by_partition_and_hybrid_queries_not():
+    from fli.query import SearchFilters, render_search
+    from fli.search import CosmosChunkReader, QueryCost
+
+    class Container:
+        def __init__(self):
+            self.calls = []
+
+        def query_items(self, sql, **kwargs):
+            self.calls.append(kwargs.get("partition_key"))
+
+            async def rows():
+                return
+                yield
+
+            return rows()
+
+    container = Container()
+    reader = CosmosChunkReader(container)
+    vector = [0.5, 0.25, 0.0]
+    await reader.search("L", render_search("L", vector, [], SearchFilters(), 8), QueryCost())
+    await reader.search("L", render_search("L", vector, ["margin"], SearchFilters(), 8), QueryCost())
+    assert container.calls == [["L"], None]  # evidence.md E27
 
 
 async def test_deleted_documents_vanish_before_the_purge_runs(ctx):
