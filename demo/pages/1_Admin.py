@@ -40,7 +40,7 @@ for lib in libraries:
                     "file": d.get("fileName"),
                     "status": d["status"],
                     "chunks": d.get("chunkCount"),
-                    "error": d.get("error"),
+                    "detail": d.get("statusDetail"),
                 }
                 for d in documents
             ],
