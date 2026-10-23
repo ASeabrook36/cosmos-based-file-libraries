@@ -89,13 +89,6 @@ async def run_lanes(lanes: int, take_session: Callable[[], Awaitable[bool]], sto
     await asyncio.gather(*(lane(n) for n in range(lanes)))
 
 
-def _token_provider(credential: Any, scope: str) -> Callable[[], Awaitable[str]]:
-    async def token() -> str:
-        return (await credential.get_token(scope)).token
-
-    return token
-
-
 async def run(settings: Settings, stopping: asyncio.Event) -> None:
     for name in ("cosmos_endpoint", "servicebus_namespace", "blob_account_url", "aoai_endpoint"):
         if not getattr(settings, name):
@@ -120,13 +113,14 @@ async def run(settings: Settings, stopping: asyncio.Event) -> None:
     from fli.governor import Governor
     from fli.queue import ServiceBusQueue
     from fli.store import CosmosDocumentStore, CosmosLibraryStore
+    from fli.tokens import CachedToken
 
     def report(event: str, fields: dict[str, Any]) -> None:
         log.info(event, extra=fields)
 
     async with AsyncExitStack() as stack:
         credential = await stack.enter_async_context(DefaultAzureCredential())
-        tokens = _token_provider(credential, COGNITIVE_SCOPE)
+        tokens = CachedToken(credential, COGNITIVE_SCOPE)
         http = await stack.enter_async_context(httpx.AsyncClient())
         cosmos = await stack.enter_async_context(CosmosClient(settings.cosmos_endpoint, credential=credential))
         database = cosmos.get_database_client(settings.cosmos_database)

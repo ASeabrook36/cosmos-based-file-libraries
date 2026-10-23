@@ -50,6 +50,7 @@ async def _azure(app: FastAPI) -> AsyncIterator[None]:
 
     from fli.docintel import SCOPE
     from fli.embedding import AzureOpenAIEmbedder
+    from fli.tokens import CachedToken
 
     async with AsyncExitStack() as stack:
         credential = await stack.enter_async_context(DefaultAzureCredential())
@@ -66,13 +67,10 @@ async def _azure(app: FastAPI) -> AsyncIterator[None]:
         app.state.queue = ServiceBusQueue(sender)
         http = await stack.enter_async_context(httpx.AsyncClient())
 
-        async def token() -> str:
-            return (await credential.get_token(SCOPE)).token
-
         embedder = AzureOpenAIEmbedder(
             endpoint=settings.aoai_endpoint,
             deployment=settings.aoai_embedding_deployment,
-            token_provider=token,
+            token_provider=CachedToken(credential, SCOPE),
             http=http,
             dimensions=settings.aoai_embedding_dimensions,
         )
