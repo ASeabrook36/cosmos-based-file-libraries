@@ -8,12 +8,33 @@ purge runs.
 ``status`` is otherwise ignored (evidence.md E26). While a replacement is queued, processing or
 has failed, the previous generation is still active and stays searchable. ``activeGeneration``
 is ``None`` until the first generation commits, so a first upload is never half-visible.
+
+``generation`` on the record is the newest generation ever assigned. It only increases, so a
+generation number is never reused, and a generation below it that is neither active nor
+pending can never become visible again. That holds even when the record was read from a
+replica that lags (evidence.md E28): such a read can only under-report the newest generation.
 """
 
 from __future__ import annotations
 
 from collections.abc import Iterable, Mapping
 from typing import Any
+
+
+def latest_generation(document: Mapping[str, Any]) -> int:
+    """The newest generation assigned. Records written before Phase 3 lack the field: they had one, generation 1."""
+    known = (document.get("generation"), document.get("activeGeneration"), document.get("pendingGeneration"), 1)
+    return max(g for g in known if g is not None)
+
+
+def is_obsolete(generation: int, document: Mapping[str, Any]) -> bool:
+    """True when chunks or an original of ``generation`` can be deleted for good.
+
+    Neither active nor pending, and not newer than the newest generation this read knows: a
+    stale read may miss a newer generation, so what lies above it is left for a later purge.
+    """
+    keep = {document.get("activeGeneration"), document.get("pendingGeneration")}
+    return generation not in keep and generation <= latest_generation(document)
 
 
 def is_visible(chunk: Mapping[str, Any], document: Mapping[str, Any] | None) -> bool:

@@ -64,6 +64,18 @@ class IndexClient:
     def list_documents(self, library_id: str) -> list[dict[str, Any]]:
         return self._call("GET", f"/v1/libraries/{library_id}/documents")["documents"]
 
+    def replace_document(
+        self, library_id: str, document_id: str, file_name: str, data: bytes, content_type: str | None = None
+    ) -> dict[str, Any]:
+        files = {"file": (file_name, data, content_type or "application/octet-stream")}
+        return self._call("PUT", f"/v1/libraries/{library_id}/documents/{document_id}/content", files=files)
+
+    def delete_document(self, library_id: str, document_id: str) -> None:
+        self._call("DELETE", f"/v1/libraries/{library_id}/documents/{document_id}")
+
+    def delete_library(self, library_id: str) -> None:
+        self._call("DELETE", f"/v1/libraries/{library_id}")
+
     def tool(self, library_id: str) -> dict[str, Any]:
         return self._call("GET", f"/v1/libraries/{library_id}/tool")
 

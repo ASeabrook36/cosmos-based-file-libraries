@@ -228,3 +228,52 @@ async def test_the_reported_charge_covers_every_cosmos_call(ctx, monkeypatch):
     body = search(client, lib, top=20).json()  # every chunk: both documents are candidates
     assert {r["documentId"] for r in body["results"]} == {d["id"] for d in s.documents.m.items.values()}
     assert body["usage"]["requestCharge"] == 4.0 + 1.0 + 2 * 1.25  # chunk query (fake), library, two documents
+
+
+async def pending_replacement_ranked_first(s, lib, doc_id, stale: int) -> list[str]:
+    """Generation 2 is being written: ``stale`` of its chunks rank above every active one."""
+    record = await s.documents.get(lib, doc_id)
+    record.update(status="processing", generation=2, pendingGeneration=2)
+    await s.documents.replace(record)
+    base = s.chunks.items[(lib, doc_id, f"{doc_id}:1:0")]
+    for i in range(stale):
+        await s.chunks.upsert({**base, "id": f"{doc_id}:2:{i}", "generation": 2, "chunkIndex": i})
+    active = sorted(c["id"] for c in s.chunks.items.values() if c["generation"] == 1)
+    s.reader.order = [f"{doc_id}:2:{i}" for i in range(stale)] + active
+    return active
+
+
+async def test_stale_chunks_that_fill_the_window_are_reported_not_hidden(ctx):
+    """Review finding 6: a full window of mostly stale chunks leaves fewer than ``top``."""
+    client, s, worker = ctx
+    lib, doc_id = await library_with_document(client, s, worker)
+    await pending_replacement_ranked_first(s, lib, doc_id, stale=14)
+    body = search(client, lib, top=8).json()  # fetch 16: 14 stale, 2 active
+    assert len(s.reader.queries) == 1  # nothing is fetched again
+    assert [r["chunkId"].split(":")[1] for r in body["results"]] == ["1", "1"]
+    assert body["coverage"]["disposition"] == "thin"
+    [note] = body["coverage"]["notes"]
+    assert note.startswith("14 matching passages were left out") and "replaced or deleted" in note
+
+
+async def test_no_note_when_the_window_was_not_full_or_top_was_reached(ctx):
+    client, s, worker = ctx
+    lib, doc_id = await library_with_document(client, s, worker)
+    active = await pending_replacement_ranked_first(s, lib, doc_id, stale=3)
+    short = search(client, lib, top=8).json()  # 3 + len(active) < 16: every visible match came back
+    assert short["coverage"]["notes"] == [] and short["coverage"]["resultCount"] == len(active)
+    full = search(client, lib, top=2).json()  # fetch 4: 3 stale and 1 active, a full window below top
+    assert full["coverage"]["resultCount"] == 1 and len(full["coverage"]["notes"]) == 1
+    s.reader.order = s.reader.order[2:]  # 1 stale, then active: top reached despite a dropped chunk
+    reached = search(client, lib, top=2).json()
+    assert reached["coverage"]["resultCount"] == 2 and reached["coverage"]["notes"] == []
+
+
+async def test_the_underfill_log_line_carries_counts_only(ctx, caplog):
+    client, s, worker = ctx
+    lib, doc_id = await library_with_document(client, s, worker)
+    await pending_replacement_ranked_first(s, lib, doc_id, stale=14)
+    with caplog.at_level(logging.INFO, logger="fli.search"):
+        search(client, lib, top=8)
+    [line] = [r for r in caplog.records if r.getMessage() == "library_search"]
+    assert (line.hidden, line.underfilled, line.resultCount) == (14, True, 2)

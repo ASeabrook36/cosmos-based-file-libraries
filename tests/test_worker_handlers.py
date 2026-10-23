@@ -8,7 +8,7 @@ import logging
 import pytest
 
 from fli.chunking import ApproxTokenizer, Chunker
-from fli.worker.handlers import BadMessage, NotYetDeleting, Worker
+from fli.worker.handlers import BadMessage, GenerationNotVisible, NotYetDeleting, Worker
 from tests.fakes import FakeEmbedder, api
 
 OLE = bytes.fromhex("D0CF11E0A1B11AE1")
@@ -29,6 +29,17 @@ def upload(client, lib, name="q4.txt", data=None, metadata=None):
     form = {"metadata": json.dumps(metadata)} if metadata else {}
     r = client.post(f"/v1/libraries/{lib}/documents", files={"file": (name, data, "text/plain")}, data=form)
     return r.json()["documentId"]
+
+
+def replace(client, lib, doc_id, name="q4.txt", data=None):
+    data = TEXT.replace("fell", "rose").encode() if data is None else data
+    r = client.put(f"/v1/libraries/{lib}/documents/{doc_id}/content", files={"file": (name, data, "text/plain")})
+    assert r.status_code == 202, r.text
+    return r.json()["generation"]
+
+
+def originals(s, lib, doc_id):
+    return sorted(p for p in s.blobs.blobs if p.startswith(f"{lib}/{doc_id}/original/"))
 
 
 def doc(client, lib, doc_id):
@@ -154,13 +165,15 @@ async def test_a_failed_replacement_keeps_the_previous_version(ctx):
     client, s, lib, worker = ctx
     doc_id = upload(client, lib)
     await drain(s, worker)
-    # Phase 3's replace endpoint will do this: generation 2 pending, generation 1 still active.
-    record = await s.documents.get(lib, doc_id)
-    record.update(pendingGeneration=2, status="queued")
-    await s.documents.replace(record)
+    replace(client, lib, doc_id, name="v2.txt")
+    s.queue.sent.clear()
     await worker.fail({"type": "ingest", "libraryId": lib, "documentId": doc_id, "generation": 2}, "x")
     d = doc(client, lib, doc_id)
-    assert (d["status"], d["activeGeneration"], d["pendingGeneration"]) == ("failed", 1, None)
+    assert (d["status"], d["activeGeneration"], d["pendingGeneration"], d["pendingFile"]) == ("failed", 1, None, None)
+    assert d["fileName"] == "q4.txt"
+    await drain(s, worker)  # the purge queued by the failure
+    assert originals(s, lib, doc_id) == [f"{lib}/{doc_id}/original/1/q4.txt"]
+    assert {c["generation"] for c in s.chunks.items.values()} == {1}
 
 
 async def test_purge_keeps_the_active_and_pending_generations_only(ctx):
@@ -173,18 +186,33 @@ async def test_purge_keeps_the_active_and_pending_generations_only(ctx):
     for gen in (1, 2, 3, 4):
         await s.chunks.upsert({"id": f"{doc_id}:{gen}:99", "libraryId": lib, "documentId": doc_id, "generation": gen})
     await worker.purge_document(lib, doc_id)
-    assert sorted({g for _, g in await s.chunks.generations(lib, doc_id)}) == [2, 3]
+    # 4 is newer than this read knows (a lagging replica can only under-report): left for a later purge.
+    assert sorted({g for _, g in await s.chunks.generations(lib, doc_id)}) == [2, 3, 4]
 
 
-async def test_stale_or_repeated_ingest_messages_do_nothing(ctx):
+async def test_a_repeated_ingest_message_writes_nothing(ctx):
     client, s, lib, worker = ctx
     upload(client, lib)
     _, message = s.queue.sent[0]
     await drain(s, worker)
     writes = s.chunks.writes
     await worker.handle(message)  # duplicate delivery after commit
-    await worker.handle({**message, "generation": 7})  # a generation that is not pending
     assert s.chunks.writes == writes and worker.embedder.calls == 1
+    assert not s.queue.sent  # generation 1 has nothing older to purge
+
+
+async def test_an_ingest_for_a_generation_the_record_does_not_show_yet_is_retried(ctx):
+    """E28: the API's replacement write may not have reached the replica the worker reads."""
+    client, s, lib, worker = ctx
+    doc_id = upload(client, lib)
+    _, message = s.queue.sent[0]
+    await drain(s, worker)
+    with pytest.raises(GenerationNotVisible):  # the record still shows generation 1 as the newest
+        await worker.handle({**message, "generation": 2})
+    assert worker.embedder.calls == 1 and not s.queue.sent
+    replace(client, lib, doc_id)  # the write becomes visible
+    await drain(s, worker)
+    assert doc(client, lib, doc_id)["activeGeneration"] == 2
 
 
 async def test_purge_library_deletes_everything_and_refuses_an_active_library(ctx):
@@ -260,3 +288,110 @@ async def test_malformed_or_unknown_messages_are_bad_messages(ctx, message):
     *_, worker = ctx
     with pytest.raises(BadMessage):
         await worker.handle(message)
+
+
+# -- replacement (spec §7.8) ---------------------------------------------------------------------
+
+
+async def test_a_replacement_commits_its_file_and_purges_the_old_generation(ctx):
+    client, s, lib, worker = ctx
+    doc_id = upload(client, lib, metadata={"author": "Jane Doe"})
+    await drain(s, worker)
+    replace(client, lib, doc_id, name="q4-final.txt")
+    pending = doc(client, lib, doc_id)["pendingFile"]
+    await drain(s, worker)
+    d = doc(client, lib, doc_id)
+    assert (d["status"], d["activeGeneration"], d["pendingGeneration"], d["pendingFile"]) == ("ready", 2, None, None)
+    assert d["fileName"] == "q4-final.txt" and d["blobPath"] == pending["blobPath"]
+    assert d["uploadedAt"] == pending["uploadedAt"] and d["author"] == "Jane Doe"  # user metadata survives
+    assert {c["generation"] for c in s.chunks.items.values()} == {2}
+    chunk = s.chunks.items[(lib, doc_id, f"{doc_id}:2:0")]
+    assert "rose" in chunk["text"] and chunk["fileName"] == "q4-final.txt"
+    assert chunk["uploadedAt"] == pending["uploadedAt"]
+    assert originals(s, lib, doc_id) == [f"{lib}/{doc_id}/original/2/q4-final.txt"]
+
+
+async def test_an_original_stored_before_phase_3_is_purged_as_generation_1(ctx):
+    client, s, lib, worker = ctx
+    doc_id = upload(client, lib)
+    await drain(s, worker)
+    legacy = f"{lib}/{doc_id}/original/q4.txt"
+    s.blobs.blobs[legacy] = s.blobs.blobs.pop(f"{lib}/{doc_id}/original/1/q4.txt")
+    record = await s.documents.get(lib, doc_id)
+    del record["generation"]  # nor did records have the counter
+    record["blobPath"] = legacy
+    await s.documents.replace(record)
+    assert replace(client, lib, doc_id) == 2
+    await drain(s, worker)
+    assert originals(s, lib, doc_id) == [f"{lib}/{doc_id}/original/2/q4.txt"]
+
+
+async def test_a_redelivery_after_commit_queues_the_purge_again(ctx, monkeypatch):
+    """Review finding 1: the purge send failed after the commit, so the message was redelivered."""
+    client, s, lib, worker = ctx
+    doc_id = upload(client, lib)
+    await drain(s, worker)
+    replace(client, lib, doc_id)
+    _, message = s.queue.sent.pop(0)
+    real = s.queue.send
+
+    async def purge_send_fails(msg, *, session_id):
+        if msg["type"] == "purgeDocument":
+            raise RuntimeError("bus down")
+        await real(msg, session_id=session_id)
+
+    monkeypatch.setattr(s.queue, "send", purge_send_fails)
+    with pytest.raises(RuntimeError):
+        await worker.handle(message)
+    assert doc(client, lib, doc_id)["activeGeneration"] == 2 and not s.queue.sent
+    monkeypatch.setattr(s.queue, "send", real)
+    calls = worker.embedder.calls
+    await worker.handle(message)  # the redelivery: nothing is re-embedded, the purge is queued again
+    assert worker.embedder.calls == calls
+    await drain(s, worker)
+    assert {c["generation"] for c in s.chunks.items.values()} == {2}
+    assert originals(s, lib, doc_id) == [f"{lib}/{doc_id}/original/2/q4.txt"]
+
+
+async def test_a_replacement_superseded_mid_write_is_abandoned(ctx, monkeypatch):
+    client, s, lib, worker = ctx
+    doc_id = upload(client, lib)
+    await drain(s, worker)
+    replace(client, lib, doc_id, name="v2.txt")
+    _, message = s.queue.sent.pop(0)
+    real = s.chunks.upsert
+
+    async def replace_midway(chunk):
+        await real(chunk)
+        if chunk["generation"] == 2 and chunk["chunkIndex"] == 0:
+            replace(client, lib, doc_id, name="v3.txt", data=b"Headcount grew in APAC. " * 50)
+
+    monkeypatch.setattr(s.chunks, "upsert", replace_midway)
+    await worker.handle(message)  # generation 2 is written, then abandoned at commit
+    assert doc(client, lib, doc_id)["activeGeneration"] == 1
+    monkeypatch.setattr(s.chunks, "upsert", real)
+    await drain(s, worker)
+    d = doc(client, lib, doc_id)
+    assert (d["activeGeneration"], d["fileName"]) == (3, "v3.txt")
+    assert {c["generation"] for c in s.chunks.items.values()} == {3}
+    assert originals(s, lib, doc_id) == [f"{lib}/{doc_id}/original/3/v3.txt"]
+
+
+async def test_a_purge_on_a_lagging_read_keeps_a_newer_original(ctx):
+    """The API stores a replacement's original before any worker read can show its generation."""
+    client, s, lib, worker = ctx
+    doc_id = upload(client, lib)
+    await drain(s, worker)
+    s.blobs.blobs[f"{lib}/{doc_id}/original/2/new.txt"] = (b"new", "text/plain")  # reserved and stored by the API
+    await worker.purge_document(lib, doc_id)  # this read still shows generation 1 as the newest
+    assert originals(s, lib, doc_id) == [f"{lib}/{doc_id}/original/1/q4.txt", f"{lib}/{doc_id}/original/2/new.txt"]
+
+
+async def test_a_replaced_document_takes_its_authored_date_from_the_new_file(ctx):
+    client, s, lib, worker = ctx
+    eml = b"From: Jane Doe <jane@example.org>\nSubject: Q4\nDate: Tue, 11 Mar 2025 09:30:00 +0000\n\nMargins fell."
+    doc_id = upload(client, lib, name="m.eml", data=eml)
+    await drain(s, worker)
+    replace(client, lib, doc_id, name="m.eml", data=eml.replace(b"11 Mar 2025", b"02 Apr 2025"))
+    await drain(s, worker)
+    assert doc(client, lib, doc_id)["authoredAt"].startswith("2025-04-02")

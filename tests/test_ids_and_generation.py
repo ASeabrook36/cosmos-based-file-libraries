@@ -3,8 +3,8 @@ from __future__ import annotations
 import pytest
 
 from fli.errors import ApiError, library_not_found
-from fli.generation import filter_visible, is_visible
-from fli.ids import chunk_id, original_blob_path
+from fli.generation import filter_visible, is_obsolete, is_visible, latest_generation
+from fli.ids import chunk_id, original_blob_path, original_generation
 
 
 def test_chunk_ids_are_deterministic_and_encode_generation_and_index():
@@ -19,7 +19,43 @@ def test_chunk_id_refuses_impossible_positions(generation, index):
 
 
 def test_blob_path_layout():
-    assert original_blob_path("L", "D", "a b.pdf") == "L/D/original/a b.pdf"
+    assert original_blob_path("L", "D", 1, "a b.pdf") == "L/D/original/1/a b.pdf"
+    assert original_blob_path("L", "D", 12, "a b.pdf") == "L/D/original/12/a b.pdf"
+    with pytest.raises(ValueError):
+        original_blob_path("L", "D", 0, "a.pdf")
+
+
+@pytest.mark.parametrize(
+    "path,generation",
+    [
+        ("L/D/original/3/a b.pdf", 3),
+        ("L/D/original/12/2024", 12),
+        ("L/D/original/a b.pdf", 1),  # stored before Phase 3: no generation segment
+        ("L/D/original/2024", 1),  # a legacy file named like a number is still legacy
+    ],
+)
+def test_each_original_knows_its_generation(path, generation):
+    assert original_generation(path) == generation
+
+
+def test_the_newest_generation_survives_records_written_before_the_counter():
+    assert latest_generation({"generation": 4, "activeGeneration": 2, "pendingGeneration": None}) == 4
+    assert latest_generation({"activeGeneration": 1, "pendingGeneration": None}) == 1
+    assert latest_generation({"activeGeneration": None, "pendingGeneration": None}) == 1  # a failed first upload
+
+
+@pytest.mark.parametrize(
+    "generation,obsolete",
+    [(1, True), (2, False), (3, True), (4, False), (5, False)],
+)
+def test_only_generations_a_read_proves_dead_are_obsolete(generation, obsolete):
+    # Active 2, pending 4, newest 4: 1 was replaced, 3 was superseded, 5 is newer than this read knows.
+    document = {"generation": 4, "activeGeneration": 2, "pendingGeneration": 4}
+    assert is_obsolete(generation, document) is obsolete
+
+
+def test_a_failed_newest_generation_is_obsolete():
+    assert is_obsolete(3, {"generation": 3, "activeGeneration": 2, "pendingGeneration": None})
 
 
 def chunk(doc: str, generation: int, index: int = 0) -> dict:
@@ -80,4 +116,4 @@ def test_api_error_body_shape():
     ],
 )
 def test_uploaded_names_cannot_leave_the_document_prefix(name, expected):
-    assert original_blob_path("L", "D", name) == f"L/D/original/{expected}"
+    assert original_blob_path("L", "D", 1, name) == f"L/D/original/1/{expected}"

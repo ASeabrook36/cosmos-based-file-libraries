@@ -15,7 +15,12 @@ Errors fall into three kinds:
 
 Document records change only through ``_mutate``: an etag-conditional replace that re-reads
 and re-decides on conflict, because the API may change the record at any moment (delete,
-and in Phase 3, replace).
+replace).
+
+The API writes records through its own Cosmos client, so the worker's first read of a change
+may come from a replica that lags (evidence.md E28). Where a message proves the record must
+already show something (a deletion, or the generation the message names), a read that does
+not show it raises ``StaleRead`` and the message is redelivered.
 """
 
 from __future__ import annotations
@@ -34,7 +39,8 @@ from fli.chunks import ChunkStore
 from fli.config import EMBEDDING_MODEL
 from fli.embedding import Embedder
 from fli.extraction import Extracted, OcrClient, extract
-from fli.ids import chunk_id
+from fli.generation import is_obsolete, latest_generation
+from fli.ids import chunk_id, original_generation, original_prefix
 from fli.queue import Message, Queue
 from fli.store import Conflict, DocumentStore, LibraryStore, Record
 
@@ -47,13 +53,21 @@ class BadMessage(ValueError):
     """A message the worker can never process: the runtime dead-letters it at once."""
 
 
-class NotYetDeleting(RuntimeError):
-    """A purge for a deletion whose ``deleting`` write this worker cannot see yet.
+class StaleRead(RuntimeError):
+    """A record read that misses a write the message proves the API already made.
 
     The API wrote it through another Cosmos client, and a read with no session token for that
     write may come from a replica that has not caught up (evidence.md E28). Raising lets the
-    message be redelivered instead of completing a purge that did nothing.
+    message be redelivered instead of completing having done nothing.
     """
+
+
+class NotYetDeleting(StaleRead):
+    """A purge for a deletion whose ``deleting`` write this worker cannot see yet."""
+
+
+class GenerationNotVisible(StaleRead):
+    """An ingest for a generation newer than any the record shows: the replacement's write is not visible yet."""
 
 
 def _now() -> str:
@@ -83,7 +97,7 @@ class Worker:
     chunker: Chunker
     ocr: OcrClient | None = None
     max_chunks_per_document: int = 5_000  # INGEST_MAX_CHUNKS_PER_DOCUMENT
-    stale_read_pause: float = 1.0  # seconds before retrying a purge whose deletion is not yet visible
+    stale_read_pause: float = 1.0  # seconds before retrying a message whose record read is stale
 
     async def handle(self, message: Message) -> None:
         kind = message.get("type")
@@ -114,22 +128,28 @@ class Worker:
             await self._mark_deleting(library_id, document_id)
             return
 
+        seen: list[Record] = []
+
         def start(doc: Record) -> bool:
+            seen[:] = [doc]
             if doc.get("status") == "deleting" or doc.get("pendingGeneration") != generation:
-                return False  # deleted, superseded or already committed: nothing to do
+                return False  # deleted, superseded, failed or already committed
             doc.update(status="processing", updatedAt=_now())
             return True
 
         document = await self._mutate(library_id, document_id, start)
         if document is None:
+            await self._not_pending(library_id, document_id, generation, seen[0] if seen else None)
             return
 
-        data = await self.blobs.download(document["blobPath"])
-        result = await extract(data, filename=document["fileName"], content_type=document["contentType"], ocr=self.ocr)
+        # A replacement's file waits in pendingFile; a first upload's is the record's own (spec §4.2).
+        source = document.get("pendingFile") or document
+        data = await self.blobs.download(source["blobPath"])
+        result = await extract(data, filename=source["fileName"], content_type=source["contentType"], ocr=self.ocr)
         if result.outcome != "ok":
             await self._fail(library_id, document_id, generation, status_detail(result))
             return
-        kind = "email" if document.get("fileType") == "eml" else "document"
+        kind = "email" if source.get("fileType") == "eml" else "document"
         pieces = await asyncio.to_thread(self.chunker.chunk, result.sections, kind)  # CPU-bound tokenizing
         if not pieces:
             await self._fail(library_id, document_id, generation, "no_text")
@@ -141,7 +161,8 @@ class Worker:
 
         vectors = await self.embedder.embed([p.text for p in pieces])
         author = document.get("author") or result.author
-        authored_at = document.get("authoredAt") or (result.authored_at.isoformat() if result.authored_at else None)
+        # authoredAt only ever comes from the file (spec §4.2), so each generation takes its own file's.
+        authored_at = result.authored_at.isoformat() if result.authored_at else None
         created = _now()
         records = [
             {
@@ -156,9 +177,9 @@ class Worker:
                 "location": p.location or {},
                 "imageRef": None,
                 "imageMeta": None,
-                "fileName": document["fileName"],
-                "fileType": document["fileType"],
-                "uploadedAt": document["uploadedAt"],
+                "fileName": source["fileName"],
+                "fileType": source["fileType"],
+                "uploadedAt": source["uploadedAt"],
                 "authoredAt": authored_at,
                 "author": author,
                 "periodStart": document.get("periodStart"),
@@ -178,14 +199,16 @@ class Worker:
         def commit(doc: Record) -> bool:
             if doc.get("status") == "deleting" or doc.get("pendingGeneration") != generation:
                 return False  # deleted or replaced while we wrote: abandon this generation
+            doc.update(doc.get("pendingFile") or {})  # the replacement's file becomes the record's own
             doc.update(
                 status="ready",
+                pendingFile=None,
                 statusDetail=None,
                 activeGeneration=generation,
                 pendingGeneration=None,
                 chunkCount=len(records),
                 author=doc.get("author") or result.author,
-                authoredAt=doc.get("authoredAt") or authored_at,
+                authoredAt=authored_at,
                 extraction={
                     "method": str(result.method),
                     "ocrApplied": result.ocr_applied,
@@ -202,6 +225,24 @@ class Worker:
             await self._purge_later(library_id, document_id)  # abandoned chunks, or older generations
         if committed is not None:
             await self.refresh_library(library_id)
+
+    async def _not_pending(self, library_id: str, document_id: str, generation: int, document: Record | None) -> None:
+        """An ingest whose generation is not pending: decide what, if anything, is left to do.
+
+        Messages are delivered at least once, and a delivery may be the retry of one that
+        committed and then failed to queue its purge (review finding 1). So the purge is queued
+        again: it is idempotent, and deletes only what is obsolete.
+        """
+        if document is None or document.get("status") == "deleting":
+            return  # gone, or its deletion's purge removes everything
+        if latest_generation(document) < generation:
+            await self._stale(GenerationNotVisible(document_id), library_id, document_id)
+        if document.get("activeGeneration") == generation:
+            if generation > 1:
+                await self._purge_later(library_id, document_id)
+            await self.refresh_library(library_id)
+        else:
+            await self._purge_later(library_id, document_id)  # superseded or failed: its leftovers
 
     async def fail(self, message: Message, reason: str) -> None:
         """Called by the runtime on the last delivery, before it dead-letters the message."""
@@ -220,7 +261,7 @@ class Worker:
             if doc.get("status") == "deleting" or doc.get("pendingGeneration") != generation:
                 return False
             # activeGeneration is untouched: a failed replacement keeps the previous version searchable.
-            doc.update(status="failed", statusDetail=detail, pendingGeneration=None, updatedAt=_now())
+            doc.update(status="failed", statusDetail=detail, pendingGeneration=None, pendingFile=None, updatedAt=_now())
             return True
 
         if await self._mutate(library_id, document_id, mark) is not None:
@@ -237,7 +278,7 @@ class Worker:
         """
         document = await self.documents.get(library_id, document_id)
         if deleted and document is not None and document.get("status") != "deleting":
-            await self._not_yet_deleting(library_id, document_id)
+            await self._stale(NotYetDeleting(document_id), library_id, document_id)
         existing = await self.chunks.generations(library_id, document_id)
         if document is None or document.get("status") == "deleting":
             for item_id, _ in existing:
@@ -247,14 +288,17 @@ class Worker:
             if document is not None:
                 await self.refresh_library(library_id)
             return
-        keep = {document.get("activeGeneration"), document.get("pendingGeneration")} - {None}
-        doomed = [item_id for item_id, gen in existing if gen not in keep]
+        doomed = [item_id for item_id, gen in existing if is_obsolete(gen, document)]
         await asyncio.gather(*(self.chunks.delete(library_id, document_id, i) for i in doomed))
+        # Each generation's original has its own path; only the active one is needed to rebuild (E16).
+        for path in await self.blobs.list_prefix(original_prefix(library_id, document_id)):
+            if is_obsolete(original_generation(path), document):
+                await self.blobs.delete(path)
 
     async def purge_library(self, library_id: str) -> None:
         library = await self.libraries.get(library_id)
         if library is not None and library.get("status") != "deleting":
-            await self._not_yet_deleting(library_id)  # only the API's DELETE queues this message
+            await self._stale(NotYetDeleting(library_id), library_id)  # only the API's DELETE queues this message
         for document in await self.documents.list(library_id, status=None, facet=None):
             if document.get("status") != "deleting":
                 await self._mark_deleting(library_id, document["id"], enqueue=False)
@@ -293,12 +337,13 @@ class Worker:
 
     # -- helpers --------------------------------------------------------------------------------
 
-    async def _not_yet_deleting(self, library_id: str, document_id: str | None = None) -> None:
+    async def _stale(self, error: StaleRead, library_id: str, document_id: str | None = None) -> None:
         log.warning(
-            "deletion not visible yet; purge retried", extra={"libraryId": library_id, "documentId": document_id}
+            "stale read; message retried",
+            extra={"libraryId": library_id, "documentId": document_id, "reason": type(error).__name__},
         )
         await asyncio.sleep(self.stale_read_pause)  # give the replica time before the redelivery
-        raise NotYetDeleting(document_id or library_id)
+        raise error
 
     async def _mutate(self, library_id: str, document_id: str, change: Callable[[Record], bool]) -> Record | None:
         """Apply ``change`` to the current record. ``None`` when the record is gone or ``change`` declines."""

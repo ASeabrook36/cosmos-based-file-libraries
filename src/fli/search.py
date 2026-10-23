@@ -5,6 +5,8 @@
 3. Embed the query and convert it for the float16 index (CLAUDE.md rule 4, E8).
 4-5. One hybrid query (vector-only when the query has no terms), library by equality only.
 6. The generation check: point-read each result's document; keep only active generations.
+   When dropped chunks leave fewer than ``top`` from a full fetch window, coverage says so
+   (review finding 6). Nothing is fetched again: the shortfall is reported, not hidden.
 7. Neighbours: one query per document, scoped to the full partition key.
 9. Coverage: what was searched and how many results.
 10. A metrics-only log line. Query text and chunk text are never logged (CLAUDE.md rule 12).
@@ -26,7 +28,7 @@ from dataclasses import dataclass, field
 from typing import Any, Protocol
 
 from fli.embedding import Embedder
-from fli.generation import filter_visible
+from fli.generation import filter_visible, is_visible
 from fli.permissions import check_search_allowed
 from fli.query import (
     MAX_FETCH,
@@ -110,6 +112,13 @@ def disposition(count: int) -> str:
     return "results" if count >= 3 else "thin" if count >= 1 else "empty"
 
 
+def underfill_note(hidden: int) -> str:
+    return (
+        f"{hidden} matching passages were left out because their documents are being added, replaced or deleted;"
+        " searching again later may return more."
+    )
+
+
 @dataclass
 class Searcher:
     libraries: LibraryStore
@@ -127,7 +136,8 @@ class Searcher:
 
         [vector] = await self.embedder.embed([request.query])
         terms = lexical_terms(request.query) if self.mode == "hybrid" else []
-        rendered = render_search(library_id, to_float16_query(vector), terms, request.filters, fetch_size(request.top))
+        fetch = fetch_size(request.top)
+        rendered = render_search(library_id, to_float16_query(vector), terms, request.filters, fetch)
         cosmos_started = time.perf_counter()
         candidates = await self.chunks.search(library_id, rendered, cost)
         cosmos_ms = (time.perf_counter() - cosmos_started) * 1000
@@ -138,6 +148,9 @@ class Searcher:
         )
         documents = {d: r for d, r in zip(document_ids, records, strict=True) if r is not None}
         kept = filter_visible(candidates, documents, request.top)
+        hidden = sum(1 for c in candidates if not is_visible(c, documents.get(c["documentId"])))
+        # Only a full window can be hiding more visible matches; a short one returned them all.
+        underfilled = len(kept) < request.top and hidden > 0 and len(candidates) == fetch
 
         neighbors: dict[tuple[str, int], list[Record]] = {}
         if request.include_neighbors:
@@ -168,7 +181,7 @@ class Searcher:
             "coverage": {
                 "searched": f"{library.get('name')} ({document_count} documents)",
                 "filtersApplied": {},
-                "notes": [],
+                "notes": [underfill_note(hidden)] if underfilled else [],
                 "resultCount": len(results),
                 "disposition": disposition(len(results)),
             },
@@ -186,6 +199,8 @@ class Searcher:
                 "mode": self.mode,
                 "top": request.top,
                 "candidates": len(candidates),
+                "hidden": hidden,
+                "underfilled": underfilled,
                 "resultCount": len(results),
                 "disposition": response["coverage"]["disposition"],
                 "requestCharge": round(cost.request_charge, 2),

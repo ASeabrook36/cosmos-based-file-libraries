@@ -1,6 +1,6 @@
 # Evidence: why the design is what it is
 
-*Version 0.6, 2026-10-23: E28 (deletion must be retryable, and the worker must not trust its first read); E29 (bound what one document can cost); N13. Version 0.5, 2026-10-22: E27 (hybrid search routed by partition key does not rank); E21 and E24 corrected. Version 0.4: E26 (search visibility). Version 0.3: Phase 0 measurements added.*
+*Version 0.7, 2026-10-23: E28 extended to ingest (a replacement's write may not be visible yet); E30 (replacement: one original per generation, a generation number never reused, underfill reported). Version 0.6, 2026-10-23: E28 (deletion must be retryable, and the worker must not trust its first read); E29 (bound what one document can cost); N13. Version 0.5, 2026-10-22: E27 (hybrid search routed by partition key does not rank); E21 and E24 corrected. Version 0.4: E26 (search visibility). Version 0.3: Phase 0 measurements added.*
 
 Most decisions in `spec.md` rest on measurements from earlier work on these Cosmos features, made on live Azure in 2026. That work built a retrieval index in which each owner (a person) had their own body of content, and every search named whose content to search. That is structurally this project's problem: an owner there plays the role a library plays here. The numbers are recorded here so this repository stands on its own.
 
@@ -279,7 +279,7 @@ Spec 0.3 had search return only documents whose `status` was `ready`, and set `s
 
 The fix: visibility depends only on `activeGeneration` (and `deleting`). `activeGeneration` is `null` until the first generation commits, so half-written chunks of a first upload are never visible either. Not measured; it follows from the spec's own rules. The unit tests in `tests/test_ids_and_generation.py` encode it.
 
-The purge follows the same rule. Spec 0.4 purged generations below the committed one, which missed chunks written by a generation that was abandoned or failed after the last commit. `purgeDocument` now deletes every generation that is neither active nor pending, which is safe because messages for one library are processed one at a time (§7.1).
+The purge follows the same rule. Spec 0.4 purged generations below the committed one, which missed chunks written by a generation that was abandoned or failed after the last commit. `purgeDocument` now deletes every generation that is neither active nor pending, which is safe because messages for one library are processed one at a time (§7.1). Since Phase 3 it also spares any generation above the newest one its read shows, which a stale read may miss (E28, E30).
 
 ### E28. Deletion must be retryable, and the worker must not trust its first read · Vendor and inference
 
@@ -299,6 +299,13 @@ The fix (`spec.md` §5 rule 5, §7.1):
 - A purge that fails on its last delivery is logged; Phase 5 alerts on it.
 
 Not observed live: it follows from the documented semantics, and `tests/test_worker_handlers.py` and the API tests encode it. Within one API process, a search reads with the same client that wrote `deleting`, so it sees the deletion. Across API instances (Phase 5) that is not proven (N13).
+
+**Replacement (Phase 3)** meets the same semantics twice:
+
+- **Ingest.** `PUT …/content` writes the new `generation` and `pendingGeneration` through the API's client, then queues `ingest`. A worker that reads the earlier version would see the generation as not pending and complete the message: the replacement would be lost, stuck as `queued`. The message names its generation, and generations only increase, so a record whose `generation` is lower than the message's is provably stale. The worker raises and the message is redelivered, as for `deleted: true`.
+- **Purge.** The API stores a replacement's original before any worker read can show its generation. A purge that deleted "every original except active and pending" on a stale read would delete it. A lagging read can only under-report the newest generation, never over-report it, so the purge deletes only generations at or below the `generation` it reads, never above (E30).
+
+A stale read that persists through all five deliveries dead-letters the ingest, and the replacement stays `queued` until the `PUT` is repeated. That is the same gap as a dead-lettered purge; Phase 5 alerts on both.
 
 Source: [Consistency level choices](https://learn.microsoft.com/en-us/azure/cosmos-db/consistency-levels) (updated 2026-04-27).
 
@@ -325,6 +332,21 @@ At 520 tokens that is about 861,000 tokens embedded and about 238,000 RU of writ
 - Its vectors take about 5 GB as Python floats in one worker.
 
 Hence `INGEST_MAX_CHUNKS_PER_DOCUMENT`, default 5,000: about 2 million tokens, embedded in about 13 minutes. It is checked after chunking and before embedding, so refusing a document costs nothing. It is a setting, so raising it is a configuration change. The proper fix is to embed and write in bounded batches (`build-plan.md` Phase 5), which removes the starvation and memory limits, though not the lock limit.
+
+### E30. Replacement: one original per generation, no generation reused, underfill reported · Inference (design consistency), with unit tests
+
+Three problems surfaced when document replacement was built (`review-response.md` findings 6 and 7, and one found in planning). None was observed live; each follows from the rules already here, and `tests/test_documents_api.py`, `tests/test_worker_handlers.py` and `tests/test_search_api.py` encode them.
+
+**An original per generation.** Originals were stored at `{libraryId}/{documentId}/original/{fileName}`, and blob versioning is off. A replacement with the same file name overwrote the original of the generation search was still returning. Had the replacement then failed, the active generation's original would have been gone, and with it the ability to rebuild that generation (E16). Each generation now has its own path, `…/original/{generation}/{fileName}`, chosen over blob versioning because it needs no infrastructure change and the record need not track version ids. Only the active generation's original is needed for a rebuild, so the purge deletes the others; blob soft delete keeps them for 7 days.
+
+**A generation number is never reused.** Without a counter, the next generation would be `max(activeGeneration, pendingGeneration) + 1`. After a failed generation 2 that reads as 2 again. If the purge after that failure never ran, chunks such as `{documentId}:2:50…99` from the failed file survive, and when the new generation 2 commits with fewer chunks they become visible: content from a file that was never accepted. Deterministic chunk ids make this possible; a counter prevents it. The record's `generation` only increases. It is also what makes stale reads detectable (E28).
+
+**Underfill is reported, not refetched.** The generation check (`spec.md` §8 step 6) drops chunks after Cosmos has chosen the top `2 × top`. Replacement makes this routine: the new generation's chunks are in the index, invisible, for the whole write, and they are near copies of the active ones, so they compete for the same slots. Then the old generation's chunks do the same until the purge runs. Two remedies were weighed:
+
+- **Fetch again** at the maximum window (40) when the first window was full and fell short. About 10–16 RU more for a vector search and about 150 RU for hybrid, only when triggered, and no help when `top` is 20, since the window is already 40.
+- **Report:** say how many passages were left out, and that searching again later may return more.
+
+Search reports. It costs nothing, it is never wrong, and the shortfall lasts only while a document is written or awaits its purge. An agent told that results were withheld can search again, or treat a thin result as provisional (§9.2). Whether a refetch earns its cost can be settled with Phase 5's evaluation set.
 
 ## Not proven
 

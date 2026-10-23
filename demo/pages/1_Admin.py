@@ -39,6 +39,8 @@ for lib in libraries:
                 {
                     "file": d.get("fileName"),
                     "status": d["status"],
+                    "generation": d.get("activeGeneration"),
+                    "replacing with": (d.get("pendingFile") or {}).get("fileName"),
                     "chunks": d.get("chunkCount"),
                     "detail": d.get("statusDetail"),
                 }
@@ -46,3 +48,19 @@ for lib in libraries:
             ],
             use_container_width=True,
         )
+        if documents:
+            names = {d["id"]: f"{d.get('fileName')} ({d['id'][:8]})" for d in documents}
+            chosen = st.selectbox("Document", list(names), format_func=names.get, key=f"pick-{lib['id']}")
+            new_file = st.file_uploader("Replace its content", key=f"rf-{lib['id']}")
+            replace_col, delete_col = st.columns(2)
+            if new_file and replace_col.button("Replace", key=f"rb-{lib['id']}"):
+                # The old version stays searchable until the new one is ready.
+                if guard(api.replace_document, lib["id"], chosen, new_file.name, new_file.getvalue(), new_file.type):
+                    st.rerun()
+            if delete_col.button("Delete document", key=f"db-{lib['id']}"):
+                guard(api.delete_document, lib["id"], chosen)
+                st.rerun()
+        if st.checkbox("I want to delete this library and every document in it", key=f"dlc-{lib['id']}"):
+            if st.button("Delete library", type="primary", key=f"dl-{lib['id']}"):
+                guard(api.delete_library, lib["id"])
+                st.rerun()

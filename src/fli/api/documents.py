@@ -1,8 +1,13 @@
-"""Document endpoints (spec §6.2): upload, list, read, delete.
+"""Document endpoints (spec §6.2): upload, list, read, replace, delete.
 
 An upload stores the original in Blob, records the document as ``queued`` with generation 1
 pending and nothing active (spec §4.2), and enqueues ``ingest`` on the library's session.
-Replacing content (``PUT …/content``) is Phase 3.
+
+A replacement (``PUT …/content``) reserves the next generation on the record first, then
+stores its original under that generation's own path, then enqueues ``ingest``. Reserving
+first means two concurrent replacements never write the same path. The record's file fields
+keep describing the active generation, the one search returns; the replacement's wait in
+``pendingFile`` until the worker commits it (spec §7.8).
 """
 
 from __future__ import annotations
@@ -11,7 +16,7 @@ import hashlib
 import json
 import logging
 from datetime import date
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Depends, File, Form, Request, Response, UploadFile
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -20,6 +25,7 @@ from fli.api.libraries import Libraries, enqueue, now
 from fli.auth import require_caller
 from fli.blobs import BlobStore
 from fli.errors import ApiError, document_not_found, library_not_found
+from fli.generation import latest_generation
 from fli.ids import new_id, original_blob_path, safe_file_name
 from fli.queue import Queue
 from fli.store import Conflict, DocumentStore, Record, public
@@ -112,6 +118,13 @@ async def read_capped(upload: UploadFile, limit: int) -> bytes:
     return b"".join(parts)
 
 
+async def read_file(request: Request, upload: UploadFile) -> bytes:
+    data = await read_capped(upload, request.app.state.settings.upload_max_bytes)
+    if not data:
+        raise ApiError(400, "empty_file", "the uploaded file is empty")
+    return data
+
+
 @router.post("", status_code=202)
 async def upload_document(
     library_id: str,
@@ -129,12 +142,10 @@ async def upload_document(
         meta = UploadMetadata.model_validate(json.loads(metadata)) if metadata else UploadMetadata()
     except json.JSONDecodeError as exc:
         raise ApiError(400, "invalid_request", "metadata must be a JSON object") from exc
-    data = await read_capped(file, request.app.state.settings.upload_max_bytes)
-    if not data:
-        raise ApiError(400, "empty_file", "the uploaded file is empty")
+    data = await read_file(request, file)
     document_id = new_id()
     file_name = safe_file_name(file.filename or "")
-    blob_path = original_blob_path(library_id, document_id, file_name)
+    blob_path = original_blob_path(library_id, document_id, 1, file_name)
     await blob_store.upload(blob_path, data, file.content_type or "application/octet-stream")
     tags = [{"key": t.key, "value": t.value, "source": "user"} for t in meta.tags]
     record: Record = {
@@ -149,8 +160,10 @@ async def upload_document(
         "blobPath": blob_path,
         "status": "queued",
         "statusDetail": None,
+        "generation": 1,
         "activeGeneration": None,
         "pendingGeneration": 1,
+        "pendingFile": None,
         "uploadedAt": now(),
         "uploadedBy": uploadedBy,
         "authoredAt": None,
@@ -219,6 +232,96 @@ async def get_document(library_id: str, document_id: str, libraries: Libraries, 
     if library is None or library.get("status") == "deleting":
         raise library_not_found(library_id)
     return public(await load(store, library_id, document_id))
+
+
+@router.put("/{document_id}/content", status_code=202)
+async def replace_content(
+    library_id: str,
+    document_id: str,
+    request: Request,
+    libraries: Libraries,
+    store: Documents,
+    blob_store: Blobs,
+    ingest: Ingest,
+    file: Annotated[UploadFile, File()],
+    uploadedBy: Annotated[str | None, Form(max_length=200)] = None,  # noqa: N803 — the API's field name
+) -> dict[str, Any]:
+    """Reprocess the document from a new file, as the next generation (spec §7.8).
+
+    The active generation stays searchable until the new one commits. A replacement sent while
+    another is still pending supersedes it: the worker abandons the older one.
+    """
+    await active_library(libraries, library_id)
+    data = await read_file(request, file)
+    file_name = safe_file_name(file.filename or "")
+    content_type = file.content_type or "application/octet-stream"
+    for _ in range(REPLACE_ATTEMPTS):
+        record = await load(store, library_id, document_id)
+        generation = latest_generation(record) + 1
+        pending: Record = {
+            "fileName": file_name,
+            "contentType": content_type,
+            "fileType": file_type(file_name),
+            "sizeBytes": len(data),
+            "sha256": hashlib.sha256(data).hexdigest(),
+            "blobPath": original_blob_path(library_id, document_id, generation, file_name),
+            "uploadedAt": now(),
+            "uploadedBy": uploadedBy,
+        }
+        record.update(
+            generation=generation,
+            pendingGeneration=generation,
+            pendingFile=pending,
+            status="queued",
+            statusDetail=None,
+            updatedAt=now(),
+        )
+        try:
+            await store.replace(record)
+            break
+        except Conflict:
+            continue
+    else:
+        raise ApiError(409, "conflict", "the document changed while it was being replaced; retry")
+
+    ids = {"libraryId": library_id, "documentId": document_id, "generation": generation}
+    try:
+        await blob_store.upload(pending["blobPath"], data, content_type)
+    except Exception:
+        log.exception("replacement not stored", extra=ids)
+        await abandon_replacement(store, blob_store, ids, pending["blobPath"], "upload_failed")
+        raise
+    try:
+        await ingest.send({"type": "ingest", **ids}, session_id=library_id)
+    except Exception as exc:
+        log.exception("enqueue failed", extra=ids)
+        await abandon_replacement(store, blob_store, ids, pending["blobPath"], "enqueue_failed")
+        raise ApiError(503, "queue_unavailable", "the replacement could not be queued; send it again") from exc
+    return {"documentId": document_id, "status": "queued", "generation": generation}
+
+
+async def abandon_replacement(
+    store: DocumentStore, blob_store: BlobStore, ids: dict[str, Any], blob_path: str, detail: str
+) -> None:
+    """A replacement no worker will ever see: mark it failed and remove its original.
+
+    The active generation is untouched and stays searchable, as after any failed replacement.
+    """
+    library_id, document_id, generation = ids["libraryId"], ids["documentId"], ids["generation"]
+    for _ in range(REPLACE_ATTEMPTS):
+        record = await store.get(library_id, document_id)
+        if record is None or record.get("pendingGeneration") != generation:
+            break  # deleted or superseded meanwhile: its own purge covers this generation
+        record.update(status="failed", statusDetail=detail, pendingGeneration=None, pendingFile=None, updatedAt=now())
+        try:
+            await store.replace(record)
+            break
+        except Conflict:
+            continue
+    try:
+        await blob_store.delete(blob_path)
+    except Exception:
+        log.exception("orphan blob not removed", extra=ids)
 
 
 @router.delete("/{document_id}", status_code=202)

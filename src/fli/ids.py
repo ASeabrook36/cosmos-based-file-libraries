@@ -2,6 +2,11 @@
 
 A chunk's id is ``{documentId}:{generation}:{chunkIndex}``. It is a pure function of its
 inputs, so a retried ingest upserts the same items instead of adding duplicates.
+
+Each generation's original has its own path, ``{libraryId}/{documentId}/original/{generation}/{fileName}``,
+so a replacement never overwrites the original of the generation search still returns
+(review finding 7). Originals stored before Phase 3 sit directly under ``original/`` and are
+generation 1.
 """
 
 from __future__ import annotations
@@ -31,5 +36,18 @@ def safe_file_name(file_name: str) -> str:
     return name[:255] or "file"
 
 
-def original_blob_path(library_id: str, document_id: str, file_name: str) -> str:
-    return f"{library_id}/{document_id}/original/{safe_file_name(file_name)}"
+def original_prefix(library_id: str, document_id: str) -> str:
+    return f"{library_id}/{document_id}/original/"
+
+
+def original_blob_path(library_id: str, document_id: str, generation: int, file_name: str) -> str:
+    if generation < 1:
+        raise ValueError("generation starts at 1")
+    return f"{original_prefix(library_id, document_id)}{generation}/{safe_file_name(file_name)}"
+
+
+def original_generation(blob_path: str) -> int:
+    """The generation an original belongs to; 1 for one stored before Phase 3 (no generation segment)."""
+    _, _, rest = blob_path.partition("/original/")
+    head, nested, _ = rest.partition("/")
+    return int(head) if nested and head.isdigit() else 1

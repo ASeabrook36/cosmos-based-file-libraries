@@ -27,10 +27,11 @@ def test_upload_stores_the_file_records_it_and_queues_generation_1(ctx):
     assert r.status_code == 202 and r.json()["status"] == "queued"
     doc_id = r.json()["documentId"]
     doc = client.get(f"/v1/libraries/{lib}/documents/{doc_id}").json()
-    assert doc["blobPath"] == f"{lib}/{doc_id}/original/Q4 review.txt"
+    assert doc["blobPath"] == f"{lib}/{doc_id}/original/1/Q4 review.txt"
     assert s.blobs.blobs[doc["blobPath"]][0] == b"Margins fell in EMEA."
     assert doc["sha256"] == hashlib.sha256(b"Margins fell in EMEA.").hexdigest() and doc["sizeBytes"] == 21
     assert (doc["status"], doc["activeGeneration"], doc["pendingGeneration"]) == ("queued", None, 1)
+    assert doc["generation"] == 1 and doc["pendingFile"] is None
     assert doc["fileType"] == "txt" and doc["author"] == "Jane Doe" and doc["facets"] == ["region=EMEA"]
     assert doc["tags"] == [{"key": "region", "value": "EMEA", "source": "user"}]
     assert s.queue.sent == [(lib, {"type": "ingest", "libraryId": lib, "documentId": doc_id, "generation": 1})]
@@ -39,7 +40,7 @@ def test_upload_stores_the_file_records_it_and_queues_generation_1(ctx):
 def test_uploaded_names_are_made_safe(ctx):
     client, s, lib = ctx
     doc_id = upload(client, lib, name="../../other/evil.txt").json()["documentId"]
-    assert list(s.blobs.blobs) == [f"{lib}/{doc_id}/original/evil.txt"]
+    assert list(s.blobs.blobs) == [f"{lib}/{doc_id}/original/1/evil.txt"]
 
 
 @pytest.mark.parametrize(
@@ -147,3 +148,143 @@ def test_file_types_are_normalised():
         "doc",
         "unknown",
     ]
+
+
+# -- replacement (PUT …/content, spec §7.8) ------------------------------------------------------
+
+
+def replace(client, library_id, doc_id, name="Q4 review.txt", data=b"Margins rose in EMEA.", **form):
+    return client.put(
+        f"/v1/libraries/{library_id}/documents/{doc_id}/content", files={"file": (name, data, "text/plain")}, data=form
+    )
+
+
+async def committed(s, lib, doc_id):
+    """Mark generation 1 committed, as the worker would."""
+    record = await s.documents.get(lib, doc_id)
+    record.update(status="ready", activeGeneration=1, pendingGeneration=None)
+    await s.documents.replace(record)
+
+
+async def test_a_replacement_reserves_the_next_generation_and_keeps_the_active_one(ctx):
+    client, s, lib = ctx
+    doc_id = upload(client, lib).json()["documentId"]
+    await committed(s, lib, doc_id)
+    r = replace(client, lib, doc_id, uploadedBy="ann")
+    assert r.status_code == 202 and r.json() == {"documentId": doc_id, "status": "queued", "generation": 2}
+    doc = client.get(f"/v1/libraries/{lib}/documents/{doc_id}").json()
+    assert (doc["generation"], doc["activeGeneration"], doc["pendingGeneration"], doc["status"]) == (2, 1, 2, "queued")
+    # The record still describes what search returns; the replacement waits in pendingFile.
+    assert doc["blobPath"] == f"{lib}/{doc_id}/original/1/Q4 review.txt" and doc["sizeBytes"] == 21
+    pending = doc["pendingFile"]
+    assert pending["blobPath"] == f"{lib}/{doc_id}/original/2/Q4 review.txt" and pending["uploadedBy"] == "ann"
+    assert pending["sha256"] == hashlib.sha256(b"Margins rose in EMEA.").hexdigest()
+    assert s.queue.sent[-1] == (lib, {"type": "ingest", "libraryId": lib, "documentId": doc_id, "generation": 2})
+
+
+async def test_a_same_name_replacement_never_overwrites_the_served_original(ctx):
+    """Review finding 7: originals were keyed by file name only."""
+    client, s, lib = ctx
+    doc_id = upload(client, lib).json()["documentId"]
+    await committed(s, lib, doc_id)
+    replace(client, lib, doc_id)
+    assert s.blobs.blobs[f"{lib}/{doc_id}/original/1/Q4 review.txt"][0] == b"Margins fell in EMEA."
+    assert s.blobs.blobs[f"{lib}/{doc_id}/original/2/Q4 review.txt"][0] == b"Margins rose in EMEA."
+
+
+async def test_a_replacement_supersedes_one_still_pending(ctx):
+    client, s, lib = ctx
+    doc_id = upload(client, lib).json()["documentId"]
+    await committed(s, lib, doc_id)
+    replace(client, lib, doc_id, name="v2.txt")
+    assert replace(client, lib, doc_id, name="v3.txt").json()["generation"] == 3
+    doc = client.get(f"/v1/libraries/{lib}/documents/{doc_id}").json()
+    assert (doc["activeGeneration"], doc["pendingGeneration"], doc["pendingFile"]["fileName"]) == (1, 3, "v3.txt")
+
+
+async def test_generations_are_never_reused_after_a_failed_replacement(ctx):
+    client, s, lib = ctx
+    doc_id = upload(client, lib).json()["documentId"]
+    await committed(s, lib, doc_id)
+    replace(client, lib, doc_id)
+    record = await s.documents.get(lib, doc_id)
+    record.update(status="failed", pendingGeneration=None, pendingFile=None)  # generation 2 failed
+    await s.documents.replace(record)
+    assert replace(client, lib, doc_id).json()["generation"] == 3
+
+
+@pytest.mark.parametrize(
+    "kwargs,status,code",
+    [({"data": b"x" * 1001}, 413, "file_too_large"), ({"data": b""}, 400, "empty_file")],
+)
+async def test_bad_replacements_change_nothing(ctx, kwargs, status, code):
+    client, s, lib = ctx
+    doc_id = upload(client, lib).json()["documentId"]
+    before = await s.documents.get(lib, doc_id)
+    r = replace(client, lib, doc_id, **kwargs)
+    assert (r.status_code, r.json()["error"]["code"]) == (status, code)
+    assert await s.documents.get(lib, doc_id) == before and len(s.queue.sent) == 1
+
+
+def test_replacing_a_deleted_or_unknown_document_is_404_and_in_a_deleting_library_409(ctx):
+    client, s, lib = ctx
+    doc_id = upload(client, lib).json()["documentId"]
+    assert replace(client, lib, "nope").json()["error"]["code"] == "document_not_found"
+    client.delete(f"/v1/libraries/{lib}/documents/{doc_id}")
+    r = replace(client, lib, doc_id)
+    assert (r.status_code, r.json()["error"]["code"]) == (404, "document_not_found")
+    other = upload(client, lib).json()["documentId"]
+    client.delete(f"/v1/libraries/{lib}")
+    r = replace(client, lib, other)
+    assert (r.status_code, r.json()["error"]["code"]) == (409, "library_deleting")
+
+
+async def test_a_queue_failure_fails_the_replacement_only(ctx, monkeypatch):
+    client, s, lib = ctx
+    doc_id = upload(client, lib).json()["documentId"]
+    await committed(s, lib, doc_id)
+
+    async def broken(message, *, session_id):
+        raise RuntimeError("bus down")
+
+    monkeypatch.setattr(s.queue, "send", broken)
+    r = replace(client, lib, doc_id)
+    assert (r.status_code, r.json()["error"]["code"]) == (503, "queue_unavailable")
+    doc = client.get(f"/v1/libraries/{lib}/documents/{doc_id}").json()
+    assert (doc["status"], doc["statusDetail"], doc["activeGeneration"]) == ("failed", "enqueue_failed", 1)
+    assert doc["pendingGeneration"] is None and doc["pendingFile"] is None and doc["generation"] == 2
+    assert list(s.blobs.blobs) == [f"{lib}/{doc_id}/original/1/Q4 review.txt"]  # the orphan is gone
+
+
+async def test_a_storage_failure_fails_the_replacement_only(ctx, monkeypatch):
+    client, s, lib = ctx
+    doc_id = upload(client, lib).json()["documentId"]
+    await committed(s, lib, doc_id)
+
+    async def broken(path, data, content_type):
+        raise RuntimeError("storage down")
+
+    monkeypatch.setattr(s.blobs, "upload", broken)
+    with pytest.raises(RuntimeError):
+        replace(client, lib, doc_id)
+    doc = client.get(f"/v1/libraries/{lib}/documents/{doc_id}").json()
+    assert (doc["status"], doc["statusDetail"], doc["activeGeneration"]) == ("failed", "upload_failed", 1)
+    assert len(s.queue.sent) == 1  # only the original upload's ingest
+
+
+async def test_a_concurrent_change_is_retried_with_a_fresh_generation(ctx, monkeypatch):
+    client, s, lib = ctx
+    doc_id = upload(client, lib).json()["documentId"]
+    await committed(s, lib, doc_id)
+    real, raced = s.documents.replace, {"done": False}
+
+    async def race_once(record):
+        if not raced["done"]:
+            raced["done"] = True
+            current = await s.documents.get(lib, doc_id)
+            current.update(generation=5)  # another replacement reserved generation 5 first
+            await real(current)
+        return await real(record)
+
+    monkeypatch.setattr(s.documents, "replace", race_once)
+    assert replace(client, lib, doc_id).json()["generation"] == 6

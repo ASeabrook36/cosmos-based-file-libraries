@@ -1,6 +1,6 @@
 # Specification: File Library Index
 
-*Version 0.7, 2026-10-23. Working name. Status: Phases 0–2 passed (`build-plan.md`): libraries, upload, ingestion, vector search and the demo platform run end to end on the demo account. Phases 3–5 are not built. Every design choice here that rests on a measurement is traced in `evidence.md`.*
+*Version 0.8, 2026-10-23. Working name. Status: Phases 0–2 passed (`build-plan.md`): libraries, upload, ingestion, vector search and the demo platform run end to end on the demo account. Phase 3 is in progress: document replacement (§7.8) is built and unit-tested, and its live exit check has not run. Phases 4–5 are not built. Every design choice here that rests on a measurement is traced in `evidence.md`.*
 
 ## 1. Scope
 
@@ -121,11 +121,13 @@ Partition key `/libraryId`. `id` equals `documentId` (a GUID).
 |---|---|---|
 | `id`, `documentId`, `libraryId` | string | |
 | `fileName`, `contentType`, `fileType`, `sizeBytes`, `sha256` | | `fileType` is the normalized extension: `pdf`, `docx`, `pptx`, `xlsx`, `txt`, `md`, `html`, `csv`, `eml`, `msg`, `image` |
-| `blobPath` | string | `{libraryId}/{documentId}/original/{fileName}` |
+| `blobPath` | string | `{libraryId}/{documentId}/original/{generation}/{fileName}`: each generation's original has its own path, so a replacement never overwrites the one search still serves. Originals stored before Phase 3 have no generation segment and count as generation 1 (`evidence.md` E30) |
 | `status` | `queued` \| `processing` \| `ready` \| `failed` \| `deleting` | The outcome of the latest processing attempt. It does not decide what search returns, except `deleting`; `activeGeneration` does (§8 step 6) |
 | `statusDetail` | string | For `failed`: `encrypted`, `password_protected`, `unsupported_file_type`, `ocr_page_limit_exceeded`, `parser_error`, `too_many_chunks`, … |
+| `generation` | int | The newest generation ever assigned. It only increases, so a generation number is never reused. The first upload sets it to 1; each replacement adds 1. Records written before Phase 3 lack it: read it as the largest of `activeGeneration`, `pendingGeneration` and 1 |
 | `activeGeneration` | int \| null | The generation search may return. `null` until the first generation commits, so a document's chunks are never searchable half-written |
-| `pendingGeneration` | int \| null | The generation being written. The first upload sets it to 1 |
+| `pendingGeneration` | int \| null | The generation being written. The first upload sets it to 1; a replacement sets it to the new `generation` |
+| `pendingFile` | object \| null | `{fileName, contentType, fileType, sizeBytes, sha256, blobPath, uploadedAt, uploadedBy}` of a replacement until it commits. The record's own file fields describe the active generation, the one search returns; on commit the worker copies these over them (§7.2 step 9). `null` for a first upload and after a commit or failure |
 | `uploadedAt`, `uploadedBy` | | System time; `uploadedBy` for audit only |
 | `authoredAt`, `authoredAtSuspect` | datetime, bool | From file metadata. `authoredAtSuspect` is set when many documents in the library share one timestamp, which marks a bulk migration rather than real authorship |
 | `author` | string \| null | |
@@ -201,11 +203,13 @@ Base path `/v1`. JSON throughout except uploads. Errors: `{"error": {"code": "..
 | `GET /v1/libraries/{libraryId}/documents` | `?status=&facet=` | List |
 | `GET /v1/libraries/{libraryId}/documents/{documentId}` | | Document, including proposals |
 | `PATCH /v1/libraries/{libraryId}/documents/{documentId}` | `{author?, periodStart?, periodEnd?, tags?, acceptProposals?: ["region=EMEA", "period", "author"]}` | Document; chunk metadata updated by a `retag` job |
-| `PUT /v1/libraries/{libraryId}/documents/{documentId}/content` | multipart `file` | `202`; reprocesses as a new generation |
+| `PUT /v1/libraries/{libraryId}/documents/{documentId}/content` | multipart `file` | `202 {documentId, status: "queued", generation}`; reprocesses as a new generation (§7.8) |
 | `DELETE /v1/libraries/{libraryId}/documents/{documentId}` | | `202`; status `deleting`. Repeatable: queues the purge again (§5 rule 5) |
 | `GET /v1/libraries/{libraryId}/documents/{documentId}/file` | | `302` to a 15-minute read-only link |
 
 Uploads are refused with `409 library_deleting` when the library is `deleting`. Maximum upload size is configurable (default 100 MB).
+
+A replacement (`PUT …/content`) is refused with `404 document_not_found` when the document does not exist or is `deleting`, `409 library_deleting` when the library is, `413 file_too_large` and `400 empty_file` as for uploads. It reserves the next `generation` on the record first, then stores the original under that generation's path, then queues `ingest`. Reserving first means two concurrent replacements never write the same path. If the original cannot be stored, or the message cannot be queued (`503 queue_unavailable`), the replacement alone is marked `failed` (`upload_failed`, `enqueue_failed`) and its original removed; the active generation stays searchable. A replacement sent while another is pending supersedes it: the worker abandons the older one.
 
 ### 6.3 Search
 
@@ -320,25 +324,25 @@ One Service Bus queue, `ingest`, with sessions enabled and `SessionId = libraryI
 
 | Message `type` | Fields | Effect |
 |---|---|---|
-| `ingest` | `libraryId, documentId, generation` | Process a document (§7.2) |
+| `ingest` | `libraryId, documentId, generation` | Process a document (§7.2). If the document's `generation` reads lower than the message's, the read is stale (`evidence.md` E28): the worker pauses a second and the message is redelivered |
 | `retag` | `libraryId, documentId` | Copy the document's metadata to its chunks by patch |
-| `purgeDocument` | `libraryId, documentId, deleted?` | Delete every chunk of the document that is neither its `activeGeneration` nor its `pendingGeneration`. If the document is `deleting` or gone, delete all its chunks, then its blobs, then its record. Safe because one library's messages never run concurrently (session order). `deleted: true` marks a purge queued by a deletion: if the document does not read as `deleting` yet, the read is stale (`evidence.md` E28), so the worker pauses a second and the message is redelivered instead of completing |
+| `purgeDocument` | `libraryId, documentId, deleted?` | Delete every chunk and original of an obsolete generation: one that is neither `activeGeneration` nor `pendingGeneration`, and not above the document's `generation` (a stale read may miss a newer generation, so what lies above is left for a later purge; E30). If the document is `deleting` or gone, delete all its chunks, then its blobs, then its record. Safe because one library's messages never run concurrently (session order). `deleted: true` marks a purge queued by a deletion: if the document does not read as `deleting` yet, the read is stale (`evidence.md` E28), so the worker pauses a second and the message is redelivered instead of completing |
 | `purgeLibrary` | `libraryId` | Delete every document, chunk and blob, then the library. If the library does not read as `deleting` yet, the read is stale (E28): retried as for `purgeDocument` |
 | `proposeDescription` | `libraryId` | Regenerate the library description proposal |
 
-A message whose `generation` is lower than the document's `pendingGeneration`/`activeGeneration`, or whose document is `deleting`, is completed without work. After the last delivery attempt fails, the worker marks the document `failed` with the reason before the message dead-letters. `activeGeneration` is left as it was: a failed replacement keeps the previous version searchable, and a failed first upload has nothing searchable. A purge that fails on its last delivery is logged as `purge dead-lettered`. Its library or document stays hidden as `deleting` until the `DELETE` is repeated (§5 rule 5); alerting on that log is Phase 5.
+An `ingest` whose generation is no longer pending is completed without processing. Unless the document is `deleting` or gone, it first queues `purgeDocument` again, and if its generation is the active one it also refreshes the library's `stats` (step 11). Messages arrive at least once, and such a delivery may be the retry of one that committed and then failed to queue its purge; the purge is idempotent. After the last delivery attempt fails, the worker marks the document `failed` with the reason before the message dead-letters. `activeGeneration` is left as it was: a failed replacement keeps the previous version searchable, and a failed first upload has nothing searchable. A purge that fails on its last delivery is logged as `purge dead-lettered`. Its library or document stays hidden as `deleting` until the `DELETE` is repeated (§5 rule 5); alerting on that log is Phase 5.
 
 ### 7.2 Processing a document
 
-1. Load the document; set `status: processing`, `pendingGeneration: G`.
-2. Download the original from Blob.
+1. Load the document; set `status: processing`. Proceed only while `pendingGeneration` is G.
+2. Download the original from Blob: `pendingFile.blobPath` for a replacement, `blobPath` for a first upload.
 3. Extract (§7.3). Encrypted, password-protected, unsupported and failed files end here with `status: failed` and a `statusDetail`.
 4. Chunk the text (§7.4). A document with more than `INGEST_MAX_CHUNKS_PER_DOCUMENT` chunks ends here with `status: failed`, `too_many_chunks`, before anything is embedded (`evidence.md` E29).
 5. Extract and describe images (§7.5).
 6. Propose tags, period and author (§9.1).
 7. Embed every chunk's `text` with the embedding deployment, in batches of 16, honouring `Retry-After` on 429.
 8. Upsert all chunks of generation G. Writes share one cap across the whole worker, `COSMOS_WRITE_CONCURRENCY` (default 2), not a cap per document. On a 429 that outlasts the SDK's own retries, wait `x-ms-retry-after-ms` and retry. Eight concurrent writers exhausted the SDK's retries on serverless within about 100 writes (`evidence.md` E10). Deterministic ids make retries safe.
-9. Commit: set `activeGeneration: G`, `pendingGeneration: null`, `status: ready`, counts. Until this moment search keeps returning the previous generation, if any; from it, search returns generation G and ignores older ones (§8 step 6).
+9. Commit: set `activeGeneration: G`, `pendingGeneration: null`, `status: ready`, counts; copy `pendingFile` over the record's file fields and clear it. `authoredAt` is taken from the file of generation G, since it only ever comes from the file; `author` keeps any value already set. Until this moment search keeps returning the previous generation, if any; from it, search returns generation G and ignores older ones (§8 step 6).
 10. If G > 1, enqueue `purgeDocument`. It also runs after a generation is abandoned (the document was deleted or replaced while G was written) and after a final failure, so half-written chunks never linger.
 11. Recompute the library's `tagVocabulary` and `stats` from the `documents` container (a single-partition query). Enqueue `proposeDescription` when the library has changed by 10 documents or 24 hours since the last proposal.
 
@@ -385,7 +389,7 @@ Cosmos throttles with HTTP 429 when a partition's throughput is exceeded. The SD
 ### 7.8 Deletion and replacement
 
 - **Document delete:** set `status: deleting` (search drops its chunks immediately, §8 step 6), then `purgeDocument`, which deletes the chunks, the blobs and the document record.
-- **Replacement (`PUT …/content`):** new blob version, `generation + 1`, `ingest`. The old generation stays searchable until the new one commits, then is purged.
+- **Replacement (`PUT …/content`):** `generation + 1`, the new original under that generation's own path, `ingest` (§6.2). The old generation stays searchable until the new one commits. Then `purgeDocument` deletes its chunks and its original; blob soft delete keeps the original recoverable for 7 days, like any deleted blob. Only the active generation's original is kept for rebuilds (E16).
 - **Library delete:** set `status: deleting` (search refused immediately, §5), then `purgeLibrary`.
 - **Retention:** a delete removes a document from the library and from search at once. Blob soft delete and Cosmos continuous backup keep deleted data recoverable by an operator for 7 days; after that it is gone.
 
@@ -434,9 +438,11 @@ ORDER BY RANK RRF(
 | `contentKinds` | `c.contentKind IN (…)` |
 
 6. **Check generations.** Collect the distinct `documentId`s in the results and point-read their document records (same partition, about 1 RU each, in parallel). Drop any chunk whose document is missing or `deleting`, or whose `generation` ≠ `activeGeneration`. Status is otherwise ignored: while a replacement is `queued` or `processing`, or after it has `failed`, the previous generation is still the active one and stays searchable (§7.8). This hides replaced and deleted documents the moment their record changes, before the background purge runs. Keep the first `top`.
+
+   Dropped chunks can leave fewer than `top`. It happens while a document is first written or replaced (the new generation's chunks are in the index, invisible, for the whole write) and until a purge runs. When the fetch window came back full and the check dropped chunks, a full window may be hiding visible matches, so coverage carries a note: how many passages were left out because their documents are being added, replaced or deleted, and that searching again later may return more. Nothing is fetched again (`evidence.md` E30). `disposition` follows the count as always.
 7. **Neighbours** (when `includeNeighbors`, text results only): one query per document, scoped to the full partition key, for `chunkIndex` ± 1 in the active generation.
 8. **Images:** for `image` results, issue a 15-minute read-only user-delegation SAS link to `imageRef`.
-9. **Coverage:** fill `coverage` (§6.3), including notes for filters that exclude documents lacking the field.
+9. **Coverage:** fill `coverage` (§6.3), including notes for filters that exclude documents lacking the field, and for passages step 6 left out.
 10. Emit the `library_search` telemetry event (§9.3). Return.
 
 Results are ordered by the fused rank Cosmos returns. Repeated identical searches can return slightly different top results, because each Cosmos replica builds its own index. Tests compare against exact-search references with recall, never against fixed result lists. Only vector-only searches have an exact reference: inside `RRF`, the brute-force flag changes nothing (`evidence.md` E24).

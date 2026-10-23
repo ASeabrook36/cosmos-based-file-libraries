@@ -29,6 +29,15 @@ Findings that share a root cause are merged. The commits are on this branch, in 
 | 10 | Production gates: vector search with hierarchical keys, float16, spherical, DiskANN at scale, one partition, Entra, public network, hybrid cost | **Deliberate, documented** | Already recorded (`evidence.md` N1, N4–N6, N10, N11; E27; `build-plan.md` Phase 5). The review gives no reason to revisit them. Public network access is now an explicit Phase 5 decision. | `4dd1e54` |
 | 11 | No CI workflow | **Missing** | `.github/workflows/ci.yml` runs ruff and the unit tests on Python 3.12 (the floor) and 3.14 (development), with no secrets and no Azure. | the commit that adds this file |
 
+## Closed in Phase 3
+
+The Phase 3 items from findings 1, 6 and 7 are built and unit-tested (`build-plan.md` Phase 3, Lifecycle). Their live check, `scripts/phase3_exit.py lifecycle`, has not run.
+
+- **Finding 1, redelivered ingest.** Any ingest whose generation is no longer pending queues the purge again, so a purge send that failed after a commit is retried by the redelivery (`spec.md` §7.1). The dead-lettered purge below is unchanged.
+- **Finding 6, underfill.** Decided: report, not refetch. Coverage says how many passages were left out (`spec.md` §8 step 6; `evidence.md` E30).
+- **Finding 7, originals.** Each generation's original has its own path, and the purge deletes obsolete ones (`spec.md` §4.2, §7.8; E30).
+- *Found in planning:* without a counter a generation number could be reused after a failed replacement, exposing that failed file's leftover chunks; and a stale read could lose a replacement. The record's `generation` only increases, and ingest retries a stale read (E28, E30).
+
 ## Open follow-up
 
 - **Deletion recovery is not fully closed (finding 1).** A purge that dead-letters is logged, but not alerted on or retried. Until Phase 5's dead-letter alerting and purge-verification job exist, someone must notice the log line and repeat the `DELETE`. The reviewer re-checked `main` at `8aab5e7` and asked for this to stay visible as an operational follow-up.

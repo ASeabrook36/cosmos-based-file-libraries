@@ -149,3 +149,25 @@ def test_the_client_sends_the_key_and_parses_error_bodies():
     with pytest.raises(IndexError_) as err:
         client.search("l", "a1", "q")
     assert (err.value.status, err.value.code) == (403, "library_not_bound_to_agent")
+
+
+def test_the_client_replaces_and_deletes_through_the_documented_paths():
+    seen = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append((request.method, request.url.path))
+        if request.method == "PUT":
+            assert b'filename="v2.pdf"' in request.content
+            return httpx.Response(202, json={"documentId": "d", "status": "queued", "generation": 2})
+        return httpx.Response(202)
+
+    client = IndexClient(
+        "http://index", "k", http=httpx.Client(base_url="http://index", transport=httpx.MockTransport(handler))
+    )
+    assert client.replace_document("l", "d", "v2.pdf", b"%PDF")["generation"] == 2
+    assert client.delete_document("l", "d") is None and client.delete_library("l") is None
+    assert seen == [
+        ("PUT", "/v1/libraries/l/documents/d/content"),
+        ("DELETE", "/v1/libraries/l/documents/d"),
+        ("DELETE", "/v1/libraries/l"),
+    ]

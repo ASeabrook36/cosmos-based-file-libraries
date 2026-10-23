@@ -12,6 +12,8 @@ class BlobStore(Protocol):
     async def upload(self, path: str, data: bytes, content_type: str) -> None: ...
     async def download(self, path: str) -> bytes: ...
     async def delete_prefix(self, prefix: str) -> int: ...
+    async def list_prefix(self, prefix: str) -> list[str]: ...
+    async def delete(self, path: str) -> None: ...
 
 
 class AzureBlobs:
@@ -44,6 +46,19 @@ class AzureBlobs:
                 pass
         return count
 
+    async def list_prefix(self, prefix: str) -> list[str]:
+        if not prefix.endswith("/"):
+            raise ValueError("a blob prefix must end in '/' so it cannot match a sibling id")
+        return [blob.name async for blob in self._c.list_blobs(name_starts_with=prefix)]
+
+    async def delete(self, path: str) -> None:
+        from azure.core.exceptions import ResourceNotFoundError
+
+        try:
+            await self._c.delete_blob(path, delete_snapshots="include")
+        except ResourceNotFoundError:  # already gone: a retried purge
+            pass
+
 
 class MemoryBlobs:
     def __init__(self) -> None:
@@ -62,3 +77,11 @@ class MemoryBlobs:
         for p in doomed:
             del self.blobs[p]
         return len(doomed)
+
+    async def list_prefix(self, prefix: str) -> list[str]:
+        if not prefix.endswith("/"):
+            raise ValueError("a blob prefix must end in '/' so it cannot match a sibling id")
+        return [p for p in self.blobs if p.startswith(prefix)]
+
+    async def delete(self, path: str) -> None:
+        self.blobs.pop(path, None)
