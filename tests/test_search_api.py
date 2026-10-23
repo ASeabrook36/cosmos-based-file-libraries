@@ -193,3 +193,11 @@ async def test_query_and_chunk_text_are_never_logged(ctx, caplog):
     logged = " ".join(f"{r.getMessage()} {r.__dict__}" for r in caplog.records)
     assert "library_search" in logged and "requestCharge" in logged
     assert "medical" not in logged and "Gross margin" not in logged
+
+
+async def test_the_response_reports_its_cost(ctx):
+    client, s, worker = ctx
+    lib, _ = await library_with_document(client, s, worker)
+    usage = search(client, lib).json()["usage"]
+    assert set(usage) == {"requestCharge", "totalMs"}
+    assert usage["requestCharge"] >= 0 and usage["totalMs"] >= 0

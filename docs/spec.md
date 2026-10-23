@@ -270,10 +270,12 @@ Response:
       "image": { "url": "https://…?sv=…", "expiresAt": "…", "width": 1280, "height": 720, "mime": "image/png" }
     }
   ],
+  "usage": { "requestCharge": 12.4, "totalMs": 210.5 },
   "telemetryId": "…"
 }
 ```
 
+- `usage` reports what this search cost: `requestCharge` is the Cosmos request units summed over all its queries (search, neighbours), `totalMs` the server-side time. It is for the platform's display and cost tracking; it carries no content.
 - `disposition` is `results` (3 or more), `thin` (1–2) or `empty` (0). An empty result is reported as empty; nothing is padded.
 - No scores are returned. Hybrid ranking fuses rank positions, so its scores are not comparable across queries and must not be thresholded.
 - `image.url` is a 15-minute read-only user-delegation SAS link. The platform fetches it to show the image to the user, and to put the image into the agent's context when the agent's model accepts images.

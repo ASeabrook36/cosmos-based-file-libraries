@@ -157,6 +157,7 @@ class Searcher:
             for rank, c in enumerate(kept, start=1)
         ]
         telemetry_id = str(uuid.uuid4())
+        total_ms = round((time.perf_counter() - started) * 1000, 1)
         document_count = (library.get("stats") or {}).get("documentCount", 0)
         response = {
             "library": {"libraryId": library_id, "name": library.get("name")},
@@ -168,6 +169,7 @@ class Searcher:
                 "disposition": disposition(len(results)),
             },
             "results": results,
+            "usage": {"requestCharge": round(cost.request_charge, 2), "totalMs": total_ms},
             "telemetryId": telemetry_id,
         }
         log.info(
@@ -184,7 +186,7 @@ class Searcher:
                 "disposition": response["coverage"]["disposition"],
                 "requestCharge": round(cost.request_charge, 2),
                 "cosmosMs": round(cosmos_ms, 1),
-                "totalMs": round((time.perf_counter() - started) * 1000, 1),
+                "totalMs": total_ms,
             },
         )
         return response
