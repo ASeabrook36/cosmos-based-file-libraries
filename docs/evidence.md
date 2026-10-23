@@ -1,6 +1,6 @@
 # Evidence: why the design is what it is
 
-*Version 0.6, 2026-10-23: E28 (deletion must be retryable, and the worker must not trust its first read). Version 0.5, 2026-10-22: E27 (hybrid search routed by partition key does not rank); E21 and E24 corrected. Version 0.4: E26 (search visibility). Version 0.3: Phase 0 measurements added.*
+*Version 0.6, 2026-10-23: E28 (deletion must be retryable, and the worker must not trust its first read); E29 (bound what one document can cost). Version 0.5, 2026-10-22: E27 (hybrid search routed by partition key does not rank); E21 and E24 corrected. Version 0.4: E26 (search visibility). Version 0.3: Phase 0 measurements added.*
 
 Most decisions in `spec.md` rest on measurements from earlier work on these Cosmos features, made on live Azure in 2026. That work built a retrieval index in which each owner (a person) had their own body of content, and every search named whose content to search. That is structurally this project's problem: an owner there plays the role a library plays here. The numbers are recorded here so this repository stands on its own.
 
@@ -298,6 +298,30 @@ The fix (`spec.md` §5 rule 5, §7.1):
 Not observed live: it follows from the documented semantics, and `tests/test_worker_handlers.py` and the API tests encode it. Within one API process, a search reads with the same client that wrote `deleting`, so it sees the deletion. Across API instances (Phase 5) that is not proven (N13).
 
 Source: [Consistency level choices](https://learn.microsoft.com/en-us/azure/cosmos-db/consistency-levels) (updated 2026-04-27).
+
+### E29. Bound what one document can cost · Measured (locally) and inference
+
+The upload limit bounds bytes, not work. How many chunks a file makes depends on how dense its text is: a 100 MB PDF that is mostly images makes a few hundred, a 100 MB CSV about 50,000.
+
+**Measured** with the `cl100k_base` tokenizer, no Azure involved. Under `chunking-v1.0`, the heading was carried whole into every chunk and subtracted from the 500-token budget. An 1,800-token section made:
+
+| Heading | v1.0 chunks | v1.1 chunks |
+|---|---|---|
+| none | 5 | 5 |
+| 300 tokens | 14 | 6 |
+| 450 tokens | 75 | 7 |
+| 520 tokens | 1,650 | 7 |
+| 5,000 tokens | (one per body token) | 17, none over 500 tokens |
+
+At 520 tokens that is about 861,000 tokens embedded and about 238,000 RU of writes at E10's 144 RU per chunk, for 1,800 tokens of text. A DOCX paragraph styled as a heading is enough. `chunking-v1.1` carries at most 64 tokens of heading and puts the full heading at the start of the body. Headings of 64 tokens or fewer chunk exactly as before.
+
+**Inference**, from the settings and E10:
+
+- A 50,000-chunk document (about 20 million tokens) embeds for about 2¾ hours at the default 150,000 tokens per minute. The worker renews a session lock for at most an hour, so the message would be redelivered mid-flight and redone, up to five times.
+- Its writes queue ahead of every other library's on the worker-wide write cap, and its embeddings share the deployment's quota with search. That breaks `spec.md` §7.1's promise that one library cannot starve the others.
+- Its vectors take about 5 GB as Python floats in one worker.
+
+Hence `INGEST_MAX_CHUNKS_PER_DOCUMENT`, default 5,000: about 2 million tokens, embedded in about 13 minutes. It is checked after chunking and before embedding, so refusing a document costs nothing. It is a setting, so raising it is a configuration change. The proper fix is to embed and write in bounded batches (`build-plan.md` Phase 5), which removes the starvation and memory limits, though not the lock limit.
 
 ## Not proven
 

@@ -65,3 +65,11 @@ def test_search_mode_defaults_to_vector_and_is_checked():
     assert Settings.from_env({"ENVIRONMENT": "demo", "SEARCH_MODE": "hybrid"}).search_mode == "hybrid"
     with pytest.raises(ConfigError, match="SEARCH_MODE"):
         Settings.from_env({"ENVIRONMENT": "demo", "SEARCH_MODE": "keyword"})
+
+
+def test_the_per_document_chunk_cap_is_a_setting():
+    assert Settings.from_env({"ENVIRONMENT": "demo"}).ingest_max_chunks_per_document == 5_000
+    env = {"ENVIRONMENT": "demo", "INGEST_MAX_CHUNKS_PER_DOCUMENT": "20000"}
+    assert Settings.from_env(env).ingest_max_chunks_per_document == 20_000
+    with pytest.raises(ConfigError, match="INGEST_MAX_CHUNKS_PER_DOCUMENT"):
+        Settings.from_env({"ENVIRONMENT": "demo", "INGEST_MAX_CHUNKS_PER_DOCUMENT": "0"})

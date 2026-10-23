@@ -123,7 +123,7 @@ Partition key `/libraryId`. `id` equals `documentId` (a GUID).
 | `fileName`, `contentType`, `fileType`, `sizeBytes`, `sha256` | | `fileType` is the normalized extension: `pdf`, `docx`, `pptx`, `xlsx`, `txt`, `md`, `html`, `csv`, `eml`, `msg`, `image` |
 | `blobPath` | string | `{libraryId}/{documentId}/original/{fileName}` |
 | `status` | `queued` \| `processing` \| `ready` \| `failed` \| `deleting` | The outcome of the latest processing attempt. It does not decide what search returns, except `deleting`; `activeGeneration` does (§8 step 6) |
-| `statusDetail` | string | For `failed`: `encrypted`, `password_protected`, `unsupported_file_type`, `ocr_page_limit_exceeded`, `parser_error`, … |
+| `statusDetail` | string | For `failed`: `encrypted`, `password_protected`, `unsupported_file_type`, `ocr_page_limit_exceeded`, `parser_error`, `too_many_chunks`, … |
 | `activeGeneration` | int \| null | The generation search may return. `null` until the first generation commits, so a document's chunks are never searchable half-written |
 | `pendingGeneration` | int \| null | The generation being written. The first upload sets it to 1 |
 | `uploadedAt`, `uploadedBy` | | System time; `uploadedBy` for audit only |
@@ -333,7 +333,7 @@ A message whose `generation` is lower than the document's `pendingGeneration`/`a
 1. Load the document; set `status: processing`, `pendingGeneration: G`.
 2. Download the original from Blob.
 3. Extract (§7.3). Encrypted, password-protected, unsupported and failed files end here with `status: failed` and a `statusDetail`.
-4. Chunk the text (§7.4).
+4. Chunk the text (§7.4). A document with more than `INGEST_MAX_CHUNKS_PER_DOCUMENT` chunks ends here with `status: failed`, `too_many_chunks`, before anything is embedded (`evidence.md` E29).
 5. Extract and describe images (§7.5).
 6. Propose tags, period and author (§9.1).
 7. Embed every chunk's `text` with the embedding deployment, in batches of 16, honouring `Retry-After` on 429.
@@ -361,6 +361,8 @@ A message whose `generation` is lower than the document's `pendingGeneration`/`a
 ### 7.4 Chunking
 
 Section-aware chunks of about 500 tokens with about 50 tokens of overlap, measured with the `cl100k_base` tokenizer (the one `text-embedding-3-large` uses). Overlap is whole trailing sentences; a sentence is split only if it alone exceeds the target. Headings are carried into every chunk of their section. An email of 700 tokens or fewer is one chunk. Spreadsheet chunks break on row boundaries. Start from `src/fli/chunking.py` (§13), and record `chunkingVersion` on every chunk.
+
+The heading carried into each chunk is at most 64 tokens. A longer heading is almost always a paragraph styled as one: the chunk carries its first 64 tokens, and its full text opens the section body, so it is indexed once (`chunking-v1.1`, `evidence.md` E29).
 
 ### 7.5 Images
 
@@ -475,6 +477,7 @@ The routing report is a saved Log Analytics query, per library over 30 days: sea
 | `UPLOAD_MAX_BYTES` | `104857600` | |
 | `IMAGE_MIN_PIXELS`, `IMAGE_MIN_BYTES`, `IMAGE_MAX_PER_DOCUMENT` | `16384`, `10240`, `50` | |
 | `INGEST_MAX_CONCURRENT_SESSIONS` | `8` | |
+| `INGEST_MAX_CHUNKS_PER_DOCUMENT` | `5000` | Larger documents fail as `too_many_chunks`. Raise it with the embedding quota and the worker's memory (`evidence.md` E29) |
 | `COSMOS_WRITE_CONCURRENCY` | `2` | Chunk writes in flight across the whole worker (§7.2 step 8). 2 suits serverless (`evidence.md` E10) |
 | `SEARCH_DEFAULT_TOP`, `SEARCH_MAX_TOP` | `8`, `20` | |
 | `SEARCH_MODE` | `vector` | `vector` or `hybrid` (§8 step 5, `evidence.md` E27) |

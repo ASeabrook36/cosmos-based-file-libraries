@@ -167,6 +167,7 @@ async def run(settings: Settings, stopping: asyncio.Event) -> None:
             ),
             chunker=Chunker(default_tokenizer()),
             ocr=ocr,
+            max_chunks_per_document=settings.ingest_max_chunks_per_document,
         )
 
         async def take_session() -> bool:

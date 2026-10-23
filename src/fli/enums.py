@@ -6,7 +6,7 @@ from enum import StrEnum
 
 # Recorded on every chunk. Any change to the chunking algorithm or its parameters must
 # change this value, so chunks made by different algorithms are never mixed unknowingly.
-CHUNKING_VERSION = "chunking-v1.0"
+CHUNKING_VERSION = "chunking-v1.1"  # v1.1: headings carried into chunks are capped
 
 
 class ExtractionMethod(StrEnum):

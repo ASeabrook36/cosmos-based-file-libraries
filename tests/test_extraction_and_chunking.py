@@ -209,6 +209,24 @@ def test_oversized_sentence_is_split_on_token_boundaries():
     assert len(chunks) >= 3 and all(c.token_count <= 500 for c in chunks)
 
 
+def test_an_over_long_heading_is_capped_and_its_text_opens_the_body():
+    """Review finding 2: a heading over the target once made one chunk per body token."""
+    chunker = Chunker(TOK)
+    heading = " ".join(f"h{i}" for i in range(520))
+    plain = chunker.chunk([long_section(heading=None)])
+    capped = chunker.chunk([long_section(heading=heading)])
+    assert len(capped) <= len(plain) + 3
+    assert all(c.token_count <= 500 for c in capped)
+    assert {c.heading for c in capped} == {" ".join(f"h{i}" for i in range(64))}
+    assert sum(" h519" in c.text for c in capped) == 1  # the full heading is indexed once, not lost
+
+
+def test_a_heading_within_the_cap_is_carried_whole():
+    heading = " ".join(f"h{i}" for i in range(64))
+    chunks = Chunker(TOK).chunk([long_section(heading=heading)])
+    assert all(c.heading == heading and c.text.startswith(heading + "\n") for c in chunks)
+
+
 def test_headings_are_carried_and_sections_never_merge():
     chunks = Chunker(TOK).chunk([long_section(60, "Alpha"), long_section(60, "Bravo")])
     assert all(c.text.startswith(("Alpha\n", "Bravo\n")) for c in chunks)
@@ -261,12 +279,12 @@ async def test_pptx_speaker_notes_are_extracted():
 
 
 def test_chunking_version_names_the_tokenizer():
-    assert chunking_version_for(TOK) == "chunking-v1.0+approx-wordpiece"
+    assert chunking_version_for(TOK) == "chunking-v1.1+approx-wordpiece"
 
     class Cl100k:
         name = "cl100k_base"
 
-    assert chunking_version_for(Cl100k()) == "chunking-v1.0"
+    assert chunking_version_for(Cl100k()) == "chunking-v1.1"
 
 
 def test_approx_tokenizer_round_trips():

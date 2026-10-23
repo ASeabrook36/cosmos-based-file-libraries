@@ -5,15 +5,20 @@ overlap; headings are carried into each chunk of their section, and chunks never
 sections, so a chunk's heading and location (page, slide or sheet) are always its own.
 Email: a message of at most 700 tokens is one chunk; longer messages use 500/50.
 
-Chunk boundaries depend on the tokenizer. ``chunking-v1.0`` is defined with the
+Chunk boundaries depend on the tokenizer. ``chunking-v1.1`` is defined with the
 ``cl100k_base`` encoding that text-embedding-3-large uses. Any other tokenizer produces a
-visibly different ``chunkingVersion`` (``chunking-v1.0+<tokenizer>``), so chunks made with a
+visibly different ``chunkingVersion`` (``chunking-v1.1+<tokenizer>``), so chunks made with a
 stand-in can never be mistaken for, or mixed with, contract-version chunks. Any change to the
 algorithm must change the version.
 
 Overlap is whole trailing sentences totalling at most 50 tokens: sentence-awareness wins over
 an exact 50. A single sentence longer than the target is split on token boundaries, the only
 case in which a sentence is cut.
+
+The heading carried into each chunk is at most 64 tokens. A longer "heading" is almost always
+a paragraph styled as one; carried whole, it left almost no body budget and multiplied the
+chunk count (review finding 2). Its full text opens the section body instead, so it is indexed
+once and nothing is lost (v1.1).
 """
 
 from __future__ import annotations
@@ -28,6 +33,7 @@ from .extraction import Section
 TARGET_TOKENS = 500
 OVERLAP_TOKENS = 50
 EMAIL_SINGLE_CHUNK_MAX = 700
+HEADING_MAX_TOKENS = 64
 CONTRACT_TOKENIZER = "cl100k_base"
 
 DocumentKind = Literal["document", "email"]
@@ -130,10 +136,17 @@ Piece = tuple[str, "str | None", int, "dict[str, Any] | None"]
 
 
 class Chunker:
-    def __init__(self, tokenizer: Tokenizer, target: int = TARGET_TOKENS, overlap: int = OVERLAP_TOKENS) -> None:
+    def __init__(
+        self,
+        tokenizer: Tokenizer,
+        target: int = TARGET_TOKENS,
+        overlap: int = OVERLAP_TOKENS,
+        heading_max: int = HEADING_MAX_TOKENS,
+    ) -> None:
         self.tokenizer = tokenizer
         self.target = target
         self.overlap = overlap
+        self.heading_max = heading_max
         self.version = chunking_version_for(tokenizer)
 
     def count(self, text: str) -> int:
@@ -155,13 +168,23 @@ class Chunker:
     def _index(pieces: list[Piece]) -> list[Chunk]:
         return [Chunk(i, text, tokens, heading, location) for i, (text, heading, tokens, location) in enumerate(pieces)]
 
+    def _bounded(self, section: Section) -> tuple[str | None, str]:
+        """The heading to carry into each chunk, and the body: an over-long heading opens the body."""
+        if not section.heading:
+            return section.heading, section.text
+        tokens = self.tokenizer.encode(section.heading)
+        if len(tokens) <= self.heading_max:
+            return section.heading, section.text
+        return self.tokenizer.decode(tokens[: self.heading_max]).strip(), f"{section.heading}\n{section.text}"
+
     def _window(self, sections: list[Section]) -> list[Piece]:
         out: list[Piece] = []
         for section in sections:
-            sentences = [s for s in split_sentences(section.text) if s]
+            heading, text = self._bounded(section)
+            sentences = [s for s in split_sentences(text) if s]
             if not sentences:
                 continue
-            prefix = f"{section.heading}\n" if section.heading else ""
+            prefix = f"{heading}\n" if heading else ""
             prefix_tokens = self.count(prefix) if prefix else 0
             budget = max(1, self.target - prefix_tokens)
             units: list[tuple[str, int]] = []
@@ -180,7 +203,7 @@ class Chunker:
             for unit, n in units:
                 if current and current_tokens + n + 1 > budget:
                     body = " ".join(u for u, _ in current)
-                    out.append((prefix + body, section.heading, self.count(prefix + body), section.location))
+                    out.append((prefix + body, heading, self.count(prefix + body), section.location))
                     carry: list[tuple[str, int]] = []
                     carried = 0
                     for prev, pn in reversed(current):
@@ -195,5 +218,5 @@ class Chunker:
                 current_tokens += n + 1
             if current:
                 body = " ".join(u for u, _ in current)
-                out.append((prefix + body, section.heading, self.count(prefix + body), section.location))
+                out.append((prefix + body, heading, self.count(prefix + body), section.location))
         return out

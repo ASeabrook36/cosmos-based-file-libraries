@@ -49,7 +49,7 @@ async def test_ingest_writes_chunks_and_commits_generation_1(ctx):
     d = doc(client, lib, doc_id)
     assert (d["status"], d["activeGeneration"], d["pendingGeneration"]) == ("ready", 1, None)
     assert d["chunkCount"] == len(s.chunks.items) > 1
-    assert d["extraction"]["chunkingVersion"].startswith("chunking-v1.0")
+    assert d["extraction"]["chunkingVersion"].startswith("chunking-v1.1")
     chunk = s.chunks.items[(lib, doc_id, f"{doc_id}:1:0")]
     assert chunk["generation"] == 1 and chunk["facets"] == ["region=EMEA"] and chunk["fileName"] == "q4.txt"
     assert len(chunk["embedding"]) == 3 and chunk["contentKind"] == "text"
@@ -199,6 +199,16 @@ async def test_purge_library_deletes_everything_and_refuses_an_active_library(ct
     await drain(s, worker)
     assert not s.chunks.items and not s.blobs.blobs and not s.documents.m.items
     assert await s.libraries.get(lib) is None
+
+
+async def test_a_document_over_the_chunk_cap_fails_before_embedding(ctx):
+    client, s, lib, worker = ctx
+    worker.max_chunks_per_document = 2
+    doc_id = upload(client, lib)  # TEXT makes several chunks
+    await drain(s, worker)
+    d = doc(client, lib, doc_id)
+    assert (d["status"], d["statusDetail"], d["activeGeneration"]) == ("failed", "too_many_chunks", None)
+    assert not s.chunks.items and worker.embedder.calls == 0
 
 
 async def test_a_deletion_purge_that_reads_a_stale_record_retries_instead_of_completing(ctx):

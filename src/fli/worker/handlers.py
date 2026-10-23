@@ -82,6 +82,7 @@ class Worker:
     embedder: Embedder
     chunker: Chunker
     ocr: OcrClient | None = None
+    max_chunks_per_document: int = 5_000  # INGEST_MAX_CHUNKS_PER_DOCUMENT
     stale_read_pause: float = 1.0  # seconds before retrying a purge whose deletion is not yet visible
 
     async def handle(self, message: Message) -> None:
@@ -132,6 +133,10 @@ class Worker:
         pieces = await asyncio.to_thread(self.chunker.chunk, result.sections, kind)  # CPU-bound tokenizing
         if not pieces:
             await self._fail(library_id, document_id, generation, "no_text")
+            return
+        if len(pieces) > self.max_chunks_per_document:
+            # Checked before embedding, so refusing costs nothing (spec §7.2 step 4).
+            await self._fail(library_id, document_id, generation, "too_many_chunks")
             return
 
         vectors = await self.embedder.embed([p.text for p in pieces])

@@ -67,6 +67,7 @@ class Settings:
     image_min_bytes: int = 10_240
     image_max_per_document: int = 50
     ingest_max_concurrent_sessions: int = 8
+    ingest_max_chunks_per_document: int = 5_000  # larger documents fail as too_many_chunks
     cosmos_write_concurrency: int = 2  # worker-wide; 2 suits serverless (evidence.md E10)
     search_default_top: int = 8
     search_max_top: int = 20
@@ -115,6 +116,7 @@ class Settings:
             image_min_bytes=_int(env, "IMAGE_MIN_BYTES", 10_240),
             image_max_per_document=_int(env, "IMAGE_MAX_PER_DOCUMENT", 50),
             ingest_max_concurrent_sessions=_int(env, "INGEST_MAX_CONCURRENT_SESSIONS", 8),
+            ingest_max_chunks_per_document=_int(env, "INGEST_MAX_CHUNKS_PER_DOCUMENT", 5_000),
             cosmos_write_concurrency=_int(env, "COSMOS_WRITE_CONCURRENCY", 2),
             search_default_top=_int(env, "SEARCH_DEFAULT_TOP", 8),
             search_max_top=_int(env, "SEARCH_MAX_TOP", 20),
@@ -133,6 +135,8 @@ class Settings:
         if self.aoai_embedding_dimensions != 3072:
             # cosmos/chunks.container.json fixes the vector dimension at creation (E16).
             raise ConfigError("AOAI_EMBEDDING_DIMENSIONS must equal the chunks vector policy (3072)")
+        if self.ingest_max_chunks_per_document < 1:
+            raise ConfigError("INGEST_MAX_CHUNKS_PER_DOCUMENT must be at least 1")
         if self.cosmos_write_concurrency < 1:
             raise ConfigError("COSMOS_WRITE_CONCURRENCY must be at least 1")
         if self.search_mode not in SEARCH_MODES:
