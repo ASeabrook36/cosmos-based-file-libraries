@@ -3,11 +3,12 @@
 from __future__ import annotations
 
 import json
+import logging
 
 import pytest
 
 from fli.chunking import ApproxTokenizer, Chunker
-from fli.worker.handlers import BadMessage, Worker
+from fli.worker.handlers import BadMessage, NotYetDeleting, Worker
 from tests.fakes import FakeEmbedder, api
 
 OLE = bytes.fromhex("D0CF11E0A1B11AE1")
@@ -19,6 +20,7 @@ def ctx():
     client, s = api()
     lib = client.post("/v1/libraries", json={"kind": "shared", "name": "Finance"}).json()["id"]
     worker = Worker(s.libraries, s.documents, s.chunks, s.blobs, s.queue, FakeEmbedder(), Chunker(ApproxTokenizer()))
+    worker.stale_read_pause = 0
     return client, s, lib, worker
 
 
@@ -190,12 +192,37 @@ async def test_purge_library_deletes_everything_and_refuses_an_active_library(ct
     upload(client, lib)
     upload(client, lib, name="b.txt")
     await drain(s, worker)
-    await worker.purge_library(lib)  # still active: ignored
+    with pytest.raises(NotYetDeleting):  # still active: retried, never purged
+        await worker.purge_library(lib)
     assert s.chunks.items and await s.libraries.get(lib) is not None
     client.delete(f"/v1/libraries/{lib}")
     await drain(s, worker)
     assert not s.chunks.items and not s.blobs.blobs and not s.documents.m.items
     assert await s.libraries.get(lib) is None
+
+
+async def test_a_deletion_purge_that_reads_a_stale_record_retries_instead_of_completing(ctx):
+    """E28: the API's ``deleting`` write may not have reached the replica the worker reads."""
+    client, s, lib, worker = ctx
+    doc_id = upload(client, lib)
+    await drain(s, worker)
+    message = {"type": "purgeDocument", "libraryId": lib, "documentId": doc_id, "deleted": True}
+    with pytest.raises(NotYetDeleting):  # the record still reads as ready
+        await worker.handle(message)
+    assert s.chunks.items and await s.documents.get(lib, doc_id) is not None
+    client.delete(f"/v1/libraries/{lib}/documents/{doc_id}")  # the write becomes visible
+    await worker.handle(message)  # the redelivery
+    assert not s.chunks.items and not s.blobs.blobs and await s.documents.get(lib, doc_id) is None
+
+
+async def test_a_dead_lettered_purge_is_logged_and_leaves_the_record_hidden(ctx, caplog):
+    client, s, lib, worker = ctx
+    doc_id = upload(client, lib)
+    client.delete(f"/v1/libraries/{lib}/documents/{doc_id}")
+    with caplog.at_level(logging.ERROR, logger="fli.worker"):
+        await worker.fail({"type": "purgeDocument", "libraryId": lib, "documentId": doc_id}, "processing_error:X")
+    assert any(r.getMessage() == "purge dead-lettered" for r in caplog.records)
+    assert (await s.documents.get(lib, doc_id))["status"] == "deleting"
 
 
 async def test_an_upload_that_raced_a_library_delete_is_never_indexed(ctx):

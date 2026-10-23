@@ -110,10 +110,32 @@ def test_delete_refuses_at_once_then_purges_in_the_background(ctx):
     client, _, queue = ctx
     lib = create(client, kind="shared").json()
     assert client.delete(f"/v1/libraries/{lib['id']}").status_code == 202
-    assert queue.sent == [(lib["id"], {"type": "purgeLibrary", "libraryId": lib["id"]})]
-    for method, path in [("get", ""), ("get", "/tool"), ("patch", ""), ("delete", "")]:
+    purge = (lib["id"], {"type": "purgeLibrary", "libraryId": lib["id"]})
+    assert queue.sent == [purge]
+    for method, path in [("get", ""), ("get", "/tool"), ("patch", "")]:
         r = client.request(method, f"/v1/libraries/{lib['id']}{path}", json={} if method == "patch" else None)
         assert r.status_code == 404 and r.json()["error"]["code"] == "library_not_found"
+    # Deleting again queues the purge again: the retry path for a purge that never ran (E28).
+    assert client.delete(f"/v1/libraries/{lib['id']}").status_code == 202
+    assert queue.sent == [purge, purge]
+    assert client.delete("/v1/libraries/nope").json()["error"]["code"] == "library_not_found"
+
+
+def test_a_queue_failure_on_delete_is_503_and_the_delete_can_be_retried(ctx, monkeypatch):
+    client, _, queue = ctx
+    lib = create(client, kind="shared").json()
+    real = queue.send
+
+    async def broken(message, *, session_id):
+        raise RuntimeError("bus down")
+
+    monkeypatch.setattr(queue, "send", broken)
+    r = client.delete(f"/v1/libraries/{lib['id']}")
+    assert (r.status_code, r.json()["error"]["code"]) == (503, "queue_unavailable")
+    assert client.get(f"/v1/libraries/{lib['id']}").status_code == 404  # refused all the same
+    monkeypatch.setattr(queue, "send", real)
+    assert client.delete(f"/v1/libraries/{lib['id']}").status_code == 202
+    assert queue.sent == [(lib["id"], {"type": "purgeLibrary", "libraryId": lib["id"]})]
 
 
 def test_unknown_library_is_404(ctx):

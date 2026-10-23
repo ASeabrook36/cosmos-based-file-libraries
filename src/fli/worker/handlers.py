@@ -47,6 +47,15 @@ class BadMessage(ValueError):
     """A message the worker can never process: the runtime dead-letters it at once."""
 
 
+class NotYetDeleting(RuntimeError):
+    """A purge for a deletion whose ``deleting`` write this worker cannot see yet.
+
+    The API wrote it through another Cosmos client, and a read with no session token for that
+    write may come from a replica that has not caught up (evidence.md E28). Raising lets the
+    message be redelivered instead of completing a purge that did nothing.
+    """
+
+
 def _now() -> str:
     return datetime.now(UTC).isoformat()
 
@@ -73,6 +82,7 @@ class Worker:
     embedder: Embedder
     chunker: Chunker
     ocr: OcrClient | None = None
+    stale_read_pause: float = 1.0  # seconds before retrying a purge whose deletion is not yet visible
 
     async def handle(self, message: Message) -> None:
         kind = message.get("type")
@@ -88,7 +98,7 @@ class Worker:
             document_id = message.get("documentId")
             if not isinstance(document_id, str) or not document_id:
                 raise BadMessage("purgeDocument needs documentId")
-            await self.purge_document(library_id, document_id)
+            await self.purge_document(library_id, document_id, deleted=message.get("deleted") is True)
         elif kind == "purgeLibrary":
             await self.purge_library(library_id)
         else:
@@ -190,6 +200,11 @@ class Worker:
 
     async def fail(self, message: Message, reason: str) -> None:
         """Called by the runtime on the last delivery, before it dead-letters the message."""
+        if message.get("type") in ("purgeDocument", "purgeLibrary"):
+            # The record stays hidden as ``deleting``; repeating the DELETE queues the purge again.
+            ids = {k: message.get(k) for k in ("libraryId", "documentId")}
+            log.error("purge dead-lettered", extra={**ids, "type": message["type"], "reason": reason})
+            return
         if message.get("type") != "ingest":
             return
         library_id, document_id, generation = message["libraryId"], message["documentId"], message["generation"]
@@ -209,8 +224,15 @@ class Worker:
 
     # -- purges -------------------------------------------------------------------------------
 
-    async def purge_document(self, library_id: str, document_id: str) -> None:
+    async def purge_document(self, library_id: str, document_id: str, *, deleted: bool = False) -> None:
+        """Remove what search must never return again.
+
+        ``deleted`` marks a purge queued by a deletion. If the record does not read as
+        ``deleting`` yet, the read is stale (E28): retry rather than tidy generations only.
+        """
         document = await self.documents.get(library_id, document_id)
+        if deleted and document is not None and document.get("status") != "deleting":
+            await self._not_yet_deleting(library_id, document_id)
         existing = await self.chunks.generations(library_id, document_id)
         if document is None or document.get("status") == "deleting":
             for item_id, _ in existing:
@@ -227,8 +249,7 @@ class Worker:
     async def purge_library(self, library_id: str) -> None:
         library = await self.libraries.get(library_id)
         if library is not None and library.get("status") != "deleting":
-            log.warning("purgeLibrary for an active library ignored", extra={"libraryId": library_id})
-            return
+            await self._not_yet_deleting(library_id)  # only the API's DELETE queues this message
         for document in await self.documents.list(library_id, status=None, facet=None):
             if document.get("status") != "deleting":
                 await self._mark_deleting(library_id, document["id"], enqueue=False)
@@ -267,6 +288,13 @@ class Worker:
 
     # -- helpers --------------------------------------------------------------------------------
 
+    async def _not_yet_deleting(self, library_id: str, document_id: str | None = None) -> None:
+        log.warning(
+            "deletion not visible yet; purge retried", extra={"libraryId": library_id, "documentId": document_id}
+        )
+        await asyncio.sleep(self.stale_read_pause)  # give the replica time before the redelivery
+        raise NotYetDeleting(document_id or library_id)
+
     async def _mutate(self, library_id: str, document_id: str, change: Callable[[Record], bool]) -> Record | None:
         """Apply ``change`` to the current record. ``None`` when the record is gone or ``change`` declines."""
         for _ in range(MUTATE_ATTEMPTS):
@@ -288,8 +316,10 @@ class Worker:
 
         await self._mutate(library_id, document_id, mark)
         if enqueue:
-            await self._purge_later(library_id, document_id)
+            await self._purge_later(library_id, document_id, deleted=True)
 
-    async def _purge_later(self, library_id: str, document_id: str) -> None:
+    async def _purge_later(self, library_id: str, document_id: str, *, deleted: bool = False) -> None:
         message: dict[str, Any] = {"type": "purgeDocument", "libraryId": library_id, "documentId": document_id}
+        if deleted:
+            message["deleted"] = True
         await self.queue.send(message, session_id=library_id)

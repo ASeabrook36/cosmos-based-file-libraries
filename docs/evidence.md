@@ -1,6 +1,6 @@
 # Evidence: why the design is what it is
 
-*Version 0.5, 2026-10-22: E27 (hybrid search routed by partition key does not rank); E21 and E24 corrected. Version 0.4: E26 (search visibility). Version 0.3: Phase 0 measurements added.*
+*Version 0.6, 2026-10-23: E28 (deletion must be retryable, and the worker must not trust its first read). Version 0.5, 2026-10-22: E27 (hybrid search routed by partition key does not rank); E21 and E24 corrected. Version 0.4: E26 (search visibility). Version 0.3: Phase 0 measurements added.*
 
 Most decisions in `spec.md` rest on measurements from earlier work on these Cosmos features, made on live Azure in 2026. That work built a retrieval index in which each owner (a person) had their own body of content, and every search named whose content to search. That is structurally this project's problem: an owner there plays the role a library plays here. The numbers are recorded here so this repository stands on its own.
 
@@ -277,6 +277,27 @@ Spec 0.3 had search return only documents whose `status` was `ready`, and set `s
 The fix: visibility depends only on `activeGeneration` (and `deleting`). `activeGeneration` is `null` until the first generation commits, so half-written chunks of a first upload are never visible either. Not measured; it follows from the spec's own rules. The unit tests in `tests/test_ids_and_generation.py` encode it.
 
 The purge follows the same rule. Spec 0.4 purged generations below the committed one, which missed chunks written by a generation that was abandoned or failed after the last commit. `purgeDocument` now deletes every generation that is neither active nor pending, which is safe because messages for one library are processed one at a time (§7.1).
+
+### E28. Deletion must be retryable, and the worker must not trust its first read · Vendor and inference
+
+Microsoft documents that under Session consistency a client that has not written to a physical partition reads it with Eventual consistency, from a single replica that may lag. The API and the worker hold separate Cosmos clients, so a worker reading a record the API has just marked `deleting` may get the earlier version.
+
+Before the independent review (`review-response.md`), two paths left a deletion stuck:
+
+- **A stale read in the worker.** `purgeLibrary` logged "ignored" and completed. `purgeDocument` took the generation-tidying path, which deletes nothing of the active generation.
+- **A failed queue send in the API.** The record was already `deleting`, and the request failed with an unhandled error.
+
+Either way the record stayed hidden as `deleting` for good, its chunks and blobs were never removed, and a second `DELETE` returned `404`, so nothing could retry it.
+
+The fix (`spec.md` §5 rule 5, §7.1):
+
+- A repeated `DELETE` queues the purge again, and a failed send returns `503 queue_unavailable`.
+- A purge queued by a deletion carries `deleted: true`. If the worker does not yet see `deleting`, it raises, and the message is redelivered after a one-second pause.
+- A purge that fails on its last delivery is logged; Phase 5 alerts on it.
+
+Not observed live: it follows from the documented semantics, and `tests/test_worker_handlers.py` and the API tests encode it. Within one API process, a search reads with the same client that wrote `deleting`, so it sees the deletion. Across API instances (Phase 5) that is not proven (N13).
+
+Source: [Consistency level choices](https://learn.microsoft.com/en-us/azure/cosmos-db/consistency-levels) (updated 2026-04-27).
 
 ## Not proven
 

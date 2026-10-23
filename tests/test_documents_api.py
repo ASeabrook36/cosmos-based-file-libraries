@@ -97,10 +97,43 @@ def test_list_filters_by_status_and_facet(ctx):
 def test_delete_hides_the_document_and_queues_its_purge(ctx):
     client, s, lib = ctx
     doc_id = upload(client, lib).json()["documentId"]
+    purge = (lib, {"type": "purgeDocument", "libraryId": lib, "documentId": doc_id, "deleted": True})
     assert client.delete(f"/v1/libraries/{lib}/documents/{doc_id}").status_code == 202
-    assert s.queue.sent[-1] == (lib, {"type": "purgeDocument", "libraryId": lib, "documentId": doc_id})
+    assert s.queue.sent[-1] == purge
     assert client.get(f"/v1/libraries/{lib}/documents/{doc_id}").status_code == 404
-    assert client.delete(f"/v1/libraries/{lib}/documents/{doc_id}").status_code == 404
+    # Deleting again queues the purge again: the retry path for a purge that never ran (E28).
+    assert client.delete(f"/v1/libraries/{lib}/documents/{doc_id}").status_code == 202
+    assert s.queue.sent[-2:] == [purge, purge]
+    assert client.delete(f"/v1/libraries/{lib}/documents/nope").status_code == 404
+
+
+def test_a_queue_failure_on_delete_is_503_and_the_delete_can_be_retried(ctx, monkeypatch):
+    client, s, lib = ctx
+    doc_id = upload(client, lib).json()["documentId"]
+    real = s.queue.send
+
+    async def broken(message, *, session_id):
+        raise RuntimeError("bus down")
+
+    monkeypatch.setattr(s.queue, "send", broken)
+    r = client.delete(f"/v1/libraries/{lib}/documents/{doc_id}")
+    assert (r.status_code, r.json()["error"]["code"]) == (503, "queue_unavailable")
+    assert client.get(f"/v1/libraries/{lib}/documents/{doc_id}").status_code == 404  # hidden all the same
+    monkeypatch.setattr(s.queue, "send", real)
+    assert client.delete(f"/v1/libraries/{lib}/documents/{doc_id}").status_code == 202
+    assert s.queue.sent[-1][1]["type"] == "purgeDocument"
+
+
+def test_a_failed_record_create_removes_the_uploaded_blob(ctx, monkeypatch):
+    client, s, lib = ctx
+
+    async def broken(record):
+        raise RuntimeError("cosmos down")
+
+    monkeypatch.setattr(s.documents, "create", broken)
+    with pytest.raises(RuntimeError):
+        upload(client, lib)
+    assert not s.blobs.blobs and not s.queue.sent
 
 
 def test_file_types_are_normalised():

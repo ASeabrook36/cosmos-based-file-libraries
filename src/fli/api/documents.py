@@ -16,7 +16,7 @@ from typing import Annotated, Literal
 from fastapi import APIRouter, Depends, File, Form, Request, Response, UploadFile
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from fli.api.libraries import Libraries, now
+from fli.api.libraries import Libraries, enqueue, now
 from fli.auth import require_caller
 from fli.blobs import BlobStore
 from fli.errors import ApiError, document_not_found, library_not_found
@@ -169,7 +169,15 @@ async def upload_document(
         "imagesSkipped": 0,
         "updatedAt": now(),
     }
-    created = await store.create(record)
+    try:
+        created = await store.create(record)
+    except Exception:
+        # No record will ever point at the blob, so no purge would find it: remove it now.
+        try:
+            await blob_store.delete_prefix(f"{library_id}/{document_id}/")
+        except Exception:
+            log.exception("orphan blob not removed", extra={"libraryId": library_id, "documentId": document_id})
+        raise
     message = {"type": "ingest", "libraryId": library_id, "documentId": document_id, "generation": 1}
     try:
         await ingest.send(message, session_id=library_id)
@@ -217,9 +225,19 @@ async def get_document(library_id: str, document_id: str, libraries: Libraries, 
 async def delete_document(
     library_id: str, document_id: str, libraries: Libraries, store: Documents, ingest: Ingest
 ) -> Response:
+    """Mark the document ``deleting``, then queue its purge (spec §7.8).
+
+    As for libraries, deleting a document already ``deleting`` queues the purge again. The
+    message says the document was deleted, so a worker that reads the record before the
+    ``deleting`` write reaches its replica retries instead of skipping the purge (E28).
+    """
     await active_library(libraries, library_id)
     for _ in range(REPLACE_ATTEMPTS):
-        record = await load(store, library_id, document_id)
+        record = await store.get(library_id, document_id)
+        if record is None:
+            raise document_not_found(document_id)
+        if record.get("status") == "deleting":
+            break
         record.update(status="deleting", updatedAt=now())
         try:
             await store.replace(record)
@@ -228,7 +246,6 @@ async def delete_document(
             continue
     else:
         raise ApiError(409, "conflict", "the document changed while it was being deleted; retry")
-    await ingest.send(
-        {"type": "purgeDocument", "libraryId": library_id, "documentId": document_id}, session_id=library_id
-    )
+    message = {"type": "purgeDocument", "libraryId": library_id, "documentId": document_id, "deleted": True}
+    await enqueue(ingest, message, library_id)
     return Response(status_code=202)

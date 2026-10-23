@@ -173,7 +173,7 @@ A fact that never changes cannot go stale, so the index holds exactly one: a per
    - the library does not exist or is `deleting` → `404 library_not_found`;
    - the library is `personal` and `X-Agent-Id` ≠ `boundAgentId` → `403 library_not_bound_to_agent`, logged as a security event.
 4. **The platform's attach screen for official agents lists only shared libraries** (`GET /v1/libraries?kind=shared`). Rule 3 is the backstop: a wrong attachment created by a platform bug returns nothing.
-5. **Deleting refuses first and purges second.** `DELETE` sets `status: deleting` at once, so searches stop immediately; chunks, document records and blobs are purged in the background. The same holds per document (§7.8).
+5. **Deleting refuses first and purges second.** `DELETE` sets `status: deleting` at once, so searches stop immediately; chunks, document records and blobs are purged in the background. The same holds per document (§7.8). Repeating `DELETE` on a library or document already `deleting` returns `202` and queues the purge again. This is the retry path when the queue send fails (`503 queue_unavailable`) or a purge dead-letters (`evidence.md` E28).
 
 Shared libraries have no index-side binding check. Which official agents may search a shared library is entirely the platform's decision.
 
@@ -189,7 +189,7 @@ Base path `/v1`. JSON throughout except uploads. Errors: `{"error": {"code": "..
 | `GET /v1/libraries` | `?kind=shared\|personal&status=active` | List (for the platform's attach screen) |
 | `GET /v1/libraries/{libraryId}` | | Library, including `descriptionProposal`, `tagVocabulary`, `stats` |
 | `PATCH /v1/libraries/{libraryId}` | `{name?, description?, autoAcceptTagProposals?}` | Library |
-| `DELETE /v1/libraries/{libraryId}` | | `202`; status `deleting` |
+| `DELETE /v1/libraries/{libraryId}` | | `202`; status `deleting`. Repeatable: queues the purge again (§5 rule 5) |
 | `POST /v1/libraries/{libraryId}/description:propose` | | `202`; regenerates the proposal |
 | `GET /v1/libraries/{libraryId}/tool` | | A ready-to-attach tool definition (§6.4) |
 
@@ -202,7 +202,7 @@ Base path `/v1`. JSON throughout except uploads. Errors: `{"error": {"code": "..
 | `GET /v1/libraries/{libraryId}/documents/{documentId}` | | Document, including proposals |
 | `PATCH /v1/libraries/{libraryId}/documents/{documentId}` | `{author?, periodStart?, periodEnd?, tags?, acceptProposals?: ["region=EMEA", "period", "author"]}` | Document; chunk metadata updated by a `retag` job |
 | `PUT /v1/libraries/{libraryId}/documents/{documentId}/content` | multipart `file` | `202`; reprocesses as a new generation |
-| `DELETE /v1/libraries/{libraryId}/documents/{documentId}` | | `202`; status `deleting` |
+| `DELETE /v1/libraries/{libraryId}/documents/{documentId}` | | `202`; status `deleting`. Repeatable: queues the purge again (§5 rule 5) |
 | `GET /v1/libraries/{libraryId}/documents/{documentId}/file` | | `302` to a 15-minute read-only link |
 
 Uploads are refused with `409 library_deleting` when the library is `deleting`. Maximum upload size is configurable (default 100 MB).
@@ -322,11 +322,11 @@ One Service Bus queue, `ingest`, with sessions enabled and `SessionId = libraryI
 |---|---|---|
 | `ingest` | `libraryId, documentId, generation` | Process a document (§7.2) |
 | `retag` | `libraryId, documentId` | Copy the document's metadata to its chunks by patch |
-| `purgeDocument` | `libraryId, documentId` | Delete every chunk of the document that is neither its `activeGeneration` nor its `pendingGeneration`. If the document is `deleting` or gone, delete all its chunks, then its blobs, then its record. Safe because one library's messages never run concurrently (session order) |
-| `purgeLibrary` | `libraryId` | Delete every document, chunk and blob, then the library |
+| `purgeDocument` | `libraryId, documentId, deleted?` | Delete every chunk of the document that is neither its `activeGeneration` nor its `pendingGeneration`. If the document is `deleting` or gone, delete all its chunks, then its blobs, then its record. Safe because one library's messages never run concurrently (session order). `deleted: true` marks a purge queued by a deletion: if the document does not read as `deleting` yet, the read is stale (`evidence.md` E28), so the worker pauses a second and the message is redelivered instead of completing |
+| `purgeLibrary` | `libraryId` | Delete every document, chunk and blob, then the library. If the library does not read as `deleting` yet, the read is stale (E28): retried as for `purgeDocument` |
 | `proposeDescription` | `libraryId` | Regenerate the library description proposal |
 
-A message whose `generation` is lower than the document's `pendingGeneration`/`activeGeneration`, or whose document is `deleting`, is completed without work. After the last delivery attempt fails, the worker marks the document `failed` with the reason before the message dead-letters. `activeGeneration` is left as it was: a failed replacement keeps the previous version searchable, and a failed first upload has nothing searchable.
+A message whose `generation` is lower than the document's `pendingGeneration`/`activeGeneration`, or whose document is `deleting`, is completed without work. After the last delivery attempt fails, the worker marks the document `failed` with the reason before the message dead-letters. `activeGeneration` is left as it was: a failed replacement keeps the previous version searchable, and a failed first upload has nothing searchable. A purge that fails on its last delivery is logged as `purge dead-lettered`. Its library or document stays hidden as `deleting` until the `DELETE` is repeated (§5 rule 5); alerting on that log is Phase 5.
 
 ### 7.2 Processing a document
 

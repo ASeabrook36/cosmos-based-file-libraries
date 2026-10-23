@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from datetime import UTC, datetime
 from typing import Annotated, Any, Literal
 
@@ -13,10 +14,12 @@ from fli.config import EMBEDDING_MODEL
 from fli.errors import ApiError, library_not_found
 from fli.ids import new_id
 from fli.permissions import check_immutable
+from fli.queue import Queue
 from fli.store import Conflict, LibraryStore, Record, public
 from fli.tool import tool_definition
 
 router = APIRouter(prefix="/v1/libraries", dependencies=[Depends(require_caller)])
+log = logging.getLogger("fli.api")
 
 MUTABLE_FIELDS = ("name", "description", "autoAcceptTagProposals")
 REPLACE_ATTEMPTS = 3
@@ -120,10 +123,28 @@ async def update_library(library_id: str, store: Libraries, body: Annotated[dict
     raise ApiError(409, "conflict", "the library changed while it was being updated; retry")
 
 
+async def enqueue(queue: Queue, message: dict[str, Any], library_id: str) -> None:
+    """Send on the library's session; a failed send is ``503`` and the caller may simply retry."""
+    try:
+        await queue.send(message, session_id=library_id)
+    except Exception as exc:
+        log.exception("enqueue failed", extra={"libraryId": library_id, "type": message["type"]})
+        raise ApiError(503, "queue_unavailable", "the work could not be queued; retry the request") from exc
+
+
 @router.delete("/{library_id}", status_code=202)
 async def delete_library(library_id: str, request: Request, store: Libraries) -> Response:
+    """Mark the library ``deleting``, then queue its purge (spec §5 rule 5).
+
+    Repeating the delete of a library already ``deleting`` queues the purge again, so a send
+    that failed, or a purge that never completed, can be retried (evidence.md E28).
+    """
     for _ in range(REPLACE_ATTEMPTS):
-        record = await load(store, library_id)
+        record = await store.get(library_id)
+        if record is None:
+            raise library_not_found(library_id)
+        if record.get("status") == "deleting":
+            break
         record.update(status="deleting", updatedAt=now())
         try:
             await store.replace(record)
@@ -132,7 +153,7 @@ async def delete_library(library_id: str, request: Request, store: Libraries) ->
             continue
     else:
         raise ApiError(409, "conflict", "the library changed while it was being deleted; retry")
-    await request.app.state.queue.send({"type": "purgeLibrary", "libraryId": library_id}, session_id=library_id)
+    await enqueue(request.app.state.queue, {"type": "purgeLibrary", "libraryId": library_id}, library_id)
     return Response(status_code=202)
 
 
