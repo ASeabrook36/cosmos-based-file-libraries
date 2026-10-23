@@ -1,6 +1,6 @@
 # Evidence: why the design is what it is
 
-*Version 0.4, 2026-10-22: E26 (search visibility). Version 0.3: Phase 0 measurements added.*
+*Version 0.5, 2026-10-22: E27 (hybrid search routed by partition key does not rank); E21 and E24 corrected. Version 0.4: E26 (search visibility). Version 0.3: Phase 0 measurements added.*
 
 Most decisions in `spec.md` rest on measurements from earlier work on these Cosmos features, made on live Azure in 2026. That work built a retrieval index in which each owner (a person) had their own body of content, and every search named whose content to search. That is structurally this project's problem: an owner there plays the role a library plays here. The numbers are recorded here so this repository stands on its own.
 
@@ -205,7 +205,7 @@ Hybrid queries (`ORDER BY RANK RRF(VectorDistance(…), FullTextScore(…))`) ex
 
 Their ranking quality was never measured. The local Cosmos emulator rejects `FullTextScore`, so hybrid can only be tested against a real account.
 
-*Phase 0*: with the library as partition-key prefix, each hybrid search came back in a single HTTP response, charged 3.91 RU, retrieved 10 documents and reported no vector index used. That held for all 20 queries, whatever their terms. See E24 for why its quality cannot be checked against an exact reference.
+*Phase 0*: with the library as partition-key prefix, each hybrid search came back in a single HTTP response, charged 3.91 RU, retrieved 10 documents and reported no vector index used. That held for all 20 queries, whatever their terms. **Corrected in Phase 1 (E27): those searches did not rank at all.** They returned the first ten stored items. The constant cost and count were the symptom, not a property of hybrid search.
 
 ### E22. Capacity mode follows traffic shape · Measured and Vendor
 
@@ -222,11 +222,38 @@ The index stores no permissions, and the system of record is checked live. A sta
 
 This project applies the principle to agent–library attachments. The platform owns them, and the index holds only the immutable personal-library binding, which cannot go stale.
 
-### E24. There is no exact reference for a hybrid search · Measured (Phase 0)
+### E24. ~~There is no exact reference for a hybrid search~~ · Withdrawn (see E27)
+
+*Withdrawn in Phase 1.* The observation below is real, but its explanation was wrong: the hybrid searches compared here were not ranked at all (E27), so the brute-force flag had nothing to change. Whether `VectorDistance(…, true, …)` inside a correctly routed `RRF` forces brute force is untested.
 
 Forcing brute force with `VectorDistance(…, true, …)` inside `ORDER BY RANK RRF(…)` changed nothing observable. All 20 such searches cost exactly what their normal versions cost, retrieved the same documents and returned the same results. Outside `RRF` the same flag raised a vector search from 15 RU to 114 RU and read every chunk.
 
 So recall "against exact search" is meaningful for vector-only searches only. The canary records hybrid agreement with the brute-force variant but does not assert it. Hybrid ranking quality has to come from an evaluation set with known answers (N3; `build-plan.md` Phase 5).
+
+### E27. A hybrid query routed by partition key does not rank · Measured (Phase 1)
+
+The Phase 1 exit run searched one 5,535-chunk library of 20 mixed documents through the API, with `partition_key=[libraryId]` as for vector search. All 11 searches, on unrelated questions, returned the same ten chunks (the first ones written) at exactly 3.91 RU in one HTTP response: the Phase 0 pattern (E21).
+
+A diagnostic ran four of the questions five ways against the same library:
+
+| Query | Partition key | Ranks? | RU | HTTP responses |
+|---|---|---|---|---|
+| `ORDER BY RANK RRF(VectorDistance, FullTextScore)` | `[libraryId]` | No: same ten items for every question | 3.91 | 1 |
+| the same | none (library in `WHERE` only) | Yes: the right document first for all four | 128–191 | 4 |
+| `ORDER BY VectorDistance` | `[libraryId]` | Yes: the right document first for all four | 8–16 | 1 |
+| `ORDER BY RANK FullTextScore` | `[libraryId]` | No | 3.91 | 1 |
+| the same | none | Yes, but poorly (below) | 39–71 | 3 |
+
+The cause, by inference from the response counts: given a partition key, the Python SDK (`azure-cosmos` 4.17) sends the query straight to the partition without fetching a query plan. `ORDER BY RANK` needs the SDK's client-side pipeline (query plan, global full-text statistics, component queries, fusion). Without it, Cosmos returns `TOP` items in storage order, with no error.
+
+Consequences:
+
+- Search defaults to vector-only (`SEARCH_MODE=vector`). Hybrid is a setting, and its queries are never routed by partition key (`src/fli/query.py` `partition_key_for`).
+- Routed correctly, hybrid costs 10–15 times a vector search, in four round trips. Its full-text statistics are computed over the whole container rather than the library, so its cost may grow with the number of libraries, against E3's premise. Phase 4 measures it.
+- Full-text ranking on its own put the same long chunks first for unrelated questions, because the lexical terms include common words ("who", "is", "how"). Hybrid still found the right documents through its vector side. A stop list belongs before any hybrid evaluation.
+- The canary now fails when different questions get the same hybrid results (`hybrid_ranks`).
+- Vector measurements (E8, E12, E25) are unaffected: vector search is correct when routed by partition key.
+
 
 ### E25. The vector index engages minutes after writes · Measured (Phase 0) and Vendor
 
@@ -257,7 +284,7 @@ These are the honest limits of the evidence. Phase 0 and Phase 4 of `build-plan.
 
 - **N1. ~~This exact configuration has never been built.~~ Built and passing at small scale (Phase 0).** float16, spherical, `indexingSearchListSize` 300, a shard key and hybrid search deployed together, and their stored definitions match `cosmos/*.json`. The canary passed at 1,500 chunks in one library (E8, E12, E25). What remains open is behaviour at scale (N11).
 - **N2. Library-only sharding is inferred.** The measurements cover type plus owner, not owner alone. Library alone means one query per search instead of one per document type. Small libraries are scanned either way (E12), so the open question is large shared libraries (10,000–100,000+ chunks). A comparison run on such libraries settles it.
-- **N3. Hybrid ranking quality is unmeasured** (E21).
+- **N3. Hybrid ranking quality is unmeasured** (E21). Until Phase 1 it had never actually run ranked (E27).
 - **N4. One physical partition only.** Everything was measured with the data on a single physical partition. A container spanning many partitions, at roughly 5 million chunks and up, is unmeasured. Each search should still reach one partition, since the library leads the key.
 - **N5. Spherical is preview** (E6). Product quantization is the GA fallback, at somewhat lower recall.
 - **N6. Microsoft asks to be contacted.** Microsoft's documentation tells users of vector search on containers with hierarchical partition keys to contact the Cosmos DB team so the account can be configured. Treat Microsoft's confirmation as a production prerequisite.

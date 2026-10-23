@@ -1,6 +1,6 @@
 # Specification: File Library Index
 
-*Version 0.5, 2026-10-22. Working name. Status: Phase 0 complete (the Cosmos configuration is proven at small scale); the application is not built. Every design choice here that rests on a measurement is traced in `evidence.md`.*
+*Version 0.6, 2026-10-22. Working name. Status: Phase 0 complete (the Cosmos configuration is proven at small scale); the application is not built. Every design choice here that rests on a measurement is traced in `evidence.md`.*
 
 ## 1. Scope
 
@@ -389,8 +389,11 @@ Cosmos throttles with HTTP 429 when a partition's throughput is exceeded. The SD
 1. Authenticate the platform (§5 rule 1). Validate the body.
 2. Point-read the library. Apply §5 rule 3.
 3. Embed `query` with the embedding deployment (3,072 floats). **Convert it for the float16 index:** round each value to float16, and set every value whose magnitude is below 2⁻¹⁴ (float16's subnormal range) to 0. The service returns no distance for a float16 query that contains a subnormal.
-4. Extract lexical terms: lower-cased alphanumeric tokens, de-duplicated, at most 16.
-5. Run one hybrid query against `chunks`:
+4. In `hybrid` mode only, extract lexical terms: lower-cased alphanumeric tokens, de-duplicated, at most 16.
+5. Run one query against `chunks`. `SEARCH_MODE` chooses its form (`evidence.md` E27):
+
+   - **`vector` (default):** `ORDER BY VectorDistance(…)` alone, routed by the library prefix of the partition key (`partition_key=[libraryId]`). One HTTP response; Phase 1 measured 8–16 RU on a 5,535-chunk library.
+   - **`hybrid`:** the `RRF` query below, sent **without** a partition key: the library is named in `WHERE` only. With a partition key the Python SDK skips the query plan that ranking needs, and Cosmos silently returns the first `TOP` items unranked. Without it the SDK runs its hybrid pipeline (query plan, full-text statistics, component queries, fusion): four HTTP responses and 128–191 RU in Phase 1. The full-text statistics cover the whole container, not the library, so this cost may grow with the number of libraries (Phase 4 measures it).
 
 ```sql
 SELECT TOP {fetch}
@@ -408,6 +411,7 @@ ORDER BY RANK RRF(
    - `{fetch}` = `min(2 × top, 40)`, rendered into the SQL as a validated positive integer. Every vector or hybrid query has a `TOP`; without one Cosmos may read far more than it needs.
    - `{'dataType': 'float16'}` must match the stored type. Declaring `float32` against a float16 index makes Cosmos scan instead of using the index (`evidence.md` E8).
    - With no lexical terms, use `ORDER BY VectorDistance(…)` alone.
+   - Any query ordered by `RANK` (hybrid or full-text) is never sent with a partition key (`src/fli/query.py` `partition_key_for`).
    - Leave `searchListSizeMultiplier`, `filterPriority` and RRF weights at their defaults until measured.
    - `c.libraryId = @libraryId` is always an equality on one value. Searching several libraries is several requests, never `IN` or `OR` across libraries.
    - Never select `c.embedding`.
@@ -471,6 +475,7 @@ The routing report is a saved Log Analytics query, per library over 30 days: sea
 | `INGEST_MAX_CONCURRENT_SESSIONS` | `8` | |
 | `COSMOS_WRITE_CONCURRENCY` | `2` | Chunk writes in flight across the whole worker (§7.2 step 8). 2 suits serverless (`evidence.md` E10) |
 | `SEARCH_DEFAULT_TOP`, `SEARCH_MAX_TOP` | `8`, `20` | |
+| `SEARCH_MODE` | `vector` | `vector` or `hybrid` (§8 step 5, `evidence.md` E27) |
 | `APPLICATIONINSIGHTS_CONNECTION_STRING` | — | |
 
 ## 11. Capacity and cost
@@ -485,7 +490,7 @@ The routing report is a saved Log Analytics query, per library over 30 days: sea
 |---|---|
 | Storage | Source: about 17.9 GB per million chunks at float32. float16 cut storage by 46%, so about 9.7 GB per million |
 | Writing | Phase 0: about 144 RU per chunk at float16, full-text index included, so about $36 per million chunks. Source: 91 RU at float32 |
-| Searching | Phase 0: about 15 RU per vector search on a 1,500-chunk library once the index engages, 114 RU before; about 4 RU per hybrid search. Source: about 7 RU typical, 54–69 RU at p95, on libraries up to 100,000 chunks |
+| Searching | Phase 0: about 15 RU per vector search on a 1,500-chunk library once the index engages, 114 RU before; Phase 1: 8–16 RU per vector search on a 5,535-chunk library; 128–191 RU per hybrid search when it actually ranks (Phase 0's 4 RU hybrid searches were unranked, E27). Source: about 7 RU typical, 54–69 RU at p95, on libraries up to 100,000 chunks |
 
 Azure OpenAI calls (embeddings, image descriptions, proposals) are billed separately and will likely exceed the Cosmos cost.
 
