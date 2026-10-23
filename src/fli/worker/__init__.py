@@ -199,7 +199,9 @@ async def run(settings: Settings, stopping: asyncio.Event) -> None:
 
 
 def main() -> None:
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
+    from fli.logs import configure
+
+    configure()
     settings = Settings.from_env()
     stopping = asyncio.Event()
 

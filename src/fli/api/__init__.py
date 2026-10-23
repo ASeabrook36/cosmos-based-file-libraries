@@ -142,7 +142,10 @@ def create_app(
 def main() -> None:
     import uvicorn
 
+    from fli.logs import configure
+
     settings = Settings.from_env()  # raises before anything listens on a refused configuration
+    configure()
     uvicorn.run(
         create_app(settings), host=os.environ.get("HOST", "127.0.0.1"), port=int(os.environ.get("PORT", "8000"))
     )
