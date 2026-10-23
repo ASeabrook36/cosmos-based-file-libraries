@@ -122,6 +122,8 @@ def main() -> int:
     record["failedDetails"] = dict(Counter(d["statusDetail"] for d in docs if d["status"] == "failed"))
     record["chunksByType"] = dict(sorted(_chunks_by_type(docs).items()))
     record["readyDocuments"] = sum(1 for d in docs if d["status"] == "ready")
+    # Anything but "chunking-v1.0" means the worker fell back from cl100k_base (src/fli/chunking.py).
+    record["chunkingVersions"] = dict(Counter((d.get("extraction") or {}).get("chunkingVersion") for d in docs))
     for d in docs:
         mark = "ok " if d["status"] == "ready" else "!! "
         print(
