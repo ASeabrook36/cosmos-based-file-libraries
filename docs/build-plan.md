@@ -1,6 +1,6 @@
 # Build plan
 
-*Version 0.4, 2026-10-22: search is vector-only by default; hybrid is a setting, because routed by partition key it does not rank (`evidence.md` E27). Version 0.3: Entra authentication moved from Phase 1 to Phase 5 (the platform authenticates its users; the prototype uses a static local key). Version 0.2: Phase 0 passed; its findings are folded into Phases 0, 4 and the risks.*
+*Version 0.5, 2026-10-22: Phase 2 passed (adapted exit check). Version 0.4: search is vector-only by default; hybrid is a setting, because routed by partition key it does not rank (`evidence.md` E27). Version 0.3: Entra authentication moved from Phase 1 to Phase 5 (the platform authenticates its users; the prototype uses a static local key). Version 0.2: Phase 0 passed; its findings are folded into Phases 0, 4 and the risks.*
 
 The plan is ordered to reach something demonstrable as early as possible:
 
@@ -74,6 +74,16 @@ The first build of this exact Cosmos configuration happens here (`evidence.md` N
 - A personal-library search with the wrong agent id is refused.
 
 ## Phase 2: The demo platform and its agents
+
+**Status: passed on 2026-10-22**, against an exit check adapted for what Phase 3 still owes. Filters and proposals are Phase 3, so tags, proposals and the period and region filters were left out. The checks were run live by the user in the demo app (`demo/`), against the demo deployment:
+
+- **Corpus:** 34 arXiv papers on retrieval-augmented generation in three shared libraries ("Rag methods" 17, "Retrieval infrastructure" 10, "Evaluation and context" 7), loaded with `scripts/load_demo_corpus.py`, plus four personal notes written for the demo. It is PDF only; the spreadsheet, emails and images of "Demo corpus" below are still to add.
+- **Step 2:** all 34 documents reached `ready`; the admin wrote each library's description by hand.
+- **Step 3:** an official agent with all three libraries attached, asked "How does Self-RAG decide when to retrieve?", chose the "Rag methods" tool and answered correctly, citing the Self-RAG paper's pages 2–3: 811 ms, 29.87 RU, with neighbours (one extra query per result document).
+- **Step 5:** a personal agent with four uploaded notes answered "What chunk size did we decide on, and why?" from the notes alone, citing the right note: 547 ms, 16.67 RU.
+- **Step 6:** the attach screen offered only shared libraries; a forced search of the personal library by the official agent returned `403 library_not_bound_to_agent`.
+
+The search response now reports `usage` (request charge and server time, `spec.md` §6.3), so the platform can show cost without reading the API's logs.
 
 The demo needs something playing the platform's role. Build a small Streamlit app that does exactly what the real platform will do, and nothing the index should do.
 
