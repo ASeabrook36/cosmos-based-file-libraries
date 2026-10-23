@@ -1,0 +1,227 @@
+{
+  "startedAt": "2026-10-23T01:16:00.922325+00:00",
+  "fileCount": 20,
+  "resumed": true,
+  "ingestSeconds": 668.8,
+  "documentsByType": {
+    "csv": {
+      "ready": 1
+    },
+    "docx": {
+      "ready": 5
+    },
+    "eml": {
+      "ready": 4
+    },
+    "html": {
+      "ready": 1
+    },
+    "md": {
+      "ready": 5
+    },
+    "pdf": {
+      "ready": 2
+    },
+    "txt": {
+      "ready": 2
+    }
+  },
+  "failedDetails": {},
+  "chunksByType": {
+    "csv": 1175,
+    "docx": 911,
+    "eml": 9,
+    "html": 16,
+    "md": 47,
+    "pdf": 2244,
+    "txt": 1128
+  },
+  "readyDocuments": 20,
+  "chunkingVersions": {
+    "chunking-v1.0": 20
+  },
+  "searches": [
+    {
+      "expectedType": "pdf",
+      "status": 200,
+      "resultCount": 5,
+      "disposition": "results",
+      "clientMs": 3270.6,
+      "allHaveFileName": true,
+      "allHaveLocation": true,
+      "topFileTypes": [
+        "pdf",
+        "pdf",
+        "pdf",
+        "pdf",
+        "pdf"
+      ]
+    },
+    {
+      "expectedType": "pdf",
+      "status": 200,
+      "resultCount": 5,
+      "disposition": "results",
+      "clientMs": 1202.3,
+      "allHaveFileName": true,
+      "allHaveLocation": true,
+      "topFileTypes": [
+        "pdf",
+        "pdf",
+        "pdf",
+        "pdf",
+        "pdf"
+      ]
+    },
+    {
+      "expectedType": "docx",
+      "status": 200,
+      "resultCount": 5,
+      "disposition": "results",
+      "clientMs": 1779.1,
+      "allHaveFileName": true,
+      "allHaveLocation": true,
+      "topFileTypes": [
+        "pdf",
+        "pdf",
+        "pdf",
+        "pdf",
+        "pdf"
+      ]
+    },
+    {
+      "expectedType": "docx",
+      "status": 200,
+      "resultCount": 5,
+      "disposition": "results",
+      "clientMs": 891.3,
+      "allHaveFileName": true,
+      "allHaveLocation": true,
+      "topFileTypes": [
+        "pdf",
+        "pdf",
+        "pdf",
+        "pdf",
+        "pdf"
+      ]
+    },
+    {
+      "expectedType": "docx",
+      "status": 200,
+      "resultCount": 5,
+      "disposition": "results",
+      "clientMs": 1200.6,
+      "allHaveFileName": true,
+      "allHaveLocation": true,
+      "topFileTypes": [
+        "pdf",
+        "pdf",
+        "pdf",
+        "pdf",
+        "pdf"
+      ]
+    },
+    {
+      "expectedType": "csv",
+      "status": 200,
+      "resultCount": 5,
+      "disposition": "results",
+      "clientMs": 1003.8,
+      "allHaveFileName": true,
+      "allHaveLocation": true,
+      "topFileTypes": [
+        "pdf",
+        "pdf",
+        "pdf",
+        "pdf",
+        "pdf"
+      ]
+    },
+    {
+      "expectedType": "txt",
+      "status": 200,
+      "resultCount": 5,
+      "disposition": "results",
+      "clientMs": 482.2,
+      "allHaveFileName": true,
+      "allHaveLocation": true,
+      "topFileTypes": [
+        "pdf",
+        "pdf",
+        "pdf",
+        "pdf",
+        "pdf"
+      ]
+    },
+    {
+      "expectedType": "txt",
+      "status": 200,
+      "resultCount": 5,
+      "disposition": "results",
+      "clientMs": 1349.4,
+      "allHaveFileName": true,
+      "allHaveLocation": true,
+      "topFileTypes": [
+        "pdf",
+        "pdf",
+        "pdf",
+        "pdf",
+        "pdf"
+      ]
+    },
+    {
+      "expectedType": "md",
+      "status": 200,
+      "resultCount": 5,
+      "disposition": "results",
+      "clientMs": 530.9,
+      "allHaveFileName": true,
+      "allHaveLocation": true,
+      "topFileTypes": [
+        "pdf",
+        "pdf",
+        "pdf",
+        "pdf",
+        "pdf"
+      ]
+    },
+    {
+      "expectedType": "html",
+      "status": 200,
+      "resultCount": 5,
+      "disposition": "results",
+      "clientMs": 594.6,
+      "allHaveFileName": true,
+      "allHaveLocation": true,
+      "topFileTypes": [
+        "pdf",
+        "pdf",
+        "pdf",
+        "pdf",
+        "pdf"
+      ]
+    },
+    {
+      "expectedType": "eml",
+      "status": 200,
+      "resultCount": 5,
+      "disposition": "results",
+      "clientMs": 777.4,
+      "allHaveFileName": true,
+      "allHaveLocation": true,
+      "topFileTypes": [
+        "pdf",
+        "pdf",
+        "pdf",
+        "pdf",
+        "pdf"
+      ]
+    }
+  ],
+  "personal": {
+    "boundAgentStatus": 200,
+    "otherAgentStatus": 403,
+    "otherAgentCode": "library_not_bound_to_agent"
+  },
+  "finishedAt": "2026-10-23T01:27:26.957622+00:00"
+}
