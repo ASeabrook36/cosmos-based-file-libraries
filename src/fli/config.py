@@ -69,6 +69,15 @@ class Settings:
     search_default_top: int = 8
     search_max_top: int = 20
 
+    @property
+    def servicebus_host(self) -> str | None:
+        """The namespace's host name. Accepts a bare namespace or the deployment's full host name."""
+        ns = self.servicebus_namespace
+        if not ns:
+            return None
+        ns = ns.removeprefix("sb://").removeprefix("https://").rstrip("/")
+        return ns if "." in ns else f"{ns}.servicebus.windows.net"
+
     @classmethod
     def from_env(cls, env: Mapping[str, str] | None = None) -> Settings:
         env = os.environ if env is None else env

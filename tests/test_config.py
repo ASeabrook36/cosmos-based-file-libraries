@@ -46,3 +46,15 @@ def test_embedding_dimensions_must_match_the_vector_policy():
 def test_healthz():
     client = TestClient(create_app(Settings.from_env(LOCAL_DEV)))
     assert client.get("/healthz").json() == {"status": "ok"}
+
+
+@pytest.mark.parametrize(
+    "value,host",
+    [
+        ("fli-demo", "fli-demo.servicebus.windows.net"),
+        ("fli-demo.servicebus.windows.net", "fli-demo.servicebus.windows.net"),  # infra/main.bicep's output
+        ("sb://fli-demo.servicebus.windows.net/", "fli-demo.servicebus.windows.net"),
+    ],
+)
+def test_servicebus_host_accepts_a_namespace_or_its_host_name(value, host):
+    assert Settings.from_env({"ENVIRONMENT": "demo", "SERVICEBUS_NAMESPACE": value}).servicebus_host == host

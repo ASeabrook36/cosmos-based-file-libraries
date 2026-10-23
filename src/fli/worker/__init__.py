@@ -130,9 +130,7 @@ async def run(settings: Settings, stopping: asyncio.Event) -> None:
         http = await stack.enter_async_context(httpx.AsyncClient())
         cosmos = await stack.enter_async_context(CosmosClient(settings.cosmos_endpoint, credential=credential))
         database = cosmos.get_database_client(settings.cosmos_database)
-        bus = await stack.enter_async_context(
-            ServiceBusClient(f"{settings.servicebus_namespace}.servicebus.windows.net", credential=credential)
-        )
+        bus = await stack.enter_async_context(ServiceBusClient(settings.servicebus_host, credential=credential))
         sender = await stack.enter_async_context(bus.get_queue_sender(settings.servicebus_queue))
         blob_service = await stack.enter_async_context(
             BlobServiceClient(settings.blob_account_url, credential=credential)
