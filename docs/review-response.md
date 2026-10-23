@@ -31,7 +31,7 @@ Findings that share a root cause are merged. The commits are on this branch, in 
 
 ## Closed in Phase 3
 
-The Phase 3 items from findings 1, 6 and 7 are built and unit-tested (`build-plan.md` Phase 3, Lifecycle). Their live check, `scripts/phase3_exit.py lifecycle`, has not run.
+The Phase 3 items from findings 1, 6 and 7 are built (`build-plan.md` Phase 3, Lifecycle). Their live check, `scripts/phase3_exit.py lifecycle`, passed on 2026-10-23 (`records/phase3-exit-lifecycle-20261023T210242Z.json`): after the replacement committed, none of 68 searches returned the old generation. Of the 4 searches made while the replacement was written, one came back with no results and the coverage note: the new generation's chunks, not yet visible, filled the whole fetch window for the question they answer best (finding 6 at its strongest; `evidence.md` E30).
 
 - **Finding 1, redelivered ingest.** Any ingest whose generation is no longer pending queues the purge again, so a purge send that failed after a commit is retried by the redelivery (`spec.md` §7.1). The dead-lettered purge below is unchanged.
 - **Finding 6, underfill.** Decided: report, not refetch. Coverage says how many passages were left out (`spec.md` §8 step 6; `evidence.md` E30).

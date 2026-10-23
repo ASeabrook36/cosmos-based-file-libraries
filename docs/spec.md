@@ -1,6 +1,6 @@
 # Specification: File Library Index
 
-*Version 0.8, 2026-10-23. Working name. Status: Phases 0–2 passed (`build-plan.md`): libraries, upload, ingestion, vector search and the demo platform run end to end on the demo account. Phase 3 is in progress: document replacement (§7.8) is built and unit-tested, and its live exit check has not run. Phases 4–5 are not built. Every design choice here that rests on a measurement is traced in `evidence.md`.*
+*Version 0.8, 2026-10-23. Working name. Status: Phases 0–2 passed (`build-plan.md`): libraries, upload, ingestion, vector search and the demo platform run end to end on the demo account. Phase 3 is in progress: document replacement (§7.8) is built, and its live exit check passed. Phases 4–5 are not built. Every design choice here that rests on a measurement is traced in `evidence.md`.*
 
 ## 1. Scope
 
