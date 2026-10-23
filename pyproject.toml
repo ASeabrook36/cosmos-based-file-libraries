@@ -25,6 +25,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+demo = [
+  "streamlit>=1.40,<2",
+  "openai>=1.50,<4",
+]
 dev = [
   "pytest>=8,<9",
   "ruff>=0.6",
@@ -35,7 +39,7 @@ fli-api = "fli.api:main"
 fli-worker = "fli.worker:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/fli"]
+packages = ["src/fli", "src/fli_demo"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
