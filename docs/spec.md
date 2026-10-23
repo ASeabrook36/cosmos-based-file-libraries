@@ -173,7 +173,7 @@ A fact that never changes cannot go stale, so the index holds exactly one: a per
    - the library does not exist or is `deleting` → `404 library_not_found`;
    - the library is `personal` and `X-Agent-Id` ≠ `boundAgentId` → `403 library_not_bound_to_agent`, logged as a security event.
 4. **The platform's attach screen for official agents lists only shared libraries** (`GET /v1/libraries?kind=shared`). Rule 3 is the backstop: a wrong attachment created by a platform bug returns nothing.
-5. **Deleting refuses first and purges second.** `DELETE` sets `status: deleting` at once, so searches stop immediately; chunks, document records and blobs are purged in the background. The same holds per document (§7.8). Repeating `DELETE` on a library or document already `deleting` returns `202` and queues the purge again. This is the retry path when the queue send fails (`503 queue_unavailable`) or a purge dead-letters (`evidence.md` E28).
+5. **Deleting refuses first and purges second.** `DELETE` sets `status: deleting` at once, so searches stop immediately (in the API process that handled the delete; across API instances, `evidence.md` N13); chunks, document records and blobs are purged in the background. The same holds per document (§7.8). Repeating `DELETE` on a library or document already `deleting` returns `202` and queues the purge again. This is the retry path when the queue send fails (`503 queue_unavailable`) or a purge dead-letters (`evidence.md` E28).
 
 Shared libraries have no index-side binding check. Which official agents may search a shared library is entirely the platform's decision.
 

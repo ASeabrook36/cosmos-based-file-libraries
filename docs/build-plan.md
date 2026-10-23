@@ -113,13 +113,16 @@ The demo needs something playing the platform's role. Build a small Streamlit ap
 - **Images:** standalone uploads and images embedded in DOCX and PPTX; skip rules and cap; vision descriptions; image chunks; short-lived read links. Render images in the chat, and pass them into the model's context when it accepts images.
 - **Proposals (enhancement 1):** per-document tag, period and author proposals, with an accept or edit screen. Per-library description proposals.
 - **Filters:** all filters in search and in the tool definition (`period`, `authoredBetween`, `uploadedBetween`, `authors`, `tags`, `fileTypes`, `contentKinds`). Add the `retag` job.
-- **Lifecycle:** document replacement and deletion; library deletion.
+- **Lifecycle:** document replacement and deletion; library deletion. From the review response (`review-response.md`):
+  - Give each generation's original its own blob path, or enable blob versioning. `spec.md` §7.8 says replacement writes "a new blob version", but versioning is off and `blobPath` is keyed by file name, so a same-name replacement would overwrite the original of the generation still being served (finding 7).
+  - When an ingest is redelivered after its generation already committed, queue the purge again: a send that failed after the commit otherwise leaves the older generation's chunks unpurged (finding 1).
 
 **Exit check**
 
 - Demo script step 4 works.
 - A period-plus-tag filtered question returns only matching documents, and the coverage notes say what was excluded.
 - After replacing a document, its old content is never returned.
+- When stale chunks of a replaced document fill the fetch window, search still returns `top` results or reports `thin`; decide between fetching again and reporting (finding 6).
 
 ## Phase 4: Scale proof and routing telemetry
 
@@ -137,6 +140,7 @@ The demo needs something playing the platform's role. Build a small Streamlit ap
   - Record the vector index type Cosmos reports (`x-ms-cosmos-index-utilization`) for each library size. Phase 0 saw `QuantizedFlat` at 1,500 chunks. The large libraries should show whether, and from what size, Cosmos walks the DiskANN graph (N11).
   - Measure how long a newly created library takes to stop scanning in a container that is already populated (N12).
   - Wait for the index before measuring search cost (E25).
+  - Measure the cross-partition library list at 1,000+ libraries, and `refresh_library` (which reads every document record after each ingest) during a bulk load into one library (review finding 4).
   - Measure hybrid search cost (`SEARCH_MODE=hybrid`) on the same libraries before and after loading the 1,000: its full-text statistics span the container, so it may grow with the number of libraries (E27).
 - **Routing telemetry (enhancement 3):** `library_search` and `search_usage` events, the usage endpoint, the saved Log Analytics query, and `GET …/routing-report`. Show it in the demo app.
 
@@ -165,12 +169,17 @@ These come after the demo, in roughly this order:
    - Library-only versus class-plus-library sharding on large libraries (N2).
    - A multi-partition container test (N4).
    - Microsoft's confirmation for vector search on containers with hierarchical partition keys (N6).
+   - Visibility across API instances: a delete on one instance, then a search on another; decide between passing session tokens and accepting a bounded window (N13).
 5. **Coverage:** PDF figure extraction (Document Intelligence layout), email attachments as child documents, conversion of legacy Office formats.
 6. **Operations:**
-   - Dead-letter alerting.
+   - Dead-letter alerting, including the worker's `purge dead-lettered` log (E28).
    - A job that verifies purges actually happened.
-   - A backup and restore drill.
+   - A backup and restore drill covering Cosmos and Blob together (E16).
    - A rebuild-from-originals script for future embedding-model changes (E16).
+7. **From the review response** (`review-response.md`):
+   - Pagination with continuation tokens on the library and document lists, and library stats updated incrementally rather than recomputed from every record (finding 4).
+   - Embed and write in bounded batches instead of holding a whole document's vectors, and size the worker's memory (finding 2, E29).
+   - Decide whether Cosmos and Storage keep public network access or move to private endpoints.
 
 ## The demo script
 
