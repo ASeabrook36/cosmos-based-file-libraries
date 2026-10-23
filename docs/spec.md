@@ -1,6 +1,6 @@
 # Specification: File Library Index
 
-*Version 0.6, 2026-10-22. Working name. Status: Phase 1 complete (upload, ingestion and vector search run end to end on the demo account); Phases 2–5 are not built. Every design choice here that rests on a measurement is traced in `evidence.md`.*
+*Version 0.7, 2026-10-23. Working name. Status: Phases 0–2 passed (`build-plan.md`): libraries, upload, ingestion, vector search and the demo platform run end to end on the demo account. Phases 3–5 are not built. Every design choice here that rests on a measurement is traced in `evidence.md`.*
 
 ## 1. Scope
 
@@ -68,7 +68,7 @@ The division of storage is deliberate. **Cosmos holds everything that is searche
 | Cosmos DB for NoSQL account | One per organization. Capability `EnableNoSQLVectorSearch`. `disableLocalAuth: true`. Session consistency. Continuous backup. Demo: add `EnableServerless`. Production: provisioned autoscale (§11). |
 | Cosmos database | `fli`. No database-level throughput: vector containers cannot use shared throughput. |
 | Containers | `libraries`, `documents`, `chunks`, defined exactly by `cosmos/*.json`. |
-| Storage account | One blob container, `files`. Public blob access off. |
+| Storage account | One blob container, `files`. Public blob access off. Blob soft delete for 7 days, matching Cosmos's continuous backup (`evidence.md` E16). |
 | Service Bus | Standard tier (sessions need it). Queue `ingest`, sessions enabled, max delivery count 5, dead-lettering on. |
 | Azure OpenAI | Embedding deployment of `text-embedding-3-large` at 3,072 dimensions. A vision-capable chat deployment for image descriptions and proposals. |
 | Document Intelligence | `prebuilt-read` for OCR of scanned PDFs and images. |
@@ -387,6 +387,7 @@ Cosmos throttles with HTTP 429 when a partition's throughput is exceeded. The SD
 - **Document delete:** set `status: deleting` (search drops its chunks immediately, §8 step 6), then `purgeDocument`, which deletes the chunks, the blobs and the document record.
 - **Replacement (`PUT …/content`):** new blob version, `generation + 1`, `ingest`. The old generation stays searchable until the new one commits, then is purged.
 - **Library delete:** set `status: deleting` (search refused immediately, §5), then `purgeLibrary`.
+- **Retention:** a delete removes a document from the library and from search at once. Blob soft delete and Cosmos continuous backup keep deleted data recoverable by an operator for 7 days; after that it is gone.
 
 ## 8. Search execution
 

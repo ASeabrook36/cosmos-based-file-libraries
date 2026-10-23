@@ -137,6 +137,14 @@ resource storage 'Microsoft.Storage/storageAccounts@2023-05-01' = {
 resource blobService 'Microsoft.Storage/storageAccounts/blobServices@2023-05-01' = {
   parent: storage
   name: 'default'
+  properties: {
+    // A purged original stays recoverable for as long as Cosmos's continuous backup keeps its
+    // records (Continuous7Days), so the two restore together (spec §3, evidence.md E16).
+    deleteRetentionPolicy: {
+      enabled: true
+      days: 7
+    }
+  }
 }
 
 resource filesContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2023-05-01' = {

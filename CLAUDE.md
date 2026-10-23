@@ -41,7 +41,7 @@ Each one prevents a failure that was measured, not imagined.
 
 ## Conventions
 
-- **Python 3.12.** FastAPI for the API. `azure-cosmos` 4.9 or later. `ruff` for lint and format. `pytest` for tests.
+- **Python 3.12 or later** (the code uses 3.12 generic syntax; developed on 3.14). FastAPI for the API. `azure-cosmos` 4.17.1 or later, the version every live run used (E27). `ruff` for lint and format. `pytest` for tests.
 - **Errors** are `{"error": {"code", "message"}}`, with the codes named in `spec.md`.
 - **Infrastructure** is Bicep, loading container bodies from `cosmos/*.json`.
 - **When a spec decision turns out wrong in practice**, change `docs/spec.md` in the same change as the code, and add or update the `docs/evidence.md` entry that justifies it.

@@ -19,8 +19,8 @@ The first build of this exact Cosmos configuration happens here (`evidence.md` N
 **Build**
 
 - Repository scaffold:
-  - Python 3.12, one package with two entry points (`api`, `worker`);
-  - FastAPI, `azure-cosmos` 4.9 or later, `azure-identity`, `azure-storage-blob`, `azure-servicebus`;
+  - Python 3.12 or later, one package with two entry points (`api`, `worker`);
+  - FastAPI, `azure-cosmos` 4.17.1 or later (originally 4.9; raised in the review response, E27), `azure-identity`, `azure-storage-blob`, `azure-servicebus`;
   - `pytest`, `ruff`.
 - Bicep for one organization's deployment:
   - Cosmos account: serverless for the demo, `EnableNoSQLVectorSearch`, `disableLocalAuth`;

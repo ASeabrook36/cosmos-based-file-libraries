@@ -172,6 +172,8 @@ None of these can be changed in place:
 
 A change means a new container plus a rebuild. This is why chunk text and original files are always kept.
 
+Originals are therefore rebuild-critical. Blob soft delete keeps a purged original recoverable for 7 days, as Cosmos's continuous backup does for records, so the two can be restored together. The restore drill is Phase 5.
+
 Source: [Vector search in Azure Cosmos DB for NoSQL](https://learn.microsoft.com/en-us/azure/cosmos-db/vector-search).
 
 ### E17. Prove each new container works at the data plane · Measured
@@ -253,6 +255,7 @@ Consequences:
 - Full-text ranking on its own put the same long chunks first for unrelated questions, because the lexical terms include common words ("who", "is", "how"). Hybrid still found the right documents through its vector side. A stop list belongs before any hybrid evaluation.
 - The canary now fails when different questions get the same hybrid results (`hybrid_ranks`).
 - Vector measurements (E8, E12, E25) are unaffected: vector search is correct when routed by partition key.
+- The SDK floor is the measured version, `azure-cosmos` 4.17.1. Whether a partition key skips the query plan may differ between versions; the canary's `hybrid_ranks` check catches a change on live runs.
 
 
 ### E25. The vector index engages minutes after writes · Measured (Phase 0) and Vendor

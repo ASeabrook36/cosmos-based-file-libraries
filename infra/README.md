@@ -15,7 +15,7 @@ Local auth is off everywhere: Cosmos, Storage (no shared key), Service Bus, Azur
 
 ## Deploy and run the canary
 
-Prerequisites: the Azure CLI, Python 3.12, and an account that can create resources and role assignments in the subscription (Owner, or Contributor plus User Access Administrator).
+Prerequisites: the Azure CLI, Python 3.12 or later, and an account that can create resources and role assignments in the subscription (Owner, or Contributor plus User Access Administrator).
 
 ```bash
 az login

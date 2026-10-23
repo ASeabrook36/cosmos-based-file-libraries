@@ -41,10 +41,10 @@ Images, metadata filters and proposals are Phase 3. The design rests on earlier 
 1. Read `docs/spec.md`.
 2. Read `docs/build-plan.md` for what each phase built and which phase is current.
 
-Set up and run every test (Python 3.12 or later):
+Set up and run every test (Python 3.12 or later; developed on 3.14):
 
 ```bash
-python3.12 -m venv .venv && .venv/bin/pip install -e '.[dev,demo]'
+python3 -m venv .venv && .venv/bin/pip install -e '.[dev,demo]'
 .venv/bin/python -m pytest
 .venv/bin/ruff check . && .venv/bin/ruff format --check .
 ```
