@@ -8,21 +8,10 @@ import pytest
 
 from fli.chunking import ApproxTokenizer, Chunker
 from fli.worker.handlers import BadMessage, Worker
-from tests.fakes import api
+from tests.fakes import FakeEmbedder, api
 
 OLE = bytes.fromhex("D0CF11E0A1B11AE1")
 TEXT = "Gross margin in EMEA fell two points in Q4 2025. " * 200  # several chunks
-
-
-class FakeEmbedder:
-    model, dimensions, version = "text-embedding-3-large", 3, "fake"
-
-    def __init__(self) -> None:
-        self.calls = 0
-
-    async def embed(self, texts):
-        self.calls += 1
-        return [[float(len(t)), 0.5, 0.25] for t in texts]
 
 
 @pytest.fixture

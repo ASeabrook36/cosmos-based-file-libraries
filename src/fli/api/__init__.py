@@ -16,6 +16,7 @@ from fli.blobs import AzureBlobs, BlobStore
 from fli.config import ConfigError, Settings
 from fli.errors import ApiError
 from fli.queue import Queue, ServiceBusQueue
+from fli.search import CosmosChunkReader, Searcher
 from fli.store import CosmosDocumentStore, CosmosLibraryStore, DocumentStore, LibraryStore
 
 
@@ -31,12 +32,24 @@ def _invalid(exc: RequestValidationError | ValidationError) -> JSONResponse:
 async def _azure(app: FastAPI) -> AsyncIterator[None]:
     """Connect to Cosmos and Service Bus with the managed identity (CLAUDE.md rule 13)."""
     settings: Settings = app.state.settings
-    if not (settings.cosmos_endpoint and settings.servicebus_namespace and settings.blob_account_url):
-        raise ConfigError("COSMOS_ENDPOINT, SERVICEBUS_NAMESPACE and BLOB_ACCOUNT_URL are required")
+    required = (
+        "cosmos_endpoint",
+        "servicebus_namespace",
+        "blob_account_url",
+        "aoai_endpoint",
+        "aoai_embedding_deployment",
+    )
+    missing = [name.upper() for name in required if not getattr(settings, name)]
+    if missing:
+        raise ConfigError(f"required: {', '.join(missing)}")
+    import httpx
     from azure.cosmos.aio import CosmosClient
     from azure.identity.aio import DefaultAzureCredential
     from azure.servicebus.aio import ServiceBusClient
     from azure.storage.blob.aio import BlobServiceClient
+
+    from fli.docintel import SCOPE
+    from fli.embedding import AzureOpenAIEmbedder
 
     async with AsyncExitStack() as stack:
         credential = await stack.enter_async_context(DefaultAzureCredential())
@@ -53,6 +66,24 @@ async def _azure(app: FastAPI) -> AsyncIterator[None]:
         app.state.libraries = CosmosLibraryStore(database.get_container_client("libraries"))
         app.state.documents = CosmosDocumentStore(database.get_container_client("documents"))
         app.state.queue = ServiceBusQueue(sender)
+        http = await stack.enter_async_context(httpx.AsyncClient())
+
+        async def token() -> str:
+            return (await credential.get_token(SCOPE)).token
+
+        embedder = AzureOpenAIEmbedder(
+            endpoint=settings.aoai_endpoint,
+            deployment=settings.aoai_embedding_deployment,
+            token_provider=token,
+            http=http,
+            dimensions=settings.aoai_embedding_dimensions,
+        )
+        app.state.searcher = Searcher(
+            app.state.libraries,
+            app.state.documents,
+            CosmosChunkReader(database.get_container_client("chunks")),
+            embedder,
+        )
         yield
 
 
@@ -63,12 +94,13 @@ def create_app(
     documents: DocumentStore | None = None,
     queue: Queue | None = None,
     blobs: BlobStore | None = None,
+    searcher: Searcher | None = None,
 ) -> FastAPI:
     """Build the API. Pass every service for tests; pass none to connect to Azure at startup."""
     check_auth_supported(settings)
-    injected = (libraries, documents, queue, blobs)
+    injected = (libraries, documents, queue, blobs, searcher)
     if any(x is not None for x in injected) and not all(x is not None for x in injected):
-        raise ValueError("pass libraries, documents, queue and blobs together, or none of them")
+        raise ValueError("pass libraries, documents, queue, blobs and searcher together, or none of them")
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
@@ -81,7 +113,7 @@ def create_app(
     app = FastAPI(title="File Library Index", version="0.1.0", lifespan=lifespan)
     app.state.settings = settings
     if libraries is not None:
-        app.state.libraries, app.state.documents, app.state.queue, app.state.blobs = injected
+        app.state.libraries, app.state.documents, app.state.queue, app.state.blobs, app.state.searcher = injected
 
     @app.exception_handler(ApiError)
     async def api_error(_: Request, exc: ApiError) -> JSONResponse:
@@ -101,9 +133,11 @@ def create_app(
 
     from fli.api import documents as document_routes
     from fli.api import libraries as library_routes
+    from fli.api import search as search_routes
 
     app.include_router(library_routes.router)
     app.include_router(document_routes.router)
+    app.include_router(search_routes.router)
     return app
 
 

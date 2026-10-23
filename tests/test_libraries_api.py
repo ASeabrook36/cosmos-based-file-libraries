@@ -5,27 +5,17 @@ from __future__ import annotations
 import logging
 
 import pytest
-from fastapi.testclient import TestClient
 
-from fli.api import create_app
-from fli.blobs import MemoryBlobs
-from fli.config import Settings
 from fli.errors import ApiError
 from fli.permissions import check_search_allowed
-from fli.queue import MemoryQueue
-from fli.store import Conflict, MemoryDocumentStore, MemoryLibraryStore, document_list_query, library_list_query
-
-KEY = "k"
-AUTH = {"Authorization": f"Bearer {KEY}"}
+from fli.store import Conflict, document_list_query, library_list_query
+from tests.fakes import api
 
 
 @pytest.fixture
 def ctx():
-    libraries, queue = MemoryLibraryStore(), MemoryQueue()
-    settings = Settings.from_env({"ENVIRONMENT": "local", "AUTH_MODE": "dev", "DEV_API_KEY": KEY})
-    app = create_app(settings, libraries=libraries, documents=MemoryDocumentStore(), queue=queue, blobs=MemoryBlobs())
-    client = TestClient(app, headers=AUTH)
-    return client, libraries, queue
+    client, s = api()
+    return client, s.libraries, s.queue
 
 
 def create(client, **body):
@@ -134,6 +124,8 @@ def test_unknown_library_is_404(ctx):
 def test_every_library_route_needs_the_key(ctx):
     client, _, _ = ctx
     lib = create(client, kind="shared").json()
+    from fastapi.testclient import TestClient
+
     bare = TestClient(client.app)
     for method, path in [("post", ""), ("get", ""), ("get", f"/{lib['id']}"), ("get", f"/{lib['id']}/tool")]:
         assert bare.request(method, f"/v1/libraries{path}").status_code == 401
