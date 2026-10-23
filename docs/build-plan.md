@@ -85,6 +85,8 @@ The first build of this exact Cosmos configuration happens here (`evidence.md` N
 
 The search response now reports `usage` (request charge and server time, `spec.md` §6.3), so the platform can show cost without reading the API's logs.
 
+The request charges reported for Phases 1 and 2 (10.6–16.5, 29.87 and 16.67 RU) predate the review response (`review-response.md`, finding 3). They exclude the library read and the generation check's document reads, about 1 RU each, which `usage.requestCharge` now includes.
+
 The demo needs something playing the platform's role. Build a small Streamlit app that does exactly what the real platform will do, and nothing the index should do.
 
 **Build**

@@ -275,7 +275,7 @@ Response:
 }
 ```
 
-- `usage` reports what this search cost: `requestCharge` is the Cosmos request units summed over all its queries (search, neighbours), `totalMs` the server-side time. It is for the platform's display and cost tracking; it carries no content.
+- `usage` reports what this search cost: `requestCharge` is the Cosmos request units summed over every Cosmos call the search made: the library read, the chunk query, the generation check's document reads (§8 step 6) and neighbours. `totalMs` is the server-side time. It is for the platform's display and cost tracking; it carries no content.
 - `disposition` is `results` (3 or more), `thin` (1–2) or `empty` (0). An empty result is reported as empty; nothing is padded.
 - No scores are returned. Hybrid ranking fuses rank positions, so its scores are not comparable across queries and must not be thresholded.
 - `image.url` is a 15-minute read-only user-delegation SAS link. The platform fetches it to show the image to the user, and to put the image into the agent's context when the agent's model accepts images.

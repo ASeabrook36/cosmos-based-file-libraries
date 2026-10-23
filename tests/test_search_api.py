@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from types import SimpleNamespace
 
 import pytest
 
@@ -201,3 +202,29 @@ async def test_the_response_reports_its_cost(ctx):
     usage = search(client, lib).json()["usage"]
     assert set(usage) == {"requestCharge", "totalMs"}
     assert usage["requestCharge"] >= 0 and usage["totalMs"] >= 0
+
+
+def charging(get, charge):
+    """Wrap a store's ``get`` so each call reports ``charge`` RU through the hook, as Cosmos does."""
+    response = SimpleNamespace(http_response=SimpleNamespace(headers={"x-ms-request-charge": str(charge)}))
+
+    async def get_and_charge(*args, raw_response_hook=None):
+        if raw_response_hook is not None:
+            raw_response_hook(response)
+        return await get(*args)
+
+    return get_and_charge
+
+
+async def test_the_reported_charge_covers_every_cosmos_call(ctx, monkeypatch):
+    """Review finding 3: the library read and the generation check's document reads count too."""
+    client, s, worker = ctx
+    lib, _ = await library_with_document(client, s, worker)
+    client.post(f"/v1/libraries/{lib}/documents", files={"file": ("q3.md", TEXT.encode(), "text/markdown")})
+    while s.queue.sent:
+        await worker.handle(s.queue.sent.pop(0)[1])
+    monkeypatch.setattr(s.libraries, "get", charging(s.libraries.get, 1.0))
+    monkeypatch.setattr(s.documents, "get", charging(s.documents.get, 1.25))
+    body = search(client, lib, top=20).json()  # every chunk: both documents are candidates
+    assert {r["documentId"] for r in body["results"]} == {d["id"] for d in s.documents.m.items.values()}
+    assert body["usage"]["requestCharge"] == 4.0 + 1.0 + 2 * 1.25  # chunk query (fake), library, two documents

@@ -5,6 +5,9 @@ for tests and local experiments. Each method is one Cosmos operation, so its cos
 point reads by id and partition key, single-partition queries for a library's documents, and
 one cross-partition query for the platform's library list (rare, and over a small container).
 
+Point reads take an optional ``raw_response_hook`` so search can meter them with its other
+Cosmos calls (spec §6.3 ``usage``).
+
 Replacements are conditional on the record's ``_etag``. A concurrent writer makes the replace
 raise ``Conflict``; callers re-read and re-apply their change.
 
@@ -15,9 +18,11 @@ from __future__ import annotations
 
 import copy
 import itertools
+from collections.abc import Callable
 from typing import Any, Protocol
 
 Record = dict[str, Any]
+ResponseHook = Callable[[Any], None]  # azure-core raw_response_hook: called with each pipeline response
 
 SYSTEM_FIELDS = ("_rid", "_self", "_etag", "_attachments", "_ts")
 
@@ -32,7 +37,7 @@ def public(record: Record) -> Record:
 
 
 class LibraryStore(Protocol):
-    async def get(self, library_id: str) -> Record | None: ...
+    async def get(self, library_id: str, *, raw_response_hook: ResponseHook | None = None) -> Record | None: ...
     async def create(self, record: Record) -> Record: ...
     async def replace(self, record: Record) -> Record: ...
     async def list(self, *, kind: str | None, status: str | None) -> list[Record]: ...
@@ -40,7 +45,9 @@ class LibraryStore(Protocol):
 
 
 class DocumentStore(Protocol):
-    async def get(self, library_id: str, document_id: str) -> Record | None: ...
+    async def get(
+        self, library_id: str, document_id: str, *, raw_response_hook: ResponseHook | None = None
+    ) -> Record | None: ...
     async def create(self, record: Record) -> Record: ...
     async def replace(self, record: Record) -> Record: ...
     async def list(self, library_id: str, *, status: str | None, facet: str | None) -> list[Record]: ...
@@ -75,11 +82,12 @@ class _CosmosContainer:
     def __init__(self, container: Any) -> None:  # azure.cosmos.aio.ContainerProxy
         self._c = container
 
-    async def read(self, item_id: str, partition_key: str) -> Record | None:
+    async def read(self, item_id: str, partition_key: str, hook: ResponseHook | None = None) -> Record | None:
         from azure.cosmos.exceptions import CosmosResourceNotFoundError
 
+        metering = {"raw_response_hook": hook} if hook else {}
         try:
-            return await self._c.read_item(item_id, partition_key=partition_key)
+            return await self._c.read_item(item_id, partition_key=partition_key, **metering)
         except CosmosResourceNotFoundError:
             return None
 
@@ -120,8 +128,8 @@ class CosmosLibraryStore:
     def __init__(self, container: Any) -> None:
         self._c = _CosmosContainer(container)
 
-    async def get(self, library_id: str) -> Record | None:
-        return await self._c.read(library_id, library_id)
+    async def get(self, library_id: str, *, raw_response_hook: ResponseHook | None = None) -> Record | None:
+        return await self._c.read(library_id, library_id, raw_response_hook)
 
     async def create(self, record: Record) -> Record:
         return await self._c.create(record)
@@ -141,8 +149,10 @@ class CosmosDocumentStore:
     def __init__(self, container: Any) -> None:
         self._c = _CosmosContainer(container)
 
-    async def get(self, library_id: str, document_id: str) -> Record | None:
-        return await self._c.read(document_id, library_id)
+    async def get(
+        self, library_id: str, document_id: str, *, raw_response_hook: ResponseHook | None = None
+    ) -> Record | None:
+        return await self._c.read(document_id, library_id, raw_response_hook)
 
     async def create(self, record: Record) -> Record:
         return await self._c.create(record)
@@ -193,7 +203,7 @@ class MemoryLibraryStore:
     def __init__(self) -> None:
         self.m = _Memory()
 
-    async def get(self, library_id: str) -> Record | None:
+    async def get(self, library_id: str, *, raw_response_hook: ResponseHook | None = None) -> Record | None:
         return self.m.read(library_id, library_id)
 
     async def create(self, record: Record) -> Record:
@@ -217,7 +227,9 @@ class MemoryDocumentStore:
     def __init__(self) -> None:
         self.m = _Memory()
 
-    async def get(self, library_id: str, document_id: str) -> Record | None:
+    async def get(
+        self, library_id: str, document_id: str, *, raw_response_hook: ResponseHook | None = None
+    ) -> Record | None:
         return self.m.read(library_id, document_id)
 
     async def create(self, record: Record) -> Record:

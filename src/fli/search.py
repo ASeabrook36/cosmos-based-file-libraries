@@ -44,6 +44,8 @@ log = logging.getLogger("fli.search")
 
 @dataclass
 class QueryCost:
+    """Every Cosmos call one search makes: library read, chunk query, document reads, neighbours."""
+
     request_charge: float = 0.0
     responses: int = 0
 
@@ -118,20 +120,22 @@ class Searcher:
 
     async def search(self, library_id: str, agent_id: str | None, request: SearchRequest) -> dict[str, Any]:
         started = time.perf_counter()
-        library = await self.libraries.get(library_id)
+        cost = QueryCost()
+        library = await self.libraries.get(library_id, raw_response_hook=cost)
         check_search_allowed(library_id, library, agent_id)
         assert library is not None
 
         [vector] = await self.embedder.embed([request.query])
         terms = lexical_terms(request.query) if self.mode == "hybrid" else []
         rendered = render_search(library_id, to_float16_query(vector), terms, request.filters, fetch_size(request.top))
-        cost = QueryCost()
         cosmos_started = time.perf_counter()
         candidates = await self.chunks.search(library_id, rendered, cost)
         cosmos_ms = (time.perf_counter() - cosmos_started) * 1000
 
         document_ids = list(dict.fromkeys(c["documentId"] for c in candidates))
-        records = await asyncio.gather(*(self.documents.get(library_id, d) for d in document_ids))
+        records = await asyncio.gather(
+            *(self.documents.get(library_id, d, raw_response_hook=cost) for d in document_ids)
+        )
         documents = {d: r for d, r in zip(document_ids, records, strict=True) if r is not None}
         kept = filter_visible(candidates, documents, request.top)
 
