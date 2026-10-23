@@ -29,6 +29,7 @@ for scanned pages.
 
 from __future__ import annotations
 
+import asyncio
 import csv
 import email
 import email.policy
@@ -429,13 +430,16 @@ async def extract(data: bytes, *, filename: str, content_type: str = "", ocr: Oc
             if not zipfile.is_zipfile(io.BytesIO(data)):
                 outcome, reason = classify_unreadable(data)
                 return Extracted(outcome, categorical_reason=reason, method=ExtractionMethod.UNSUPPORTED)
-            sections, (author, authored_at) = {"docx": _docx, "pptx": _pptx, "xlsx": _xlsx}[ext](data)
+            # Parsers are synchronous and can run for many seconds: keep the event loop free
+            # (queue lock renewal and other lanes run on it).
+            parse = {"docx": _docx, "pptx": _pptx, "xlsx": _xlsx}[ext]
+            sections, (author, authored_at) = await asyncio.to_thread(parse, data)
             return Extracted("ok", sections, author=author, authored_at=authored_at)
         if ext == "pdf":
             if b"/MicrosoftIRMServices" in data[:1_000_000]:
                 return Extracted("encrypted", method=ExtractionMethod.UNSUPPORTED)
             try:
-                sections, pages, (author, authored_at) = _pdf(data)
+                sections, pages, (author, authored_at) = await asyncio.to_thread(_pdf, data)
             except PermissionError:
                 return Extracted(
                     "categorical", categorical_reason="password_protected", method=ExtractionMethod.UNSUPPORTED
@@ -450,10 +454,10 @@ async def extract(data: bytes, *, filename: str, content_type: str = "", ocr: Oc
                 "unsupported", unsupported_reason="unsupported_file_type", method=ExtractionMethod.UNSUPPORTED
             )
         if ext == "eml" or content_type == "message/rfc822":
-            sections, (author, authored_at) = _eml(data)
+            sections, (author, authored_at) = await asyncio.to_thread(_eml, data)
             return Extracted("ok", sections, author=author, authored_at=authored_at)
         if ext == "csv":
-            return Extracted("ok", _csv(data.decode("utf-8", errors="replace"), filename))
+            return Extracted("ok", await asyncio.to_thread(_csv, data.decode("utf-8", errors="replace"), filename))
         if ext in TEXT_TYPES or content_type.startswith("text/plain") or content_type == "text/markdown":
             text = data.decode("utf-8", errors="replace")
             return Extracted(
@@ -463,7 +467,7 @@ async def extract(data: bytes, *, filename: str, content_type: str = "", ocr: Oc
                 else ([Section(None, text.strip())] if text.strip() else []),
             )
         if ext in ("html", "htm", "aspx") or content_type.startswith("text/html"):
-            return Extracted("ok", _html(data.decode("utf-8", errors="replace")))
+            return Extracted("ok", await asyncio.to_thread(_html, data.decode("utf-8", errors="replace")))
         if data[:8] == OLE_MAGIC:
             outcome, reason = classify_unreadable(data)
             if outcome != "encrypted" or reason:

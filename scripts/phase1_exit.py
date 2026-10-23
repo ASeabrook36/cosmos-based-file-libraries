@@ -175,7 +175,7 @@ def main() -> int:
         .raise_for_status()
         .json()
     )
-    upload(client, personal["id"], files[0])
+    upload(client, personal["id"], min(files, key=lambda p: p.stat().st_size))
     own = client.post(
         f"/v1/libraries/{personal['id']}/search",
         json={"query": WRONG_AGENT_SEARCH},

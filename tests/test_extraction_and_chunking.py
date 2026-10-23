@@ -423,3 +423,26 @@ def test_pdf_dates_honour_their_zone(raw, expected):
 
     parsed = _pdf_date(raw)
     assert (parsed.isoformat() if parsed else None) == expected
+
+
+async def test_parsing_runs_off_the_event_loop_thread(monkeypatch):
+    import threading
+
+    from fli import extraction
+
+    seen = {}
+    real = extraction._docx
+
+    def spy(data):
+        seen["thread"] = threading.current_thread()
+        return real(data)
+
+    monkeypatch.setattr(extraction, "_docx", spy)
+    import docx
+
+    doc = docx.Document()
+    doc.add_paragraph("hello")
+    buf = io.BytesIO()
+    doc.save(buf)
+    await extract(buf.getvalue(), filename="a.docx")
+    assert seen["thread"] is not threading.main_thread()  # lock renewal keeps running meanwhile

@@ -119,7 +119,7 @@ class Worker:
             await self._fail(library_id, document_id, generation, status_detail(result))
             return
         kind = "email" if document.get("fileType") == "eml" else "document"
-        pieces = self.chunker.chunk(result.sections, kind)
+        pieces = await asyncio.to_thread(self.chunker.chunk, result.sections, kind)  # CPU-bound tokenizing
         if not pieces:
             await self._fail(library_id, document_id, generation, "no_text")
             return
