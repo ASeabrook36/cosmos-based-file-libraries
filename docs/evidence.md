@@ -1,6 +1,6 @@
 # Evidence: why the design is what it is
 
-*Version 0.7, 2026-10-23: E28 extended to ingest (a replacement's write may not be visible yet); E30 (replacement: one original per generation, a generation number never reused, underfill reported). Version 0.6, 2026-10-23: E28 (deletion must be retryable, and the worker must not trust its first read); E29 (bound what one document can cost); N13. Version 0.5, 2026-10-22: E27 (hybrid search routed by partition key does not rank); E21 and E24 corrected. Version 0.4: E26 (search visibility). Version 0.3: Phase 0 measurements added.*
+*Version 0.8, 2026-10-23: E30 records the Phase 3 live check, which observed underfill reaching an empty result. Version 0.7, 2026-10-23: E28 extended to ingest (a replacement's write may not be visible yet); E30 (replacement: one original per generation, a generation number never reused, underfill reported). Version 0.6, 2026-10-23: E28 (deletion must be retryable, and the worker must not trust its first read); E29 (bound what one document can cost); N13. Version 0.5, 2026-10-22: E27 (hybrid search routed by partition key does not rank); E21 and E24 corrected. Version 0.4: E26 (search visibility). Version 0.3: Phase 0 measurements added.*
 
 Most decisions in `spec.md` rest on measurements from earlier work on these Cosmos features, made on live Azure in 2026. That work built a retrieval index in which each owner (a person) had their own body of content, and every search named whose content to search. That is structurally this project's problem: an owner there plays the role a library plays here. The numbers are recorded here so this repository stands on its own.
 
@@ -333,9 +333,9 @@ At 520 tokens that is about 861,000 tokens embedded and about 238,000 RU of writ
 
 Hence `INGEST_MAX_CHUNKS_PER_DOCUMENT`, default 5,000: about 2 million tokens, embedded in about 13 minutes. It is checked after chunking and before embedding, so refusing a document costs nothing. It is a setting, so raising it is a configuration change. The proper fix is to embed and write in bounded batches (`build-plan.md` Phase 5), which removes the starvation and memory limits, though not the lock limit.
 
-### E30. Replacement: one original per generation, no generation reused, underfill reported · Inference (design consistency), with unit tests
+### E30. Replacement: one original per generation, no generation reused, underfill reported · Inference (design consistency), with unit tests; underfill measured (Phase 3)
 
-Three problems surfaced when document replacement was built (`review-response.md` findings 6 and 7, and one found in planning). None was observed live; each follows from the rules already here, and `tests/test_documents_api.py`, `tests/test_worker_handlers.py` and `tests/test_search_api.py` encode them.
+Three problems surfaced when document replacement was built (`review-response.md` findings 6 and 7, and one found in planning). Each follows from the rules already here, and `tests/test_documents_api.py`, `tests/test_worker_handlers.py` and `tests/test_search_api.py` encode them. The Phase 3 live check then observed the underfill (below). The other two were not observed live.
 
 **An original per generation.** Originals were stored at `{libraryId}/{documentId}/original/{fileName}`, and blob versioning is off. A replacement with the same file name overwrote the original of the generation search was still returning. Had the replacement then failed, the active generation's original would have been gone, and with it the ability to rebuild that generation (E16). Each generation now has its own path, `…/original/{generation}/{fileName}`, chosen over blob versioning because it needs no infrastructure change and the record need not track version ids. Only the active generation's original is needed for a rebuild, so the purge deletes the others; blob soft delete keeps them for 7 days.
 
@@ -346,7 +346,9 @@ Three problems surfaced when document replacement was built (`review-response.md
 - **Fetch again** at the maximum window (40) when the first window was full and fell short. About 10–16 RU more for a vector search and about 150 RU for hybrid, only when triggered, and no help when `top` is 20, since the window is already 40.
 - **Report:** say how many passages were left out, and that searching again later may return more.
 
-Search reports. It costs nothing, it is never wrong, and the shortfall lasts only while a document is written or awaits its purge. An agent told that results were withheld can search again, or treat a thin result as provisional (§9.2). Whether a refetch earns its cost can be settled with Phase 5's evaluation set.
+Search reports. It costs nothing, it is never wrong, and the shortfall lasts only while a document is written or awaits its purge. An agent told that results were withheld can search again, or treat a thin or empty result as provisional (§9.2). Whether a refetch earns its cost can be settled with Phase 5's evaluation set.
+
+*Phase 3 live check* (`records/phase3-exit-lifecycle-20261023T210242Z.json`): a 30-page paper was replaced by a different 18-page paper under the same file name, and the replacement committed 9 seconds after the `PUT`. Of the 4 searches made while it was written, one, 6 seconds in, came back with **no results** and the note. It asked the question the new paper answers. The new generation's chunks, written but not yet visible, filled the whole 16-chunk fetch window (`top` 8). Four seconds earlier, before those chunks were written, the same question had returned 8 results from the old generation. After the commit, all 68 searches returned 8 results of the new generation. So underfill can reach empty, not only thin. It is total exactly when the new version matches the question better than the old one, which is when an agent most needs the note.
 
 ## Not proven
 
