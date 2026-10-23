@@ -135,7 +135,14 @@ async def run(settings: Settings, stopping: asyncio.Event) -> None:
         blob_service = await stack.enter_async_context(
             BlobServiceClient(settings.blob_account_url, credential=credential)
         )
-        renewer = await stack.enter_async_context(AutoLockRenewer(max_lock_renewal_duration=LOCK_RENEWAL_SECONDS))
+
+        async def renewal_failed(renewable: Any, error: Exception | None) -> None:
+            # A lost session lock lets another lane take the same library and redo the message.
+            log.error("lock renewal failed", extra={"error": type(error).__name__ if error else None})
+
+        renewer = await stack.enter_async_context(
+            AutoLockRenewer(max_lock_renewal_duration=LOCK_RENEWAL_SECONDS, on_lock_renew_failure=renewal_failed)
+        )
 
         writes = Governor("cosmos_writes", max_concurrency=settings.cosmos_write_concurrency, on_event=report)
         embeddings = Governor("embeddings", max_concurrency=4, on_event=report)
@@ -181,7 +188,12 @@ async def run(settings: Settings, stopping: asyncio.Event) -> None:
                     library_id = receiver.session.session_id
                     log.info("session taken", extra={"libraryId": library_id})
                     async for message in receiver:  # ends after SESSION_IDLE_SECONDS without messages
+                        log.info(
+                            "message received",
+                            extra={"libraryId": library_id, "deliveryCount": message.delivery_count},
+                        )
                         outcome = await settle(worker, b"".join(message.body), message.delivery_count)
+                        log.info("message settled", extra={"libraryId": library_id, "action": outcome.action})
                         if outcome.action == "complete":
                             await receiver.complete_message(message)
                         elif outcome.action == "abandon":
