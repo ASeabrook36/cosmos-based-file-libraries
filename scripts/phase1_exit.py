@@ -49,6 +49,7 @@ QUESTIONS = [
 ]
 
 WRONG_AGENT_SEARCH = "What is in this library?"
+LIBRARY_NAME = "Phase 1 exit check"
 
 
 def wait_for_documents(client: httpx.Client, library_id: str, timeout: float) -> list[dict]:
@@ -82,6 +83,11 @@ def main() -> int:
     parser.add_argument("--api", default="http://127.0.0.1:8000")
     parser.add_argument("--timeout", type=float, default=3600, help="seconds to wait for ingestion")
     parser.add_argument("--top", type=int, default=5)
+    parser.add_argument(
+        "--resume",
+        action="store_true",
+        help="continue with the existing exit-check library: no new library, no uploads",
+    )
     args = parser.parse_args()
 
     key = os.environ.get("DEV_API_KEY")
@@ -97,20 +103,30 @@ def main() -> int:
     record: dict = {"startedAt": datetime.now(UTC).isoformat(), "fileCount": len(files)}
     client = httpx.Client(base_url=args.api, headers={"Authorization": f"Bearer {key}"}, timeout=60)
 
-    print(f"1. creating a shared library and uploading {len(files)} files")
-    library = (
-        client.post(
-            "/v1/libraries",
-            json={"kind": "shared", "name": "Phase 1 exit check", "description": "Mixed public documents."},
-        )
-        .raise_for_status()
-        .json()
-    )
-    lib = library["id"]
     started = time.monotonic()
-    for path in files:
-        upload(client, lib, path)
-    record["uploadSeconds"] = round(time.monotonic() - started, 1)
+    if args.resume:
+        existing = client.get("/v1/libraries", params={"kind": "shared"}).raise_for_status().json()["libraries"]
+        mine = sorted((x for x in existing if x["name"] == LIBRARY_NAME), key=lambda x: x["createdAt"])
+        if not mine:
+            print(f"no library named {LIBRARY_NAME!r} to resume", file=sys.stderr)
+            return 2
+        lib = mine[-1]["id"]
+        record["resumed"] = True
+        print("1. resuming the existing exit-check library (no uploads)")
+    else:
+        print(f"1. creating a shared library and uploading {len(files)} files")
+        library = (
+            client.post(
+                "/v1/libraries",
+                json={"kind": "shared", "name": LIBRARY_NAME, "description": "Mixed public documents."},
+            )
+            .raise_for_status()
+            .json()
+        )
+        lib = library["id"]
+        for path in files:
+            upload(client, lib, path)
+        record["uploadSeconds"] = round(time.monotonic() - started, 1)
 
     print("2. waiting for ingestion")
     docs = wait_for_documents(client, lib, args.timeout)
