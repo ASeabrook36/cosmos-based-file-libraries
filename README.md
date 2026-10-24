@@ -11,7 +11,55 @@ A search service that stores agent file libraries in Azure Cosmos DB instead of 
 
 It removes the limit that prompted it. Azure AI Search allows 200 indexes per service on the S2 and S3 tiers, and the current design uses one index per library. Here a library is a value stored on each record, not an object the service counts, so the number of libraries has no design limit.
 
-**Status:** Phases 0–3 of `docs/build-plan.md` have passed on live Azure.
+## Why one Cosmos container
+
+Today every library is its own search index, and the search service counts indexes. Here every library lives in one Cosmos DB container: each passage of each document is stored with its text, its meaning as a vector, and the ID of its library. Cosmos keeps each library's passages together and builds a separate vector index for each library inside that one container. A search names one library, so it reaches only that library's passages and that library's index.
+
+```mermaid
+flowchart LR
+    subgraph today["Today: Azure AI Search, one index per library"]
+        direction TB
+        svc["Search service<br/>S2 or S3 tier"]
+        svc --> t1["Index for library 1"]
+        svc --> t2["Index for library 2"]
+        svc --> t3["…"]
+        svc --> t200["Index for library 200"]
+        t200 -.- cap["Library 201 has nowhere to go:<br/>the service allows 200 indexes"]
+    end
+
+    subgraph proposed["Proposed: one Cosmos DB container for every library"]
+        direction TB
+        question["An agent searches one library<br/>by meaning, optionally filtered by<br/>period, author, tags or file type"]
+        subgraph container["One container. Each passage stores its text, its vector and its library ID"]
+            direction LR
+            la["<b>Library A</b><br/>its passages, stored together<br/>its own vector index"]
+            lb["<b>Library B</b><br/>its passages, stored together<br/>its own vector index"]
+            ln["<b>Library 10,000</b><br/>a new library is new records,<br/>not a new index"]
+        end
+        answer["The best-matching passages,<br/>with file and page,<br/>from current versions only"]
+        question -- "the library ID sends the search<br/>to that library's data only" --> la
+        la -- "one query ranks by meaning<br/>and applies the filters" --> answer
+    end
+
+    today ~~~ proposed
+```
+
+What this arrangement buys, with the measurements behind it (`docs/evidence.md`):
+
+| Goal | How the container delivers it | Measured |
+|---|---|---|
+| **Accurate semantic search** | Each library has its own vector index, so a search compares the question's meaning against that library's passages only. Filters run inside the same query, and a replaced document's old version is never returned. | Per-owner vector indexes kept recall@10 at 0.991 against exact search (E2). Half-precision vectors lost no accuracy: 0.980 against 0.980 (E7). |
+| **Fast** | The library ID leads the container's partition key and is its vector shard key, so a search goes to one library's data and one index, in one round trip. | 97–127 ms server latency at the 95th percentile, against 143–295 ms without per-owner indexes (E2). |
+| **Cheap** | A search's cost follows the size of the library searched, not of the container. Half-precision vectors and serverless billing keep the rest small. | 54–69 RU per search at the 95th percentile, against 407–1,063 (E2). 8–16 RU per search on a 5,535-passage library here, 4–7 RU filtered: about $4 per million searches at serverless prices (E10). |
+| **No limit on libraries** | A library is a value on each record. Cosmos counts containers (500 per account), never values, so adding a library creates nothing it counts. | Azure AI Search allows 50 indexes on S1 and 200 on S2 and S3 (E1). Phase 4 puts 1,000 libraries in one container and checks search cost is unchanged. |
+
+The arrangement pays off only when every search names exactly one library. Searching without the library ID cost about 220 times more, and one query across several libraries about 300 times more (E4, E5). So the service always takes the library ID from the URL the platform called, and searches several libraries as several queries.
+
+The latency and per-owner figures come from earlier measurements of the same Cosmos features on a container of 2,000 owners' content, which this design applies to libraries. That libraries behave like those owners is an inference until Phase 4 measures it (N2).
+
+## Status
+
+Phases 0–3 of `docs/build-plan.md` have passed on live Azure.
 
 - Phase 0: the Cosmos configuration deployed and passed its canary at small scale (`records/`).
 - Phase 1: the API, ingestion worker and vector search work end to end, and a personal library refuses other agents.
@@ -20,7 +68,44 @@ It removes the limit that prompted it. Azure AI Search allows 200 indexes per se
 
 Next are Phase 3B (images) and Phase 4 (a thousand libraries in one container, measured). The design rests on earlier measurements of these Cosmos features on live Azure (2026). `docs/evidence.md` traces each decision to them and lists what is not yet proven.
 
-## How it works
+## What's here
+
+| Path | What it is | For |
+|---|---|---|
+| `docs/brief.md` | The case for the change, in two pages | Anyone deciding whether to adopt it |
+| `docs/spec.md` | What to build: components, data model, permissions, API, ingestion, search | Whoever builds it |
+| `docs/build-plan.md` | Build order, demo-first, with an exit check per phase and the demo script | Whoever builds it |
+| `docs/evidence.md` | Each decision, the measurement behind it, and what is not proven | Reviewers, and anyone challenging a decision |
+| `docs/review-response.md` | Each finding of the independent architecture review, its class, and what was done | Reviewers |
+| `cosmos/*.json` | The three Cosmos container definitions, ready to deploy | Infrastructure code |
+| `infra/` | Bicep for one organization's deployment, and how to deploy it | Whoever deploys it |
+| `src/fli/` | The application package: `fli-api` and `fli-worker` entry points | Whoever builds it |
+| `src/fli_demo/`, `demo/` | The demo platform: the index client, the agent–library attachments (kept outside the index) and the agent loop; the Streamlit pages | Anyone running the demo |
+| `scripts/canary.py` | Proves a newly deployed account's vector and hybrid search work (CLAUDE.md rule 11) | Whoever deploys it |
+| `scripts/load_demo_corpus.py` | Loads a folder of documents into shared libraries through the API | Anyone running the demo |
+| `scripts/deployment_env.py` | Prints a deployment's outputs as `export` lines, for the demo commands below | Anyone running the demo |
+| `scripts/phase1_exit.py`, `scripts/phase3_exit.py` | Exit checks driven through the running API; each writes a record to `records/` | Whoever runs an exit check |
+| `records/` | Canary and exit-check records, committed | Reviewers |
+| `CLAUDE.md` | Rules for coding agents working in this repo | Coding agents |
+
+## Getting started
+
+1. Read `docs/spec.md`.
+2. Read `docs/build-plan.md` for what each phase built and which phase is current.
+
+Set up and run every test (Python 3.12 or later; developed on 3.14):
+
+```bash
+python3 -m venv .venv && .venv/bin/pip install -e '.[dev,demo]'
+.venv/bin/python -m pytest
+.venv/bin/ruff check . && .venv/bin/ruff format --check .
+```
+
+To deploy and run the canary, follow `infra/README.md`.
+
+## Prototype setup
+
+How the prototype is built and run for the demo: every component, what runs where, and the exact Cosmos layout. The section above says why; this one says precisely what.
 
 ### Components and workloads
 
@@ -84,7 +169,7 @@ flowchart TB
 
 **Metadata changes.** Accepting a proposal or editing a document's tags updates the document record at once and queues `retag`, which copies the metadata onto every chunk so filters run inside the vector query.
 
-### How Cosmos is structured for libraries
+### The Cosmos containers in detail
 
 Three containers in one database. Everything is keyed by library first, because every operation names exactly one library: a search, an upload, a permission check. A library is a value on each record, not a container or index, so there is no count to run out of.
 
@@ -126,41 +211,6 @@ flowchart TB
 | Keep costs low on serverless | float16 vectors cut storage by 46% and query cost by about 41% at equal recall (E7), provided the query vector is declared float16 too (E8). A search cost 8–16 RU on a 5,535-chunk library in Phase 1. Writes are the expensive side, about 144 RU per chunk, so the worker caps them across all libraries (E10). |
 
 Vector settings (dimensions, data type, quantizer, shard key) cannot change after a container is created, so the chunk text and original files are kept: a change means a new container, rebuilt from them (E16).
-
-## What's here
-
-| Path | What it is | For |
-|---|---|---|
-| `docs/brief.md` | The case for the change, in two pages | Anyone deciding whether to adopt it |
-| `docs/spec.md` | What to build: components, data model, permissions, API, ingestion, search | Whoever builds it |
-| `docs/build-plan.md` | Build order, demo-first, with an exit check per phase and the demo script | Whoever builds it |
-| `docs/evidence.md` | Each decision, the measurement behind it, and what is not proven | Reviewers, and anyone challenging a decision |
-| `docs/review-response.md` | Each finding of the independent architecture review, its class, and what was done | Reviewers |
-| `cosmos/*.json` | The three Cosmos container definitions, ready to deploy | Infrastructure code |
-| `infra/` | Bicep for one organization's deployment, and how to deploy it | Whoever deploys it |
-| `src/fli/` | The application package: `fli-api` and `fli-worker` entry points | Whoever builds it |
-| `src/fli_demo/`, `demo/` | The demo platform: the index client, the agent–library attachments (kept outside the index) and the agent loop; the Streamlit pages | Anyone running the demo |
-| `scripts/canary.py` | Proves a newly deployed account's vector and hybrid search work (CLAUDE.md rule 11) | Whoever deploys it |
-| `scripts/load_demo_corpus.py` | Loads a folder of documents into shared libraries through the API | Anyone running the demo |
-| `scripts/deployment_env.py` | Prints a deployment's outputs as `export` lines, for the demo commands below | Anyone running the demo |
-| `scripts/phase1_exit.py`, `scripts/phase3_exit.py` | Exit checks driven through the running API; each writes a record to `records/` | Whoever runs an exit check |
-| `records/` | Canary and exit-check records, committed | Reviewers |
-| `CLAUDE.md` | Rules for coding agents working in this repo | Coding agents |
-
-## Getting started
-
-1. Read `docs/spec.md`.
-2. Read `docs/build-plan.md` for what each phase built and which phase is current.
-
-Set up and run every test (Python 3.12 or later; developed on 3.14):
-
-```bash
-python3 -m venv .venv && .venv/bin/pip install -e '.[dev,demo]'
-.venv/bin/python -m pytest
-.venv/bin/ruff check . && .venv/bin/ruff format --check .
-```
-
-To deploy and run the canary, follow `infra/README.md`.
 
 ## Run the demo
 
