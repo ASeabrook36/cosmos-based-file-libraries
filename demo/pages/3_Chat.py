@@ -34,12 +34,18 @@ def show(searches):
         label = f"Tool called: {s.tool_name} → {s.library_name} · {s.latency_ms:.0f} ms · {charge}"
         with st.expander(label):
             st.write(f"Query: {s.query}")
+            if s.filters:
+                st.write("Filters: " + ", ".join(f"{k} {v}" for k, v in s.filters.items()))
             if s.error:
                 st.error(s.error)
             else:
                 st.write(f"{s.result_count} results ({s.disposition})")
+                for note in s.notes:
+                    st.caption(note)
                 for c in s.citations:
                     st.write("- " + c.label())
+        for image in s.images:  # image results (Phase 3B); short-lived read links from the index
+            st.image(image["url"], caption=image["caption"])
 
 
 for m in st.session_state.chat:

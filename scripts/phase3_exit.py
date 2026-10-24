@@ -18,6 +18,28 @@
    only. No file names, query text or chunk text (CLAUDE.md rule 12).
 
 Use two real, different documents (evidence.md E14), each with a question only it answers.
+
+    python scripts/phase3_exit.py filters MANIFEST.json [--worker-log worker.log]
+
+``filters`` checks metadata filters and metadata updates. The manifest names real documents
+with their metadata, filtered searches to run, and one tag change (paths relative to it)::
+
+    {"documents": [{"path": "q4-emea.pdf", "author": "…", "periodStart": "2025-10-01",
+                    "periodEnd": "2025-12-31", "tags": [{"key": "region", "value": "EMEA"}]}, …],
+     "searches": [{"question": "…", "filters": {"period": {"from": "…", "to": "…"},
+                                                "tags": ["region=EMEA"]}}, …],
+     "retag": {"document": 0, "tag": {"key": "…", "value": "…"}, "question": "…"}}
+
+1. Creates a shared library, uploads the documents with their metadata, waits until ready.
+2. Runs each search unfiltered and filtered. Every filtered result's document must match its
+   filters, read from the document records; where some document lacks a filtered field, the
+   coverage notes must say so (spec §9.2).
+3. Adds the retag tag to one document, then removes it, and times how long each change takes to
+   reach a search filtered on that tag (``retag``, spec §7.7). With ``--worker-log``, the
+   worker's ``retag done`` lines give what the chunk patches cost.
+4. Deletes the library and writes ``records/phase3-exit-filters-<UTC timestamp>.json``: metrics
+   and filter names only. No file names, questions, tag values or authors (CLAUDE.md rule 12).
+
 Needs the API running locally with AUTH_MODE=dev and the worker running against the same
 deployment. ``DEV_API_KEY`` must match the API's.
 """
@@ -58,8 +80,13 @@ def wait_until(client: httpx.Client, library_id: str, document_id: str, done, ti
     return document
 
 
-def search(client: httpx.Client, library_id: str, question: str, top: int) -> httpx.Response:
-    return client.post(f"/v1/libraries/{library_id}/search", json={"query": question, "top": top}, headers=AGENT)
+def search(
+    client: httpx.Client, library_id: str, question: str, top: int, filters: dict | None = None
+) -> httpx.Response:
+    body: dict = {"query": question, "top": top}
+    if filters:
+        body["filters"] = filters
+    return client.post(f"/v1/libraries/{library_id}/search", json=body, headers=AGENT)
 
 
 def observe(client: httpx.Client, library_id: str, document_id: str, question: str, top: int) -> dict:
@@ -171,6 +198,154 @@ def lifecycle(client: httpx.Client, args: argparse.Namespace) -> dict:
     return record
 
 
+# -- filters ----------------------------------------------------------------------------------
+
+FILTERS_LIBRARY = "Phase 3 exit check: filters"
+MISSING_NOTE = {"period": "no period set", "authoredBetween": "no authored date", "authors": "no author"}
+
+
+def _in_window(value: str | None, window: dict) -> bool:
+    day = (value or "")[:10]
+    return bool(day) and window.get("from", "0001-01-01") <= day <= window.get("to", "9999-12-31")
+
+
+def matches(document: dict, result: dict, filters: dict) -> bool:
+    """Whether a result's document satisfies the filters, judged from the document record."""
+    if (period := filters.get("period")) is not None:
+        start, end = document.get("periodStart"), document.get("periodEnd")
+        if not (start and end and start <= period.get("to", "9999-12-31") and end >= period.get("from", "0001-01-01")):
+            return False
+    if "authoredBetween" in filters and not _in_window(document.get("authoredAt"), filters["authoredBetween"]):
+        return False
+    if "uploadedBetween" in filters and not _in_window(document.get("uploadedAt"), filters["uploadedBetween"]):
+        return False
+    if filters.get("authors") and document.get("author") not in filters["authors"]:
+        return False
+    if not set(filters.get("tags", [])) <= set(document.get("facets", [])):
+        return False
+    if filters.get("fileTypes") and document.get("fileType") not in filters["fileTypes"]:
+        return False
+    return not filters.get("contentKinds") or result.get("contentKind") in filters["contentKinds"]
+
+
+def lacking(document: dict, name: str) -> bool:
+    if name == "period":
+        return not (document.get("periodStart") and document.get("periodEnd"))
+    return not document.get({"authoredBetween": "authoredAt", "authors": "author"}[name])
+
+
+def wait_all_ready(client: httpx.Client, library_id: str, timeout: float) -> list[dict]:
+    deadline = time.monotonic() + timeout
+    while True:
+        docs = client.get(f"/v1/libraries/{library_id}/documents").raise_for_status().json()["documents"]
+        if not any(d["status"] in ("queued", "processing") for d in docs):
+            return docs
+        if time.monotonic() > deadline:
+            raise SystemExit("timed out waiting for ingestion")
+        time.sleep(5)
+
+
+def retag_charges(log_path: Path | None, document_id: str) -> list[dict]:
+    """``retag done`` lines for one document from the worker's log: chunks patched and their cost."""
+    if log_path is None or not log_path.exists():
+        return []
+    out = []
+    for line in log_path.read_text().splitlines():
+        if "retag done" in line and document_id in line and "{" in line:
+            fields = json.loads(line[line.index("{") :])
+            out.append({"chunks": fields["chunks"], "requestCharge": fields["requestCharge"]})
+    return out
+
+
+def wait_for_tag(client, library_id, document_id, question, tag, present: bool, timeout: float) -> float | None:
+    """Seconds until a search filtered on ``tag`` does (or no longer does) return the document."""
+    started = time.monotonic()
+    while time.monotonic() - started < timeout:
+        body = search(client, library_id, question, 20, {"tags": [tag]}).raise_for_status().json()
+        if any(r["documentId"] == document_id for r in body["results"]) == present:
+            return round(time.monotonic() - started, 1)
+        time.sleep(2)
+    return None
+
+
+def filters_check(client: httpx.Client, args: argparse.Namespace) -> dict:
+    manifest = json.loads(args.manifest.read_text())
+    base = args.manifest.parent
+    record: dict = {"check": "filters", "startedAt": datetime.now(UTC).isoformat()}
+
+    print(f"1. creating a shared library and uploading {len(manifest['documents'])} documents with metadata")
+    lib = client.post("/v1/libraries", json={"kind": "shared", "name": FILTERS_LIBRARY}).raise_for_status().json()["id"]
+    ids = []
+    for entry in manifest["documents"]:
+        path = base / entry["path"]
+        metadata = {k: entry[k] for k in ("author", "periodStart", "periodEnd", "tags") if entry.get(k)}
+        r = client.post(
+            f"/v1/libraries/{lib}/documents",
+            files={"file": (path.name, path.read_bytes(), "application/octet-stream")},
+            data={"metadata": json.dumps(metadata)},
+            timeout=300,
+        )
+        ids.append(r.raise_for_status().json()["documentId"])
+    docs = wait_all_ready(client, lib, args.timeout)
+    record["documents"] = {"uploaded": len(ids), "ready": sum(1 for d in docs if d["status"] == "ready")}
+
+    print("2. running each search unfiltered and filtered")
+    by_id = {d["id"]: d for d in docs if d["status"] == "ready"}
+    searches = []
+    for entry in manifest["searches"]:
+        filters = entry["filters"]
+        plain = search(client, lib, entry["question"], args.top).raise_for_status().json()
+        body = search(client, lib, entry["question"], args.top, filters).raise_for_status().json()
+        notes = body["coverage"]["notes"]
+        expected = [k for k in MISSING_NOTE if k in filters and any(lacking(d, k) for d in by_id.values())]
+        searches.append(
+            {
+                "filterKeys": sorted(filters),
+                "resultCount": len(body["results"]),
+                "unfilteredResultCount": len(plain["results"]),
+                "mismatches": sum(1 for r in body["results"] if not matches(by_id[r["documentId"]], r, filters)),
+                "documentsReturned": len({r["documentId"] for r in body["results"]}),
+                "missingNotesExpected": expected,
+                "missingNotesFound": [k for k in expected if any(MISSING_NOTE[k] in n for n in notes)],
+                "notes": len(notes),
+                "filtersAppliedKeys": sorted(body["coverage"]["filtersApplied"]),
+                "requestCharge": body["usage"]["requestCharge"],
+                "unfilteredRequestCharge": plain["usage"]["requestCharge"],
+            }
+        )
+        s = searches[-1]
+        print(f"  {s['filterKeys']}: {s['resultCount']} results, {s['mismatches']} mismatches, {s['notes']} notes")
+    record["searches"] = searches
+
+    print("3. changing one document's tags and timing how long search takes to follow")
+    change = manifest["retag"]
+    doc_id = ids[change["document"]]
+    tag = f"{change['tag']['key']}={change['tag']['value']}"
+    before = [{"key": t["key"], "value": t["value"]} for t in by_id[doc_id].get("tags", [])]
+    client.patch(f"/v1/libraries/{lib}/documents/{doc_id}", json={"tags": [*before, change["tag"]]}).raise_for_status()
+    added = wait_for_tag(client, lib, doc_id, change["question"], tag, True, args.timeout)
+    client.patch(f"/v1/libraries/{lib}/documents/{doc_id}", json={"tags": before}).raise_for_status()
+    removed = wait_for_tag(client, lib, doc_id, change["question"], tag, False, args.timeout)
+    record["retag"] = {
+        "secondsToAppear": added,
+        "secondsToDisappear": removed,
+        "patches": retag_charges(args.worker_log, doc_id),
+    }
+    print(f"  tag reached search after {added} s, left it after {removed} s")
+
+    print("4. deleting the library")
+    client.delete(f"/v1/libraries/{lib}").raise_for_status()
+    record["passed"] = (
+        record["documents"]["ready"] == len(ids)
+        and all(s["mismatches"] == 0 and s["missingNotesFound"] == s["missingNotesExpected"] for s in searches)
+        and all(s["filtersAppliedKeys"] == s["filterKeys"] for s in searches)
+        and added is not None
+        and removed is not None
+    )
+    record["finishedAt"] = datetime.now(UTC).isoformat()
+    return record
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     sub = parser.add_subparsers(dest="check", required=True)
@@ -184,6 +359,12 @@ def main() -> int:
     life.add_argument("--api", default="http://127.0.0.1:8000")
     life.add_argument("--timeout", type=float, default=1800, help="seconds to wait for ingestion")
     life.add_argument("--top", type=int, default=8)
+    filt = sub.add_parser("filters", help="metadata filters and metadata updates")
+    filt.add_argument("manifest", type=Path, help="documents, their metadata, searches and one tag change")
+    filt.add_argument("--worker-log", type=Path, help="the worker's log, for what retag's patches cost")
+    filt.add_argument("--api", default="http://127.0.0.1:8000")
+    filt.add_argument("--timeout", type=float, default=1800, help="seconds to wait for ingestion or a retag")
+    filt.add_argument("--top", type=int, default=8)
     args = parser.parse_args()
 
     key = os.environ.get("DEV_API_KEY")
@@ -191,7 +372,7 @@ def main() -> int:
         print("DEV_API_KEY must be set (the same value as the API's)", file=sys.stderr)
         return 2
     client = httpx.Client(base_url=args.api, headers={"Authorization": f"Bearer {key}"}, timeout=60)
-    record = lifecycle(client, args)
+    record = lifecycle(client, args) if args.check == "lifecycle" else filters_check(client, args)
     stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     out = REPO / "records" / f"phase3-exit-{args.check}-{stamp}.json"
     out.write_text(json.dumps(record, indent=2) + "\n")

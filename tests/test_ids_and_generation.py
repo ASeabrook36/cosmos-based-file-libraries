@@ -4,7 +4,7 @@ import pytest
 
 from fli.errors import ApiError, library_not_found
 from fli.generation import filter_visible, is_obsolete, is_visible, latest_generation
-from fli.ids import chunk_id, original_blob_path, original_generation
+from fli.ids import blob_generation, chunk_id, image_blob_path, original_blob_path
 
 
 def test_chunk_ids_are_deterministic_and_encode_generation_and_index():
@@ -32,10 +32,20 @@ def test_blob_path_layout():
         ("L/D/original/12/2024", 12),
         ("L/D/original/a b.pdf", 1),  # stored before Phase 3: no generation segment
         ("L/D/original/2024", 1),  # a legacy file named like a number is still legacy
+        ("L/D/images/4/0f3a.png", 4),
     ],
 )
-def test_each_original_knows_its_generation(path, generation):
-    assert original_generation(path) == generation
+def test_each_original_and_image_knows_its_generation(path, generation):
+    assert blob_generation(path) == generation
+
+
+def test_image_paths_are_per_generation_and_never_from_the_file():
+    assert image_blob_path("L", "D", 2, "0f3a-9b", "png") == "L/D/images/2/0f3a-9b.png"
+    for bad in (("../x", "png"), ("a", "p/ng"), ("a", "PNG")):
+        with pytest.raises(ValueError):
+            image_blob_path("L", "D", 1, *bad)
+    with pytest.raises(ValueError):
+        blob_generation("L/D/other/1/x")
 
 
 def test_the_newest_generation_survives_records_written_before_the_counter():

@@ -1,6 +1,6 @@
 # Evidence: why the design is what it is
 
-*Version 0.8, 2026-10-23: E30 records the Phase 3 live check, which observed underfill reaching an empty result. Version 0.7, 2026-10-23: E28 extended to ingest (a replacement's write may not be visible yet); E30 (replacement: one original per generation, a generation number never reused, underfill reported). Version 0.6, 2026-10-23: E28 (deletion must be retryable, and the worker must not trust its first read); E29 (bound what one document can cost); N13. Version 0.5, 2026-10-22: E27 (hybrid search routed by partition key does not rank); E21 and E24 corrected. Version 0.4: E26 (search visibility). Version 0.3: Phase 0 measurements added.*
+*Version 0.9, 2026-10-23: E28 extended to metadata updates (`retag`). Version 0.8, 2026-10-23: E30 records the Phase 3 live check, which observed underfill reaching an empty result. Version 0.7, 2026-10-23: E28 extended to ingest (a replacement's write may not be visible yet); E30 (replacement: one original per generation, a generation number never reused, underfill reported). Version 0.6, 2026-10-23: E28 (deletion must be retryable, and the worker must not trust its first read); E29 (bound what one document can cost); N13. Version 0.5, 2026-10-22: E27 (hybrid search routed by partition key does not rank); E21 and E24 corrected. Version 0.4: E26 (search visibility). Version 0.3: Phase 0 measurements added.*
 
 Most decisions in `spec.md` rest on measurements from earlier work on these Cosmos features, made on live Azure in 2026. That work built a retrieval index in which each owner (a person) had their own body of content, and every search named whose content to search. That is structurally this project's problem: an owner there plays the role a library plays here. The numbers are recorded here so this repository stands on its own.
 
@@ -306,6 +306,8 @@ Not observed live: it follows from the documented semantics, and `tests/test_wor
 - **Purge.** The API stores a replacement's original before any worker read can show its generation. A purge that deleted "every original except active and pending" on a stale read would delete it. A lagging read can only under-report the newest generation, never over-report it, so the purge deletes only generations at or below the `generation` it reads, never above (E30).
 
 A stale read that persists through all five deliveries dead-letters the ingest, and the replacement stays `queued` until the `PUT` is repeated. That is the same gap as a dead-lettered purge; Phase 5 alerts on both.
+
+**Metadata (Phase 3).** `PATCH` writes a document's author, period and tags through the API's client, then queues `retag`. A worker that read the earlier record would copy the old metadata onto the chunks and complete, and filters would keep matching the old values until the next `PATCH`. Each `PATCH` raises the record's `metadataVersion`, and the message carries it. A record whose `metadataVersion` is lower than the message's is provably stale: the worker raises and the message is redelivered. One that is higher means a later `PATCH` has queued its own `retag`, which copies everything, so this one completes without work. Not observed live; `tests/test_worker_handlers.py` encodes it.
 
 Source: [Consistency level choices](https://learn.microsoft.com/en-us/azure/cosmos-db/consistency-levels) (updated 2026-04-27).
 

@@ -8,10 +8,10 @@
    When dropped chunks leave fewer than ``top`` from a full fetch window, coverage says so
    (review finding 6). Nothing is fetched again: the shortfall is reported, not hidden.
 7. Neighbours: one query per document, scoped to the full partition key.
-9. Coverage: what was searched and how many results.
+9. Coverage: what was searched, which filters applied, how many results, and notes on what a
+   filter left out: documents lacking the filtered field, and filter values no document in the
+   library has. Counts come from the library's ``filterValues`` (``fli.vocabulary``).
 10. A metrics-only log line. Query text and chunk text are never logged (CLAUDE.md rule 12).
-
-Phase 1 runs no metadata filters; Phase 3 adds them (the query builder already renders them).
 
 ``SEARCH_MODE`` chooses step 4-5: ``vector`` (the default) or ``hybrid``. Hybrid ranks only when
 sent without a partition key, and then costs about ten times more (evidence.md E27).
@@ -102,6 +102,7 @@ class SearchRequest:
     top: int
     include_neighbors: bool = False
     filters: SearchFilters = field(default_factory=SearchFilters)
+    filters_applied: Mapping[str, Any] = field(default_factory=dict)  # coverage.filtersApplied
 
 
 def fetch_size(top: int) -> int:
@@ -110,6 +111,43 @@ def fetch_size(top: int) -> int:
 
 def disposition(count: int) -> str:
     return "results" if count >= 3 else "thin" if count >= 1 else "empty"
+
+
+MISSING = (  # (SearchFilters attribute, filterValues["missing"] key, what is lacking, filter name)
+    ("period", "period", "a period set", "period"),
+    ("authored_between", "authoredAt", "an authored date", "authoredBetween"),
+    ("authors", "author", "an author", "authors"),
+)
+
+
+def filter_notes(filters: SearchFilters, library: Mapping[str, Any]) -> list[str]:
+    """What the filters left out (spec §9.2). An empty result must not read as "the answer does not exist".
+
+    A library refreshed before ``filterValues`` existed gets the spec's general notes instead of counts.
+    """
+    values = library.get("filterValues")
+    vocabulary = library.get("tagVocabulary") or {}
+    total = (library.get("stats") or {}).get("documentCount", 0)
+    notes: list[str] = []
+    for attribute, missing_key, lacking, name in MISSING:
+        if not getattr(filters, attribute):
+            continue
+        if values is None:
+            notes.append(f"Documents without {lacking} are not included when filtering by {name}.")
+        elif count := values["missing"].get(missing_key, 0):
+            bare = lacking.split(" ", 1)[1]
+            notes.append(f"{count} of {total} documents have no {bare}, so filtering by {name} left them out.")
+    unknown_tags = [t for t in filters.tags if t.partition("=")[2] not in vocabulary.get(t.partition("=")[0], {})]
+    if unknown_tags:
+        notes.append(f"No document in this library is tagged {', '.join(unknown_tags)}.")
+    if values is not None:
+        if unknown := [a for a in filters.authors if a not in values["authors"]]:
+            notes.append(f"No document in this library has the author {', '.join(unknown)}.")
+        if unknown := [t for t in filters.file_types if t not in values["fileTypes"]]:
+            notes.append(f"This library has no documents of type {', '.join(unknown)}.")
+        if unknown := [k for k in filters.content_kinds if k not in values["contentKinds"]]:
+            notes.append(f"This library has no {' or '.join(unknown)} content.")
+    return notes
 
 
 def underfill_note(hidden: int) -> str:
@@ -169,7 +207,7 @@ class Searcher:
                 "neighbors": neighbors.get((c["documentId"], c["chunkIndex"]), [])
                 if request.include_neighbors
                 else None,
-                "image": None,  # image chunks and their read links are Phase 3
+                "image": None,  # image chunks and their read links are Phase 3B
             }
             for rank, c in enumerate(kept, start=1)
         ]
@@ -180,8 +218,8 @@ class Searcher:
             "library": {"libraryId": library_id, "name": library.get("name")},
             "coverage": {
                 "searched": f"{library.get('name')} ({document_count} documents)",
-                "filtersApplied": {},
-                "notes": [underfill_note(hidden)] if underfilled else [],
+                "filtersApplied": dict(request.filters_applied),
+                "notes": filter_notes(request.filters, library) + ([underfill_note(hidden)] if underfilled else []),
                 "resultCount": len(results),
                 "disposition": disposition(len(results)),
             },
@@ -197,6 +235,7 @@ class Searcher:
                 "libraryKind": library.get("kind"),
                 "agentId": agent_id,
                 "mode": self.mode,
+                "filterKeys": sorted(request.filters_applied),  # keys only: values may be personal
                 "top": request.top,
                 "candidates": len(candidates),
                 "hidden": hidden,

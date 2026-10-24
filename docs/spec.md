@@ -1,6 +1,6 @@
 # Specification: File Library Index
 
-*Version 0.8, 2026-10-23. Working name. Status: Phases 0–2 passed (`build-plan.md`): libraries, upload, ingestion, vector search and the demo platform run end to end on the demo account. Phase 3 is in progress: document replacement (§7.8) is built, and its live exit check passed. Phases 4–5 are not built. Every design choice here that rests on a measurement is traced in `evidence.md`.*
+*Version 0.9, 2026-10-23. Working name. Status: Phases 0–2 passed (`build-plan.md`): libraries, upload, ingestion, vector search and the demo platform run end to end on the demo account. Phase 3 is in progress: document replacement (§7.8) is built and its live exit check passed; metadata filters (§6.3, §6.4, §7.7) are built and unit-tested, and their live check has not run. Phases 4–5 are not built. Every design choice here that rests on a measurement is traced in `evidence.md`.*
 
 ## 1. Scope
 
@@ -108,6 +108,7 @@ Partition key `/libraryId`. `id` equals `libraryId` (a GUID).
 | `descriptionProposal` | object | `{text, generatedAt, basedOnDocumentCount}`. Enhancement 1 |
 | `autoAcceptTagProposals` | bool | Default `true` for personal, `false` for shared |
 | `tagVocabulary` | object | `{key: {value: documentCount}}`, recomputed after ingestion |
+| `filterValues` | object | `{authors, fileTypes, contentKinds: {value: documentCount}, period: {from, to} \| null, missing: {period, author, authoredAt}}`, counted over searchable documents and recomputed with `tagVocabulary`. The tool definition (§6.4) and coverage notes (§9.2) read it, so neither reads documents per search |
 | `stats` | object | `{documentCount, chunkCount, imageCount, lastIngestedAt}` |
 | `embeddingModel`, `embeddingDimensions` | string, int | Recorded for rebuilds |
 | `status` | `active` \| `deleting` | |
@@ -136,6 +137,7 @@ Partition key `/libraryId`. `id` equals `documentId` (a GUID).
 | `tagProposals` | array | `[{key, value}]` awaiting acceptance (enhancement 1) |
 | `periodProposal`, `authorProposal` | | Same, for the typed fields |
 | `facets` | string[] | `key=value` for every entry in `tags`; this is what filters match |
+| `metadataVersion` | int | Raised by each `PATCH`; the `retag` message carries it (§7.1). 0 at upload |
 | `extraction` | object | `{method, ocrApplied, pageCount, extractionVersion, chunkingVersion}` |
 | `chunkCount`, `imageCount`, `imagesSkipped` | int | |
 | `updatedAt` | datetime | |
@@ -202,7 +204,7 @@ Base path `/v1`. JSON throughout except uploads. Errors: `{"error": {"code": "..
 | `POST /v1/libraries/{libraryId}/documents` | multipart: `file`, optional `metadata` JSON `{author?, periodStart?, periodEnd?, tags?}` | `202 {documentId, status: "queued"}` |
 | `GET /v1/libraries/{libraryId}/documents` | `?status=&facet=` | List |
 | `GET /v1/libraries/{libraryId}/documents/{documentId}` | | Document, including proposals |
-| `PATCH /v1/libraries/{libraryId}/documents/{documentId}` | `{author?, periodStart?, periodEnd?, tags?, acceptProposals?: ["region=EMEA", "period", "author"]}` | Document; chunk metadata updated by a `retag` job |
+| `PATCH /v1/libraries/{libraryId}/documents/{documentId}` | `{author?, periodStart?, periodEnd?, tags?, acceptProposals?: ["region=EMEA", "period", "author"]}` | Document; chunk metadata updated by a `retag` job (§7.7). `acceptProposals` arrives with proposals |
 | `PUT /v1/libraries/{libraryId}/documents/{documentId}/content` | multipart `file` | `202 {documentId, status: "queued", generation}`; reprocesses as a new generation (§7.8) |
 | `DELETE /v1/libraries/{libraryId}/documents/{documentId}` | | `202`; status `deleting`. Repeatable: queues the purge again (§5 rule 5) |
 | `GET /v1/libraries/{libraryId}/documents/{documentId}/file` | | `302` to a 15-minute read-only link |
@@ -210,6 +212,8 @@ Base path `/v1`. JSON throughout except uploads. Errors: `{"error": {"code": "..
 Uploads are refused with `409 library_deleting` when the library is `deleting`. Maximum upload size is configurable (default 100 MB).
 
 A replacement (`PUT …/content`) is refused with `404 document_not_found` when the document does not exist or is `deleting`, `409 library_deleting` when the library is, `413 file_too_large` and `400 empty_file` as for uploads. It reserves the next `generation` on the record first, then stores the original under that generation's path, then queues `ingest`. Reserving first means two concurrent replacements never write the same path. If the original cannot be stored, or the message cannot be queued (`503 queue_unavailable`), the replacement alone is marked `failed` (`upload_failed`, `enqueue_failed`) and its original removed; the active generation stays searchable. A replacement sent while another is pending supersedes it: the worker abandons the older one.
+
+A metadata update (`PATCH`) changes only the fields it names. `tags` replaces the list: a tag kept from before keeps its `source`, a new one is `user`, and `facets` is recomputed. `periodStart` and `periodEnd` go together. It is refused with `404 document_not_found` and `409 library_deleting` as for replacements. The record changes at once; `retag` then copies the change to the chunks (§7.7). Until it runs, filters match the chunks' previous metadata. If `retag` cannot be queued, the update is kept and the response is `503 queue_unavailable`; repeating the request queues it again.
 
 ### 6.3 Search
 
@@ -239,6 +243,8 @@ Every filter is optional. Three time filters exist because "when" means three di
 - `uploadedBetween`: `uploadedAt` in the window.
 
 `tags` must all match. `authors`, `fileTypes` and `contentKinds` match any listed value. `top` defaults to 8, maximum 20.
+
+A window may give `from`, `to` or both; dates are inclusive, and an open side is unbounded. `tags` are `key=value`. `fileTypes` takes the normalized types of §4.2, and `contentKinds` `text` or `image`. Each list holds at most 20 values. Anything else is `400 invalid_request`.
 
 Response:
 
@@ -281,6 +287,7 @@ Response:
 
 - `usage` reports what this search cost: `requestCharge` is the Cosmos request units summed over every Cosmos call the search made: the library read, the chunk query, the generation check's document reads (§8 step 6) and neighbours. `totalMs` is the server-side time. It is for the platform's display and cost tracking; it carries no content.
 - `disposition` is `results` (3 or more), `thin` (1–2) or `empty` (0). An empty result is reported as empty; nothing is padded.
+- `notes` says what a filter left out: how many documents lack the filtered field (`period`, `authoredBetween`, `authors`), and any filter value no document in the library has. It also reports passages the generation check left out (§8 step 6).
 - No scores are returned. Hybrid ranking fuses rank positions, so its scores are not comparable across queries and must not be thresholded.
 - `image.url` is a 15-minute read-only user-delegation SAS link. The platform fetches it to show the image to the user, and to put the image into the agent's context when the agent's model accepts images.
 
@@ -310,7 +317,7 @@ Response:
 }
 ```
 
-The tag and author values are an `enum` built from the library's actual vocabulary, so the agent picks real values instead of inventing them. When a library has more than 100 tag values, the enum is dropped and the description lists the 50 most used. The tool name is a slug of the library name, made unique per agent by the platform if needed. The platform maps a tool call back to `POST …/search` with the tool's `libraryId` and the calling agent's `X-Agent-Id`; the library is never an agent-supplied argument.
+Filters are offered only when they can narrow the search: tags, authors, `period` and `authoredBetween` when some document has a value; `fileTypes` and `contentKinds` when the library holds more than one. The description's "Filters available" sentence lists only the offered filters. `uploadedBetween` is an API filter only. The tag and author values are an `enum` built from the library's actual vocabulary (`tagVocabulary`, `filterValues`), so the agent picks real values instead of inventing them. When a library has more than 100 tag or author values, that enum is dropped and the description lists the 50 most used. The tool name is a slug of the library name, made unique per agent by the platform if needed. The platform maps a tool call back to `POST …/search` with the tool's `libraryId` and the calling agent's `X-Agent-Id`; the library is never an agent-supplied argument.
 
 ### 6.5 Search usage (enhancement 3)
 
@@ -325,7 +332,7 @@ One Service Bus queue, `ingest`, with sessions enabled and `SessionId = libraryI
 | Message `type` | Fields | Effect |
 |---|---|---|
 | `ingest` | `libraryId, documentId, generation` | Process a document (§7.2). If the document's `generation` reads lower than the message's, the read is stale (`evidence.md` E28): the worker pauses a second and the message is redelivered |
-| `retag` | `libraryId, documentId` | Copy the document's metadata to its chunks by patch |
+| `retag` | `libraryId, documentId, metadataVersion` | Copy the document's `facets`, `author`, `periodStart` and `periodEnd` to the chunks of its active and pending generations, by patch, under the worker-wide write cap (§7.7). If the record's `metadataVersion` reads lower than the message's, the read is stale (`evidence.md` E28) and the message is redelivered; if higher, a later `retag` is queued and this one completes without work. A `retag` that fails on its last delivery is logged as `retag dead-lettered`; repeating the `PATCH` queues it again |
 | `purgeDocument` | `libraryId, documentId, deleted?` | Delete every chunk and original of an obsolete generation: one that is neither `activeGeneration` nor `pendingGeneration`, and not above the document's `generation` (a stale read may miss a newer generation, so what lies above is left for a later purge; E30). If the document is `deleting` or gone, delete all its chunks, then its blobs, then its record. Safe because one library's messages never run concurrently (session order). `deleted: true` marks a purge queued by a deletion: if the document does not read as `deleting` yet, the read is stale (`evidence.md` E28), so the worker pauses a second and the message is redelivered instead of completing |
 | `purgeLibrary` | `libraryId` | Delete every document, chunk and blob, then the library. If the library does not read as `deleting` yet, the read is stale (E28): retried as for `purgeDocument` |
 | `proposeDescription` | `libraryId` | Regenerate the library description proposal |
@@ -344,7 +351,7 @@ An `ingest` whose generation is no longer pending is completed without processin
 8. Upsert all chunks of generation G. Writes share one cap across the whole worker, `COSMOS_WRITE_CONCURRENCY` (default 2), not a cap per document. On a 429 that outlasts the SDK's own retries, wait `x-ms-retry-after-ms` and retry. Eight concurrent writers exhausted the SDK's retries on serverless within about 100 writes (`evidence.md` E10). Deterministic ids make retries safe.
 9. Commit: set `activeGeneration: G`, `pendingGeneration: null`, `status: ready`, counts; copy `pendingFile` over the record's file fields and clear it. `authoredAt` is taken from the file of generation G, since it only ever comes from the file; `author` keeps any value already set. Until this moment search keeps returning the previous generation, if any; from it, search returns generation G and ignores older ones (§8 step 6).
 10. If G > 1, enqueue `purgeDocument`. It also runs after a generation is abandoned (the document was deleted or replaced while G was written) and after a final failure, so half-written chunks never linger.
-11. Recompute the library's `tagVocabulary` and `stats` from the `documents` container (a single-partition query). Enqueue `proposeDescription` when the library has changed by 10 documents or 24 hours since the last proposal.
+11. Recompute the library's `tagVocabulary`, `filterValues` and `stats` from the `documents` container (a single-partition query). Enqueue `proposeDescription` when the library has changed by 10 documents or 24 hours since the last proposal.
 
 ### 7.3 Extraction
 
@@ -372,7 +379,7 @@ The heading carried into each chunk is at most 64 tokens. A longer heading is al
 
 1. Collect standalone image uploads and images embedded in DOCX and PPTX. (PDF figures are Phase 5: Document Intelligence layout with figure output.)
 2. Skip images with fewer than `IMAGE_MIN_PIXELS` total pixels (default 16,384, i.e. 128×128) or smaller than `IMAGE_MIN_BYTES` (default 10 KB): logos, icons, bullets. Cap at `IMAGE_MAX_PER_DOCUMENT` (default 50). Record `imagesSkipped`.
-3. Store each kept image at `{libraryId}/{documentId}/images/{imageId}.{ext}`.
+3. Store each kept image at `{libraryId}/{documentId}/images/{generation}/{imageId}.{ext}`. Image ids and extensions are generated, never taken from the file. Like originals, each generation's images have their own path, and the purge removes those of obsolete generations by the same rule (§7.1).
 4. Describe it with the vision deployment. Prompt: describe what the image shows for someone searching for it; transcribe any visible text, numbers, labels, axis titles and legends; for charts, state the chart type, what is compared and the main trend; do not speculate beyond what is visible. Give it the document name and the nearest heading or slide title as context.
 5. The chunk `text` is `"Image from <fileName>, <location>, under '<heading>': <description>"`, `contentKind: image`, with `imageRef` and `imageMeta`. It is embedded with the same model as text, so one search covers both.
 
@@ -384,7 +391,7 @@ Cosmos throttles with HTTP 429 when a partition's throughput is exceeded. The SD
 
 ### 7.7 Metadata changes
 
-`PATCH` on a document updates the document record at once, then enqueues `retag`, which patches `facets`, `author`, `periodStart` and `periodEnd` on every chunk of the active generation (a single-partition query by `libraryId` + `documentId`, then partial-update operations). A few hundred small writes per document.
+`PATCH` on a document updates the document record at once, then enqueues `retag`, which patches `facets`, `author`, `periodStart` and `periodEnd` on every chunk of the active and pending generations (a single-partition query by `libraryId` + `documentId`, then partial-update operations). The pending generation is a replacement in flight; older generations are never searchable and await their purge. What a patch costs is unmeasured. Cosmos may re-index the whole item, which would put a patch closer to a write (`evidence.md` E10: about 144 RU) than to a small one; the Phase 3 filters check measures it, from the worker's `retag done` log line.
 
 ### 7.8 Deletion and replacement
 

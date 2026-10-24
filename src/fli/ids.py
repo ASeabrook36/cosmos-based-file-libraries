@@ -6,7 +6,8 @@ inputs, so a retried ingest upserts the same items instead of adding duplicates.
 Each generation's original has its own path, ``{libraryId}/{documentId}/original/{generation}/{fileName}``,
 so a replacement never overwrites the original of the generation search still returns
 (review finding 7). Originals stored before Phase 3 sit directly under ``original/`` and are
-generation 1.
+generation 1. Images extracted from a generation (spec §7.5) follow the same layout under
+``images/{generation}/``, so the purge removes both by one rule.
 """
 
 from __future__ import annotations
@@ -46,8 +47,26 @@ def original_blob_path(library_id: str, document_id: str, generation: int, file_
     return f"{original_prefix(library_id, document_id)}{generation}/{safe_file_name(file_name)}"
 
 
-def original_generation(blob_path: str) -> int:
-    """The generation an original belongs to; 1 for one stored before Phase 3 (no generation segment)."""
-    _, _, rest = blob_path.partition("/original/")
-    head, nested, _ = rest.partition("/")
-    return int(head) if nested and head.isdigit() else 1
+def image_prefix(library_id: str, document_id: str) -> str:
+    return f"{library_id}/{document_id}/images/"
+
+
+def image_blob_path(library_id: str, document_id: str, generation: int, image_id: str, ext: str) -> str:
+    if generation < 1:
+        raise ValueError("generation starts at 1")
+    if not re.fullmatch(r"[A-Za-z0-9-]+", image_id) or not re.fullmatch(r"[a-z0-9]{1,5}", ext):
+        raise ValueError("image ids and extensions are generated, never taken from the file")
+    return f"{image_prefix(library_id, document_id)}{generation}/{image_id}.{ext}"
+
+
+def blob_generation(blob_path: str) -> int:
+    """The generation an original or image belongs to; 1 when there is no generation segment.
+
+    Only originals stored before Phase 3 lack one.
+    """
+    for folder in ("/original/", "/images/"):
+        if folder in blob_path:
+            _, _, rest = blob_path.partition(folder)
+            head, nested, _ = rest.partition("/")
+            return int(head) if nested and head.isdigit() else 1
+    raise ValueError("not an original or image path")

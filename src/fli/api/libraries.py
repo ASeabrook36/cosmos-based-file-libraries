@@ -17,6 +17,7 @@ from fli.permissions import check_immutable
 from fli.queue import Queue
 from fli.store import Conflict, LibraryStore, Record, public
 from fli.tool import tool_definition
+from fli.vocabulary import filter_values
 
 router = APIRouter(prefix="/v1/libraries", dependencies=[Depends(require_caller)])
 log = logging.getLogger("fli.api")
@@ -82,6 +83,7 @@ async def create_library(body: LibraryCreate, request: Request, store: Libraries
         "descriptionProposal": None,
         "autoAcceptTagProposals": body.kind == "personal",
         "tagVocabulary": {},
+        "filterValues": filter_values([]),
         "stats": {"documentCount": 0, "chunkCount": 0, "imageCount": 0, "lastIngestedAt": None},
         "embeddingModel": EMBEDDING_MODEL,
         "embeddingDimensions": settings.aoai_embedding_dimensions,

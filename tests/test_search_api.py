@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import logging
 from types import SimpleNamespace
 
@@ -169,7 +170,14 @@ async def test_deleted_or_unknown_libraries_are_404(ctx):
         ({"top": 21}, "invalid_request"),
         ({"top": "8"}, "invalid_request"),
         ({"query": "   "}, "invalid_request"),
-        ({"filters": {"tags": ["region=EMEA"]}}, "filters_not_supported"),
+        ({"filters": {"tags": ["EMEA"]}}, "invalid_request"),  # a tag is key=value
+        ({"filters": {"period": {"from": "2025-12-31", "to": "2025-10-01"}}}, "invalid_request"),
+        ({"filters": {"period": {}}}, "invalid_request"),
+        ({"filters": {"period": {"from": "Q4"}}}, "invalid_request"),
+        ({"filters": {"fileTypes": ["exe"]}}, "invalid_request"),
+        ({"filters": {"contentKinds": ["video"]}}, "invalid_request"),
+        ({"filters": {"authors": ["x"] * 21}}, "invalid_request"),
+        ({"filters": {"libraryId": "other"}}, "invalid_request"),  # nor a filter (rule 3)
         ({"libraryId": "other"}, "invalid_request"),  # the library is never a body field (rule 3)
     ],
 )
@@ -277,3 +285,131 @@ async def test_the_underfill_log_line_carries_counts_only(ctx, caplog):
         search(client, lib, top=8)
     [line] = [r for r in caplog.records if r.getMessage() == "library_search"]
     assert (line.hidden, line.underfilled, line.resultCount) == (14, True, 2)
+
+
+# -- filters (spec §6.3, §8, §9.2) ---------------------------------------------------------------
+
+
+async def tagged_library(client, s, worker):
+    """Three documents: one with every field set, one with a tag only, one with nothing."""
+    lib = client.post("/v1/libraries", json={"kind": "shared", "name": "Finance"}).json()["id"]
+    full = {
+        "author": "Jane Doe",
+        "periodStart": "2025-10-01",
+        "periodEnd": "2025-12-31",
+        "tags": [{"key": "region", "value": "EMEA"}, {"key": "topic", "value": "margin"}],
+    }
+    for name, metadata in (
+        ("q4.md", full),
+        ("apac.md", {"tags": [{"key": "region", "value": "APAC"}]}),
+        ("notes.md", None),
+    ):
+        form = {"metadata": json.dumps(metadata)} if metadata else {}
+        client.post(
+            f"/v1/libraries/{lib}/documents",
+            files={"file": (name, f"# Margins\n\n{TEXT}".encode(), "text/markdown")},
+            data=form,
+        )
+    while s.queue.sent:
+        await worker.handle(s.queue.sent.pop(0)[1])
+    return lib
+
+
+async def test_filters_render_into_the_query_with_inclusive_dates(ctx):
+    client, s, worker = ctx
+    lib = await tagged_library(client, s, worker)
+    filters = {
+        "period": {"from": "2025-10-01", "to": "2025-12-31"},
+        "authoredBetween": {"to": "2025-03-31"},
+        "uploadedBetween": {"from": "2026-01-01"},
+        "authors": ["Jane Doe"],
+        "tags": ["region=EMEA", "topic=margin"],
+        "fileTypes": ["md"],
+        "contentKinds": ["text"],
+    }
+    assert search(client, lib, filters=filters).status_code == 200
+    query = s.reader.queries[-1][1]
+    params = {p["name"]: p["value"] for p in query.parameters}
+    assert "c.periodStart <= @pTo AND c.periodEnd >= @pFrom" in query.sql
+    assert (params["@pFrom"], params["@pTo"]) == ("2025-10-01", "2025-12-31")  # overlap, both inclusive
+    assert (params["@aFrom"], params["@aTo"]) == ("0001-01-01", "2025-04-01")  # to is the next day, exclusive
+    assert (params["@uFrom"], params["@uTo"]) == ("2026-01-01", "9999-12-31")  # an open side is unbounded
+    assert "ARRAY_CONTAINS(c.facets, @tag0) AND ARRAY_CONTAINS(c.facets, @tag1)" in query.sql  # tags: all
+    assert [params["@tag0"], params["@tag1"], params["@au0"], params["@ft0"], params["@ck0"]] == [
+        "region=EMEA",
+        "topic=margin",
+        "Jane Doe",
+        "md",
+        "text",
+    ]
+    assert query.sql.count("c.libraryId") == 1 and "{'dataType': 'float16'}" in query.sql  # rules 2 and 4
+
+
+async def test_coverage_says_which_filters_applied(ctx):
+    client, s, worker = ctx
+    lib = await tagged_library(client, s, worker)
+    body = search(client, lib, filters={"period": {"from": "2025-10-01"}, "tags": ["region=EMEA", "region=EMEA"]})
+    assert body.json()["coverage"]["filtersApplied"] == {"period": "2025-10-01..", "tags": ["region=EMEA"]}
+    assert search(client, lib).json()["coverage"]["filtersApplied"] == {}
+
+
+async def test_coverage_counts_documents_a_filter_left_out_for_lacking_the_field(ctx):
+    client, s, worker = ctx
+    lib = await tagged_library(client, s, worker)
+    filters = {"period": {"from": "2025-10-01"}, "authors": ["Jane Doe"], "authoredBetween": {"from": "2025-01-01"}}
+    notes = search(client, lib, filters=filters).json()["coverage"]["notes"]
+    assert notes == [
+        "2 of 3 documents have no period set, so filtering by period left them out.",
+        "3 of 3 documents have no authored date, so filtering by authoredBetween left them out.",
+        "2 of 3 documents have no author, so filtering by authors left them out.",
+    ]
+
+
+async def test_coverage_names_filter_values_no_document_has(ctx):
+    client, s, worker = ctx
+    lib = await tagged_library(client, s, worker)
+    filters = {
+        "tags": ["region=EMEA", "region=LATAM"],
+        "authors": ["Jane Doe", "Sam Lee"],
+        "fileTypes": ["md", "pptx"],
+        "contentKinds": ["image"],
+    }
+    notes = search(client, lib, filters=filters).json()["coverage"]["notes"]
+    assert "No document in this library is tagged region=LATAM." in notes
+    assert "No document in this library has the author Sam Lee." in notes
+    assert "This library has no documents of type pptx." in notes
+    assert "This library has no image content." in notes
+    assert "2 of 3 documents have no author, so filtering by authors left them out." in notes
+    assert len(notes) == 5  # values the library does have (region=EMEA, Jane Doe, md) get no note
+
+
+async def test_a_library_summarised_before_filter_values_gets_general_notes(ctx):
+    client, s, worker = ctx
+    lib = await tagged_library(client, s, worker)
+    library = await s.libraries.get(lib)
+    del library["filterValues"]
+    await s.libraries.replace(library)
+    notes = search(client, lib, filters={"period": {"from": "2025-10-01"}, "tags": ["x=y"]}).json()["coverage"]["notes"]
+    assert notes == [
+        "Documents without a period set are not included when filtering by period.",
+        "No document in this library is tagged x=y.",
+    ]
+
+
+async def test_filter_keys_are_logged_but_never_their_values(ctx, caplog):
+    client, s, worker = ctx
+    lib = await tagged_library(client, s, worker)
+    with caplog.at_level(logging.INFO, logger="fli.search"):
+        search(client, lib, filters={"tags": ["diagnosis=private"], "authors": ["Jane Doe"]})
+    [line] = [r for r in caplog.records if r.getMessage() == "library_search"]
+    assert line.filterKeys == ["authors", "tags"]
+    logged = " ".join(f"{r.getMessage()} {r.__dict__}" for r in caplog.records)
+    assert "private" not in logged and "Jane" not in logged
+
+
+async def test_a_filtered_search_returns_only_matching_documents(ctx):
+    client, s, worker = ctx
+    lib = await tagged_library(client, s, worker)
+    body = search(client, lib, top=20, filters={"tags": ["region=EMEA"], "period": {"from": "2025-11-01"}}).json()
+    assert body["results"] and {r["fileName"] for r in body["results"]} == {"q4.md"}
+    assert {r["fileName"] for r in search(client, lib, top=20).json()["results"]} == {"q4.md", "apac.md", "notes.md"}

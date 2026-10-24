@@ -51,6 +51,22 @@ for lib in libraries:
         if documents:
             names = {d["id"]: f"{d.get('fileName')} ({d['id'][:8]})" for d in documents}
             chosen = st.selectbox("Document", list(names), format_func=names.get, key=f"pick-{lib['id']}")
+            current = next(d for d in documents if d["id"] == chosen)
+            with st.form(f"meta-{lib['id']}-{chosen}"):
+                author = st.text_input("Author", current.get("author") or "")
+                start = st.text_input("Period start (YYYY-MM-DD)", current.get("periodStart") or "")
+                end = st.text_input("Period end (YYYY-MM-DD)", current.get("periodEnd") or "")
+                tags = st.text_input("Tags (key=value, comma-separated)", ", ".join(current.get("facets") or []))
+                if st.form_submit_button("Save metadata"):
+                    pairs = [t.strip().split("=", 1) for t in tags.split(",") if "=" in t]
+                    fields = {
+                        "author": author.strip() or None,
+                        "periodStart": start.strip() or None,
+                        "periodEnd": end.strip() or None,
+                        "tags": [{"key": k.strip(), "value": v.strip()} for k, v in pairs],
+                    }
+                    if guard(api.update_document, lib["id"], chosen, **fields):
+                        st.success("Saved. Search filters pick it up once the index has updated the chunks.")
             new_file = st.file_uploader("Replace its content", key=f"rf-{lib['id']}")
             replace_col, delete_col = st.columns(2)
             if new_file and replace_col.button("Replace", key=f"rb-{lib['id']}"):

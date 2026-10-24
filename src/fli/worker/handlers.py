@@ -27,7 +27,6 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -40,9 +39,10 @@ from fli.config import EMBEDDING_MODEL
 from fli.embedding import Embedder
 from fli.extraction import Extracted, OcrClient, extract
 from fli.generation import is_obsolete, latest_generation
-from fli.ids import chunk_id, original_generation, original_prefix
+from fli.ids import blob_generation, chunk_id, image_prefix, original_prefix
 from fli.queue import Message, Queue
 from fli.store import Conflict, DocumentStore, LibraryStore, Record
+from fli.vocabulary import filter_values, searchable, tag_vocabulary
 
 log = logging.getLogger("fli.worker")
 
@@ -68,6 +68,13 @@ class NotYetDeleting(StaleRead):
 
 class GenerationNotVisible(StaleRead):
     """An ingest for a generation newer than any the record shows: the replacement's write is not visible yet."""
+
+
+class MetadataNotVisible(StaleRead):
+    """A retag for a metadata version newer than the record shows: the PATCH's write is not visible yet."""
+
+
+RETAG_FIELDS = ("facets", "author", "periodStart", "periodEnd")  # copied from the document to its chunks
 
 
 def _now() -> str:
@@ -116,6 +123,11 @@ class Worker:
             await self.purge_document(library_id, document_id, deleted=message.get("deleted") is True)
         elif kind == "purgeLibrary":
             await self.purge_library(library_id)
+        elif kind == "retag":
+            document_id, version = message.get("documentId"), message.get("metadataVersion")
+            if not isinstance(document_id, str) or not isinstance(version, int) or version < 1:
+                raise BadMessage("retag needs documentId and a positive metadataVersion")
+            await self.retag(library_id, document_id, version)
         else:
             raise BadMessage(f"unknown message type {kind!r}")
 
@@ -246,10 +258,14 @@ class Worker:
 
     async def fail(self, message: Message, reason: str) -> None:
         """Called by the runtime on the last delivery, before it dead-letters the message."""
+        ids = {k: message.get(k) for k in ("libraryId", "documentId")}
         if message.get("type") in ("purgeDocument", "purgeLibrary"):
             # The record stays hidden as ``deleting``; repeating the DELETE queues the purge again.
-            ids = {k: message.get(k) for k in ("libraryId", "documentId")}
             log.error("purge dead-lettered", extra={**ids, "type": message["type"], "reason": reason})
+            return
+        if message.get("type") == "retag":
+            # Filters keep matching the chunks' previous metadata; repeating the PATCH queues it again.
+            log.error("retag dead-lettered", extra={**ids, "reason": reason})
             return
         if message.get("type") != "ingest":
             return
@@ -267,6 +283,40 @@ class Worker:
         if await self._mutate(library_id, document_id, mark) is not None:
             log.info("document failed", extra={"libraryId": library_id, "documentId": document_id, "detail": detail})
             await self._purge_later(library_id, document_id)  # anything this generation half-wrote
+
+    # -- metadata -----------------------------------------------------------------------------
+
+    async def retag(self, library_id: str, document_id: str, version: int) -> None:
+        """Copy the document's filterable metadata to its chunks (spec §7.7).
+
+        Only the active and pending generations: older ones are never searchable and await their
+        purge. Session order puts this after any ingest queued before the PATCH, and an ingest
+        queued after it copies the new metadata itself.
+        """
+        document = await self.documents.get(library_id, document_id)
+        if document is None or document.get("status") == "deleting":
+            return
+        current = document.get("metadataVersion") or 0
+        if current < version:
+            await self._stale(MetadataNotVisible(document_id), library_id, document_id)
+        if current > version:
+            return  # a later PATCH queued its own retag, which copies everything
+        keep = {document.get("activeGeneration"), document.get("pendingGeneration")} - {None}
+        targets = [item_id for item_id, gen in await self.chunks.generations(library_id, document_id) if gen in keep]
+        fields = {name: document.get(name) for name in RETAG_FIELDS}
+        fields["facets"] = fields["facets"] or []
+        charges = await asyncio.gather(*(self.chunks.patch(library_id, document_id, i, fields) for i in targets))
+        log.info(
+            "retag done",
+            extra={
+                "libraryId": library_id,
+                "documentId": document_id,
+                "metadataVersion": version,
+                "chunks": len(targets),
+                "requestCharge": round(sum(charges), 2),
+            },
+        )
+        await self.refresh_library(library_id)
 
     # -- purges -------------------------------------------------------------------------------
 
@@ -290,10 +340,12 @@ class Worker:
             return
         doomed = [item_id for item_id, gen in existing if is_obsolete(gen, document)]
         await asyncio.gather(*(self.chunks.delete(library_id, document_id, i) for i in doomed))
-        # Each generation's original has its own path; only the active one is needed to rebuild (E16).
-        for path in await self.blobs.list_prefix(original_prefix(library_id, document_id)):
-            if is_obsolete(original_generation(path), document):
-                await self.blobs.delete(path)
+        # Each generation's original and images have their own paths; only the active ones are
+        # needed to rebuild (E16) or to hand back.
+        for prefix in (original_prefix(library_id, document_id), image_prefix(library_id, document_id)):
+            for path in await self.blobs.list_prefix(prefix):
+                if is_obsolete(blob_generation(path), document):
+                    await self.blobs.delete(path)
 
     async def purge_library(self, library_id: str) -> None:
         library = await self.libraries.get(library_id)
@@ -309,14 +361,9 @@ class Worker:
     # -- library summary ------------------------------------------------------------------------
 
     async def refresh_library(self, library_id: str) -> None:
-        """Recompute ``stats`` and ``tagVocabulary`` from the documents (spec §7.2 step 11)."""
-        documents = await self.documents.list(library_id, status=None, facet=None)
-        ready = [d for d in documents if d.get("activeGeneration") is not None and d.get("status") != "deleting"]
-        vocabulary: dict[str, Counter[str]] = {}
-        for d in ready:
-            for facet in d.get("facets", []):
-                key, _, value = facet.partition("=")
-                vocabulary.setdefault(key, Counter())[value] += 1
+        """Recompute ``stats``, ``tagVocabulary`` and ``filterValues`` from the documents (spec §7.2 step 11)."""
+        ready = searchable(await self.documents.list(library_id, status=None, facet=None))
+        summary = {"tagVocabulary": tag_vocabulary(ready), "filterValues": filter_values(ready)}
         stats = {
             "documentCount": len(ready),
             "chunkCount": sum(d.get("chunkCount", 0) for d in ready),
@@ -327,7 +374,7 @@ class Worker:
             library = await self.libraries.get(library_id)
             if library is None or library.get("status") == "deleting":
                 return
-            library.update(stats=stats, tagVocabulary={k: dict(v) for k, v in vocabulary.items()}, updatedAt=_now())
+            library.update(stats=stats, **summary, updatedAt=_now())
             try:
                 await self.libraries.replace(library)
                 return

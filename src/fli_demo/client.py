@@ -79,11 +79,15 @@ class IndexClient:
     def tool(self, library_id: str) -> dict[str, Any]:
         return self._call("GET", f"/v1/libraries/{library_id}/tool")
 
-    def search(self, library_id: str, agent_id: str, query: str, top: int = 8) -> dict[str, Any]:
+    def update_document(self, library_id: str, document_id: str, **fields: Any) -> dict[str, Any]:
+        """``author``, ``periodStart``, ``periodEnd``, ``tags``: only the fields given change."""
+        return self._call("PATCH", f"/v1/libraries/{library_id}/documents/{document_id}", json=fields)
+
+    def search(
+        self, library_id: str, agent_id: str, query: str, top: int = 8, filters: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
         """The library id is the path's, the agent id the header's: never a model-supplied argument."""
-        return self._call(
-            "POST",
-            f"/v1/libraries/{library_id}/search",
-            json={"query": query, "top": top, "includeNeighbors": True},
-            headers={"X-Agent-Id": agent_id},
-        )
+        body: dict[str, Any] = {"query": query, "top": top, "includeNeighbors": True}
+        if filters:
+            body["filters"] = filters
+        return self._call("POST", f"/v1/libraries/{library_id}/search", json=body, headers={"X-Agent-Id": agent_id})

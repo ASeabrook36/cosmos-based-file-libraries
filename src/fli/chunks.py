@@ -12,6 +12,10 @@ error is raised, the queue message is retried later, and deterministic chunk ids
 repeated writes overwrite rather than duplicate.
 
 Queries here are single-partition (``[libraryId, documentId]``) and never vector queries.
+
+``patch`` sets top-level fields on one chunk (``retag``, spec §7.7). Its request charge is
+returned, so the worker can report what metadata changes cost: unmeasured so far, and possibly
+close to a full write, since Cosmos re-indexes the item.
 """
 
 from __future__ import annotations
@@ -30,6 +34,7 @@ class ChunkStore(Protocol):
     async def upsert(self, chunk: Record) -> None: ...
     async def generations(self, library_id: str, document_id: str) -> list[tuple[str, int]]: ...
     async def delete(self, library_id: str, document_id: str, chunk_id: str) -> None: ...
+    async def patch(self, library_id: str, document_id: str, chunk_id: str, fields: Record) -> float: ...
 
 
 def retry_after_seconds(exc: BaseException) -> float | None:
@@ -91,11 +96,29 @@ class CosmosChunks:
 
         await capped(self.governor, call, self.max_attempts)
 
+    async def patch(self, library_id: str, document_id: str, chunk_id: str, fields: Record) -> float:
+        """Set ``fields`` on the chunk. Returns the request charge; 0 if the chunk is already gone."""
+        from azure.cosmos.exceptions import CosmosResourceNotFoundError
+
+        operations = [{"op": "set", "path": f"/{name}", "value": value} for name, value in fields.items()]
+
+        async def call() -> float:
+            try:
+                item = await self._c.patch_item(
+                    chunk_id, partition_key=[library_id, document_id], patch_operations=operations
+                )
+            except CosmosResourceNotFoundError:  # purged meanwhile: nothing to update
+                return 0.0
+            return float(item.get_response_headers().get("x-ms-request-charge", 0) or 0)
+
+        return await capped(self.governor, call, self.max_attempts)
+
 
 class MemoryChunks:
     def __init__(self) -> None:
         self.items: dict[tuple[str, str, str], Record] = {}
         self.writes = 0
+        self.patches = 0
 
     async def upsert(self, chunk: Record) -> None:
         self.writes += 1
@@ -110,3 +133,9 @@ class MemoryChunks:
 
     async def delete(self, library_id: str, document_id: str, chunk_id: str) -> None:
         self.items.pop((library_id, document_id, chunk_id), None)
+
+    async def patch(self, library_id: str, document_id: str, chunk_id: str, fields: Record) -> float:
+        self.patches += 1
+        if (chunk := self.items.get((library_id, document_id, chunk_id))) is not None:
+            chunk.update(fields)
+        return 0.0

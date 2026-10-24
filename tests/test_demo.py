@@ -21,17 +21,25 @@ class FakeIndex:
         self.names = names or {"lib-a": "search_library_finance", "lib-b": "search_library_hr"}
         self.refuse = set(refuse)
         self.searches = []
+        self.filters = []
 
     def tool(self, library_id):
         return tool(self.names[library_id])
 
-    def search(self, library_id, agent_id, query, top=8):
+    def search(self, library_id, agent_id, query, top=8, filters=None):
         self.searches.append((library_id, agent_id, query))
+        self.filters.append(filters)
         if library_id in self.refuse:
             raise IndexError_(403, "library_not_bound_to_agent", "no")
         return {
             "library": {"libraryId": library_id, "name": library_id.upper()},
-            "coverage": {"disposition": "results"},
+            "coverage": {
+                "disposition": "results",
+                "filtersApplied": dict(filters or {}),
+                "notes": ["1 of 2 documents have no period set, so filtering by period left them out."]
+                if filters and "period" in filters
+                else [],
+            },
             "usage": {"requestCharge": 12.5, "totalMs": 80},
             "results": [
                 {"fileName": "q4.pdf", "location": {"page": 3}, "heading": None, "text": "margin fell"},
@@ -171,3 +179,49 @@ def test_the_client_replaces_and_deletes_through_the_documented_paths():
         ("DELETE", "/v1/libraries/l/documents/d"),
         ("DELETE", "/v1/libraries/l"),
     ]
+
+
+def test_the_tools_filters_reach_the_search_and_the_trace_and_nothing_else_does():
+    index = FakeIndex()
+    arguments = {
+        "query": "margin",
+        "period": {"from": "2025-10-01", "to": "2025-12-31"},
+        "tags": ["region=EMEA"],
+        "authors": [],  # empty: not sent
+        "libraryId": "lib-b",  # never a filter (rule 3)
+        "top": 20,  # not a tool argument
+    }
+    chat = scripted(Reply(None, [ToolCall("c1", "search_library_finance", json.dumps(arguments))]), Reply("A."))
+    turn = run_turn(chat, index, AGENT, [], "q")
+    assert index.searches == [("lib-a", "agent-7", "margin")]
+    assert index.filters == [{"period": {"from": "2025-10-01", "to": "2025-12-31"}, "tags": ["region=EMEA"]}]
+    [trace] = turn.searches
+    assert trace.filters == trace.filters_applied == index.filters[0]
+    assert trace.notes == ["1 of 2 documents have no period set, so filtering by period left them out."]
+    seen_by_model = json.loads(chat.seen[1][0][-1]["content"])
+    assert seen_by_model["notes"] == trace.notes and seen_by_model["filtersApplied"] == index.filters[0]
+
+
+def test_a_search_without_filters_sends_none():
+    index = FakeIndex()
+    chat = scripted(Reply(None, [ToolCall("c1", "search_library_finance", json.dumps({"query": "q"}))]), Reply("A."))
+    run_turn(chat, index, AGENT, [], "q")
+    assert index.filters == [None]
+
+
+def test_the_client_sends_filters_and_metadata_updates():
+    seen = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append((request.method, request.url.path, json.loads(request.content)))
+        return httpx.Response(200, json={"results": []})
+
+    client = IndexClient(
+        "http://index", "k", http=httpx.Client(base_url="http://index", transport=httpx.MockTransport(handler))
+    )
+    client.search("l", "a1", "q", filters={"tags": ["region=EMEA"]})
+    client.search("l", "a1", "q")
+    client.update_document("l", "d", tags=[{"key": "region", "value": "EMEA"}])
+    assert seen[0][2]["filters"] == {"tags": ["region=EMEA"]} and "filters" not in seen[1][2]
+    assert seen[2][:2] == ("PATCH", "/v1/libraries/l/documents/d")
+    assert seen[2][2] == {"tags": [{"key": "region", "value": "EMEA"}]}

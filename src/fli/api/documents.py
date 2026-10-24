@@ -1,4 +1,4 @@
-"""Document endpoints (spec §6.2): upload, list, read, replace, delete.
+"""Document endpoints (spec §6.2): upload, list, read, update metadata, replace, delete.
 
 An upload stores the original in Blob, records the document as ``queued`` with generation 1
 pending and nothing active (spec §4.2), and enqueues ``ingest`` on the library's session.
@@ -8,6 +8,10 @@ stores its original under that generation's own path, then enqueues ``ingest``. 
 first means two concurrent replacements never write the same path. The record's file fields
 keep describing the active generation, the one search returns; the replacement's wait in
 ``pendingFile`` until the worker commits it (spec §7.8).
+
+A metadata update (``PATCH``) changes the record at once and queues ``retag``, which copies the
+change onto the chunks that filters match (spec §7.7). Each update raises ``metadataVersion``;
+the message carries it, so a worker that reads an older record retries (evidence.md E28).
 """
 
 from __future__ import annotations
@@ -18,7 +22,7 @@ import logging
 from datetime import date
 from typing import Annotated, Any, Literal
 
-from fastapi import APIRouter, Depends, File, Form, Request, Response, UploadFile
+from fastapi import APIRouter, Body, Depends, File, Form, Request, Response, UploadFile
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from fli.api.libraries import Libraries, enqueue, now
@@ -176,6 +180,7 @@ async def upload_document(
         "periodProposal": None,
         "authorProposal": None,
         "facets": sorted({f"{t['key']}={t['value']}" for t in tags}),
+        "metadataVersion": 0,
         "extraction": None,
         "chunkCount": 0,
         "imageCount": 0,
@@ -232,6 +237,75 @@ async def get_document(library_id: str, document_id: str, libraries: Libraries, 
     if library is None or library.get("status") == "deleting":
         raise library_not_found(library_id)
     return public(await load(store, library_id, document_id))
+
+
+class DocumentUpdate(BaseModel):
+    """The fields a person may set. ``acceptProposals`` arrives with proposals (Phase 3)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    author: str | None = Field(default=None, max_length=200)
+    periodStart: date | None = None
+    periodEnd: date | None = None
+    tags: list[Tag] | None = Field(default=None, max_length=100)
+
+
+def apply_update(record: Record, changes: dict[str, Any]) -> None:
+    """Apply validated changes. Tags kept from before keep their source; new ones are ``user``."""
+    if "author" in changes:
+        record["author"] = changes["author"]
+    for name in ("periodStart", "periodEnd"):
+        if name in changes:
+            record[name] = changes[name].isoformat() if changes[name] else None
+    if (record.get("periodStart") is None) != (record.get("periodEnd") is None):
+        raise ApiError(400, "invalid_request", "periodStart and periodEnd go together")
+    if record.get("periodStart") and record["periodStart"] > record["periodEnd"]:
+        raise ApiError(400, "invalid_request", "periodStart is after periodEnd")
+    if changes.get("tags") is not None:
+        sources = {(t["key"], t["value"]): t.get("source", "user") for t in record.get("tags", [])}
+        pairs = dict.fromkeys((t["key"], t["value"]) for t in changes["tags"])
+        record["tags"] = [{"key": k, "value": v, "source": sources.get((k, v), "user")} for k, v in pairs]
+        record["facets"] = sorted({f"{k}={v}" for k, v in pairs})
+    record["metadataVersion"] = (record.get("metadataVersion") or 0) + 1
+
+
+@router.patch("/{document_id}")
+async def update_document(
+    library_id: str,
+    document_id: str,
+    libraries: Libraries,
+    store: Documents,
+    ingest: Ingest,
+    body: Annotated[dict[str, Any], Body()],
+) -> Record:
+    """Update author, period or tags now; ``retag`` copies them to the chunks (spec §7.7).
+
+    Until ``retag`` runs, filters still match the chunks' previous metadata. If it cannot be
+    queued the update is kept and the response is ``503``: repeating the request queues it again.
+    """
+    await active_library(libraries, library_id)
+    changes = DocumentUpdate.model_validate(body).model_dump(exclude_unset=True)
+    if "tags" in changes and changes["tags"] is None:
+        raise ApiError(400, "invalid_request", "tags is a list; send [] to remove every tag")
+    for _ in range(REPLACE_ATTEMPTS):
+        record = await load(store, library_id, document_id)
+        apply_update(record, changes)
+        record["updatedAt"] = now()
+        try:
+            record = await store.replace(record)
+            break
+        except Conflict:
+            continue
+    else:
+        raise ApiError(409, "conflict", "the document changed while it was being updated; retry")
+    message = {
+        "type": "retag",
+        "libraryId": library_id,
+        "documentId": document_id,
+        "metadataVersion": record["metadataVersion"],
+    }
+    await enqueue(ingest, message, library_id)
+    return public(record)
 
 
 @router.put("/{document_id}/content", status_code=202)

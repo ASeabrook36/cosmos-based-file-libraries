@@ -8,7 +8,7 @@ import logging
 import pytest
 
 from fli.chunking import ApproxTokenizer, Chunker
-from fli.worker.handlers import BadMessage, GenerationNotVisible, NotYetDeleting, Worker
+from fli.worker.handlers import BadMessage, GenerationNotVisible, MetadataNotVisible, NotYetDeleting, Worker
 from tests.fakes import FakeEmbedder, api
 
 OLE = bytes.fromhex("D0CF11E0A1B11AE1")
@@ -395,3 +395,95 @@ async def test_a_replaced_document_takes_its_authored_date_from_the_new_file(ctx
     replace(client, lib, doc_id, name="m.eml", data=eml.replace(b"11 Mar 2025", b"02 Apr 2025"))
     await drain(s, worker)
     assert doc(client, lib, doc_id)["authoredAt"].startswith("2025-04-02")
+
+
+# -- retag (spec §7.7) ---------------------------------------------------------------------------
+
+
+def patch(client, lib, doc_id, **body):
+    r = client.patch(f"/v1/libraries/{lib}/documents/{doc_id}", json=body)
+    assert r.status_code == 200, r.text
+    return r.json()
+
+
+async def test_a_metadata_update_reaches_every_searchable_chunk(ctx):
+    client, s, lib, worker = ctx
+    doc_id = upload(client, lib)
+    await drain(s, worker)
+    patch(client, lib, doc_id, author="Jane Doe", periodStart="2025-10-01", periodEnd="2025-12-31",
+          tags=[{"key": "region", "value": "APAC"}])  # fmt: skip
+    await drain(s, worker)
+    chunks = list(s.chunks.items.values())
+    assert chunks and s.chunks.patches == len(chunks)
+    assert {(c["author"], c["periodStart"], c["periodEnd"], tuple(c["facets"])) for c in chunks} == {
+        ("Jane Doe", "2025-10-01", "2025-12-31", ("region=APAC",))
+    }
+    library = client.get(f"/v1/libraries/{lib}").json()
+    assert library["tagVocabulary"] == {"region": {"APAC": 1}}
+    assert library["filterValues"]["authors"] == {"Jane Doe": 1} and library["filterValues"]["missing"]["period"] == 0
+
+
+async def test_retag_covers_a_pending_replacement_and_skips_obsolete_generations(ctx):
+    client, s, lib, worker = ctx
+    doc_id = upload(client, lib)
+    await drain(s, worker)
+    record = await s.documents.get(lib, doc_id)
+    record.update(generation=3, activeGeneration=2, pendingGeneration=3, metadataVersion=1, facets=["region=EMEA"])
+    await s.documents.replace(record)
+    for gen in (1, 2, 3):
+        await s.chunks.upsert({"id": f"{doc_id}:{gen}:0", "libraryId": lib, "documentId": doc_id, "generation": gen,
+                               "facets": []})  # fmt: skip
+    await worker.handle({"type": "retag", "libraryId": lib, "documentId": doc_id, "metadataVersion": 1})
+    facets = {gen: s.chunks.items[(lib, doc_id, f"{doc_id}:{gen}:0")]["facets"] for gen in (1, 2, 3)}
+    assert facets == {1: [], 2: ["region=EMEA"], 3: ["region=EMEA"]}  # 1 is obsolete: left for the purge
+
+
+async def test_a_retag_for_a_version_the_record_does_not_show_yet_is_retried(ctx):
+    """E28: the API's PATCH may not have reached the replica the worker reads."""
+    client, s, lib, worker = ctx
+    doc_id = upload(client, lib)
+    await drain(s, worker)
+    message = {"type": "retag", "libraryId": lib, "documentId": doc_id, "metadataVersion": 1}
+    with pytest.raises(MetadataNotVisible):
+        await worker.handle(message)
+    assert s.chunks.patches == 0
+    patch(client, lib, doc_id, author="Jane Doe")  # the write becomes visible
+    await worker.handle(message)
+    assert s.chunks.patches > 0
+
+
+async def test_an_older_or_orphaned_retag_does_nothing(ctx):
+    client, s, lib, worker = ctx
+    doc_id = upload(client, lib)
+    await drain(s, worker)
+    patch(client, lib, doc_id, author="A")
+    patch(client, lib, doc_id, author="B")
+    first, second = s.queue.sent.pop(0)[1], s.queue.sent.pop(0)[1]
+    await worker.handle(first)  # superseded by version 2: its own retag copies everything
+    assert s.chunks.patches == 0
+    await worker.handle(second)
+    assert {c["author"] for c in s.chunks.items.values()} == {"B"}
+    client.delete(f"/v1/libraries/{lib}/documents/{doc_id}")
+    patches = s.chunks.patches
+    await worker.handle(second)  # the document is deleting: nothing to update
+    assert s.chunks.patches == patches
+
+
+async def test_a_dead_lettered_retag_is_logged(ctx, caplog):
+    client, s, lib, worker = ctx
+    doc_id = upload(client, lib)
+    with caplog.at_level(logging.ERROR, logger="fli.worker"):
+        await worker.fail({"type": "retag", "libraryId": lib, "documentId": doc_id, "metadataVersion": 1}, "X")
+    assert any(r.getMessage() == "retag dead-lettered" for r in caplog.records)
+
+
+async def test_a_replacement_purges_the_old_generations_images_too(ctx):
+    """Room for images (Phase 3B): they follow the originals' per-generation rule."""
+    client, s, lib, worker = ctx
+    doc_id = upload(client, lib)
+    await drain(s, worker)
+    s.blobs.blobs[f"{lib}/{doc_id}/images/1/a.png"] = (b"old", "image/png")
+    replace(client, lib, doc_id)
+    s.blobs.blobs[f"{lib}/{doc_id}/images/2/b.png"] = (b"new", "image/png")
+    await drain(s, worker)
+    assert sorted(p for p in s.blobs.blobs if "/images/" in p) == [f"{lib}/{doc_id}/images/2/b.png"]

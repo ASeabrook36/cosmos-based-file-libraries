@@ -17,7 +17,7 @@ It removes the limit that prompted it. Azure AI Search allows 200 indexes per se
 - Phase 1: the API, ingestion worker and vector search work end to end, and a personal library refuses other agents.
 - Phase 2: a demo platform (Streamlit) runs official and personal agents that search their libraries through tools.
 
-Images, metadata filters and proposals are Phase 3. The design rests on earlier measurements of these Cosmos features on live Azure (2026). `docs/evidence.md` traces each decision to them and lists what is not yet proven.
+Phase 3 (in progress) adds document replacement, metadata filters and proposals; images follow in Phase 3B. The design rests on earlier measurements of these Cosmos features on live Azure (2026). `docs/evidence.md` traces each decision to them and lists what is not yet proven.
 
 ## What's here
 

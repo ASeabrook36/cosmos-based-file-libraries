@@ -1,11 +1,11 @@
 # Build plan
 
-*Version 0.8, 2026-10-23: Phase 3's Lifecycle live check passed (`records/phase3-exit-lifecycle-20261023T210242Z.json`). Version 0.7, 2026-10-23: Phase 3's Lifecycle item built in code (replacement, findings 1, 6 and 7). Version 0.6, 2026-10-23: the independent review's findings and their later-phase items, recorded in `review-response.md`. Version 0.5, 2026-10-22: Phase 2 passed (adapted exit check). Version 0.4: search is vector-only by default; hybrid is a setting, because routed by partition key it does not rank (`evidence.md` E27). Version 0.3: Entra authentication moved from Phase 1 to Phase 5 (the platform authenticates its users; the prototype uses a static local key). Version 0.2: Phase 0 passed; its findings are folded into Phases 0, 4 and the risks.*
+*Version 0.9, 2026-10-23: Images move out of Phase 3 into Phase 3B, so metadata and lifecycle can be finished and demonstrated first; Phase 3's Filters item built in code. Version 0.8, 2026-10-23: Phase 3's Lifecycle live check passed (`records/phase3-exit-lifecycle-20261023T210242Z.json`). Version 0.7, 2026-10-23: Phase 3's Lifecycle item built in code (replacement, findings 1, 6 and 7). Version 0.6, 2026-10-23: the independent review's findings and their later-phase items, recorded in `review-response.md`. Version 0.5, 2026-10-22: Phase 2 passed (adapted exit check). Version 0.4: search is vector-only by default; hybrid is a setting, because routed by partition key it does not rank (`evidence.md` E27). Version 0.3: Entra authentication moved from Phase 1 to Phase 5 (the platform authenticates its users; the prototype uses a static local key). Version 0.2: Phase 0 passed; its findings are folded into Phases 0, 4 and the risks.*
 
 The plan is ordered to reach something demonstrable as early as possible:
 
 - Phases 0–2 are the critical path to a working demo.
-- Phases 3–4 make the demo convincing: images, filters, and proof that the library ceiling is gone.
+- Phases 3, 3B and 4 make the demo convincing: filters and proposals, images, and proof that the library ceiling is gone.
 - Phase 5 is the road to production.
 
 Each phase ends with an exit check that must pass before the next phase starts.
@@ -106,13 +106,13 @@ The demo needs something playing the platform's role. Build a small Streamlit ap
 
 **Exit check:** demo script steps 2, 3, 5 and 6 (below) run end to end.
 
-## Phase 3: Images and metadata
+## Phase 3: Metadata and lifecycle
 
 **Build**
 
-- **Images:** standalone uploads and images embedded in DOCX and PPTX; skip rules and cap; vision descriptions; image chunks; short-lived read links. Render images in the chat, and pass them into the model's context when it accepts images.
 - **Proposals (enhancement 1):** per-document tag, period and author proposals, with an accept or edit screen. Per-library description proposals.
-- **Filters:** all filters in search and in the tool definition (`period`, `authoredBetween`, `uploadedBetween`, `authors`, `tags`, `fileTypes`, `contentKinds`). Add the `retag` job.
+- **Filters:** all filters in search and in the tool definition (`period`, `authoredBetween`, `uploadedBetween`, `authors`, `tags`, `fileTypes`, `contentKinds`). Add the `retag` job. **Built and unit-tested on 2026-10-23; the live check below has not run.** Coverage notes count the documents a filter left out for lacking the field, and name filter values no document has; the tool offers only filters that can narrow the search (`spec.md` §6.3, §6.4). Metadata is edited by document `PATCH`, with an edit form in the demo's Admin page; `retag` copies it to the chunks, retrying a stale read (E28). What a chunk patch costs is unmeasured (§7.7).
+- **Room for images:** per-generation image paths in the purge, a working `contentKinds` filter, and an image slot in the demo chat. Building images is Phase 3B. **Done** with Filters.
 - **Lifecycle:** document replacement and deletion; library deletion. **Built on 2026-10-23; its live check passed the same day** (`records/phase3-exit-lifecycle-20261023T210242Z.json`). Deletion was built in Phases 1–2 and the review response; replacement (`PUT …/content`) here, with Replace and Delete controls in the demo's Admin page. From the review response (`review-response.md`):
   - Give each generation's original its own blob path, or enable blob versioning (finding 7). **Done:** its own path, `…/original/{generation}/{fileName}`; the purge deletes obsolete generations' originals (`evidence.md` E30).
   - When an ingest is redelivered after its generation already committed, queue the purge again (finding 1). **Done:** any ingest whose generation is no longer pending queues the purge again (`spec.md` §7.1).
@@ -120,11 +120,19 @@ The demo needs something playing the platform's role. Build a small Streamlit ap
 
 **Exit check**
 
-- Demo script step 4 works.
-- A period-plus-tag filtered question returns only matching documents, and the coverage notes say what was excluded.
+- Demo script step 2 runs in full, including the index proposing a description and tags and the admin accepting them.
+- A period-plus-tag filtered question returns only matching documents, and the coverage notes say what was excluded. It runs with `scripts/phase3_exit.py filters`, on a manifest of real documents and their metadata, and also times a tag change reaching search and records what `retag`'s patches cost. Not yet run.
 - After replacing a document, its old content is never returned.
 - When stale chunks of a replaced document fill the fetch window, search still returns `top` results or reports `thin`; decide between fetching again and reporting (finding 6). **Decided: reporting.** Coverage says how many passages were left out (`spec.md` §8 step 6, E30).
 - The replacement and underfill checks run with `scripts/phase3_exit.py lifecycle`, on two real documents (E14). **Passed on 2026-10-23** (`records/phase3-exit-lifecycle-20261023T210242Z.json`): the Self-RAG paper was replaced by "Lost in the Middle" under the same file name. The replacement committed after 9 seconds; none of the 68 searches after the commit returned the old generation, and deleting the document, then the library, removed each from search at once. Of the 4 searches made while the replacement was written, one came back with no results and the coverage note: the new generation's chunks, not yet visible, filled the whole fetch window for the question they answer best (finding 6 at its strongest; `evidence.md` E30). That run's write window was short, so only those 4 searches checked that nothing of the new generation showed before the commit.
+
+## Phase 3B: Images
+
+Images were moved out of Phase 3 on 2026-10-23 so that metadata and lifecycle could be finished and demonstrated first. Phase 3 leaves room for them: image paths, the purge rule, the `contentKinds` filter and the chat's image slot are already in place, and the `chunks` container needs no change (it already indexes `contentKind`). Phase 3B can run before or after Phase 4.
+
+**Build:** standalone uploads and images embedded in DOCX and PPTX; skip rules and cap; vision descriptions; image chunks; short-lived read links. Render images in the chat, and pass them into the model's context when it accepts images.
+
+**Exit check:** demo script step 4 works.
 
 ## Phase 4: Scale proof and routing telemetry
 
@@ -196,7 +204,7 @@ About ten minutes. Each step names the phase that delivers it.
    - The "Finance Assistant" agent has three shared libraries attached.
    - Ask: "What drove the change in gross margin in EMEA in Q4 2025?"
    - Show that the agent chose the finance library's tool, applied the period and region filters, and answered with citations (file and slide). Show the search's request charge and latency.
-4. **Images** (Phase 3). Ask: "Show me the regional margin chart." The answer includes the chart from the deck, shown in the chat.
+4. **Images** (Phase 3B). Ask: "Show me the regional margin chart." The answer includes the chart from the deck, shown in the chat.
 5. **A personal agent** (Phase 2). A user builds a personal agent, uploads their own notes, and asks a question only those notes can answer.
 6. **Personal stays personal** (Phase 2).
    - The admin's attach screen does not offer the personal library.

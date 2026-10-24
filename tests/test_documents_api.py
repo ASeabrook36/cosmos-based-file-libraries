@@ -288,3 +288,108 @@ async def test_a_concurrent_change_is_retried_with_a_fresh_generation(ctx, monke
 
     monkeypatch.setattr(s.documents, "replace", race_once)
     assert replace(client, lib, doc_id).json()["generation"] == 6
+
+
+# -- metadata updates (PATCH, spec §6.2, §7.7) ---------------------------------------------------
+
+
+def patch(client, library_id, doc_id, **body):
+    return client.patch(f"/v1/libraries/{library_id}/documents/{doc_id}", json=body)
+
+
+def test_an_upload_starts_at_metadata_version_0(ctx):
+    client, s, lib = ctx
+    doc_id = upload(client, lib).json()["documentId"]
+    assert client.get(f"/v1/libraries/{lib}/documents/{doc_id}").json()["metadataVersion"] == 0
+
+
+def test_an_update_changes_the_record_at_once_and_queues_retag(ctx):
+    client, s, lib = ctx
+    doc_id = upload(client, lib).json()["documentId"]
+    r = patch(
+        client,
+        lib,
+        doc_id,
+        author="Jane Doe",
+        periodStart="2025-10-01",
+        periodEnd="2025-12-31",
+        tags=[{"key": "region", "value": "EMEA"}, {"key": "region", "value": "EMEA"}],
+    )
+    assert r.status_code == 200
+    doc = r.json()
+    assert (doc["author"], doc["periodStart"], doc["periodEnd"]) == ("Jane Doe", "2025-10-01", "2025-12-31")
+    assert doc["tags"] == [{"key": "region", "value": "EMEA", "source": "user"}] and doc["facets"] == ["region=EMEA"]
+    assert doc["metadataVersion"] == 1 and "_etag" not in doc
+    retag = {"type": "retag", "libraryId": lib, "documentId": doc_id, "metadataVersion": 1}
+    assert s.queue.sent[-1] == (lib, retag)
+
+
+async def test_kept_tags_keep_their_source(ctx):
+    client, s, lib = ctx
+    doc_id = upload(client, lib).json()["documentId"]
+    record = await s.documents.get(lib, doc_id)
+    record["tags"] = [{"key": "topic", "value": "margin", "source": "accepted-proposal"}]
+    await s.documents.replace(record)
+    tags = [{"key": "topic", "value": "margin"}, {"key": "region", "value": "APAC"}]
+    doc = patch(client, lib, doc_id, tags=tags).json()
+    assert doc["tags"] == [
+        {"key": "topic", "value": "margin", "source": "accepted-proposal"},
+        {"key": "region", "value": "APAC", "source": "user"},
+    ]
+    assert doc["facets"] == ["region=APAC", "topic=margin"]
+
+
+def test_only_named_fields_change_and_a_period_can_be_cleared(ctx):
+    client, s, lib = ctx
+    meta = json.dumps({"author": "Jane Doe", "periodStart": "2025-10-01", "periodEnd": "2025-12-31"})
+    doc_id = upload(client, lib, metadata=meta).json()["documentId"]
+    doc = patch(client, lib, doc_id, periodStart=None, periodEnd=None).json()
+    assert (doc["author"], doc["periodStart"], doc["periodEnd"]) == ("Jane Doe", None, None)
+    assert patch(client, lib, doc_id, tags=[]).json()["facets"] == []
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        {"periodStart": "2025-10-01"},  # half a period
+        {"periodStart": "2025-12-31", "periodEnd": "2025-10-01"},
+        {"tags": None},
+        {"tags": [{"key": "a=b", "value": "c"}]},
+        {"acceptProposals": ["period"]},  # arrives with proposals
+        {"fileName": "renamed.pdf"},
+        {"author": "x" * 201},
+    ],
+)
+def test_bad_updates_change_nothing(ctx, body):
+    client, s, lib = ctx
+    doc_id = upload(client, lib).json()["documentId"]
+    sent = len(s.queue.sent)
+    r = patch(client, lib, doc_id, **body)
+    assert (r.status_code, r.json()["error"]["code"]) == (400, "invalid_request")
+    assert client.get(f"/v1/libraries/{lib}/documents/{doc_id}").json()["metadataVersion"] == 0
+    assert len(s.queue.sent) == sent
+
+
+def test_updating_a_deleted_document_is_404_and_in_a_deleting_library_409(ctx):
+    client, s, lib = ctx
+    doc_id = upload(client, lib).json()["documentId"]
+    client.delete(f"/v1/libraries/{lib}/documents/{doc_id}")
+    assert patch(client, lib, doc_id, author="x").json()["error"]["code"] == "document_not_found"
+    other = upload(client, lib).json()["documentId"]
+    client.delete(f"/v1/libraries/{lib}")
+    r = patch(client, lib, other, author="x")
+    assert (r.status_code, r.json()["error"]["code"]) == (409, "library_deleting")
+
+
+def test_a_queue_failure_keeps_the_update_and_says_so(ctx, monkeypatch):
+    client, s, lib = ctx
+    doc_id = upload(client, lib).json()["documentId"]
+
+    async def broken(message, *, session_id):
+        raise RuntimeError("bus down")
+
+    monkeypatch.setattr(s.queue, "send", broken)
+    r = patch(client, lib, doc_id, author="Jane Doe")
+    assert (r.status_code, r.json()["error"]["code"]) == (503, "queue_unavailable")
+    doc = client.get(f"/v1/libraries/{lib}/documents/{doc_id}").json()
+    assert (doc["author"], doc["metadataVersion"]) == ("Jane Doe", 1)

@@ -1,8 +1,9 @@
 """The agent loop: one tool per attached library, each call mapped to ``POST …/search``.
 
 The model never supplies a library id. A tool call is mapped, by tool name, to the library the
-platform attached, and the agent's own id goes in ``X-Agent-Id`` (CLAUDE.md rule 3). Query text and
-chunk text are not logged.
+platform attached, and the agent's own id goes in ``X-Agent-Id`` (CLAUDE.md rule 3). The filters the
+tool offers (spec §6.4) are passed through as the search's ``filters``; any other argument is
+dropped. Query text and chunk text are not logged.
 """
 
 from __future__ import annotations
@@ -15,6 +16,7 @@ from typing import Any, Protocol
 
 MAX_ROUNDS = 4
 TOOL_RESULT_CHARS = 1500  # per chunk, as handed to the model
+FILTER_ARGUMENTS = ("period", "authoredBetween", "authors", "tags", "fileTypes", "contentKinds")
 
 
 @dataclass
@@ -35,7 +37,9 @@ Chat = Callable[[list[dict[str, Any]], list[dict[str, Any]]], Reply]
 
 class Index(Protocol):
     def tool(self, library_id: str) -> dict[str, Any]: ...
-    def search(self, library_id: str, agent_id: str, query: str, top: int = 8) -> dict[str, Any]: ...
+    def search(
+        self, library_id: str, agent_id: str, query: str, top: int = 8, filters: Mapping[str, Any] | None = None
+    ) -> dict[str, Any]: ...
 
 
 @dataclass
@@ -61,6 +65,10 @@ class SearchTrace:
     disposition: str | None
     citations: list[Citation]
     error: str | None = None
+    filters: dict[str, Any] = field(default_factory=dict)  # what the model asked for
+    filters_applied: dict[str, Any] = field(default_factory=dict)  # what the index says it applied
+    notes: list[str] = field(default_factory=list)  # coverage notes: what a filter left out
+    images: list[dict[str, Any]] = field(default_factory=list)  # {url, caption}, for image results
 
 
 @dataclass
@@ -88,9 +96,12 @@ def build_tools(index: Index, library_ids: Sequence[str]) -> tuple[list[dict[str
 
 
 def compact(results: Mapping[str, Any]) -> dict[str, Any]:
-    """What the model sees: file, location and text. No ids, no scores."""
+    """What the model sees: what was filtered and left out, then file, location and text. No ids, no scores."""
+    coverage = results["coverage"]
     return {
-        "disposition": results["coverage"]["disposition"],
+        "disposition": coverage["disposition"],
+        "filtersApplied": coverage.get("filtersApplied") or {},
+        "notes": coverage.get("notes") or [],
         "results": [
             {
                 "file": r["fileName"],
@@ -155,16 +166,18 @@ def _run_search(call, index, agent, owners, names, searches, clock) -> str:
     if library_id is None:
         return json.dumps({"error": f"unknown tool {call.name}"})
     try:
-        query = str(json.loads(call.arguments or "{}")["query"])
+        arguments = json.loads(call.arguments or "{}")
+        query = str(arguments["query"])
     except (ValueError, KeyError, TypeError):
         return json.dumps({"error": "the tool needs a JSON object with a string 'query'"})
+    filters = {k: arguments[k] for k in FILTER_ARGUMENTS if arguments.get(k) not in (None, [], {})}
     started = clock()
     try:
-        response = index.search(library_id, agent["id"], query)
-    except Exception as exc:  # the index's refusals (403, 404) go back to the model and to the trace
+        response = index.search(library_id, agent["id"], query, filters=filters or None)
+    except Exception as exc:  # the index's refusals (403, 404, 400) go back to the model and to the trace
         searches.append(
             SearchTrace(call.name, library_id, names.get(library_id, library_id), query, (clock() - started) * 1000,
-                        None, 0, None, [], error=str(exc))
+                        None, 0, None, [], error=str(exc), filters=filters)
         )  # fmt: skip
         return json.dumps({"error": str(exc)})
     latency = (clock() - started) * 1000
@@ -173,11 +186,19 @@ def _run_search(call, index, agent, owners, names, searches, clock) -> str:
         c = Citation(r["fileName"], r["location"], r.get("heading"))
         if c.label() not in {x.label() for x in seen}:
             seen.append(c)
+    coverage = response["coverage"]
+    images = [
+        {"url": r["image"]["url"], "caption": Citation(r["fileName"], r["location"]).label()}
+        for r in response["results"]
+        if r.get("image")
+    ]
     searches.append(
         SearchTrace(
             call.name, library_id, response["library"]["name"], query, latency,
             (response.get("usage") or {}).get("requestCharge"),
-            len(response["results"]), response["coverage"]["disposition"], seen,
+            len(response["results"]), coverage["disposition"], seen,
+            filters=filters, filters_applied=coverage.get("filtersApplied") or {},
+            notes=coverage.get("notes") or [], images=images,
         )
     )  # fmt: skip
     return json.dumps(compact(response))
