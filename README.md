@@ -77,6 +77,8 @@ Next are Phase 3B (images) and Phase 4 (a thousand libraries in one container, m
 | `docs/build-plan.md` | Build order, demo-first, with an exit check per phase and the demo script | Whoever builds it |
 | `docs/evidence.md` | Each decision, the measurement behind it, and what is not proven | Reviewers, and anyone challenging a decision |
 | `docs/review-response.md` | Each finding of the independent architecture review, its class, and what was done | Reviewers |
+| `docs/capacity/provisioned-throughput.md` | Why production runs on provisioned throughput although the demo is serverless, with sizing and switching guidance | Anyone planning a production deployment |
+| `docs/capacity/untested-at-scale.md` | What is not yet tested at the high end: a busy library's throughput ceiling, how many libraries one container holds, several physical partitions | Reviewers, and anyone planning for a large organization |
 | `cosmos/*.json` | The three Cosmos container definitions, ready to deploy | Infrastructure code |
 | `infra/` | Bicep for one organization's deployment, and how to deploy it | Whoever deploys it |
 | `src/fli/` | The application package: `fli-api` and `fli-worker` entry points | Whoever builds it |

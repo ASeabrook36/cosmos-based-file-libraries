@@ -507,7 +507,7 @@ The routing report is a saved Log Analytics query, per library over 30 days: sea
 
 **Demo:** a serverless account. It costs nothing when idle. A serverless container in the source measurements topped out near 1,785 RU/s, about 22 chunk writes per second, shared between ingestion and searches.
 
-**Production:** provisioned autoscale. Two reasons: serverless's ceiling cannot be raised, so a large admin upload would slow every agent's searches in the organization for its duration; and serverless carries no SLA. Autoscale bills each hour at the highest throughput used, with a floor of 10% of the configured maximum. Starting points to tune: `chunks` 4,000 RU/s maximum, `documents` and `libraries` 1,000 each. A serverless account converts to provisioned one way only, so the demo account can be promoted.
+**Production:** provisioned autoscale. Two reasons: serverless's ceiling cannot be raised, so a large admin upload would slow every agent's searches in the organization for its duration; and serverless carries no SLA. Autoscale bills each hour at the highest throughput used, with a floor of 10% of the configured maximum. Starting points to tune: `chunks` 4,000 RU/s maximum, `documents` and `libraries` 1,000 each. A serverless account converts to provisioned one way only, so the demo account can be promoted. The full argument, the sizing guidance and when to switch are in `capacity/provisioned-throughput.md`; what is untested at the high end is in `capacity/untested-at-scale.md`.
 
 **Measured unit costs** (serverless at about $0.25 per million RU; see `evidence.md`). "Source" is the earlier project: float32 vectors, 600,000 chunks on one physical partition. "Phase 0" is this project's canary: this exact configuration, one 1,500-chunk library.
 
