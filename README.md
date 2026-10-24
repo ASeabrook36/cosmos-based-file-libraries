@@ -15,33 +15,33 @@ It removes the limit that prompted it. Azure AI Search allows 200 indexes per se
 
 Today every library is its own search index, and the search service counts indexes. Here every library lives in one Cosmos DB container: each passage of each document is stored with its text, its meaning as a vector, and the ID of its library. Cosmos keeps each library's passages together and builds a separate vector index for each library inside that one container. A search names one library, so it reaches only that library's passages and that library's index.
 
+**Today.** One Azure AI Search index per library, and the service stops at 200.
+
 ```mermaid
-flowchart LR
-    subgraph today["Today: Azure AI Search, one index per library"]
-        direction TB
-        svc["Search service<br/>S2 or S3 tier"]
-        svc --> t1["Index for library 1"]
-        svc --> t2["Index for library 2"]
-        svc --> t3["…"]
-        svc --> t200["Index for library 200"]
-        t200 -.- cap["Library 201 has nowhere to go:<br/>the service allows 200 indexes"]
-    end
+flowchart TB
+    agent([Agent]) --> service["AI Search service"]
+    service --> i1["Library 1<br/>index"]
+    service --> i2["Library 2<br/>index"]
+    service --> idots["…"]
+    service --> i200["Library 200<br/>index"]
+    service -. "limit" .-x i201["Library 201<br/>no index"]
+    style i201 stroke-dasharray: 5 5
+```
 
-    subgraph proposed["Proposed: one Cosmos DB container for every library"]
-        direction TB
-        question["An agent searches one library<br/>by meaning, optionally filtered by<br/>period, author, tags or file type"]
-        subgraph container["One container. Each passage stores its text, its vector and its library ID"]
-            direction LR
-            la["<b>Library A</b><br/>its passages, stored together<br/>its own vector index"]
-            lb["<b>Library B</b><br/>its passages, stored together<br/>its own vector index"]
-            ln["<b>Library 10,000</b><br/>a new library is new records,<br/>not a new index"]
-        end
-        answer["The best-matching passages,<br/>with file and page,<br/>from current versions only"]
-        question -- "the library ID sends the search<br/>to that library's data only" --> la
-        la -- "one query ranks by meaning<br/>and applies the filters" --> answer
-    end
+**Proposed.** One Cosmos DB container. The library is a key on each passage, and each key gets its own vector index.
 
-    today ~~~ proposed
+```mermaid
+flowchart TB
+    agent([Agent]) -- "search with key A" --> a
+    subgraph container["One Cosmos container"]
+        direction LR
+        a["Key A<br/>index"]
+        b["Key B<br/>index"]
+        c["Key C<br/>index"]
+        more["Any number<br/>of keys"]
+    end
+    a --> results([Best passages])
+    style more stroke-dasharray: 5 5
 ```
 
 What this arrangement buys, with the measurements behind it (`docs/evidence.md`):
@@ -112,54 +112,47 @@ How the prototype is built and run for the demo: every component, what runs wher
 The index is two processes, an API and an ingestion worker, in front of Azure services. Both authenticate with Entra ID only: a user-assigned managed identity when deployed, your `az login` when run locally. Keys are disabled on Cosmos, Blob Storage, Service Bus, Azure OpenAI and Document Intelligence. The platform keeps agents and which libraries they may use (in the demo, Streamlit stands in for it), so the index stores no permissions beyond who owns a personal library.
 
 ```mermaid
-flowchart TB
-    subgraph platform["Agent platform: owns agents and attachments (demo: Streamlit, demo/)"]
-        direction LR
-        admin["Admin and user pages<br/>create libraries, upload,<br/>review proposals"]
-        agent["Agent loop<br/>one search tool<br/>per attached library"]
-        registry[("Agents and attachments<br/>~/.fli-demo/state.json")]
-        agent -.- registry
+flowchart LR
+    subgraph platform["Agent platform"]
+        admin([Admin])
+        agent([Agent])
     end
-
-    subgraph index["File Library Index (runs locally today; Container Apps in Phase 5)"]
-        direction LR
-        api["<b>fli-api</b> (FastAPI)<br/>libraries, documents,<br/>search, tool definitions"]
-        bus[["<b>Service Bus</b> queue ingest<br/>sessions: one lane per library<br/>ingest, retag, purge, propose"]]
-        worker["<b>fli-worker</b><br/>extract, chunk, propose,<br/>embed, write, retag, purge"]
-        api -- enqueue --> bus -- "up to 8 libraries<br/>at a time" --> worker
+    subgraph index["File Library Index"]
+        api["API"]
+        queue[["Queue"]]
+        worker["Worker"]
     end
-
-    subgraph data["Azure data (infra/main.bicep)"]
-        direction LR
-        cosmos[("<b>Cosmos DB for NoSQL</b><br/>serverless, vector search,<br/>continuous backup<br/>libraries, documents, chunks")]
-        blob[("<b>Blob Storage</b><br/>container files<br/>originals, per generation")]
+    subgraph azure["Azure"]
+        cosmos[("Cosmos DB")]
+        blob[("Blob Storage")]
+        openai["Azure OpenAI"]
+        ocr["Document Intelligence"]
     end
-
-    subgraph ai["Azure AI services"]
-        direction LR
-        embed["<b>Azure OpenAI</b><br/>text-embedding-3-large<br/>3,072 dimensions"]
-        chat["<b>Azure OpenAI</b><br/>chat deployment<br/>proposals; demo agent"]
-        ocr["<b>Document Intelligence</b><br/>prebuilt-read OCR for<br/>PDFs without a text layer"]
-    end
-
-    insights["<b>Application Insights</b><br/>deployed; search events<br/>arrive in Phase 4"]
-
-    admin -- "REST, Bearer key<br/>(Entra in Phase 5)" --> api
-    agent -- "POST …/search<br/>with X-Agent-Id" --> api
-    agent -- "answers with<br/>tool calls" --> chat
-
-    api -- "store original" --> blob
-    api -- "records; one query<br/>per search" --> cosmos
-    api -- "embed the question" --> embed
-
-    worker -- "read original" --> blob
-    worker -- "write chunks,<br/>commit, retag" --> cosmos
-    worker -- "embed chunks" --> embed
-    worker -- "tags, period, author;<br/>library description" --> chat
+    admin -- upload --> api
+    agent -- search --> api
+    agent -- chat --> openai
+    api -- jobs --> queue --> worker
+    api -- "save file" --> blob
+    api -- query --> cosmos
+    api -- embed --> openai
+    worker -- "read file" --> blob
+    worker -- "embed, propose" --> openai
     worker -- OCR --> ocr
-
-    api -.-> insights
+    worker -- write --> cosmos
 ```
+
+| Box | What it is | Its job |
+|---|---|---|
+| Admin, Agent | The platform's pages and agent loop; in the demo, Streamlit (`demo/`) | Create libraries, upload, review proposals; answer questions with one search tool per attached library |
+| API | `fli-api` (FastAPI); local today, Container Apps in Phase 5 | Libraries, documents, search, tool definitions; checks a personal library belongs to the agent searching |
+| Queue | Service Bus queue `ingest`, one session per library | Work for the worker; one library at a time per lane, up to 8 libraries at once |
+| Worker | `fli-worker` | Extract, chunk, propose tags, embed, write, retag, purge |
+| Cosmos DB | NoSQL, serverless, vector search, continuous backup | Libraries, documents and passages ([detail below](#the-cosmos-containers-in-detail)) |
+| Blob Storage | Container `files` | Original files, one per version, to rebuild from and hand back |
+| Azure OpenAI | `text-embedding-3-large` (3,072 dimensions) and a chat deployment | Vectors for passages and questions; proposed tags, periods, authors and descriptions; the demo agent |
+| Document Intelligence | `prebuilt-read` | OCR for PDFs with no text layer |
+
+Application Insights is deployed too; search events start arriving in Phase 4.
 
 **Upload.** The API stores the original in Blob Storage under its own generation's path, writes the document record as `queued`, and puts an `ingest` message on the queue with the library as its session. One library's messages run one at a time, so a user dropping 5,000 files occupies one lane, while up to 8 libraries ingest in parallel.
 
@@ -175,30 +168,28 @@ Three containers in one database. Everything is keyed by library first, because 
 
 ```mermaid
 flowchart TB
-    subgraph db["Cosmos database fli (definitions: cosmos/*.json)"]
-        direction TB
-        libs["<b>libraries</b><br/>partition key /libraryId<br/>one record per library:<br/>kind shared or personal, boundAgentId,<br/>description and its proposal,<br/>tag vocabulary, filter values, stats"]
-        docs["<b>documents</b><br/>partition key /libraryId<br/>one record per document:<br/>status, generations, file fields,<br/>author, period, tags, proposals"]
-        subgraph chunks["<b>chunks</b>: partition key /libraryId then /documentId, vector shard key /libraryId"]
-            direction LR
-            subgraph libA["library A: its own DiskANN graph"]
-                a1["document 1<br/>chunks 0..n"]
-                a2["document 2<br/>chunks 0..n"]
-            end
-            subgraph libB["library B: its own DiskANN graph"]
-                b1["document 3<br/>chunks 0..n"]
-            end
+    search(["Search library A"])
+    search -- "1 check access" --> libs[("libraries")]
+    search -- "2 search" --> A
+    search -- "3 check versions" --> docs[("documents")]
+    subgraph chunks["chunks"]
+        subgraph A["Library A"]
+            a1["Document 1"]
+            a2["Document 2"]
+        end
+        subgraph B["Library B"]
+            b1["Document 3"]
         end
     end
-
-    chunk["<b>A chunk</b><br/>id documentId:generation:chunkIndex<br/>text, heading, page or slide<br/>embedding: 3,072 float16, cosine<br/>copied for filters: author, period,<br/>facets, fileType, contentKind, dates"]
-    q["<b>One search</b><br/>SELECT TOP 2 x top ...<br/>WHERE c.libraryId = @libraryId AND filters<br/>ORDER BY VectorDistance float16<br/>sent with partition key libraryId"]
-
-    q -. "1. point-read the library,<br/>check access" .-> libs
-    q -- "2. routed to one library's data,<br/>searched with that library's graph" --> libA
-    q -. "3. read the hits' documents,<br/>drop replaced generations" .-> docs
-    a1 -.- chunk
 ```
+
+| Container | Partition key | One record per | Holds |
+|---|---|---|---|
+| `libraries` | `/libraryId` | library | Shared or personal, the bound agent, description and its proposal, tag vocabulary, stats |
+| `documents` | `/libraryId` | document | Status, versions, file details, author, period, tags, proposals |
+| `chunks` | `/libraryId`, then `/documentId`; vector index sharded by `/libraryId` | passage | Text and its page or slide; a 3,072-dimension float16 vector; copies of the document's author, period, tags and file type, for filtering |
+
+A search is one query, sent with the library as its partition key: `SELECT TOP n … WHERE c.libraryId = @libraryId AND filters ORDER BY VectorDistance(…)`. Before it, the API reads the library record to check access. After it, it reads the documents of the hits and drops passages from replaced versions.
 
 | What libraries need | How the containers provide it |
 |---|---|
