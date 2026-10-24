@@ -3,7 +3,7 @@ import os
 import streamlit as st
 from common import client, guard, registry
 
-from fli_demo.agent import azure_chat, run_turn
+from fli_demo.agent import azure_chat, plain_dollars, run_turn
 
 st.title("Chat")
 api, reg = client(), registry()
@@ -33,7 +33,7 @@ def show(searches):
         charge = f"{s.request_charge} RU" if s.request_charge is not None else "RU not reported"
         label = f"Tool called: {s.tool_name} → {s.library_name} · {s.latency_ms:.0f} ms · {charge}"
         with st.expander(label):
-            st.write(f"Query: {s.query}")
+            st.write(plain_dollars(f"Query: {s.query}"))
             if s.filters:
                 st.write("Filters: " + ", ".join(f"{k} {v}" for k, v in s.filters.items()))
             if s.error:
@@ -50,13 +50,13 @@ def show(searches):
 
 for m in st.session_state.chat:
     with st.chat_message(m["role"]):
-        st.write(m["content"])
+        st.write(plain_dollars(m["content"]))
         show(m.get("searches", []))
 
 if question := st.chat_input("Ask a question"):
     st.session_state.chat.append({"role": "user", "content": question})
     with st.chat_message("user"):
-        st.write(question)
+        st.write(plain_dollars(question))
     with st.chat_message("assistant"), st.spinner("Searching…"):
         turn = guard(run_turn, model(), api, agent, st.session_state.history, question, names)
         if turn:
@@ -65,6 +65,6 @@ if question := st.chat_input("Ask a question"):
                 {"role": "user", "content": question},
                 {"role": "assistant", "content": turn.answer},
             ]
-            st.write(turn.answer)
+            st.write(plain_dollars(turn.answer))
             show(turn.searches)
             st.session_state.chat.append({"role": "assistant", "content": turn.answer, "searches": turn.searches})

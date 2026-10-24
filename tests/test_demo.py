@@ -7,7 +7,7 @@ import json
 import httpx
 import pytest
 
-from fli_demo.agent import Reply, ToolCall, build_tools, run_turn
+from fli_demo.agent import Reply, ToolCall, build_tools, plain_dollars, run_turn
 from fli_demo.client import IndexClient, IndexError_
 from fli_demo.proposals import accept_all, proposals_of, review_request, summary
 from fli_demo.registry import PERSONAL, Registry, create_personal_agent
@@ -286,3 +286,10 @@ def test_leaving_everything_sends_nothing_and_a_bad_edit_is_refused():
         review_request(PROPOSED_DOC, {"period": ("accept", "Q3 2025")})
     with pytest.raises(ValueError):
         review_request(PROPOSED_DOC, {"region=EMEA": ("accept", "Europe")})
+
+
+def test_dollar_amounts_render_as_text_not_latex():
+    answer = "Revenue was $179,465 thousand (Analytics $169,253)."
+    assert plain_dollars(answer) == r"Revenue was \$179,465 thousand (Analytics \$169,253)."
+    assert plain_dollars(r"already \$5") == r"already \$5"  # never escaped twice
+    assert plain_dollars("no amounts") == "no amounts"

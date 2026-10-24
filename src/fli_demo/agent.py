@@ -9,6 +9,7 @@ dropped. Query text and chunk text are not logged.
 from __future__ import annotations
 
 import json
+import re
 import time
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
@@ -76,6 +77,12 @@ class Turn:
     answer: str
     searches: list[SearchTrace]
     messages: list[dict[str, Any]]
+
+
+def plain_dollars(text: str) -> str:
+    """Escape ``$`` for Streamlit's Markdown, which reads text between two dollar signs as LaTeX:
+    "revenue $179,465 … $169,253" otherwise renders as a formula."""
+    return re.sub(r"(?<!\\)\$", r"\\$", text)
 
 
 def build_tools(index: Index, library_ids: Sequence[str]) -> tuple[list[dict[str, Any]], dict[str, str]]:
