@@ -283,7 +283,7 @@ class Worker:
         try:
             messages = document_messages(file_name, opening_text(pieces), prompt_vocabulary(library))
             reply = await self.proposer.complete_json(messages)
-            proposals = parse_document_proposals(reply.data)
+            proposals = parse_document_proposals(reply.data, library)
         except Exception as exc:
             log.warning("proposals failed", extra={**ids, "reason": type(exc).__name__})
             return None

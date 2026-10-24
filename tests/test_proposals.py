@@ -99,6 +99,63 @@ def test_parsing_caps_tags_and_tolerates_garbage():
     assert parse_document_proposals({"author": "x" * 201}).author is None
 
 
+LIVE_LIBRARY = {  # spellings the demo library held on 2026-10-23 (evidence.md E32)
+    "tagVocabulary": {
+        "document type": {"Annual Report": 4, "Presentation": 2},
+        "documentType": {"Management Report": 3},
+        "document-type": {"management report": 1},
+        "company": {"PDF Solutions": 9, "PDF Solutions, Inc.": 2},
+        "accounting": {"GAAP and Non-GAAP": 2, "GAAP and non-GAAP": 1},
+    },
+    "filterValues": {"authors": {"PDF Solutions, Inc.": 6, "PDF Solutions": 4, "Yunchao Gong, Sanjiv Kumar": 1}},
+}
+
+
+def test_proposals_take_the_library_s_own_spelling_of_keys_and_values():
+    data = {
+        "tags": [
+            {"key": "Document-Type", "value": "annual report"},
+            {"key": "documentType", "value": "Management Report"},
+            {"key": "company", "value": "PDF Solutions, Inc."},
+            {"key": "Accounting", "value": "GAAP and non-GAAP"},
+        ]
+    }
+    p = parse_document_proposals(data, LIVE_LIBRARY)
+    assert p.tags == [
+        ("document type", "Annual Report"),  # the most used of the keys folding alike
+        ("document type", "Management Report"),  # the value's own most used spelling, under any key spelling
+        ("company", "PDF Solutions"),  # a company suffix is not a different company
+        ("accounting", "GAAP and Non-GAAP"),
+    ]
+
+
+def test_authors_take_the_library_s_spelling_and_new_ones_are_kept_as_given():
+    assert parse_document_proposals({"author": "PDF Solutions"}, LIVE_LIBRARY).author == "PDF Solutions, Inc."
+    assert parse_document_proposals({"author": "Yunchao Gong; Sanjiv Kumar"}, LIVE_LIBRARY).author == (
+        "Yunchao Gong, Sanjiv Kumar"
+    )
+    assert parse_document_proposals({"author": "Wasatch Advisors LP"}, LIVE_LIBRARY).author == "Wasatch Advisors LP"
+
+
+def test_new_keys_are_snake_case_and_one_answer_is_consistent_with_itself():
+    data = {
+        "tags": [
+            {"key": "SEC filing", "value": "Form 10-K"},
+            {"key": "fiscalYear", "value": "2024"},
+            {"key": "sec_filing", "value": "form 10-k"},  # the same tag spelled again
+            {"key": "Région", "value": "Île-de-France"},
+            {"key": "--", "value": "x"},  # nothing left once punctuation goes
+        ]
+    }
+    p = parse_document_proposals(data)
+    assert p.tags == [("sec_filing", "Form 10-K"), ("fiscal_year", "2024"), ("région", "Île-de-France")]
+
+
+def test_the_document_prompt_asks_for_shared_facets_not_one_off_details():
+    system = document_messages("a.pdf", "text", {"tags": {}, "authors": []})[0]["content"]
+    assert "lowercase snake_case" in system and "Never tag one-off details" in system
+
+
 def doc(**fields):
     return {"tags": [], "periodStart": None, "periodEnd": None, "author": None, **fields}
 
