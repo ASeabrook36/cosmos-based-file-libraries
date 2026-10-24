@@ -1,6 +1,6 @@
 # Evidence: why the design is what it is
 
-*Version 0.9, 2026-10-23: E28 extended to metadata updates (`retag`). Version 0.8, 2026-10-23: E30 records the Phase 3 live check, which observed underfill reaching an empty result. Version 0.7, 2026-10-23: E28 extended to ingest (a replacement's write may not be visible yet); E30 (replacement: one original per generation, a generation number never reused, underfill reported). Version 0.6, 2026-10-23: E28 (deletion must be retryable, and the worker must not trust its first read); E29 (bound what one document can cost); N13. Version 0.5, 2026-10-22: E27 (hybrid search routed by partition key does not rank); E21 and E24 corrected. Version 0.4: E26 (search visibility). Version 0.3: Phase 0 measurements added.*
+*Version 1.0, 2026-10-23: E31 (proposals never overwrite or fail a document); N14. Version 0.9, 2026-10-23: E28 extended to metadata updates (`retag`). Version 0.8, 2026-10-23: E30 records the Phase 3 live check, which observed underfill reaching an empty result. Version 0.7, 2026-10-23: E28 extended to ingest (a replacement's write may not be visible yet); E30 (replacement: one original per generation, a generation number never reused, underfill reported). Version 0.6, 2026-10-23: E28 (deletion must be retryable, and the worker must not trust its first read); E29 (bound what one document can cost); N13. Version 0.5, 2026-10-22: E27 (hybrid search routed by partition key does not rank); E21 and E24 corrected. Version 0.4: E26 (search visibility). Version 0.3: Phase 0 measurements added.*
 
 Most decisions in `spec.md` rest on measurements from earlier work on these Cosmos features, made on live Azure in 2026. That work built a retrieval index in which each owner (a person) had their own body of content, and every search named whose content to search. That is structurally this project's problem: an owner there plays the role a library plays here. The numbers are recorded here so this repository stands on its own.
 
@@ -352,6 +352,18 @@ Search reports. It costs nothing, it is never wrong, and the shortfall lasts onl
 
 *Phase 3 live check* (`records/phase3-exit-lifecycle-20261023T210242Z.json`): a 30-page paper was replaced by a different 18-page paper under the same file name, and the replacement committed 9 seconds after the `PUT`. Of the 4 searches made while it was written, one, 6 seconds in, came back with **no results** and the note. It asked the question the new paper answers. The new generation's chunks, written but not yet visible, filled the whole 16-chunk fetch window (`top` 8). Four seconds earlier, before those chunks were written, the same question had returned 8 results from the old generation. After the commit, all 68 searches returned 8 results of the new generation. So underfill can reach empty, not only thin. It is total exactly when the new version matches the question better than the old one, which is when an agent most needs the note.
 
+### E31. Proposals fill gaps, never overwrite, and never fail a document · Inference (design consistency), with unit tests
+
+A proposal is a model's guess, and `spec.md` §9.1 keeps accepted values distinguishable from a person's. Auto-accept therefore only fills what is empty. Replacing a value someone set would silently undo a person's decision. Such a conflict stays a proposal for review instead.
+
+The proposal call is an enhancement on the ingestion path. Failing the document on a chat outage or a malformed answer would make search depend on the chat deployment. So a failure is logged and the document proceeds without proposals.
+
+Accepted proposals are merged before the chunks are written, so auto-accept costs no `retag` (E10: a patch may cost close to a write, §7.7).
+
+`acceptProposals` is checked against the record the API reads. Under E28 that read may briefly miss proposals the worker has just written, and the request is then refused with `400`; repeating it succeeds.
+
+`tests/test_proposals.py` and `tests/test_proposals_flow.py` encode these rules. Not observed live.
+
 ## Not proven
 
 These are the honest limits of the evidence. Phase 0 and Phase 4 of `build-plan.md` are designed to close the first ones.
@@ -369,3 +381,4 @@ These are the honest limits of the evidence. Phase 0 and Phase 4 of `build-plan.
 - **N11. The DiskANN graph has not been observed in use.** At 1,500 vectors, Cosmos used the vector index in its `QuantizedFlat` mode (E12). The library size at which it walks the DiskANN graph, and that graph's cost and recall on this configuration, are unmeasured. `build-plan.md` Phase 4's large libraries should report the index type Cosmos used.
 - **N12. Index lag for a new library in a populated container is unmeasured.** E25 measured a new container. A personal library created in a container that already holds a million chunks may engage faster or slower.
 - **N13. Visibility across Cosmos clients is unproven.** The API and the worker hold separate Cosmos clients, and under Session consistency a client reads another's writes with Eventual consistency (E28). Within one API process, a search sees that process's own deletes. A delete handled by one API instance and a search on another, or a search after the API restarts, may briefly return the deleted document. A commit by the worker may be seen late, which is a miss, not a leak. Test it before running more than one API instance (`build-plan.md` Phase 5).
+- **N14. Proposal quality and cost are unmeasured.** Whether the model reuses the library's vocabulary, proposes periods only when the document states them, and writes descriptions that steer agents well has not been tested on real documents. Nor has the chat cost per document. The Phase 3 exit check (demo step 2) is the first look; the Phase 5 evaluation set should cover it.

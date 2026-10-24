@@ -122,3 +122,23 @@ def api(services: Services | None = None, **overrides: str) -> tuple[TestClient,
         searcher=searcher,
     )
     return TestClient(app, headers=AUTH), s
+
+
+class FakeChat:
+    """Stands in for the chat deployment: answers in order (the last repeats), recording every prompt.
+
+    An answer that is an exception is raised instead. Never a real model call in tests.
+    """
+
+    def __init__(self, *answers) -> None:
+        self.answers = list(answers) or [{}]
+        self.calls: list[list[dict]] = []
+
+    async def complete_json(self, messages):
+        from fli.proposals import ChatReply
+
+        self.calls.append(messages)
+        answer = self.answers.pop(0) if len(self.answers) > 1 else self.answers[0]
+        if isinstance(answer, BaseException):
+            raise answer
+        return ChatReply(answer, prompt_tokens=100, completion_tokens=20)

@@ -111,6 +111,7 @@ async def run(settings: Settings, stopping: asyncio.Event) -> None:
     from fli.docintel import DocumentIntelligenceReader
     from fli.embedding import AzureOpenAIEmbedder
     from fli.governor import Governor
+    from fli.proposals import AzureOpenAIChat
     from fli.queue import ServiceBusQueue
     from fli.store import CosmosDocumentStore, CosmosLibraryStore
     from fli.tokens import CachedToken
@@ -151,6 +152,18 @@ async def run(settings: Settings, stopping: asyncio.Event) -> None:
             if settings.docintel_endpoint
             else None
         )
+        proposer = (
+            AzureOpenAIChat(
+                endpoint=settings.aoai_endpoint,
+                deployment=settings.aoai_chat_deployment,
+                token_provider=tokens,
+                http=http,
+            )
+            if settings.aoai_chat_deployment
+            else None
+        )
+        if proposer is None:
+            log.info("proposals off: AOAI_CHAT_DEPLOYMENT is not set")
         worker = Worker(
             libraries=CosmosLibraryStore(database.get_container_client("libraries")),
             documents=CosmosDocumentStore(database.get_container_client("documents")),
@@ -168,6 +181,7 @@ async def run(settings: Settings, stopping: asyncio.Event) -> None:
             chunker=Chunker(default_tokenizer()),
             ocr=ocr,
             max_chunks_per_document=settings.ingest_max_chunks_per_document,
+            proposer=proposer,
         )
 
         async def take_session() -> bool:

@@ -159,6 +159,15 @@ async def delete_library(library_id: str, request: Request, store: Libraries) ->
     return Response(status_code=202)
 
 
+@router.post("/{library_id}/description:propose", status_code=202)
+async def propose_description(library_id: str, request: Request, store: Libraries) -> Response:
+    """Queue a new description proposal (spec §9.1). It lands in ``descriptionProposal``, never ``description``."""
+    await load(store, library_id)
+    message = {"type": "proposeDescription", "libraryId": library_id, "requested": True}
+    await enqueue(request.app.state.queue, message, library_id)
+    return Response(status_code=202)
+
+
 @router.get("/{library_id}/tool")
 async def get_tool(library_id: str, store: Libraries) -> dict[str, Any]:
     return tool_definition(await load(store, library_id))

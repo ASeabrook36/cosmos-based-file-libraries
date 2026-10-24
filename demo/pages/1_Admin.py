@@ -1,7 +1,15 @@
 import streamlit as st
 from common import client, guard
 
+from fli_demo.proposals import accept_all, proposals_of, review_request, summary
+
 st.title("Admin: shared libraries")
+
+
+def documents_label(n: int) -> str:
+    return f"{n} document" if n == 1 else f"{n} documents"
+
+
 api = client()
 
 with st.expander("Create a shared library"):
@@ -23,6 +31,35 @@ for lib in libraries:
             api.update_description, lib["id"], new_description
         ):
             st.success("Saved")
+        proposal = lib.get("descriptionProposal")
+        if proposal:
+            with st.container(border=True):
+                generated = (proposal.get("generatedAt") or "")[:16].replace("T", " ")
+                st.markdown(
+                    f"**Proposed description** · from {documents_label(proposal.get('basedOnDocumentCount', 0))}"
+                    f" · {generated} UTC"
+                )
+                if proposal["text"] == lib.get("description"):
+                    st.caption("✓ This is the description agents see.")
+                else:
+                    edited = st.text_area("Edit before accepting, if you like", proposal["text"], key=f"dp-{lib['id']}")
+                    if st.button("Accept this description", type="primary", key=f"da-{lib['id']}") and guard(
+                        api.update_description, lib["id"], edited
+                    ):
+                        st.rerun()
+        if stats.get("documentCount") and st.button("Propose a new description", key=f"dq-{lib['id']}"):
+            if guard(api.propose_description, lib["id"]):
+                st.info("Asked the index for a proposal. Refresh in a few seconds.")
+        auto = st.toggle(
+            "Accept proposed tags, period and author automatically",
+            value=bool(lib.get("autoAcceptTagProposals")),
+            key=f"aa-{lib['id']}",
+            help="Proposals fill empty fields and add tags; they never replace a value someone set.",
+        )
+        if auto != bool(lib.get("autoAcceptTagProposals")) and guard(
+            api.update_library, lib["id"], autoAcceptTagProposals=auto
+        ):
+            st.rerun()
         files = st.file_uploader("Upload files", accept_multiple_files=True, key=f"u-{lib['id']}")
         if files and st.button(f"Upload {len(files)} file(s)", key=f"b-{lib['id']}"):
             for f in files:
@@ -42,16 +79,54 @@ for lib in libraries:
                     "generation": d.get("activeGeneration"),
                     "replacing with": (d.get("pendingFile") or {}).get("fileName"),
                     "chunks": d.get("chunkCount"),
+                    "tags": ", ".join(d.get("facets") or []),
+                    "proposals": len(proposals_of(d)),
                     "detail": d.get("statusDetail"),
                 }
                 for d in documents
             ],
             use_container_width=True,
         )
+        waiting = [d for d in documents if proposals_of(d)]
+        if waiting:
+            st.markdown(f"**Proposals waiting** · {documents_label(len(waiting))}")
+            st.dataframe(
+                [{"file": d.get("fileName"), "proposed": summary(d)} for d in waiting],
+                use_container_width=True,
+            )
+            if st.button("Accept all waiting proposals", key=f"pa-{lib['id']}"):
+                for d in waiting:
+                    guard(api.resolve_proposals, lib["id"], d["id"], accept_all(d))
+                st.rerun()
         if documents:
             names = {d["id"]: f"{d.get('fileName')} ({d['id'][:8]})" for d in documents}
             chosen = st.selectbox("Document", list(names), format_func=names.get, key=f"pick-{lib['id']}")
             current = next(d for d in documents if d["id"] == chosen)
+            pending = proposals_of(current)
+            if pending:
+                with st.form(f"prop-{lib['id']}-{chosen}"):
+                    st.markdown("**Proposed by the index**: accept, edit then accept, or dismiss")
+                    decisions = {}
+                    for p in pending:
+                        value_col, action_col = st.columns([3, 2])
+                        label = {"tag": "Tag (key=value)", "period": "Period (start..end)", "author": "Author"}
+                        value = value_col.text_input(label[p.kind], p.value, key=f"pv-{chosen}-{p.item}")
+                        action = action_col.radio(
+                            "Action",
+                            ["accept", "dismiss", "leave"],
+                            horizontal=True,
+                            key=f"pc-{chosen}-{p.item}",
+                            label_visibility="hidden",
+                        )
+                        decisions[p.item] = (action, value)
+                    if st.form_submit_button("Apply"):
+                        try:
+                            body = review_request(current, decisions)
+                        except ValueError as exc:
+                            st.error(str(exc))
+                            body = None
+                        if body and guard(api.update_document, lib["id"], chosen, **body):
+                            st.rerun()
             with st.form(f"meta-{lib['id']}-{chosen}"):
                 author = st.text_input("Author", current.get("author") or "")
                 start = st.text_input("Period start (YYYY-MM-DD)", current.get("periodStart") or "")

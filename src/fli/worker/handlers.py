@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import time
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -40,6 +41,20 @@ from fli.embedding import Embedder
 from fli.extraction import Extracted, OcrClient, extract
 from fli.generation import is_obsolete, latest_generation
 from fli.ids import blob_generation, chunk_id, image_prefix, original_prefix
+from fli.proposals import (
+    OPENING_CHARS,
+    ChatModel,
+    DocumentProposals,
+    description_due,
+    description_messages,
+    document_messages,
+    opening_text,
+    parse_description,
+    parse_document_proposals,
+    prompt_vocabulary,
+    sample_documents,
+    settle_proposals,
+)
 from fli.queue import Message, Queue
 from fli.store import Conflict, DocumentStore, LibraryStore, Record
 from fli.vocabulary import filter_values, searchable, tag_vocabulary
@@ -104,6 +119,7 @@ class Worker:
     chunker: Chunker
     ocr: OcrClient | None = None
     max_chunks_per_document: int = 5_000  # INGEST_MAX_CHUNKS_PER_DOCUMENT
+    proposer: ChatModel | None = None  # the chat deployment; proposals are off without one (spec §9.1)
     stale_read_pause: float = 1.0  # seconds before retrying a message whose record read is stale
 
     async def handle(self, message: Message) -> None:
@@ -128,6 +144,8 @@ class Worker:
             if not isinstance(document_id, str) or not isinstance(version, int) or version < 1:
                 raise BadMessage("retag needs documentId and a positive metadataVersion")
             await self.retag(library_id, document_id, version)
+        elif kind == "proposeDescription":
+            await self.propose_description(library_id, requested=message.get("requested") is True)
         else:
             raise BadMessage(f"unknown message type {kind!r}")
 
@@ -171,8 +189,17 @@ class Worker:
             await self._fail(library_id, document_id, generation, "too_many_chunks")
             return
 
+        # Proposals come before embedding, so accepted ones are written with the chunks (spec §7.2 step 6).
+        proposals = await self._propose_metadata(library, document_id, source["fileName"], pieces)
+        accept = library.get("autoAcceptTagProposals") is True
+        meta = {name: document.get(name) for name in ("tags", "periodStart", "periodEnd")}
+        meta["author"] = document.get("author") or result.author
+        if proposals is not None:
+            settle_proposals(meta, proposals, accept=accept)
+        else:
+            meta["facets"] = document.get("facets", [])
+
         vectors = await self.embedder.embed([p.text for p in pieces])
-        author = document.get("author") or result.author
         # authoredAt only ever comes from the file (spec §4.2), so each generation takes its own file's.
         authored_at = result.authored_at.isoformat() if result.authored_at else None
         created = _now()
@@ -193,10 +220,10 @@ class Worker:
                 "fileType": source["fileType"],
                 "uploadedAt": source["uploadedAt"],
                 "authoredAt": authored_at,
-                "author": author,
-                "periodStart": document.get("periodStart"),
-                "periodEnd": document.get("periodEnd"),
-                "facets": document.get("facets", []),
+                "author": meta["author"],
+                "periodStart": meta["periodStart"],
+                "periodEnd": meta["periodEnd"],
+                "facets": meta["facets"],
                 "tokenCount": p.token_count,
                 "embedding": vector,
                 "embeddingModel": EMBEDDING_MODEL,
@@ -230,6 +257,9 @@ class Worker:
                 },
                 updatedAt=_now(),
             )
+            if proposals is not None:
+                # On the record as it is now: a PATCH made meanwhile is kept, and its retag follows.
+                settle_proposals(doc, proposals, accept=accept)
             return True
 
         committed = await self._mutate(library_id, document_id, commit)
@@ -237,6 +267,39 @@ class Worker:
             await self._purge_later(library_id, document_id)  # abandoned chunks, or older generations
         if committed is not None:
             await self.refresh_library(library_id)
+
+    async def _propose_metadata(
+        self, library: Record, document_id: str, file_name: str, pieces: list[Any]
+    ) -> DocumentProposals | None:
+        """One chat call for tags, period and author. ``None`` if proposals are off or the call failed.
+
+        A failed call never fails the document: proposals are an enhancement. Only counts and
+        token usage are logged, never the text sent or received (CLAUDE.md rule 12).
+        """
+        if self.proposer is None:
+            return None
+        ids = {"libraryId": library["id"], "documentId": document_id}
+        started = time.monotonic()
+        try:
+            messages = document_messages(file_name, opening_text(pieces), prompt_vocabulary(library))
+            reply = await self.proposer.complete_json(messages)
+            proposals = parse_document_proposals(reply.data)
+        except Exception as exc:
+            log.warning("proposals failed", extra={**ids, "reason": type(exc).__name__})
+            return None
+        log.info(
+            "proposals made",
+            extra={
+                **ids,
+                "tags": len(proposals.tags),
+                "period": proposals.period is not None,
+                "author": proposals.author is not None,
+                "promptTokens": reply.prompt_tokens,
+                "completionTokens": reply.completion_tokens,
+                "ms": round((time.monotonic() - started) * 1000),
+            },
+        )
+        return proposals
 
     async def _not_pending(self, library_id: str, document_id: str, generation: int, document: Record | None) -> None:
         """An ingest whose generation is not pending: decide what, if anything, is left to do.
@@ -266,6 +329,10 @@ class Worker:
         if message.get("type") == "retag":
             # Filters keep matching the chunks' previous metadata; repeating the PATCH queues it again.
             log.error("retag dead-lettered", extra={**ids, "reason": reason})
+            return
+        if message.get("type") == "proposeDescription":
+            # The previous proposal, if any, stays; the next refresh or a POST …/description:propose retries.
+            log.error("proposeDescription dead-lettered", extra={**ids, "reason": reason})
             return
         if message.get("type") != "ingest":
             return
@@ -318,6 +385,59 @@ class Worker:
         )
         await self.refresh_library(library_id)
 
+    # -- library description ------------------------------------------------------------------
+
+    async def propose_description(self, library_id: str, *, requested: bool = False) -> None:
+        """Propose a library description from a sample of its documents (spec §9.1).
+
+        ``requested`` marks a ``POST …/description:propose``, which always regenerates. A message
+        queued by a refresh checks again whether one is due: a burst of uploads queues one per
+        document, and only the first, run after them all, makes the call.
+        """
+        library = await self.libraries.get(library_id)
+        if library is None or library.get("status") == "deleting":
+            return
+        if self.proposer is None:
+            log.info("proposals off; description not proposed", extra={"libraryId": library_id})
+            return
+        documents = searchable(await self.documents.list(library_id, status=None, facet=None))
+        if not documents or not (requested or description_due(library, len(documents))):
+            return
+        samples = []
+        for document in sample_documents(documents):
+            opening = await self.chunks.opening(library_id, document["id"], document["activeGeneration"])
+            samples.append((document.get("fileName") or "", (opening or "")[:OPENING_CHARS]))
+        started = time.monotonic()
+        reply = await self.proposer.complete_json(description_messages(library, samples))
+        proposal = {
+            "text": parse_description(reply.data),  # raises on nothing usable: the message is retried
+            "generatedAt": _now(),
+            "basedOnDocumentCount": len(documents),
+        }
+        for _ in range(MUTATE_ATTEMPTS):
+            library = await self.libraries.get(library_id)
+            if library is None or library.get("status") == "deleting":
+                return
+            library.update(descriptionProposal=proposal, updatedAt=_now())  # never description itself
+            try:
+                await self.libraries.replace(library)
+                break
+            except Conflict:
+                continue
+        else:
+            raise Conflict(library_id)
+        log.info(
+            "description proposed",
+            extra={
+                "libraryId": library_id,
+                "documents": len(documents),
+                "sampled": len(samples),
+                "promptTokens": reply.prompt_tokens,
+                "completionTokens": reply.completion_tokens,
+                "ms": round((time.monotonic() - started) * 1000),
+            },
+        )
+
     # -- purges -------------------------------------------------------------------------------
 
     async def purge_document(self, library_id: str, document_id: str, *, deleted: bool = False) -> None:
@@ -361,7 +481,10 @@ class Worker:
     # -- library summary ------------------------------------------------------------------------
 
     async def refresh_library(self, library_id: str) -> None:
-        """Recompute ``stats``, ``tagVocabulary`` and ``filterValues`` from the documents (spec §7.2 step 11)."""
+        """Recompute ``stats``, ``tagVocabulary`` and ``filterValues`` from the documents (spec §7.2 step 11).
+
+        Then queue ``proposeDescription`` if the library changed enough since its last proposal.
+        """
         ready = searchable(await self.documents.list(library_id, status=None, facet=None))
         summary = {"tagVocabulary": tag_vocabulary(ready), "filterValues": filter_values(ready)}
         stats = {
@@ -377,10 +500,14 @@ class Worker:
             library.update(stats=stats, **summary, updatedAt=_now())
             try:
                 await self.libraries.replace(library)
-                return
+                break
             except Conflict:
                 continue
-        raise Conflict(library_id)
+        else:
+            raise Conflict(library_id)
+        if self.proposer is not None and description_due(library, len(ready)):
+            message = {"type": "proposeDescription", "libraryId": library_id}
+            await self.queue.send(message, session_id=library_id)
 
     # -- helpers --------------------------------------------------------------------------------
 

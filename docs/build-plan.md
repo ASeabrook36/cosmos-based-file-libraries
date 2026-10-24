@@ -1,6 +1,6 @@
 # Build plan
 
-*Version 0.9, 2026-10-23: Images move out of Phase 3 into Phase 3B, so metadata and lifecycle can be finished and demonstrated first; Phase 3's Filters item built in code. Version 0.8, 2026-10-23: Phase 3's Lifecycle live check passed (`records/phase3-exit-lifecycle-20261023T210242Z.json`). Version 0.7, 2026-10-23: Phase 3's Lifecycle item built in code (replacement, findings 1, 6 and 7). Version 0.6, 2026-10-23: the independent review's findings and their later-phase items, recorded in `review-response.md`. Version 0.5, 2026-10-22: Phase 2 passed (adapted exit check). Version 0.4: search is vector-only by default; hybrid is a setting, because routed by partition key it does not rank (`evidence.md` E27). Version 0.3: Entra authentication moved from Phase 1 to Phase 5 (the platform authenticates its users; the prototype uses a static local key). Version 0.2: Phase 0 passed; its findings are folded into Phases 0, 4 and the risks.*
+*Version 1.0, 2026-10-23: Phase 3's Proposals item built in code. Version 0.9, 2026-10-23: Images move out of Phase 3 into Phase 3B, so metadata and lifecycle can be finished and demonstrated first; Phase 3's Filters item built in code. Version 0.8, 2026-10-23: Phase 3's Lifecycle live check passed (`records/phase3-exit-lifecycle-20261023T210242Z.json`). Version 0.7, 2026-10-23: Phase 3's Lifecycle item built in code (replacement, findings 1, 6 and 7). Version 0.6, 2026-10-23: the independent review's findings and their later-phase items, recorded in `review-response.md`. Version 0.5, 2026-10-22: Phase 2 passed (adapted exit check). Version 0.4: search is vector-only by default; hybrid is a setting, because routed by partition key it does not rank (`evidence.md` E27). Version 0.3: Entra authentication moved from Phase 1 to Phase 5 (the platform authenticates its users; the prototype uses a static local key). Version 0.2: Phase 0 passed; its findings are folded into Phases 0, 4 and the risks.*
 
 The plan is ordered to reach something demonstrable as early as possible:
 
@@ -110,7 +110,7 @@ The demo needs something playing the platform's role. Build a small Streamlit ap
 
 **Build**
 
-- **Proposals (enhancement 1):** per-document tag, period and author proposals, with an accept or edit screen. Per-library description proposals.
+- **Proposals (enhancement 1):** per-document tag, period and author proposals, with an accept or edit screen. Per-library description proposals. **Built and unit-tested on 2026-10-23; the live check (demo step 2) has not run.** Proposals are made during ingestion and auto-accepted in libraries that allow it. They are accepted, edited or dismissed by document `PATCH` (`acceptProposals`, `dismissProposals`) and on the demo's Admin page, which also accepts or edits the library description proposal (`spec.md` §9.1).
 - **Filters:** all filters in search and in the tool definition (`period`, `authoredBetween`, `uploadedBetween`, `authors`, `tags`, `fileTypes`, `contentKinds`). Add the `retag` job. **Built and unit-tested on 2026-10-23; the live check below has not run.** Coverage notes count the documents a filter left out for lacking the field, and name filter values no document has; the tool offers only filters that can narrow the search (`spec.md` §6.3, §6.4). Metadata is edited by document `PATCH`, with an edit form in the demo's Admin page; `retag` copies it to the chunks, retrying a stale read (E28). What a chunk patch costs is unmeasured (§7.7).
 - **Room for images:** per-generation image paths in the purge, a working `contentKinds` filter, and an image slot in the demo chat. Building images is Phase 3B. **Done** with Filters.
 - **Lifecycle:** document replacement and deletion; library deletion. **Built on 2026-10-23; its live check passed the same day** (`records/phase3-exit-lifecycle-20261023T210242Z.json`). Deletion was built in Phases 1–2 and the review response; replacement (`PUT …/content`) here, with Replace and Delete controls in the demo's Admin page. From the review response (`review-response.md`):
@@ -120,7 +120,7 @@ The demo needs something playing the platform's role. Build a small Streamlit ap
 
 **Exit check**
 
-- Demo script step 2 runs in full, including the index proposing a description and tags and the admin accepting them.
+- Demo script step 2 runs in full, including the index proposing a description and tags and the admin accepting them. Not yet run.
 - A period-plus-tag filtered question returns only matching documents, and the coverage notes say what was excluded. It runs with `scripts/phase3_exit.py filters`, on a manifest of real documents and their metadata, and also times a tag change reaching search and records what `retag`'s patches cost. Not yet run.
 - After replacing a document, its old content is never returned.
 - When stale chunks of a replaced document fill the fetch window, search still returns `top` results or reports `thin`; decide between fetching again and reporting (finding 6). **Decided: reporting.** Coverage says how many passages were left out (`spec.md` §8 step 6, E30).

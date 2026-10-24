@@ -1,6 +1,6 @@
 # Specification: File Library Index
 
-*Version 0.9, 2026-10-23. Working name. Status: Phases 0–2 passed (`build-plan.md`): libraries, upload, ingestion, vector search and the demo platform run end to end on the demo account. Phase 3 is in progress: document replacement (§7.8) is built and its live exit check passed; metadata filters (§6.3, §6.4, §7.7) are built and unit-tested, and their live check has not run. Phases 4–5 are not built. Every design choice here that rests on a measurement is traced in `evidence.md`.*
+*Version 0.9, 2026-10-23. Working name. Status: Phases 0–2 passed (`build-plan.md`): libraries, upload, ingestion, vector search and the demo platform run end to end on the demo account. Phase 3 is in progress: document replacement (§7.8) is built and its live exit check passed; metadata filters (§6.3, §6.4, §7.7) and proposals (§9.1) are built and unit-tested, and their live checks have not run. Phases 4–5 are not built. Every design choice here that rests on a measurement is traced in `evidence.md`.*
 
 ## 1. Scope
 
@@ -105,8 +105,8 @@ Partition key `/libraryId`. `id` equals `libraryId` (a GUID).
 | `boundAgentId` | string | Personal only, required; absent on shared. Immutable |
 | `name` | string | |
 | `description` | string | What agents see as the tool description. Platform-editable |
-| `descriptionProposal` | object | `{text, generatedAt, basedOnDocumentCount}`. Enhancement 1 |
-| `autoAcceptTagProposals` | bool | Default `true` for personal, `false` for shared |
+| `descriptionProposal` | object | `{text, generatedAt, basedOnDocumentCount}`, written by `proposeDescription` (§9.1). The index never copies it into `description`. Enhancement 1 |
+| `autoAcceptTagProposals` | bool | Default `true` for personal, `false` for shared. When set, proposals fill empty fields and add tags at ingestion (§9.1) |
 | `tagVocabulary` | object | `{key: {value: documentCount}}`, recomputed after ingestion |
 | `filterValues` | object | `{authors, fileTypes, contentKinds: {value: documentCount}, period: {from, to} \| null, missing: {period, author, authoredAt}}`, counted over searchable documents and recomputed with `tagVocabulary`. The tool definition (§6.4) and coverage notes (§9.2) read it, so neither reads documents per search |
 | `stats` | object | `{documentCount, chunkCount, imageCount, lastIngestedAt}` |
@@ -134,8 +134,8 @@ Partition key `/libraryId`. `id` equals `documentId` (a GUID).
 | `author` | string \| null | |
 | `periodStart`, `periodEnd` | date \| null | The period the document is **about**. Not the upload or authoring date |
 | `tags` | array | `[{key, value, source: "user" \| "accepted-proposal"}]` |
-| `tagProposals` | array | `[{key, value}]` awaiting acceptance (enhancement 1) |
-| `periodProposal`, `authorProposal` | | Same, for the typed fields |
+| `tagProposals` | array | `[{key, value}]` awaiting acceptance (enhancement 1). Tags the document already has are not proposed |
+| `periodProposal`, `authorProposal` | `{start, end} \| null`, `string \| null` | As for tags. Each ingestion replaces all three with its own proposals |
 | `facets` | string[] | `key=value` for every entry in `tags`; this is what filters match |
 | `metadataVersion` | int | Raised by each `PATCH`; the `retag` message carries it (§7.1). 0 at upload |
 | `extraction` | object | `{method, ocrApplied, pageCount, extractionVersion, chunkingVersion}` |
@@ -194,7 +194,7 @@ Base path `/v1`. JSON throughout except uploads. Errors: `{"error": {"code": "..
 | `GET /v1/libraries/{libraryId}` | | Library, including `descriptionProposal`, `tagVocabulary`, `stats` |
 | `PATCH /v1/libraries/{libraryId}` | `{name?, description?, autoAcceptTagProposals?}` | Library |
 | `DELETE /v1/libraries/{libraryId}` | | `202`; status `deleting`. Repeatable: queues the purge again (§5 rule 5) |
-| `POST /v1/libraries/{libraryId}/description:propose` | | `202`; regenerates the proposal |
+| `POST /v1/libraries/{libraryId}/description:propose` | | `202`; queues `proposeDescription` (§7.1). `404 library_not_found` if the library does not exist or is `deleting`; `503 queue_unavailable` |
 | `GET /v1/libraries/{libraryId}/tool` | | A ready-to-attach tool definition (§6.4) |
 
 ### 6.2 Documents
@@ -204,7 +204,7 @@ Base path `/v1`. JSON throughout except uploads. Errors: `{"error": {"code": "..
 | `POST /v1/libraries/{libraryId}/documents` | multipart: `file`, optional `metadata` JSON `{author?, periodStart?, periodEnd?, tags?}` | `202 {documentId, status: "queued"}` |
 | `GET /v1/libraries/{libraryId}/documents` | `?status=&facet=` | List |
 | `GET /v1/libraries/{libraryId}/documents/{documentId}` | | Document, including proposals |
-| `PATCH /v1/libraries/{libraryId}/documents/{documentId}` | `{author?, periodStart?, periodEnd?, tags?, acceptProposals?: ["region=EMEA", "period", "author"]}` | Document; chunk metadata updated by a `retag` job (§7.7). `acceptProposals` arrives with proposals |
+| `PATCH /v1/libraries/{libraryId}/documents/{documentId}` | `{author?, periodStart?, periodEnd?, tags?, acceptProposals?: ["region=EMEA", "period", "author"], dismissProposals?: [...]}` | Document; chunk metadata updated by a `retag` job (§7.7) |
 | `PUT /v1/libraries/{libraryId}/documents/{documentId}/content` | multipart `file` | `202 {documentId, status: "queued", generation}`; reprocesses as a new generation (§7.8) |
 | `DELETE /v1/libraries/{libraryId}/documents/{documentId}` | | `202`; status `deleting`. Repeatable: queues the purge again (§5 rule 5) |
 | `GET /v1/libraries/{libraryId}/documents/{documentId}/file` | | `302` to a 15-minute read-only link |
@@ -214,6 +214,8 @@ Uploads are refused with `409 library_deleting` when the library is `deleting`. 
 A replacement (`PUT …/content`) is refused with `404 document_not_found` when the document does not exist or is `deleting`, `409 library_deleting` when the library is, `413 file_too_large` and `400 empty_file` as for uploads. It reserves the next `generation` on the record first, then stores the original under that generation's path, then queues `ingest`. Reserving first means two concurrent replacements never write the same path. If the original cannot be stored, or the message cannot be queued (`503 queue_unavailable`), the replacement alone is marked `failed` (`upload_failed`, `enqueue_failed`) and its original removed; the active generation stays searchable. A replacement sent while another is pending supersedes it: the worker abandons the older one.
 
 A metadata update (`PATCH`) changes only the fields it names. `tags` replaces the list: a tag kept from before keeps its `source`, a new one is `user`, and `facets` is recomputed. `periodStart` and `periodEnd` go together. It is refused with `404 document_not_found` and `409 library_deleting` as for replacements. The record changes at once; `retag` then copies the change to the chunks (§7.7). Until it runs, filters match the chunks' previous metadata. If `retag` cannot be queued, the update is kept and the response is `503 queue_unavailable`; repeating the request queues it again.
+
+`acceptProposals` and `dismissProposals` name current proposals: `key=value`, `period` or `author`. An accepted tag joins `tags` with `source: accepted-proposal`; an accepted period or author is set as if sent. Either way the proposal is removed. Fields sent explicitly apply first, and accepted tags are added to them. To edit a proposal, send the edited value as a field and dismiss the proposal. A request is refused with `400 invalid_request` when it names a proposal the document does not currently have (it may have been regenerated or resolved meanwhile), names one in both lists, or accepts `period` or `author` while also setting that field. A `PATCH` that only dismisses changes nothing filters match: it does not raise `metadataVersion` and queues no `retag`.
 
 ### 6.3 Search
 
@@ -335,7 +337,7 @@ One Service Bus queue, `ingest`, with sessions enabled and `SessionId = libraryI
 | `retag` | `libraryId, documentId, metadataVersion` | Copy the document's `facets`, `author`, `periodStart` and `periodEnd` to the chunks of its active and pending generations, by patch, under the worker-wide write cap (§7.7). If the record's `metadataVersion` reads lower than the message's, the read is stale (`evidence.md` E28) and the message is redelivered; if higher, a later `retag` is queued and this one completes without work. A `retag` that fails on its last delivery is logged as `retag dead-lettered`; repeating the `PATCH` queues it again |
 | `purgeDocument` | `libraryId, documentId, deleted?` | Delete every chunk and original of an obsolete generation: one that is neither `activeGeneration` nor `pendingGeneration`, and not above the document's `generation` (a stale read may miss a newer generation, so what lies above is left for a later purge; E30). If the document is `deleting` or gone, delete all its chunks, then its blobs, then its record. Safe because one library's messages never run concurrently (session order). `deleted: true` marks a purge queued by a deletion: if the document does not read as `deleting` yet, the read is stale (`evidence.md` E28), so the worker pauses a second and the message is redelivered instead of completing |
 | `purgeLibrary` | `libraryId` | Delete every document, chunk and blob, then the library. If the library does not read as `deleting` yet, the read is stale (E28): retried as for `purgeDocument` |
-| `proposeDescription` | `libraryId` | Regenerate the library description proposal |
+| `proposeDescription` | `libraryId, requested?` | Propose a library description (§9.1). `requested: true` marks `POST …/description:propose` and always regenerates. Without it (queued by step 11), the worker checks again that a proposal is due and otherwise completes without a call, so a burst of uploads costs one call. One that fails on its last delivery is logged as `proposeDescription dead-lettered`; the previous proposal stays |
 
 An `ingest` whose generation is no longer pending is completed without processing. Unless the document is `deleting` or gone, it first queues `purgeDocument` again, and if its generation is the active one it also refreshes the library's `stats` (step 11). Messages arrive at least once, and such a delivery may be the retry of one that committed and then failed to queue its purge; the purge is idempotent. After the last delivery attempt fails, the worker marks the document `failed` with the reason before the message dead-letters. `activeGeneration` is left as it was: a failed replacement keeps the previous version searchable, and a failed first upload has nothing searchable. A purge that fails on its last delivery is logged as `purge dead-lettered`. Its library or document stays hidden as `deleting` until the `DELETE` is repeated (§5 rule 5); alerting on that log is Phase 5.
 
@@ -346,12 +348,12 @@ An `ingest` whose generation is no longer pending is completed without processin
 3. Extract (§7.3). Encrypted, password-protected, unsupported and failed files end here with `status: failed` and a `statusDetail`.
 4. Chunk the text (§7.4). A document with more than `INGEST_MAX_CHUNKS_PER_DOCUMENT` chunks ends here with `status: failed`, `too_many_chunks`, before anything is embedded (`evidence.md` E29).
 5. Extract and describe images (§7.5).
-6. Propose tags, period and author (§9.1).
+6. Propose tags, period and author (§9.1). If the library has `autoAcceptTagProposals`, the accepted values go into the chunks written in step 8. A failed proposal call does not fail the document: it is logged, and the document proceeds without proposals.
 7. Embed every chunk's `text` with the embedding deployment, in batches of 16, honouring `Retry-After` on 429.
 8. Upsert all chunks of generation G. Writes share one cap across the whole worker, `COSMOS_WRITE_CONCURRENCY` (default 2), not a cap per document. On a 429 that outlasts the SDK's own retries, wait `x-ms-retry-after-ms` and retry. Eight concurrent writers exhausted the SDK's retries on serverless within about 100 writes (`evidence.md` E10). Deterministic ids make retries safe.
-9. Commit: set `activeGeneration: G`, `pendingGeneration: null`, `status: ready`, counts; copy `pendingFile` over the record's file fields and clear it. `authoredAt` is taken from the file of generation G, since it only ever comes from the file; `author` keeps any value already set. Until this moment search keeps returning the previous generation, if any; from it, search returns generation G and ignores older ones (§8 step 6).
+9. Commit: set `activeGeneration: G`, `pendingGeneration: null`, `status: ready`, counts; copy `pendingFile` over the record's file fields and clear it. `authoredAt` is taken from the file of generation G, since it only ever comes from the file; `author` keeps any value already set. Until this moment search keeps returning the previous generation, if any; from it, search returns generation G and ignores older ones (§8 step 6). The step 6 proposals are settled on the record as it reads now, so a `PATCH` made meanwhile is kept, and its `retag` follows in session order.
 10. If G > 1, enqueue `purgeDocument`. It also runs after a generation is abandoned (the document was deleted or replaced while G was written) and after a final failure, so half-written chunks never linger.
-11. Recompute the library's `tagVocabulary`, `filterValues` and `stats` from the `documents` container (a single-partition query). Enqueue `proposeDescription` when the library has changed by 10 documents or 24 hours since the last proposal.
+11. Recompute the library's `tagVocabulary`, `filterValues` and `stats` from the `documents` container (a single-partition query). Enqueue `proposeDescription` when the library has no proposal yet, when its document count has moved by 10 or more since the last proposal, or when 24 hours have passed and the count has changed.
 
 ### 7.3 Extraction
 
@@ -460,10 +462,12 @@ The vector index engages minutes after writes (`evidence.md` E25). Until it does
 
 ### 9.1 Proposed descriptions and tags
 
-- **Per document**, during ingestion: one chat call on the document's opening text (about 3,000 tokens) plus the library's current tag vocabulary. Output, as JSON: `period {start, end} | null`, `author | null`, `tags [{key, value}]`. The prompt tells the model to reuse existing keys and values where they fit, and to propose a period only when the document states or clearly implies the period it covers. Proposals land in `tagProposals`, `periodProposal` and `authorProposal`. If the library has `autoAcceptTagProposals`, they are accepted at once with `source: accepted-proposal`; otherwise they wait for a user in the library UI.
-- **Per library**: `proposeDescription` sends the library name, current description, tag vocabulary and a sample of document titles and opening lines (up to 30 documents). Output: a 2–4 sentence description stating what the library contains, which periods, regions or topics it covers, and what it should not be used for. It lands in `descriptionProposal`; an admin or the owner accepts or edits it. It never overwrites `description` on its own.
+- **Per document**, during ingestion: one chat call on the document's opening text (about 3,000 tokens) plus the library's current tag vocabulary. Output, as JSON: `period {start, end} | null`, `author | null`, `tags [{key, value}]`. The prompt tells the model to reuse existing keys and values where they fit, and to propose a period only when the document states or clearly implies the period it covers. Proposals land in `tagProposals`, `periodProposal` and `authorProposal`. With `autoAcceptTagProposals`, they fill what is empty (an unset period or author) and add tags with `source: accepted-proposal`, at once and in the chunks as they are written. A proposal that would replace a value already set stays proposed. Otherwise all of them wait for `PATCH … acceptProposals` or `dismissProposals` (§6.2). The model's answer is checked entry by entry, and an invalid tag, date or author is dropped. At most 8 tags.
+- **Per library**: `proposeDescription` sends the library name, current description, tag vocabulary and a sample of document titles and opening lines (up to 30 documents, spread evenly over upload time; each document's opening lines are the first 400 characters of its first chunk). Output: a 2–4 sentence description stating what the library contains, which periods, regions or topics it covers, and what it should not be used for. It lands in `descriptionProposal`; an admin or the owner accepts or edits it. It never overwrites `description` on its own.
 
 Accepted values keep their source on the document record, so a user-entered tag and an accepted AI proposal stay distinguishable.
+
+Document text, file names and model output go to the chat deployment and are never logged; the worker logs counts, token usage and timing only (§9.3).
 
 ### 9.2 Coverage disclosure
 
@@ -486,7 +490,7 @@ The routing report is a saved Log Analytics query, per library over 30 days: sea
 | `BLOB_ACCOUNT_URL`, `BLOB_CONTAINER` | —, `files` | |
 | `SERVICEBUS_NAMESPACE`, `SERVICEBUS_QUEUE` | —, `ingest` | |
 | `AOAI_ENDPOINT`, `AOAI_EMBEDDING_DEPLOYMENT`, `AOAI_EMBEDDING_DIMENSIONS` | —, —, `3072` | The dimension must equal the container's vector policy; the app checks at startup |
-| `AOAI_VISION_DEPLOYMENT`, `AOAI_CHAT_DEPLOYMENT` | — | Can be the same deployment |
+| `AOAI_VISION_DEPLOYMENT`, `AOAI_CHAT_DEPLOYMENT` | — | Can be the same deployment. Without `AOAI_CHAT_DEPLOYMENT`, proposals are off |
 | `DOCINTEL_ENDPOINT`, `OCR_MAX_PAGES` | —, `200` | |
 | `UPLOAD_MAX_BYTES` | `104857600` | |
 | `IMAGE_MIN_PIXELS`, `IMAGE_MIN_BYTES`, `IMAGE_MAX_PER_DOCUMENT` | `16384`, `10240`, `50` | |

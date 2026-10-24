@@ -9,6 +9,7 @@ import pytest
 
 from fli_demo.agent import Reply, ToolCall, build_tools, run_turn
 from fli_demo.client import IndexClient, IndexError_
+from fli_demo.proposals import accept_all, proposals_of, review_request, summary
 from fli_demo.registry import PERSONAL, Registry, create_personal_agent
 
 
@@ -225,3 +226,63 @@ def test_the_client_sends_filters_and_metadata_updates():
     assert seen[0][2]["filters"] == {"tags": ["region=EMEA"]} and "filters" not in seen[1][2]
     assert seen[2][:2] == ("PATCH", "/v1/libraries/l/documents/d")
     assert seen[2][2] == {"tags": [{"key": "region", "value": "EMEA"}]}
+
+
+def test_the_client_reaches_the_proposal_endpoints():
+    seen = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append((request.method, request.url.path, json.loads(request.content) if request.content else None))
+        return httpx.Response(202) if request.method == "POST" else httpx.Response(200, json={})
+
+    client = IndexClient(
+        "http://index", "k", http=httpx.Client(base_url="http://index", transport=httpx.MockTransport(handler))
+    )
+    assert client.propose_description("l") is True
+    client.update_library("l", autoAcceptTagProposals=True)
+    client.resolve_proposals("l", "d", ["region=EMEA"], ["author"])
+    assert seen == [
+        ("POST", "/v1/libraries/l/description:propose", None),
+        ("PATCH", "/v1/libraries/l", {"autoAcceptTagProposals": True}),
+        ("PATCH", "/v1/libraries/l/documents/d", {"acceptProposals": ["region=EMEA"], "dismissProposals": ["author"]}),
+    ]
+
+
+PROPOSED_DOC = {
+    "tags": [{"key": "type", "value": "report", "source": "user"}],
+    "tagProposals": [{"key": "region", "value": "EMEA"}, {"key": "topic", "value": "margin"}],
+    "periodProposal": {"start": "2025-10-01", "end": "2025-12-31"},
+    "authorProposal": "Jane Doe",
+}
+
+
+def test_the_review_lists_every_proposal():
+    assert [p.item for p in proposals_of(PROPOSED_DOC)] == ["region=EMEA", "topic=margin", "period", "author"]
+    assert accept_all(PROPOSED_DOC) == ["region=EMEA", "topic=margin", "period", "author"]
+    assert summary(PROPOSED_DOC) == "region=EMEA, topic=margin, period 2025-10-01..2025-12-31, author Jane Doe"
+    assert proposals_of({"tagProposals": [], "periodProposal": None}) == []
+
+
+def test_unchanged_acceptances_dismissals_and_edits_become_one_patch():
+    decisions = {
+        "region=EMEA": ("accept", "region=Europe"),  # edited
+        "topic=margin": ("accept", "topic=margin"),
+        "period": ("accept", "2025-07-01..2025-09-30"),  # edited
+        "author": ("dismiss", "Jane Doe"),
+    }
+    assert review_request(PROPOSED_DOC, decisions) == {
+        "tags": [{"key": "type", "value": "report"}, {"key": "region", "value": "Europe"}],
+        "periodStart": "2025-07-01",
+        "periodEnd": "2025-09-30",
+        "acceptProposals": ["topic=margin"],
+        "dismissProposals": ["region=EMEA", "period", "author"],
+    }
+
+
+def test_leaving_everything_sends_nothing_and_a_bad_edit_is_refused():
+    assert review_request(PROPOSED_DOC, {}) is None
+    assert review_request(PROPOSED_DOC, {"author": ("leave", "x")}) is None
+    with pytest.raises(ValueError):
+        review_request(PROPOSED_DOC, {"period": ("accept", "Q3 2025")})
+    with pytest.raises(ValueError):
+        review_request(PROPOSED_DOC, {"region=EMEA": ("accept", "Europe")})

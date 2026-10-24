@@ -12,6 +12,9 @@ keep describing the active generation, the one search returns; the replacement's
 A metadata update (``PATCH``) changes the record at once and queues ``retag``, which copies the
 change onto the chunks that filters match (spec §7.7). Each update raises ``metadataVersion``;
 the message carries it, so a worker that reads an older record retries (evidence.md E28).
+``acceptProposals`` moves proposals made during ingestion into the record's own fields, with
+``source: accepted-proposal`` for tags (spec §9.1); ``dismissProposals`` drops them. A PATCH
+that only dismisses changes nothing filters match, so it raises no version and queues no retag.
 """
 
 from __future__ import annotations
@@ -31,6 +34,7 @@ from fli.blobs import BlobStore
 from fli.errors import ApiError, document_not_found, library_not_found
 from fli.generation import latest_generation
 from fli.ids import new_id, original_blob_path, safe_file_name
+from fli.proposals import facets
 from fli.queue import Queue
 from fli.store import Conflict, DocumentStore, Record, public
 
@@ -239,8 +243,11 @@ async def get_document(library_id: str, document_id: str, libraries: Libraries, 
     return public(await load(store, library_id, document_id))
 
 
+ProposalItem = Annotated[str, Field(min_length=1, max_length=301)]  # "key=value", "period" or "author"
+
+
 class DocumentUpdate(BaseModel):
-    """The fields a person may set. ``acceptProposals`` arrives with proposals (Phase 3)."""
+    """The fields a person may set, and the proposals they accept or dismiss (spec §6.2)."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -248,25 +255,70 @@ class DocumentUpdate(BaseModel):
     periodStart: date | None = None
     periodEnd: date | None = None
     tags: list[Tag] | None = Field(default=None, max_length=100)
+    acceptProposals: list[ProposalItem] = Field(default_factory=list, max_length=100)
+    dismissProposals: list[ProposalItem] = Field(default_factory=list, max_length=100)
+
+
+def resolve_proposals(record: Record, changes: dict[str, Any]) -> None:
+    """Accept or dismiss proposals named as ``key=value``, ``period`` or ``author``.
+
+    Each must be a current proposal: one regenerated or resolved meanwhile is refused, so a
+    stale screen never accepts what it did not show. Error messages never echo the values.
+    """
+    accept, dismiss = changes.get("acceptProposals") or [], changes.get("dismissProposals") or []
+    if set(accept) & set(dismiss):
+        raise ApiError(400, "invalid_request", "a proposal cannot be both accepted and dismissed")
+    if "period" in accept and ("periodStart" in changes or "periodEnd" in changes):
+        raise ApiError(400, "invalid_request", "accept the period proposal or set the period, not both")
+    if "author" in accept and "author" in changes:
+        raise ApiError(400, "invalid_request", "accept the author proposal or set the author, not both")
+    proposed = {f"{t['key']}={t['value']}" for t in record.get("tagProposals") or []}
+    for item in [*accept, *dismiss]:
+        known = record.get(f"{item}Proposal") is not None if item in ("period", "author") else item in proposed
+        if not known:
+            raise ApiError(400, "invalid_request", "a named proposal is not among the document's current proposals")
+    tags = list(record.get("tags") or [])
+    have = {f"{t['key']}={t['value']}" for t in tags}
+    for item in accept:
+        if item == "period":
+            period = record["periodProposal"]
+            record["periodStart"], record["periodEnd"] = period["start"], period["end"]
+        elif item == "author":
+            record["author"] = record["authorProposal"]
+        elif item not in have:
+            key, _, value = item.partition("=")
+            tags.append({"key": key, "value": value, "source": "accepted-proposal"})
+    record["tags"] = tags
+    record["facets"] = facets(tags)
+    resolved = set(accept) | set(dismiss)
+    record["tagProposals"] = [t for t in record.get("tagProposals") or [] if f"{t['key']}={t['value']}" not in resolved]
+    for name in ("period", "author"):
+        if name in resolved:
+            record[f"{name}Proposal"] = None
 
 
 def apply_update(record: Record, changes: dict[str, Any]) -> None:
-    """Apply validated changes. Tags kept from before keep their source; new ones are ``user``."""
+    """Apply validated changes. Tags kept from before keep their source; new ones are ``user``.
+
+    Fields set explicitly apply first; accepted proposals then add to them.
+    """
     if "author" in changes:
         record["author"] = changes["author"]
     for name in ("periodStart", "periodEnd"):
         if name in changes:
             record[name] = changes[name].isoformat() if changes[name] else None
-    if (record.get("periodStart") is None) != (record.get("periodEnd") is None):
-        raise ApiError(400, "invalid_request", "periodStart and periodEnd go together")
-    if record.get("periodStart") and record["periodStart"] > record["periodEnd"]:
-        raise ApiError(400, "invalid_request", "periodStart is after periodEnd")
     if changes.get("tags") is not None:
         sources = {(t["key"], t["value"]): t.get("source", "user") for t in record.get("tags", [])}
         pairs = dict.fromkeys((t["key"], t["value"]) for t in changes["tags"])
         record["tags"] = [{"key": k, "value": v, "source": sources.get((k, v), "user")} for k, v in pairs]
         record["facets"] = sorted({f"{k}={v}" for k, v in pairs})
-    record["metadataVersion"] = (record.get("metadataVersion") or 0) + 1
+    resolve_proposals(record, changes)
+    if (record.get("periodStart") is None) != (record.get("periodEnd") is None):
+        raise ApiError(400, "invalid_request", "periodStart and periodEnd go together")
+    if record.get("periodStart") and record["periodStart"] > record["periodEnd"]:
+        raise ApiError(400, "invalid_request", "periodStart is after periodEnd")
+    if set(changes) - {"dismissProposals"}:
+        record["metadataVersion"] = (record.get("metadataVersion") or 0) + 1
 
 
 @router.patch("/{document_id}")
@@ -298,6 +350,8 @@ async def update_document(
             continue
     else:
         raise ApiError(409, "conflict", "the document changed while it was being updated; retry")
+    if not set(changes) - {"dismissProposals"}:
+        return public(record)  # nothing filters match changed: no retag
     message = {
         "type": "retag",
         "libraryId": library_id,

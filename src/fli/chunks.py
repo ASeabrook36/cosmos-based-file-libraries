@@ -16,6 +16,9 @@ Queries here are single-partition (``[libraryId, documentId]``) and never vector
 ``patch`` sets top-level fields on one chunk (``retag``, spec §7.7). Its request charge is
 returned, so the worker can report what metadata changes cost: unmeasured so far, and possibly
 close to a full write, since Cosmos re-indexes the item.
+
+``opening`` reads the text of a generation's first chunk, for library description proposals
+(spec §9.1). It selects ``c.text`` only, never ``c.embedding`` (CLAUDE.md rule 5).
 """
 
 from __future__ import annotations
@@ -35,6 +38,13 @@ class ChunkStore(Protocol):
     async def generations(self, library_id: str, document_id: str) -> list[tuple[str, int]]: ...
     async def delete(self, library_id: str, document_id: str, chunk_id: str) -> None: ...
     async def patch(self, library_id: str, document_id: str, chunk_id: str, fields: Record) -> float: ...
+    async def opening(self, library_id: str, document_id: str, generation: int) -> str | None: ...
+
+
+OPENING_QUERY = (
+    "SELECT TOP 1 c.text FROM c WHERE c.libraryId = @libraryId AND c.documentId = @documentId"
+    " AND c.generation = @generation AND c.chunkIndex = 0"
+)
 
 
 def retry_after_seconds(exc: BaseException) -> float | None:
@@ -113,6 +123,20 @@ class CosmosChunks:
 
         return await capped(self.governor, call, self.max_attempts)
 
+    async def opening(self, library_id: str, document_id: str, generation: int) -> str | None:
+        items = self._c.query_items(
+            OPENING_QUERY,
+            parameters=[
+                {"name": "@libraryId", "value": library_id},
+                {"name": "@documentId", "value": document_id},
+                {"name": "@generation", "value": generation},
+            ],
+            partition_key=[library_id, document_id],
+        )
+        async for item in items:
+            return item.get("text")
+        return None
+
 
 class MemoryChunks:
     def __init__(self) -> None:
@@ -139,3 +163,9 @@ class MemoryChunks:
         if (chunk := self.items.get((library_id, document_id, chunk_id))) is not None:
             chunk.update(fields)
         return 0.0
+
+    async def opening(self, library_id: str, document_id: str, generation: int) -> str | None:
+        for (lib, doc, _), c in self.items.items():
+            if (lib, doc) == (library_id, document_id) and c["generation"] == generation and c["chunkIndex"] == 0:
+                return c["text"]
+        return None

@@ -57,6 +57,15 @@ class IndexClient:
     def update_description(self, library_id: str, description: str) -> dict[str, Any]:
         return self._call("PATCH", f"/v1/libraries/{library_id}", json={"description": description})
 
+    def update_library(self, library_id: str, **fields: Any) -> dict[str, Any]:
+        """``name``, ``description``, ``autoAcceptTagProposals``: only the fields given change."""
+        return self._call("PATCH", f"/v1/libraries/{library_id}", json=fields)
+
+    def propose_description(self, library_id: str) -> bool:
+        """Queue a new description proposal; it appears in the library's ``descriptionProposal``."""
+        self._call("POST", f"/v1/libraries/{library_id}/description:propose")
+        return True
+
     def upload(self, library_id: str, file_name: str, data: bytes, content_type: str | None = None) -> dict[str, Any]:
         files = {"file": (file_name, data, content_type or "application/octet-stream")}
         return self._call("POST", f"/v1/libraries/{library_id}/documents", files=files)
@@ -80,8 +89,18 @@ class IndexClient:
         return self._call("GET", f"/v1/libraries/{library_id}/tool")
 
     def update_document(self, library_id: str, document_id: str, **fields: Any) -> dict[str, Any]:
-        """``author``, ``periodStart``, ``periodEnd``, ``tags``: only the fields given change."""
+        """``author``, ``periodStart``, ``periodEnd``, ``tags``, ``acceptProposals``, ``dismissProposals``.
+
+        Only the fields given change.
+        """
         return self._call("PATCH", f"/v1/libraries/{library_id}/documents/{document_id}", json=fields)
+
+    def resolve_proposals(
+        self, library_id: str, document_id: str, accept: list[str], dismiss: list[str] | None = None, **fields: Any
+    ) -> dict[str, Any]:
+        """Accept or dismiss proposals (``key=value``, ``period``, ``author``), with any edited fields."""
+        body = {**fields, "acceptProposals": accept, "dismissProposals": dismiss or []}
+        return self.update_document(library_id, document_id, **body)
 
     def search(
         self, library_id: str, agent_id: str, query: str, top: int = 8, filters: dict[str, Any] | None = None
