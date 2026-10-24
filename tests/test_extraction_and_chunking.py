@@ -139,6 +139,24 @@ def test_read_channel_distinguishes_rms_from_password_from_unknown():
     assert classify_unreadable(password) == ("categorical", "password_protected")
     assert classify_unreadable(unknown) == ("encrypted", None)  # unreadable after a successful read → exclude
     assert classify_unreadable(b"%PDF-1.7 /Encrypt /Filter /MicrosoftIRMServices") == ("encrypted", None)
+    assert classify_unreadable(b"%PDF-1.7 truncated") == ("failed", None)
+    assert classify_unreadable(b"PK\x03\x04 this is not a zip") == ("failed", None)
+
+
+@pytest.mark.parametrize(
+    ("data", "filename"),
+    [
+        (b"PK\x03\x04 this is not a real zip archive", "corrupt.docx"),
+        (b"This is plain text saved with a .pdf name.", "mislabelled.pdf"),
+        (b"%PDF-1.7\n%%garbage with no objects", "truncated.pdf"),
+    ],
+)
+async def test_damaged_or_mislabelled_files_are_parser_errors_not_encrypted(data, filename):
+    from fli.worker.handlers import status_detail
+
+    result = await extract(data, filename=filename)
+    assert result.outcome == "failed"
+    assert status_detail(result) == "parser_error"
 
 
 async def test_office_extension_with_protected_container_is_classified_not_retried():

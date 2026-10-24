@@ -369,6 +369,8 @@ An `ingest` whose generation is no longer pending is completed without processin
 | PNG, JPEG, GIF, WEBP, TIFF, BMP | Image path only (§7.5); OCR text from the vision description |
 | Legacy DOC, PPT, XLS | `failed`, `unsupported_file_type` in v1 |
 
+A file that cannot be parsed is `encrypted` or `password_protected` only when it shows a sign of protection: an Office encryption container, or a PDF `/Encrypt` dictionary. Otherwise it is damaged or not what its name says, and fails as `parser_error` (`evidence.md` E33).
+
 `authoredAt` and `author` come from document core properties (Office), PDF metadata, or email headers. Start from `src/fli/extraction.py` (§13), which already does native-first extraction with OCR fallback, detects encrypted and password-protected files, and records page, slide and sheet locations.
 
 ### 7.4 Chunking

@@ -9,7 +9,11 @@ retried, because retrying cannot change the answer:
 
 * rights-protected (RMS/IRM) Office or PDF → ``encrypted``;
 * password-protected Office or PDF → ``categorical`` with ``password_protected``;
-* unparseable for a reason not recognised → ``encrypted`` (treated as unreadable).
+* an Office container (OLE) with no marker recognised → ``encrypted``: encrypted Office files
+  are OLE-wrapped, and nothing else should arrive as one under a modern extension;
+* anything else unparseable (a damaged file, plain text under a ``.pdf`` name) → ``failed``,
+  reported as ``parser_error``. Calling it encrypted sent admins looking for a password
+  (``evidence.md`` E33).
 
 Transient failures (HTTP 5xx, timeouts) never reach this classification: they raise and the
 queue message is retried. The rights-protection markers follow the MS-OFFCRYPTO data-space
@@ -116,7 +120,7 @@ def classify_unreadable(data: bytes) -> tuple[Outcome, str | None]:
             return "encrypted", None
         if b"/Encrypt" in data:
             return "categorical", "password_protected"
-    return "encrypted", None
+    return "failed", None  # no sign of protection: the file is damaged or not what its name says
 
 
 def _utc(value: datetime | None) -> datetime | None:
