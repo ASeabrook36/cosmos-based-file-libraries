@@ -393,7 +393,7 @@ Cosmos throttles with HTTP 429 when a partition's throughput is exceeded. The SD
 
 ### 7.7 Metadata changes
 
-`PATCH` on a document updates the document record at once, then enqueues `retag`, which patches `facets`, `author`, `periodStart` and `periodEnd` on every chunk of the active and pending generations (a single-partition query by `libraryId` + `documentId`, then partial-update operations). The pending generation is a replacement in flight; older generations are never searchable and await their purge. What a patch costs is unmeasured. Cosmos may re-index the whole item, which would put a patch closer to a write (`evidence.md` E10: about 144 RU) than to a small one; the Phase 3 filters check measures it, from the worker's `retag done` log line.
+`PATCH` on a document updates the document record at once, then enqueues `retag`, which patches `facets`, `author`, `periodStart` and `periodEnd` on every chunk of the active and pending generations (a single-partition query by `libraryId` + `documentId`, then partial-update operations). The pending generation is a replacement in flight; older generations are never searchable and await their purge. A patch costs about 80 RU per chunk, a little over half a write (`evidence.md` E32; a write is about 144 RU, E10), so retagging a 239-chunk document costs about 19,000 RU. The worker's `retag done` log line reports it.
 
 ### 7.8 Deletion and replacement
 

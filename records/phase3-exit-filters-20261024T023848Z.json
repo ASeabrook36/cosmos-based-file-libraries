@@ -1,0 +1,144 @@
+{
+  "check": "filters",
+  "startedAt": "2026-10-24T02:36:47.248440+00:00",
+  "documents": {
+    "uploaded": 8,
+    "ready": 8
+  },
+  "searches": [
+    {
+      "filterKeys": [
+        "period",
+        "tags"
+      ],
+      "resultCount": 8,
+      "unfilteredResultCount": 8,
+      "mismatches": 0,
+      "documentsReturned": 1,
+      "missingNotesExpected": [
+        "period"
+      ],
+      "missingNotesFound": [
+        "period"
+      ],
+      "notes": 1,
+      "filtersAppliedKeys": [
+        "period",
+        "tags"
+      ],
+      "requestCharge": 7.21,
+      "unfilteredRequestCharge": 15.02
+    },
+    {
+      "filterKeys": [
+        "tags"
+      ],
+      "resultCount": 4,
+      "unfilteredResultCount": 8,
+      "mismatches": 0,
+      "documentsReturned": 1,
+      "missingNotesExpected": [],
+      "missingNotesFound": [],
+      "notes": 0,
+      "filtersAppliedKeys": [
+        "tags"
+      ],
+      "requestCharge": 5.55,
+      "unfilteredRequestCharge": 16.23
+    },
+    {
+      "filterKeys": [
+        "authors"
+      ],
+      "resultCount": 8,
+      "unfilteredResultCount": 8,
+      "mismatches": 0,
+      "documentsReturned": 3,
+      "missingNotesExpected": [
+        "authors"
+      ],
+      "missingNotesFound": [
+        "authors"
+      ],
+      "notes": 1,
+      "filtersAppliedKeys": [
+        "authors"
+      ],
+      "requestCharge": 15.44,
+      "unfilteredRequestCharge": 15.06
+    },
+    {
+      "filterKeys": [
+        "fileTypes"
+      ],
+      "resultCount": 4,
+      "unfilteredResultCount": 8,
+      "mismatches": 0,
+      "documentsReturned": 1,
+      "missingNotesExpected": [],
+      "missingNotesFound": [],
+      "notes": 0,
+      "filtersAppliedKeys": [
+        "fileTypes"
+      ],
+      "requestCharge": 5.55,
+      "unfilteredRequestCharge": 16.04
+    },
+    {
+      "filterKeys": [
+        "period",
+        "tags"
+      ],
+      "resultCount": 1,
+      "unfilteredResultCount": 8,
+      "mismatches": 0,
+      "documentsReturned": 1,
+      "missingNotesExpected": [
+        "period"
+      ],
+      "missingNotesFound": [
+        "period"
+      ],
+      "notes": 1,
+      "filtersAppliedKeys": [
+        "period",
+        "tags"
+      ],
+      "requestCharge": 5.35,
+      "unfilteredRequestCharge": 14.85
+    },
+    {
+      "filterKeys": [
+        "tags"
+      ],
+      "resultCount": 0,
+      "unfilteredResultCount": 8,
+      "mismatches": 0,
+      "documentsReturned": 0,
+      "missingNotesExpected": [],
+      "missingNotesFound": [],
+      "notes": 1,
+      "filtersAppliedKeys": [
+        "tags"
+      ],
+      "requestCharge": 3.99,
+      "unfilteredRequestCharge": 16.21
+    }
+  ],
+  "retag": {
+    "secondsToAppear": 5.8,
+    "secondsToDisappear": 0.2,
+    "patches": [
+      {
+        "chunks": 1,
+        "requestCharge": 71.25
+      },
+      {
+        "chunks": 1,
+        "requestCharge": 71.25
+      }
+    ]
+  },
+  "passed": true,
+  "finishedAt": "2026-10-24T02:38:48.148272+00:00"
+}
