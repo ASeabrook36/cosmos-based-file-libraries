@@ -2,7 +2,7 @@ Authored by Strategist v4.
 
 # Library organization assessment
 
-Date: 2026-10-23 (America/New_York).
+Date: 2026-10-23 (America/New_York). Updated 2026-10-24 with hybrid advice and the requested evidence plan.
 Reviewed snapshot: [39632f2](https://github.com/ASeabrook36/cosmos-based-file-libraries/tree/39632f2b1c8f2db7bee65323888228fbba83fee0).
 Status: technical consultation and recommendations; no new binding ruling, product decision, production approval, or authorization of spend.
 
@@ -78,9 +78,51 @@ The same page now describes dropping and re-adding vector policies/indexes with 
 
 Microsoft still asks users of vector search with hierarchical partition keys to contact the Cosmos team for account configuration. That remains applicable. Cross-client delete visibility, Entra caller authentication, purge recovery and backup/restore are existing production follow-ups, not evidence against the basic library model.
 
-## Recommended next step
+## Follow-up: what hybrid would earn here
 
-Use Phase 4 as the next evidence-producing step, adding concurrent ingestion and foreground search to the before/after library-count comparison. Preserve the library layout and direct optimization effort toward measured overhead and resource contention. No alternative partitioning scheme is currently justified.
+Added 2026-10-24 at Andrew's request. This section records advice and a concrete evidence plan; it changes no accepted protocol, phase exit check, production configuration or spending authority.
+
+Hybrid combines semantic retrieval with lexical ranking. Its credible benefit here is finding distinctive names, product codes, identifiers, rare jargon and explicit wording that embeddings can overlook. Structured metadata filtering already works with vector search; dates, tags, authors and library isolation do not require hybrid. Lexical ranking of body text is also different from a guaranteed literal identifier lookup: tokenization and punctuation handling must be checked on the actual identifiers.
+
+Recommendation: use vector-only search for the structural proof. Include exact-term questions in the quality set below. Do not build a hybrid optimization campaign merely to “cover more ground.” If representative vector searches miss necessary evidence, first inspect extraction, chunking, metadata exclusions and query formulation. If the remaining misses are lexical, make a small paired comparison of the existing hybrid path against vector-only on those cases plus ordinary semantic questions. Record rescued answers, regressions, complete RU, latency and full-text index write/storage overhead. A targeted lexical lookup may suffice for a specific need; its implementation is not commissioned here. Hybrid becomes worth adopting only if its measured benefit justifies its cost for the intended workload.
+
+Microsoft's [hybrid overview](https://learn.microsoft.com/en-us/azure/search/hybrid-search-overview) explains the semantic/lexical distinction and exact-term use cases. Its Azure AI Search relevance claims do not establish quality or economics for this Cosmos implementation.
+
+The current build plan already includes hybrid measurements. Deferring those is a recommendation for Andrew's scope decision, not a silent removal of an existing phase requirement. Leave the existing code and full-text index unchanged during the first structural comparison, so it measures the actual configuration.
+
+## Concrete next evidence: three questions
+
+Extend the existing Phase 4 work rather than start a separate broad benchmark. The table specifies observations needed to answer Andrew's questions; the sequence below keeps the work bounded. Proposed counts are practical starting samples, not scientific acceptance thresholds.
+
+| Question | Concrete comparison | What the result establishes |
+|---|---|---|
+| Does library-scoped retrieval remain efficient as the container grows and spans physical partitions? | Keep selected personal and shared anchor libraries, their contents and questions fixed. Replay the same searches at 10, 100 and 1,000 populated libraries. Then, in a separately costed multi-partition run, repeat after verifying actual physical distribution. Record which partition ranges each query contacts. | Whether unrelated library growth adds query work; whether routing stays confined to the ranges holding the named library. Library count alone cannot establish multi-partition behavior. |
+| Does it work for small personal and large, popular shared libraries? | Use the existing 30–150-chunk personal sizes and shared scopes around 10k, 30k and 100k chunks. Hold a low-rate anchor workload steady, then separately increase shared-library search traffic and add uploads, first into another library and then into the searched library. | Cost versus scope size, saturation and noisy-neighbor behavior; whether latency loss comes from shared capacity, embedding quota, index freshness or an unexpectedly broad query path. |
+| Does the exact vector configuration retrieve useful evidence at those sizes? | On stable, indexed corpora, compare indexed top-10 with forced exact vector top-10 using identical queries, converted vectors and filters. Separately score whether the default API top-8 contains the annotated passages needed to answer 50–100 realistic questions. | Approximation/quantization behavior versus the stored-vector reference, and actual evidence-finding quality. High agreement with exact vector search alone does not establish useful answers. |
+
+### Execution sequence and records
+
+1. **Prepare one reproducible runner and manifest.** Extend the planned `scripts/scale_demo.py`; do not implement application features first. Record producing commit, SDK version, exported actual container definitions, capacity mode and configured throughput, observed physical partition count, worker/API instance counts, embedding deployment/quota and search options. Use real permission-cleared documents and embeddings. Persist corpus hashes, library sizes and query-set version; no random vectors or filler text. If material is reused across libraries for load, label that reuse and keep the quality set representative.
+
+2. **Choose anchor libraries and the quality questions before measuring.** Include small personal and each shared-library size, ordinary semantic paraphrases, names/identifiers from the real documents, and selective metadata filters. Annotate supporting document/passage locations and expected no-answer cases. Reuse the same questions in each applicable comparison, and report personal/shared and semantic/exact-term results separately. Keep a few wrong-agent requests to confirm isolation while scaling.
+
+3. **Run the inexpensive existing-layout comparison first.** Load the 10 → 100 → 1,000 library milestones. Keep anchor content unchanged. At each milestone wait until observed index use and RU settle; record the index type rather than assume DiskANN graph traversal. Replay about 20 fixed questions per anchor five times, interleaving libraries and reporting variation, with warm-up separated. Measure a fresh library's time from write completion to indexed retrieval in the populated container separately. A new library may initially scan; do not mix that period into steady-state cost.
+
+4. **Separate database work from API and worker overhead.** Replay cached query vectors directly against Cosmos as a diagnostic, then the normal authenticated API searches. Record vector-query RU/time, complete API RU, embedding time/throttles, document reads and optional neighbor costs. With the baseline held fixed, ramp shared-library request rate in recorded steps, then run the upload comparisons. Record p50/p95 end-to-end latency, achieved request rate, errors, 429s/retries, ingestion rate, index lag and worker memory. Meter refresh/list work and library-item bytes separately. If performance degrades, first repeat the affected case with ingestion paused or reduced, changing one lever at a time. A fresh-index delay or embedding bottleneck does not by itself indict the partition key.
+
+5. **Make the multi-partition step explicit and bounded.** Before provisioning or loading more, prepare a cost/resource estimate, proposed sizes and means of verifying physical distribution. Obtain any required authorization under the existing infrastructure/spend boundaries. Use service-reported physical-partition information and per-query diagnostics; do not infer distribution from library count or a rough GB-per-chunk estimate. First test a container with multiple partitions while anchors remain small. Testing one library spread over several partitions is a distinct case: demonstrate it if the target workload and authorized envelope support it; otherwise report it unmeasured. For isolated routing comparisons retain comparable capacity headroom, identify partition splits, and separate transient index rebuilding from settled performance. Redact sensitive identifiers in committed diagnostics.
+
+6. **Measure quality on a quiescent snapshot.** Finish ingestion/purges and use ready documents with stable active generations. Forced exact and indexed queries must use the same float16 conversion, filters, candidate scope and TOP. Account for ties and scopes with fewer than ten eligible chunks. Record recall@10 across repeats. That exact reference uses the same stored vectors, so it cannot establish absence of float16 loss against float32 or suitability of the embedding model. For the annotated questions separately report answer-support hit rate at API top-8, missing evidence, spurious results on no-answer questions and filter exclusions. Any optional end-to-end answer evaluation is reported separately from retrieval quality. Diagnose failures before introducing another layout or a hybrid matrix.
+
+7. **Commit a compact result with the raw evidence.** Use `records/` for machine output and a concise linked report alongside the build plan. For each question state: measured sizes/load/topology, observed result, remaining uncertainty, and whether the next fix concerns workers/API, supporting metadata records, capacity or the chunk partition/vector-index design. Report serverless RU as RU, and model production autoscale/storage/AI costs separately; do not convert RU into a production price using serverless unit rates. Record each live run's actual resource use and completion state.
+
+### Interpretation and decision boundaries
+
+The three implementation concerns do not currently require changing `libraryId → documentId` or the `libraryId` vector shard key. Worker pacing/batching, incremental summaries and parallel API orchestration can be changed around that layout. Moving growing facet catalogs out of the hot library record is a supporting metadata adjustment, not a chunk-container rebuild.
+
+Evidence that would justify reopening the foundational design includes settled queries contacting unrelated ranges, scans or index-quality failures at intended large-library sizes, or a popular library's capacity ceiling remaining inadequate after measured capacity and workload controls. Diagnose any failure against actual routing, query shape, SDK/service behavior and declared support before concluding that the keys are wrong.
+
+The measurements should expose performance curves and limitations. Andrew retains the decision on required scale, acceptable latency/quality, cost and any new live-resource commitment. A 1,000-library demonstration establishes only the tested topology and traffic; it does not certify arbitrary production scale. No tests have been executed by this documentation update.
 
 ## Sources
 
