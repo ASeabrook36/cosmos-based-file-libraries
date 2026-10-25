@@ -1,6 +1,8 @@
 # Cosmos DB Key-Based File Libraries
-
 *Working name.*
+
+
+*From Seabrook Lab*
 
 A search service that stores agent file libraries in Azure Cosmos DB instead of Azure AI Search.
 
