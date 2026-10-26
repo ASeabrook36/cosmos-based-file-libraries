@@ -1,0 +1,75 @@
+{
+  "check": "library-performance-dashboard",
+  "inventory": {
+    "documents": 4,
+    "activeDocuments": 4,
+    "chunks": 191,
+    "images": 0,
+    "embeddingModel": "text-embedding-3-large",
+    "embeddingDimensions": 3072,
+    "measuredDocuments": 1
+  },
+  "measuredIngestion": {
+    "extractionMs": 101.8,
+    "chunkingMs": 3.2,
+    "embeddingMs": 959.1,
+    "chunkWriteMs": 966.8,
+    "chunkCount": 18,
+    "chunkTokens": 6584,
+    "chunkTokensMin": 116,
+    "chunkTokensMax": 464,
+    "chunkTokensMean": 365.8,
+    "embeddingTokens": 6584,
+    "embeddingRequests": 2,
+    "embeddingRetries": 0,
+    "embeddingThrottles": 0,
+    "embeddingModel": "text-embedding-3-large",
+    "embeddingDimensions": 3072,
+    "chunkWriteCharge": 2592.65,
+    "chunkingVersion": "chunking-v1.1",
+    "tokenizer": "cl100k_base",
+    "totalMs": 15945.9
+  },
+  "retrievalSummary": {
+    "retrievalCalls": 3,
+    "searches": 1,
+    "fullReads": 0,
+    "budgetRefusals": 1,
+    "errors": 0,
+    "distinctAgents": 1,
+    "requestCharge": 26.98,
+    "chargeComplete": true,
+    "latencyP50Ms": 501.4,
+    "latencyP95Ms": 1486.4,
+    "emptySearches": 0,
+    "thinSearches": 0,
+    "queryEmbeddingTokens": 8,
+    "queryEmbeddingTokensComplete": true,
+    "byOperation": [
+      {
+        "operation": "search",
+        "calls": 1,
+        "requestCharge": 17.69,
+        "latencyP50Ms": 1486.4,
+        "latencyP95Ms": 1486.4
+      },
+      {
+        "operation": "read",
+        "calls": 1,
+        "requestCharge": 3.42,
+        "latencyP50Ms": 261.2,
+        "latencyP95Ms": 261.2
+      },
+      {
+        "operation": "discover",
+        "calls": 1,
+        "requestCharge": 5.87,
+        "latencyP50Ms": 501.4,
+        "latencyP95Ms": 501.4
+      }
+    ]
+  },
+  "scope": "single-prototype-smoke-check",
+  "answerQualityAssessed": false,
+  "privacy": "No environment identifiers, prompts, source text or filenames retained."
+}

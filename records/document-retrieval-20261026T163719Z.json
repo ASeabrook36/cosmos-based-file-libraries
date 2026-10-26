@@ -1,0 +1,62 @@
+{
+  "check": "adaptive-document-retrieval",
+  "startedAt": "2026-10-26T16:37:19.369838+00:00",
+  "documents": [
+    {
+      "label": "self-rag",
+      "sha256": "d9eaa1398abac0df67a9d0933a5bf8b6d9d83d2e72da2a486073cd842dd52978"
+    },
+    {
+      "label": "lost-middle",
+      "sha256": "653b29619eae2ae4b361d7bdcdc06db4bedcb1b0eabe31814036beca8c1af0b1"
+    },
+    {
+      "label": "original-rag",
+      "sha256": "23e3249e9a1e75418d82efecab0ea8c4d033b89c93742f63208d47ce01f21233"
+    }
+  ],
+  "serviceChecks": {
+    "freshExtractionArtifacts": true,
+    "tools": 3,
+    "cataloguePages": 3,
+    "inspection": {
+      "estimatedTokens": 67465,
+      "tokenizer": "cl100k_base",
+      "usage": {
+        "requestCharge": 9.12,
+        "totalMs": 945.8
+      }
+    },
+    "budgetRefusal": true,
+    "completeBatch": {
+      "documentCount": 3,
+      "estimatedTokens": 67465,
+      "tokenizer": "cl100k_base",
+      "usage": {
+        "requestCharge": 9.12,
+        "totalMs": 738.3
+      },
+      "sectionCounts": [
+        30,
+        18,
+        19
+      ]
+    },
+    "searchProbe": {
+      "resultCount": 8,
+      "usage": {
+        "requestCharge": 18.28,
+        "totalMs": 1369.7
+      }
+    }
+  },
+  "modelChecks": [],
+  "complete": false,
+  "interruption": {
+    "type": "model_token_rate_limit",
+    "tokensPerMinute": 50000,
+    "scenario": "full_then_passages",
+    "successfulModelCallsBeforeThrottle": 2,
+    "resolution": "Use two smaller complete papers and bounded completion tokens; retry with provider reset timing."
+  }
+}

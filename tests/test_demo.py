@@ -105,7 +105,7 @@ def test_the_loop_stops_after_the_round_limit_and_asks_for_an_answer_without_too
     index = FakeIndex()
     again = Reply(None, [ToolCall("c", "search_library_finance", '{"query": "x"}')])
     chat = scripted(again, again, again, again, Reply("Final."))
-    turn = run_turn(chat, index, AGENT, [], "q")
+    turn = run_turn(chat, index, AGENT, [], "q", max_rounds=4)
     assert turn.answer == "Final." and len(turn.searches) == 4
     assert chat.seen[-1][1] == []
 
@@ -293,3 +293,120 @@ def test_dollar_amounts_render_as_text_not_latex():
     assert plain_dollars(answer) == r"Revenue was \$179,465 thousand (Analytics \$169,253)."
     assert plain_dollars(r"already \$5") == r"already \$5"  # never escaped twice
     assert plain_dollars("no amounts") == "no amounts"
+
+
+@pytest.mark.parametrize(
+    "headers,waits",
+    [
+        ({"retry-after": "7"}, [7.0]),
+        ({"retry-after-ms": "1500"}, [1.5]),
+        ({"retry-after": "120"}, [60.0, 60.0]),
+        ({}, [60.0]),
+    ],
+)
+def test_azure_chat_respects_rate_limit_headers_and_bounds_response_tokens(headers, waits):
+    from types import SimpleNamespace
+
+    from openai import RateLimitError
+
+    from fli_demo.agent import azure_chat
+
+    error = RateLimitError(
+        "quota exceeded",
+        response=httpx.Response(
+            429, headers=headers, request=httpx.Request("POST", "https://example.openai.azure.com")
+        ),
+        body=None,
+    )
+    replies = iter(
+        [error, SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content="Answer", tool_calls=[]))])]
+    )
+    seen = []
+
+    def create(**kwargs):
+        seen.append(kwargs)
+        item = next(replies)
+        if isinstance(item, Exception):
+            raise item
+        return item
+
+    client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)))
+    slept = []
+    chat = azure_chat("endpoint", "deployment", client=client, sleep=slept.append)
+    assert chat([{"role": "user", "content": "question"}], []).content == "Answer"
+    assert slept == waits and len(seen) == 2
+    assert all(x["max_completion_tokens"] == 8000 for x in seen)
+
+
+def test_azure_chat_exhausts_a_bounded_number_of_rate_limit_attempts():
+    from types import SimpleNamespace
+
+    from openai import RateLimitError
+
+    from fli_demo.agent import azure_chat
+
+    error = RateLimitError(
+        "quota exceeded",
+        response=httpx.Response(
+            429, headers={"retry-after": "1"}, request=httpx.Request("POST", "https://example.openai.azure.com")
+        ),
+        body=None,
+    )
+    calls = []
+
+    def create(**kwargs):
+        calls.append(kwargs)
+        raise error
+
+    client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)))
+    slept = []
+    with pytest.raises(RateLimitError):
+        azure_chat("endpoint", "deployment", client=client, sleep=slept.append)([], [])
+    assert len(calls) == 3 and slept == [1.0, 1.0]
+
+
+def test_passages_can_be_reduced_to_fit_remaining_context_without_discarding_all_search_evidence():
+    from fli.chunking import ApproxTokenizer
+    from fli_demo.agent import _run_search
+
+    index = FakeIndex()
+    original = index.search
+
+    def many_passages(*args, **kwargs):
+        response = original(*args, **kwargs)
+        response["results"] = [
+            {"fileName": f"source-{i}.md", "location": {}, "text": "Relevant evidence. " * 100} for i in range(8)
+        ]
+        return response
+
+    index.search = many_passages
+    traces = []
+    tokenizer = ApproxTokenizer()
+    content = _run_search(
+        ToolCall("s", "search_library_finance", '{"query":"supporting facts"}'),
+        index,
+        AGENT,
+        {"search_library_finance": "lib-a"},
+        {},
+        traces,
+        lambda: 0,
+        1000,
+        tokenizer,
+    )
+    result = json.loads(content)
+    assert 0 < result["passagesDelivered"] < result["passagesMatched"] == 8
+    assert result["contextLimited"] and result["disposition"] == "context_limited"
+    assert len(tokenizer.encode(content)) <= 1000
+    assert result["results"][0]["file"] == "source-0.md"
+    assert traces[0].result_count == result["passagesDelivered"]
+    assert len(traces[0].citations) == result["passagesDelivered"]
+
+
+def test_routing_guidance_distinguishes_coverage_from_attention_and_specialized_model_features():
+    chat = scripted(Reply("Answer"))
+    run_turn(chat, FakeIndex(), AGENT, [], "question")
+    guidance = chat.seen[0][0][0]["content"]
+    assert "original file is not, by itself, a reason to load the whole file" in guidance
+    assert "more context can impair attention" in guidance
+    assert "Separate findings actually supported by citations" in guidance
+    assert "Self-assessment alone does not prove completeness" in guidance

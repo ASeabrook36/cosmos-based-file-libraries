@@ -150,6 +150,7 @@ class DocumentProposals:
     tags: list[tuple[str, str]] = field(default_factory=list)
     period: tuple[str, str] | None = None  # (start, end), ISO dates
     author: str | None = None
+    description: str | None = None  # discovery hint from opening text, never evidence of the whole file
 
 
 class Piece(Protocol):
@@ -185,7 +186,9 @@ def prompt_vocabulary(library: Mapping[str, Any]) -> dict[str, Any]:
 
 DOCUMENT_INSTRUCTIONS = f"""You label documents in a file library so that agents can filter searches.
 Answer with one JSON object: {{"period": {{"start": "YYYY-MM-DD", "end": "YYYY-MM-DD"}} or null, \
-"author": string or null, "tags": [{{"key": string, "value": string}}]}}.
+"author": string or null, "description": string or null, "tags": [{{"key": string, "value": string}}]}}.
+- description: one or two sentences (at most 800 characters) identifying the document's subject and purpose \
+from this opening text. This is a discovery hint, not a full-document summary. Do not invent coverage.
 - period: the period the document is about (for example the quarter a report covers), not when it was \
 written. Give one only when the document states or clearly implies it; otherwise null.
 - author: the person or organization that wrote the document, only when the text names them; otherwise null.
@@ -311,7 +314,12 @@ def parse_document_proposals(data: Mapping[str, Any], library: Mapping[str, Any]
         if start and end and start <= end:
             period = (start, end)
     author = _text(data.get("author"), 200)
-    return DocumentProposals(tags=tags[:MAX_TAGS], period=period, author=spellings.author(author) if author else None)
+    return DocumentProposals(
+        tags=tags[:MAX_TAGS],
+        period=period,
+        author=spellings.author(author) if author else None,
+        description=_text(data.get("description"), 800),
+    )
 
 
 def facets(tags: Iterable[Mapping[str, Any]]) -> list[str]:

@@ -27,8 +27,9 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 
-from fli.embedding import Embedder
+from fli.embedding import Embedder, measure_embeddings
 from fli.generation import filter_visible, is_visible
+from fli.metrics import record as record_metric
 from fli.permissions import check_search_allowed
 from fli.query import (
     MAX_FETCH,
@@ -59,6 +60,9 @@ class QueryCost:
 
 
 class ChunkReader(Protocol):
+    async def document(
+        self, library_id: str, document_id: str, generation: int, limit: int, cost: QueryCost
+    ) -> list[Record]: ...
     async def search(self, library_id: str, query: RenderedQuery, cost: QueryCost) -> list[Record]: ...
     async def neighbors(
         self, library_id: str, document_id: str, generation: int, indexes: Sequence[int], cost: QueryCost
@@ -68,6 +72,25 @@ class ChunkReader(Protocol):
 class CosmosChunkReader:
     def __init__(self, container: Any) -> None:  # azure.cosmos.aio.ContainerProxy for "chunks"
         self._c = container
+
+    async def document(
+        self, library_id: str, document_id: str, generation: int, limit: int, cost: QueryCost
+    ) -> list[Record]:
+        if not 1 <= limit <= 100_001:
+            raise ValueError("invalid complete-document chunk limit")
+        sql = (
+            f"SELECT TOP {limit} c.chunkIndex, c.text, c.heading, c.location, c.contentKind FROM c "
+            "WHERE c.libraryId = @libraryId AND c.documentId = @documentId AND c.generation = @generation"
+        )
+        params = [
+            {"name": "@libraryId", "value": library_id},
+            {"name": "@documentId", "value": document_id},
+            {"name": "@generation", "value": generation},
+        ]
+        items = self._c.query_items(
+            sql, parameters=params, partition_key=[library_id, document_id], raw_response_hook=cost
+        )
+        return [item async for item in items]
 
     async def search(self, library_id: str, query: RenderedQuery, cost: QueryCost) -> list[Record]:
         routing: dict[str, Any] = {}
@@ -172,7 +195,10 @@ class Searcher:
         check_search_allowed(library_id, library, agent_id)
         assert library is not None
 
-        [vector] = await self.embedder.embed([request.query])
+        embedding_started = time.perf_counter()
+        with measure_embeddings() as embedding_usage:
+            [vector] = await self.embedder.embed([request.query])
+        embedding_ms = (time.perf_counter() - embedding_started) * 1000
         terms = lexical_terms(request.query) if self.mode == "hybrid" else []
         fetch = fetch_size(request.top)
         rendered = render_search(library_id, to_float16_query(vector), terms, request.filters, fetch)
@@ -199,6 +225,7 @@ class Searcher:
                 "rank": rank,
                 "chunkId": c["id"],
                 "documentId": c["documentId"],
+                "generation": c["generation"],
                 "fileName": c.get("fileName"),
                 "location": c.get("location") or {},
                 "heading": c.get("heading"),
@@ -224,7 +251,12 @@ class Searcher:
                 "disposition": disposition(len(results)),
             },
             "results": results,
-            "usage": {"requestCharge": round(cost.request_charge, 2), "totalMs": total_ms},
+            "usage": {
+                "requestCharge": round(cost.request_charge, 2),
+                "totalMs": total_ms,
+                "embeddingMs": round(embedding_ms, 1),
+                "embeddingTokens": embedding_usage.prompt_tokens if embedding_usage.tokens_reported else None,
+            },
             "telemetryId": telemetry_id,
         }
         log.info(
@@ -246,6 +278,21 @@ class Searcher:
                 "cosmosMs": round(cosmos_ms, 1),
                 "totalMs": total_ms,
             },
+        )
+        record_metric(
+            "search",
+            library_id,
+            agentId=agent_id,
+            requestCharge=round(cost.request_charge, 2),
+            totalMs=total_ms,
+            cosmosMs=round(cosmos_ms, 1),
+            resultCount=len(results),
+            disposition=response["coverage"]["disposition"],
+            embeddingMs=round(embedding_ms, 1),
+            embeddingTokens=embedding_usage.prompt_tokens if embedding_usage.tokens_reported else None,
+            embeddingRequests=embedding_usage.requests,
+            embeddingRetries=embedding_usage.retries,
+            embeddingThrottles=embedding_usage.throttled,
         )
         return response
 

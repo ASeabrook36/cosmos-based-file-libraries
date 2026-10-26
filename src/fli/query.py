@@ -141,6 +141,31 @@ def _any_of(column: str, prefix: str, values: Sequence[str], params: list[dict[s
     return f"{column} IN ({', '.join(names)})"
 
 
+def metadata_clauses(filters: SearchFilters, params: list[dict[str, Any]]) -> list[str]:
+    """Shared document/chunk filter semantics. Content kind is a chunk-only filter."""
+    where: list[str] = []
+    for window, start, end, lo, hi in (
+        (filters.period, "periodStart", "periodEnd", "pFrom", "pTo"),
+        (filters.authored_between, "authoredAt", "authoredAt", "aFrom", "aTo"),
+        (filters.uploaded_between, "uploadedAt", "uploadedAt", "uFrom", "uTo"),
+    ):
+        if window is None:
+            continue
+        if lo == "pFrom":
+            where.append(f"c.{start} <= @{hi} AND c.{end} >= @{lo}")
+        else:
+            where.append(f"c.{start} >= @{lo} AND c.{end} < @{hi}")
+        params.extend([{"name": f"@{lo}", "value": window.start}, {"name": f"@{hi}", "value": window.end}])
+    if filters.authors:
+        where.append(_any_of("c.author", "au", filters.authors, params))
+    for i, tag in enumerate(filters.tags):
+        where.append(f"ARRAY_CONTAINS(c.facets, @tag{i})")
+        params.append({"name": f"@tag{i}", "value": tag})
+    if filters.file_types:
+        where.append(_any_of("c.fileType", "ft", filters.file_types, params))
+    return where
+
+
 def render_search(
     library_id: str, query_vector_f16: Sequence[float], terms: Sequence[str], filters: SearchFilters, fetch: int
 ) -> RenderedQuery:
@@ -157,28 +182,7 @@ def render_search(
         {"name": "@queryVector", "value": list(query_vector_f16)},
     ]
     where = ["c.libraryId = @libraryId"]
-    if filters.period:
-        where.append("c.periodStart <= @pTo AND c.periodEnd >= @pFrom")
-        params += [{"name": "@pFrom", "value": filters.period.start}, {"name": "@pTo", "value": filters.period.end}]
-    if filters.authored_between:
-        where.append("c.authoredAt >= @aFrom AND c.authoredAt < @aTo")
-        params += [
-            {"name": "@aFrom", "value": filters.authored_between.start},
-            {"name": "@aTo", "value": filters.authored_between.end},
-        ]
-    if filters.uploaded_between:
-        where.append("c.uploadedAt >= @uFrom AND c.uploadedAt < @uTo")
-        params += [
-            {"name": "@uFrom", "value": filters.uploaded_between.start},
-            {"name": "@uTo", "value": filters.uploaded_between.end},
-        ]
-    if filters.authors:
-        where.append(_any_of("c.author", "au", filters.authors, params))
-    for i, tag in enumerate(filters.tags):
-        where.append(f"ARRAY_CONTAINS(c.facets, @tag{i})")
-        params.append({"name": f"@tag{i}", "value": tag})
-    if filters.file_types:
-        where.append(_any_of("c.fileType", "ft", filters.file_types, params))
+    where.extend(metadata_clauses(filters, params))
     if filters.content_kinds:
         where.append(_any_of("c.contentKind", "ck", filters.content_kinds, params))
 

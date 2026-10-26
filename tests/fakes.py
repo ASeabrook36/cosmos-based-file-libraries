@@ -84,6 +84,13 @@ class FakeChunkReader:
         top = int(query.sql.split()[2])
         return [{k: c.get(k) for k in FIELDS} for c in rows[:top]]
 
+    async def document(self, library_id, document_id, generation, limit, cost):
+        return [
+            dict(c)
+            for (lib, doc, _), c in self.chunks.items.items()
+            if (lib, doc) == (library_id, document_id) and c["generation"] == generation
+        ][:limit]
+
     async def neighbors(self, library_id, document_id, generation, indexes, cost):
         return [
             {"chunkIndex": c["chunkIndex"], "text": c["text"]}

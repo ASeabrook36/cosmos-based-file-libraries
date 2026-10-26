@@ -21,9 +21,9 @@ security_log = logging.getLogger("fli.security")
 
 
 def check_search_allowed(library_id: str, library: Mapping[str, Any] | None, agent_id: str | None) -> None:
-    """Raise unless ``agent_id`` may search ``library``. Never log query text (CLAUDE.md rule 12)."""
+    """Backstop for search, document discovery, full reads and the agent tool bundle."""
     if not agent_id or not agent_id.strip():
-        raise ApiError(400, "missing_agent_id", "the X-Agent-Id header is required on every search")
+        raise ApiError(400, "missing_agent_id", "the X-Agent-Id header is required on every agent library request")
     if library is None or library.get("status") == "deleting":
         raise library_not_found(library_id)
     if library.get("kind") == "personal" and library.get("boundAgentId") != agent_id:

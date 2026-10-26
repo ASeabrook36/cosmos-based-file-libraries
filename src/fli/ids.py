@@ -51,6 +51,16 @@ def image_prefix(library_id: str, document_id: str) -> str:
     return f"{library_id}/{document_id}/images/"
 
 
+def text_prefix(library_id: str, document_id: str) -> str:
+    return f"{library_id}/{document_id}/text/"
+
+
+def text_blob_path(library_id: str, document_id: str, generation: int) -> str:
+    if generation < 1:
+        raise ValueError("generation starts at 1")
+    return f"{text_prefix(library_id, document_id)}{generation}/sections.json"
+
+
 def image_blob_path(library_id: str, document_id: str, generation: int, image_id: str, ext: str) -> str:
     if generation < 1:
         raise ValueError("generation starts at 1")
@@ -60,13 +70,13 @@ def image_blob_path(library_id: str, document_id: str, generation: int, image_id
 
 
 def blob_generation(blob_path: str) -> int:
-    """The generation an original or image belongs to; 1 when there is no generation segment.
+    """The generation an original, image or text artifact belongs to; 1 for legacy originals.
 
     Only originals stored before Phase 3 lack one.
     """
-    for folder in ("/original/", "/images/"):
+    for folder in ("/original/", "/images/", "/text/"):
         if folder in blob_path:
             _, _, rest = blob_path.partition(folder)
             head, nested, _ = rest.partition("/")
             return int(head) if nested and head.isdigit() else 1
-    raise ValueError("not an original or image path")
+    raise ValueError("not an original, image or text artifact path")

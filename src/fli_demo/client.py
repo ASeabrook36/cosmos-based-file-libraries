@@ -88,6 +88,22 @@ class IndexClient:
     def tool(self, library_id: str) -> dict[str, Any]:
         return self._call("GET", f"/v1/libraries/{library_id}/tool")
 
+    def tools(self, library_id: str, agent_id: str) -> list[dict[str, Any]]:
+        return self._call("GET", f"/v1/libraries/{library_id}/tools", headers={"X-Agent-Id": agent_id})["tools"]
+
+    def discover_documents(self, library_id: str, agent_id: str, **selectors: Any) -> dict[str, Any]:
+        return self._call(
+            "POST", f"/v1/libraries/{library_id}/documents:discover", json=selectors, headers={"X-Agent-Id": agent_id}
+        )
+
+    def read_documents(self, library_id: str, agent_id: str, **selection: Any) -> dict[str, Any]:
+        return self._call(
+            "POST", f"/v1/libraries/{library_id}/documents:read", json=selection, headers={"X-Agent-Id": agent_id}
+        )
+
+    def library_metrics(self, library_id: str, agent_id: str) -> dict[str, Any]:
+        return self._call("GET", f"/v1/libraries/{library_id}/metrics", headers={"X-Agent-Id": agent_id})
+
     def update_document(self, library_id: str, document_id: str, **fields: Any) -> dict[str, Any]:
         """``author``, ``periodStart``, ``periodEnd``, ``tags``, ``acceptProposals``, ``dismissProposals``.
 

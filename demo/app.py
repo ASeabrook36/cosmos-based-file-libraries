@@ -11,3 +11,5 @@ st.write(
 st.page_link("pages/1_Admin.py", label="Admin: libraries and files")
 st.page_link("pages/2_Agents.py", label="Agents: attach libraries")
 st.page_link("pages/3_Chat.py", label="Chat")
+
+st.page_link("pages/4_Library_Performance.py", label="Library performance: ingestion and retrieval measurements")

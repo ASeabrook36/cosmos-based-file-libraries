@@ -94,3 +94,98 @@ def tool_definition(library: Mapping[str, Any]) -> dict[str, Any]:
             "parameters": {"type": "object", "properties": properties, "required": ["query"]},
         },
     }
+
+
+def tool_definitions(library: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Standard function schemas; a REST or MCP host binds each to this library."""
+    search = tool_definition(library)
+    search["function"]["description"] += (
+        "\nReturns selected passages, never proof of whole-file or all-files coverage. "
+        "Use documentId from results to read a whole file; for 'all files by author/tag', enumerate the catalogue."
+    )
+    slug = tool_name(library.get("name", "")).removeprefix(PREFIX)
+    filters = {
+        k: v for k, v in search["function"]["parameters"]["properties"].items() if k not in ("query", "contentKinds")
+    }
+    for key, description in (
+        ("authors", "Any listed author matches exactly."),
+        ("tags", "All key=value tags must match."),
+        ("fileTypes", "Any listed normalized file type matches."),
+    ):
+        # The catalogue includes queued/failed files and sees metadata edits immediately.
+        # Cached searchable-only vocabulary is a hint, never an exhaustive enum here.
+        known = (filters.get(key) or {}).get("items", {}).get("enum", [])
+        hint = f" Recently observed values include: {', '.join(known[:LISTED])}." if known else ""
+        filters[key] = {"type": "array", "items": {"type": "string"}, "description": description + hint}
+    for key in ("period", "authoredBetween", "uploadedBetween"):
+        filters.setdefault(key, {**WINDOW})
+    common = library.get("description") or library.get("name") or "File library"
+    catalogue = {
+        "type": "function",
+        "function": {
+            "name": ("find_documents_library_" + slug)[:MAX_NAME].rstrip("_"),
+            "description": common + "\nFind files by name or metadata without loading their contents. "
+            "fileNames matches any exact name ignoring case; duplicate names remain distinct documents. "
+            "fileNameContains matches a name fragment. Selectors combine with AND. "
+            "For 'all matching files', follow nextAfter using after with unchanged selectors until hasMore=false, "
+            "including unreadable files in your coverage accounting. Inspect metadata, generated opening descriptions "
+            "and estimatedTokens before full reads. Null estimates mean unknown. "
+            "For a vaguely described topic, search passages first to identify candidate documentIds; "
+            "semantic top hits are not an exhaustive file set. Clarify if multiple plausible files remain.",
+            "parameters": {
+                "type": "object",
+                "additionalProperties": False,
+                "properties": {
+                    "filters": {"type": "object", "additionalProperties": False, "properties": filters},
+                    "fileNames": {"type": "array", "maxItems": 20, "items": {"type": "string"}},
+                    "fileNameContains": {"type": "string"},
+                    "after": {"type": "string"},
+                    "limit": {"type": "integer", "minimum": 1, "maximum": 100},
+                },
+            },
+        },
+    }
+    read = {
+        "type": "function",
+        "function": {
+            "name": ("read_documents_library_" + slug)[:MAX_NAME].rstrip("_"),
+            "description": common + "\nRead the complete extracted text of one or more identified files. "
+            "Use for explicit whole-file requests, full summaries, critiques, comparisons, or tasks requiring "
+            "global context. Prefer passage search for localized facts. Best-answer quality takes priority: "
+            "combine full reads with passage searches from other files in the same turn as needed, "
+            "without routine user confirmation. "
+            "Weigh input tokens, latency and attention cost; do not substitute snippets for a requested whole read. "
+            "Select documentIds and generations from catalogue/search; never invent IDs. "
+            "includeText=false inspects exact serialized size without returning content. "
+            "maxTokens is your available input budget (default 32000, service maximum 200000); "
+            "reserve room for instructions, history, other files and the answer. "
+            "Returns every selected file in full or no text with budget_exceeded. Split batches or increase "
+            "the budget only if the model has capacity. No silent truncation. Token estimates name their tokenizer. "
+            "A text read does not supply original visuals or guarantee extraction captured every figure/attachment. "
+            "Only say files were read in full when complete=true; disclose unreadable files and incomplete sets.",
+            "parameters": {
+                "type": "object",
+                "additionalProperties": False,
+                "properties": {
+                    "documents": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 20,
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": False,
+                            "properties": {
+                                "documentId": {"type": "string"},
+                                "generation": {"type": "integer", "minimum": 1},
+                            },
+                            "required": ["documentId"],
+                        },
+                    },
+                    "includeText": {"type": "boolean"},
+                    "maxTokens": {"type": "integer", "minimum": 1, "maximum": 200000},
+                },
+                "required": ["documents"],
+            },
+        },
+    }
+    return [search, catalogue, read]

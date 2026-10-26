@@ -25,6 +25,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+samples = ["Pillow>=10.1,<13"]
 demo = [
   "streamlit>=1.40,<2",
   "openai>=1.50,<4",
@@ -32,6 +33,7 @@ demo = [
 dev = [
   "pytest>=8,<9",
   "ruff>=0.6",
+  "openai>=1.50,<4",  # unit tests exercise the optional demo's chat transport and usage accounting
 ]
 
 [project.scripts]

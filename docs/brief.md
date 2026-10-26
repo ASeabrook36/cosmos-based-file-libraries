@@ -13,8 +13,8 @@ One current solutions for this index is Azure AI Search Service index. This serv
 The proposal is to move file libraries to Azure Cosmos DB, and make a library a **value stored on each record** rather than an object the service counts.
 
 - **One container, every library.** Every searchable piece of every document carries its library's ID. Cosmos uses that ID to store each library's content together and to build a **separate vector index for each library inside the same container**. (A vector index is what lets search find text by meaning rather than exact words.) Adding a library adds records, not infrastructure, so there is no design limit on the number of libraries.
-- **Cosmos holds everything that is searched.** That means the text, the vectors, the document and library details, and the tags. Blob storage keeps only the original files and images, to hand back to users.
-- **Agents work as they do today.** Each attached library is one tool, described by the library's description, and the agent decides per conversation which libraries to search.
+- **Cosmos holds everything that is searched.** That means the text, the vectors, the document and library details, and the tags. Blob storage keeps the original files and images, plus complete extracted text for agents to read on demand.
+- **Agents work as they do today.** Each attached library exposes tools described by the library's description, and the agent decides per conversation which libraries to use and whether it needs passages, complete documents, or both.
 
 ## What gets better
 

@@ -26,6 +26,8 @@ not show it raises ``StaleRead`` and the message is redelivered.
 from __future__ import annotations
 
 import asyncio
+import hashlib
+import json
 import logging
 import time
 from collections.abc import Callable
@@ -37,10 +39,11 @@ from fli.blobs import BlobStore
 from fli.chunking import Chunker
 from fli.chunks import ChunkStore
 from fli.config import EMBEDDING_MODEL
-from fli.embedding import Embedder
+from fli.embedding import Embedder, measure_embeddings
 from fli.extraction import Extracted, OcrClient, extract
 from fli.generation import is_obsolete, latest_generation
-from fli.ids import blob_generation, chunk_id, image_prefix, original_prefix
+from fli.ids import blob_generation, chunk_id, image_prefix, original_prefix, text_blob_path, text_prefix
+from fli.metrics import record as record_metric
 from fli.proposals import (
     OPENING_CHARS,
     ChatModel,
@@ -152,6 +155,7 @@ class Worker:
     # -- ingest -------------------------------------------------------------------------------
 
     async def ingest(self, library_id: str, document_id: str, generation: int) -> None:
+        started = time.perf_counter()
         library = await self.libraries.get(library_id)
         if library is None or library.get("status") == "deleting":
             # Uploaded as the library was being deleted: never index it.
@@ -175,10 +179,13 @@ class Worker:
         # A replacement's file waits in pendingFile; a first upload's is the record's own (spec §4.2).
         source = document.get("pendingFile") or document
         data = await self.blobs.download(source["blobPath"])
+        extraction_started = time.perf_counter()
         result = await extract(data, filename=source["fileName"], content_type=source["contentType"], ocr=self.ocr)
         if result.outcome != "ok":
             await self._fail(library_id, document_id, generation, status_detail(result))
             return
+        extraction_ms = (time.perf_counter() - extraction_started) * 1000
+        chunking_started = time.perf_counter()
         kind = "email" if source.get("fileType") == "eml" else "document"
         pieces = await asyncio.to_thread(self.chunker.chunk, result.sections, kind)  # CPU-bound tokenizing
         if not pieces:
@@ -188,6 +195,8 @@ class Worker:
             # Checked before embedding, so refusing costs nothing (spec §7.2 step 4).
             await self._fail(library_id, document_id, generation, "too_many_chunks")
             return
+
+        chunking_ms = (time.perf_counter() - chunking_started) * 1000
 
         # Proposals come before embedding, so accepted ones are written with the chunks (spec §7.2 step 6).
         proposals = await self._propose_metadata(library, document_id, source["fileName"], pieces)
@@ -199,7 +208,10 @@ class Worker:
         else:
             meta["facets"] = document.get("facets", [])
 
-        vectors = await self.embedder.embed([p.text for p in pieces])
+        embedding_started = time.perf_counter()
+        with measure_embeddings() as embedding_usage:
+            vectors = await self.embedder.embed([p.text for p in pieces])
+        embedding_ms = (time.perf_counter() - embedding_started) * 1000
         # authoredAt only ever comes from the file (spec §4.2), so each generation takes its own file's.
         authored_at = result.authored_at.isoformat() if result.authored_at else None
         created = _now()
@@ -233,7 +245,44 @@ class Worker:
             for p, vector in zip(pieces, vectors, strict=True)
         ]
         # The worker-wide cap inside the chunk store decides how many of these run at once.
-        await asyncio.gather(*(self.chunks.upsert(r) for r in records))
+        writes_started = time.perf_counter()
+        write_charges = await asyncio.gather(*(self.chunks.upsert(r) for r in records))
+        writes_ms = (time.perf_counter() - writes_started) * 1000
+        chunk_tokens = [p.token_count for p in pieces]
+        processing_metrics = {
+            "extractionMs": round(extraction_ms, 1),
+            "chunkingMs": round(chunking_ms, 1),
+            "embeddingMs": round(embedding_ms, 1),
+            "chunkWriteMs": round(writes_ms, 1),
+            "chunkCount": len(pieces),
+            "chunkTokens": sum(chunk_tokens),
+            "chunkTokensMin": min(chunk_tokens),
+            "chunkTokensMax": max(chunk_tokens),
+            "chunkTokensMean": round(sum(chunk_tokens) / len(pieces), 1),
+            "embeddingTokens": embedding_usage.prompt_tokens if embedding_usage.tokens_reported else None,
+            "embeddingRequests": embedding_usage.requests,
+            "embeddingRetries": embedding_usage.retries,
+            "embeddingThrottles": embedding_usage.throttled,
+            "embeddingModel": self.embedder.model,
+            "embeddingDimensions": self.embedder.dimensions,
+            "chunkWriteCharge": round(sum(write_charges), 2) if all(x is not None for x in write_charges) else None,
+            "chunkingVersion": self.chunker.version,
+            "tokenizer": self.chunker.tokenizer.name,
+        }
+
+        # Preserve extraction order before chunk overlap/normalization. Only the generation
+        # committed below may be read; an abandoned artifact is removed by the normal purge.
+        sections = [{"heading": s.heading, "text": s.text, "location": s.location or {}} for s in result.sections]
+        serialized = json.dumps(sections, ensure_ascii=False)
+        full_text = {
+            "blobPath": text_blob_path(library_id, document_id, generation),
+            "tokenCount": await asyncio.to_thread(self.chunker.count, serialized),
+            "tokenizer": self.chunker.tokenizer.name,
+            "sectionCount": len(sections),
+            "generation": generation,
+            "sha256": hashlib.sha256(serialized.encode("utf-8")).hexdigest(),
+        }
+        await self.blobs.upload(full_text["blobPath"], serialized.encode("utf-8"), "application/json")
 
         def commit(doc: Record) -> bool:
             if doc.get("status") == "deleting" or doc.get("pendingGeneration") != generation:
@@ -246,6 +295,9 @@ class Worker:
                 activeGeneration=generation,
                 pendingGeneration=None,
                 chunkCount=len(records),
+                fullText=full_text,
+                processingMetrics={**processing_metrics, "totalMs": round((time.perf_counter() - started) * 1000, 1)},
+                description=proposals.description if proposals is not None else None,
                 author=doc.get("author") or result.author,
                 authoredAt=authored_at,
                 extraction={
@@ -266,6 +318,13 @@ class Worker:
         if committed is None or generation > 1:
             await self._purge_later(library_id, document_id)  # abandoned chunks, or older generations
         if committed is not None:
+            record_metric(
+                "ingest",
+                library_id,
+                documentId=document_id,
+                generation=generation,
+                **{k: v for k, v in committed["processingMetrics"].items()},
+            )
             await self.refresh_library(library_id)
 
     async def _propose_metadata(
@@ -462,7 +521,11 @@ class Worker:
         await asyncio.gather(*(self.chunks.delete(library_id, document_id, i) for i in doomed))
         # Each generation's original and images have their own paths; only the active ones are
         # needed to rebuild (E16) or to hand back.
-        for prefix in (original_prefix(library_id, document_id), image_prefix(library_id, document_id)):
+        for prefix in (
+            original_prefix(library_id, document_id),
+            image_prefix(library_id, document_id),
+            text_prefix(library_id, document_id),
+        ):
             for path in await self.blobs.list_prefix(prefix):
                 if is_obsolete(blob_generation(path), document):
                     await self.blobs.delete(path)

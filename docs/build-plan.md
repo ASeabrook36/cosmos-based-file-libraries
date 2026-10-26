@@ -128,6 +128,24 @@ The demo needs something playing the platform's role. Build a small Streamlit ap
 - When stale chunks of a replaced document fill the fetch window, search still returns `top` results or reports `thin`; decide between fetching again and reporting (finding 6). **Decided: reporting.** Coverage says how many passages were left out (`spec.md` §8 step 6, E30).
 - The replacement and underfill checks run with `scripts/phase3_exit.py lifecycle`, on two real documents (E14). **Passed on 2026-10-23** (`records/phase3-exit-lifecycle-20261023T210242Z.json`): the Self-RAG paper was replaced by "Lost in the Middle" under the same file name. The replacement committed after 9 seconds; none of the 68 searches after the commit returned the old generation, and deleting the document, then the library, removed each from search at once. Of the 4 searches made while the replacement was written, one came back with no results and the coverage note: the new generation's chunks, not yet visible, filled the whole fetch window for the question they answer best (finding 6 at its strongest; `evidence.md` E30). That run's write window was short, so only those 4 searches checked that nothing of the new generation showed before the commit.
 
+## Additional enhancement: adaptive document retrieval
+
+**Status: implemented and smoke-tested live on 2026-10-26; both requested retrieval directions passed. Human answer-quality review and broader live validation remain pending.** This is the next user-requested enhancement after Phase 3 and does not waive the existing Phase 3B/4/5 checks.
+
+- Add a library-bound tool bundle with search, paginated document discovery and complete-text reading.
+- Let the agent mix complete documents and selected passages in either direction within a single question, revising its retrieval plan without routine user confirmation.
+- Discover named files, files selected by author/tags/dates/type, and candidates for vague references identified through semantic search. Disclose unreadable files and incomplete enumeration.
+- Preserve versioned pre-chunking extraction, identify legacy indexed representations, enforce explicit context budgets and never silently truncate full reads.
+- Test library binding, lifecycle/purge, races, completeness, budgets, both retrieval directions and mixed evidence. See [document-retrieval.md](document-retrieval.md) for the contract and validation boundary.
+
+**Remaining live evaluation:** the four-paper smoke test and both explicit model sequences passed (`records/document-retrieval-20261026T165258Z.json`). Still use a broader set of real documents and the actual chat deployment for localized, whole-file, all-by-metadata, vague-reference and mixed-evidence questions in both directions. Verify routing and citations, estimated/actual input tokens, RU and latency, refusal cases, the documents indexing-policy update, and replacement/deletion behavior. Record results before marking this live-validated.
+
+## Additional enhancement: prototype performance workbench
+
+**Status: implemented and tested locally; library ingestion/retrieval counters verified live on 2026-10-26.** Chat exposes actual model usage, provider/wait timing and retrieval RU/latency. Library Performance exposes active inventory, chunk distributions, actual embedding tokens/retries, chunk-write RU and bounded retrieval history by operation/caller. Personal-library metrics use the binding backstop. The live six-page check is `records/library-performance-smoke.json`.
+
+This uses an optional external single-host journal for the prototype, with no extra Cosmos writes per retrieval. It does not complete Phase 4's production Log Analytics routing report or the scale/quality evaluation. See [observability.md](observability.md) for measurement boundaries, missing historical data and configuration. Production telemetry ingestion/retention and multi-instance aggregation remain outstanding.
+
 ## Phase 3B: Images
 
 Images were moved out of Phase 3 on 2026-10-23 so that metadata and lifecycle could be finished and demonstrated first. Phase 3 leaves room for them: image paths, the purge rule, the `contentKinds` filter and the chat's image slot are already in place, and the `chunks` container needs no change (it already indexes `contentKind`). Phase 3B can run before or after Phase 4.

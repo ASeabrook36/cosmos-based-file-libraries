@@ -16,6 +16,7 @@
       { "path": "/fileType/?" },
       { "path": "/sha256/?" },
       { "path": "/uploadedAt/?" },
+      { "path": "/authoredAt/?" },
       { "path": "/author/?" },
       { "path": "/periodStart/?" },
       { "path": "/periodEnd/?" },

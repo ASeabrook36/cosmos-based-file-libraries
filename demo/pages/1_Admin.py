@@ -4,6 +4,7 @@ from common import client, guard
 from fli_demo.proposals import accept_all, proposals_of, review_request, summary
 
 st.title("Admin: shared libraries")
+st.page_link("pages/4_Library_Performance.py", label="Open library performance dashboard")
 
 
 def documents_label(n: int) -> str:

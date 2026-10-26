@@ -1,0 +1,225 @@
+{
+  "check": "full-document-versus-mixed-retrieval",
+  "date": "2026-10-26",
+  "sourceRoles": [
+    "primary_document",
+    "reference_document"
+  ],
+  "sameAgentInstructions": true,
+  "sameAttachedLibraries": true,
+  "comparisonDesign": "Two interactive runs with different question wording and fresh agent chats; not a controlled benchmark.",
+  "runs": [
+    {
+      "scenario": "whole_primary_and_reference",
+      "totalMs": 52267.77537504677,
+      "retrievalMs": 964.3245838815346,
+      "retrievalRequestCharge": 17.61,
+      "promptTokens": 25161,
+      "completionTokens": 4866,
+      "totalTokens": 30027,
+      "providerMs": 51206.6,
+      "rateLimitWaitMs": 0.0,
+      "rateLimitRetries": 0,
+      "tools": [
+        {
+          "operation": "discover",
+          "latencyMs": 201.99429197236896,
+          "requestCharge": 5.21,
+          "resultCount": 0,
+          "estimatedTokens": null,
+          "complete": null,
+          "error": false
+        },
+        {
+          "operation": "discover",
+          "latencyMs": 191.28724990878254,
+          "requestCharge": 5.56,
+          "resultCount": 2,
+          "estimatedTokens": null,
+          "complete": null,
+          "error": false
+        },
+        {
+          "operation": "read",
+          "latencyMs": 571.0430420003831,
+          "requestCharge": 6.84,
+          "resultCount": 2,
+          "estimatedTokens": 14499,
+          "complete": true,
+          "error": false
+        }
+      ],
+      "modelCalls": [
+        {
+          "promptTokens": 1997,
+          "completionTokens": 161,
+          "totalTokens": 2158,
+          "cachedPromptTokens": 0,
+          "reasoningTokens": 128,
+          "totalMs": 8866.6,
+          "providerMs": 8866.5,
+          "rateLimitWaitMs": 0.0,
+          "rateLimitRetries": 0
+        },
+        {
+          "promptTokens": 2233,
+          "completionTokens": 23,
+          "totalTokens": 2256,
+          "cachedPromptTokens": 1920,
+          "reasoningTokens": 0,
+          "totalMs": 1613.1,
+          "providerMs": 1613.0,
+          "rateLimitWaitMs": 0.0,
+          "rateLimitRetries": 0
+        },
+        {
+          "promptTokens": 3261,
+          "completionTokens": 347,
+          "totalTokens": 3608,
+          "cachedPromptTokens": 2176,
+          "reasoningTokens": 256,
+          "totalMs": 5202.5,
+          "providerMs": 5202.4,
+          "rateLimitWaitMs": 0.0,
+          "rateLimitRetries": 0
+        },
+        {
+          "promptTokens": 17670,
+          "completionTokens": 4335,
+          "totalTokens": 22005,
+          "cachedPromptTokens": 0,
+          "reasoningTokens": 1856,
+          "totalMs": 35524.8,
+          "providerMs": 35524.7,
+          "rateLimitWaitMs": 0.0,
+          "rateLimitRetries": 0
+        }
+      ],
+      "finalAnswerInputTokens": 17670
+    },
+    {
+      "scenario": "whole_primary_plus_reference_passages",
+      "totalMs": 51817.82754207961,
+      "retrievalMs": 2045.7767499610782,
+      "retrievalRequestCharge": 29.009999999999998,
+      "promptTokens": 26223,
+      "completionTokens": 5752,
+      "totalTokens": 31975,
+      "providerMs": 49649.200000000004,
+      "rateLimitWaitMs": 0.0,
+      "rateLimitRetries": 0,
+      "tools": [
+        {
+          "operation": "discover",
+          "latencyMs": 206.8173330044374,
+          "requestCharge": 5.21,
+          "resultCount": 0,
+          "estimatedTokens": null,
+          "complete": null,
+          "error": false
+        },
+        {
+          "operation": "discover",
+          "latencyMs": 211.60891698673368,
+          "requestCharge": 5.56,
+          "resultCount": 2,
+          "estimatedTokens": null,
+          "complete": null,
+          "error": false
+        },
+        {
+          "operation": "read",
+          "latencyMs": 863.1866669747978,
+          "requestCharge": 4.56,
+          "resultCount": 1,
+          "estimatedTokens": 4228,
+          "complete": true,
+          "error": false
+        },
+        {
+          "operation": "search",
+          "latencyMs": 764.1638329951093,
+          "requestCharge": 13.68,
+          "resultCount": 8,
+          "estimatedTokens": null,
+          "complete": null,
+          "error": false
+        }
+      ],
+      "modelCalls": [
+        {
+          "promptTokens": 2045,
+          "completionTokens": 33,
+          "totalTokens": 2078,
+          "cachedPromptTokens": 1920,
+          "reasoningTokens": 0,
+          "totalMs": 2540.1,
+          "providerMs": 2540.0,
+          "rateLimitWaitMs": 0.0,
+          "rateLimitRetries": 0
+        },
+        {
+          "promptTokens": 2281,
+          "completionTokens": 23,
+          "totalTokens": 2304,
+          "cachedPromptTokens": 1920,
+          "reasoningTokens": 0,
+          "totalMs": 2310.5,
+          "providerMs": 2310.4,
+          "rateLimitWaitMs": 0.0,
+          "rateLimitRetries": 0
+        },
+        {
+          "promptTokens": 3309,
+          "completionTokens": 446,
+          "totalTokens": 3755,
+          "cachedPromptTokens": 0,
+          "reasoningTokens": 384,
+          "totalMs": 5046.2,
+          "providerMs": 5046.1,
+          "rateLimitWaitMs": 0.0,
+          "rateLimitRetries": 0
+        },
+        {
+          "promptTokens": 7510,
+          "completionTokens": 335,
+          "totalTokens": 7845,
+          "cachedPromptTokens": 1920,
+          "reasoningTokens": 256,
+          "totalMs": 3800.0,
+          "providerMs": 3799.9,
+          "rateLimitWaitMs": 0.0,
+          "rateLimitRetries": 0
+        },
+        {
+          "promptTokens": 11078,
+          "completionTokens": 4915,
+          "totalTokens": 15993,
+          "cachedPromptTokens": 3200,
+          "reasoningTokens": 1600,
+          "totalMs": 35952.8,
+          "providerMs": 35952.8,
+          "rateLimitWaitMs": 0.0,
+          "rateLimitRetries": 0
+        }
+      ],
+      "finalAnswerInputTokens": 11078
+    }
+  ],
+  "observations": {
+    "requestedMixedWorkflowObserved": true,
+    "finalAnswerContextReductionPercent": 37.3,
+    "cumulativeInputTokensReduced": false,
+    "retrievalTimeReduced": false,
+    "modelAttentionImprovementMeasured": false,
+    "independentAnswerAccuracyAssessed": false,
+    "retrievalRUReduced": false
+  },
+  "limitations": [
+    "Single run per condition, different prompt wording, different answer lengths and cache behavior.",
+    "Cumulative tokens include repeated model inputs and generated output; final-call context is a separate measure.",
+    "No general cost, latency, attention or accuracy advantage established.",
+    "Validates tool composition with explicit consumer directions, not universally correct agent judgment."
+  ],
+  "privacy": "No prompts, answers, source text, filenames, environment identifiers or machine paths retained."
+}

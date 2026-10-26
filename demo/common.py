@@ -25,5 +25,5 @@ def guard(fn, *args, **kwargs):
     except IndexError_ as exc:
         st.error(str(exc))
     except Exception as exc:  # connection refused, bad key
-        st.error(f"Index API unreachable or misconfigured: {type(exc).__name__}")
+        st.error(f"The request could not be completed: {type(exc).__name__}")
     return None

@@ -27,6 +27,7 @@ from collections.abc import Awaitable, Callable
 from typing import Any, Protocol
 
 from fli.governor import Governor
+from fli.search import QueryCost
 
 Record = dict[str, Any]
 
@@ -34,7 +35,7 @@ DEFAULT_MAX_ATTEMPTS = 10
 
 
 class ChunkStore(Protocol):
-    async def upsert(self, chunk: Record) -> None: ...
+    async def upsert(self, chunk: Record) -> float | None: ...
     async def generations(self, library_id: str, document_id: str) -> list[tuple[str, int]]: ...
     async def delete(self, library_id: str, document_id: str, chunk_id: str) -> None: ...
     async def patch(self, library_id: str, document_id: str, chunk_id: str, fields: Record) -> float: ...
@@ -84,8 +85,10 @@ class CosmosChunks:
         self.governor = governor
         self.max_attempts = max_attempts
 
-    async def upsert(self, chunk: Record) -> None:
-        await capped(self.governor, lambda: self._c.upsert_item(chunk), self.max_attempts)
+    async def upsert(self, chunk: Record) -> float | None:
+        cost = QueryCost()
+        await capped(self.governor, lambda: self._c.upsert_item(chunk, raw_response_hook=cost), self.max_attempts)
+        return cost.request_charge if cost.responses else None
 
     async def generations(self, library_id: str, document_id: str) -> list[tuple[str, int]]:
         items = self._c.query_items(

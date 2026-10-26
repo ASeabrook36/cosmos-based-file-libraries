@@ -208,7 +208,9 @@ async def test_the_response_reports_its_cost(ctx):
     client, s, worker = ctx
     lib, _ = await library_with_document(client, s, worker)
     usage = search(client, lib).json()["usage"]
-    assert set(usage) == {"requestCharge", "totalMs"}
+    assert set(usage) == {"requestCharge", "totalMs", "embeddingMs", "embeddingTokens"}
+    assert usage["embeddingMs"] >= 0
+    assert usage["embeddingTokens"] is None  # the fake embedder supplies no provider token usage
     assert usage["requestCharge"] >= 0 and usage["totalMs"] >= 0
 
 

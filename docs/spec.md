@@ -1,6 +1,6 @@
 # Specification: File Library Index
 
-*Version 0.9, 2026-10-23. Working name. Status: Phases 0–2 passed (`build-plan.md`): libraries, upload, ingestion, vector search and the demo platform run end to end on the demo account. Phase 3 is in progress: document replacement (§7.8) is built and its live exit check passed; metadata filters (§6.3, §6.4, §7.7) and proposals (§9.1) are built and unit-tested, and their live checks have not run. Phases 4–5 are not built. Every design choice here that rests on a measurement is traced in `evidence.md`.*
+*Version 0.10, 2026-10-26. Working name. Phases 0–3 passed on live Azure (`build-plan.md`). Adaptive document retrieval (§6.6) is implemented and its live smoke check passed; human answer-quality and broader routing evaluation remain pending. Images (Phase 3B) and Phases 4–5 remain to build. Every measured design choice is traced in `evidence.md`.*
 
 ## 1. Scope
 
@@ -8,7 +8,8 @@ The File Library Index (the **index**) replaces Azure AI Search as the store and
 
 - accepts files into libraries, extracts their text and image content, embeds it, and stores it in Azure Cosmos DB;
 - serves search requests from agents, one library per request, with optional metadata filters;
-- returns text chunks, citations and images an agent can put into its context.
+- returns text chunks, citations and images an agent can put into its context;
+- lets an agent discover files and read complete extracted text, combining full files and selected passages in either order within one question (§6.6).
 
 It does **not** decide who may do what. The **platform** (the existing agent product) remains the system of record for users, agents, roles and which libraries are attached to which agent. The index enforces exactly one rule on its own: a personal library answers only the agent it was created for (§5).
 
@@ -36,7 +37,7 @@ flowchart LR
     Q["Service Bus queue<br/>sessions = libraryId"]
     W["Ingestion worker"]
     C[("Cosmos DB<br/>libraries · documents · chunks")]
-    B[("Blob Storage<br/>original files · images")]
+    B[("Blob Storage<br/>originals · images · extracted text")]
     AI["Azure OpenAI<br/>embeddings · vision · proposals"]
     DI["Document Intelligence<br/>OCR for scans"]
     T["Application Insights"]
@@ -59,7 +60,7 @@ Two processes from one codebase and one container image:
 - **Index API**: every endpoint in §6. Writes uploads to Blob, records documents, enqueues work, and runs searches.
 - **Ingestion worker**: consumes the queue and does all slow work: extraction, chunking, image description, embedding, writing chunks, purging.
 
-The division of storage is deliberate. **Cosmos holds everything that is searched or reasoned over** (chunk text, vectors, metadata, document and library records). **Blob holds bytes that are handed back** (original files, extracted images). A Cosmos item is limited to 2 MB, and Blob storage costs a small fraction of Cosmos storage per GB.
+The division of storage is deliberate. **Cosmos holds the searchable representation** (chunk text, vectors, metadata, document and library records). **Blob holds bytes that are handed back** (original files, extracted images, and versioned complete extracted-text artifacts for full reads, §6.6). A Cosmos item is limited to 2 MB, and Blob storage costs a small fraction of Cosmos storage per GB.
 
 ## 3. Azure resources and identities
 
@@ -140,6 +141,9 @@ Partition key `/libraryId`. `id` equals `documentId` (a GUID).
 | `metadataVersion` | int | Raised by each `PATCH`; the `retag` message carries it (§7.1). 0 at upload |
 | `extraction` | object | `{method, ocrApplied, pageCount, extractionVersion, chunkingVersion}` |
 | `chunkCount`, `imageCount`, `imagesSkipped` | int | |
+| `processingMetrics` | object or absent | Current-generation worker stage times, chunk distribution, actual embedding usage and chunk-write RU (§6.4a). Older documents remain unmeasured |
+| `fullText` | object | `{blobPath, generation, sectionCount, tokenCount, tokenizer, sha256}` for the active generation’s pre-chunking extracted sections (§6.6). Absent on older documents |
+| `description` | string or null | Generated discovery hint from opening text, at most 800 characters; not a full-document summary (§6.6) |
 | `updatedAt` | datetime | |
 
 ### 4.3 `chunks`
@@ -173,7 +177,7 @@ A fact that never changes cannot go stale, so the index holds exactly one: a per
 
 1. **Only the platform can call the index.** Agents and users never hold credentials to the index, so the `X-Agent-Id` header on a request can be trusted. **Production:** every request carries an Entra bearer token for the index's API app registration with the app role `Platform.Caller`, held only by the platform's service principal (Phase 5). **Prototype:** the platform is trusted by deployment. The API listens on the local machine and requires a static key (`AUTH_MODE=dev`, refused unless `ENVIRONMENT=local`). The platform authenticates its own users and decides who may see and add to which libraries, including exposing a personal library only to the agent it was created for; the index does none of that.
 2. **Creating a library fixes its kind.** `kind: personal` requires `boundAgentId`; `kind: shared` forbids it. Neither field can change afterwards: `PATCH` with either returns `400 immutable_field`. Making a personal library shared means copying it into a new shared library (not in v1), never flipping the field.
-3. **Search checks the binding.** Even though the platform exposes a personal library only to its own agent, the index re-checks as a backstop. Before searching, the index reads the library record (a point read, about 1 RU). It refuses when:
+3. **Every agent retrieval capability checks the binding.** Search, document discovery, complete reads and the `/tools` bundle require `X-Agent-Id` and apply this rule. Even though the platform exposes a personal library only to its own agent, the index re-checks as a backstop. Before searching, the index reads the library record (a point read, about 1 RU). It refuses when:
    - the library does not exist or is `deleting` → `404 library_not_found`;
    - the library is `personal` and `X-Agent-Id` ≠ `boundAgentId` → `403 library_not_bound_to_agent`, logged as a security event.
 4. **The platform's attach screen for official agents lists only shared libraries** (`GET /v1/libraries?kind=shared`). Rule 3 is the backstop: a wrong attachment created by a platform bug returns nothing.
@@ -321,9 +325,41 @@ Response:
 
 Filters are offered only when they can narrow the search: tags, authors, `period` and `authoredBetween` when some document has a value; `fileTypes` and `contentKinds` when the library holds more than one. The description's "Filters available" sentence lists only the offered filters. `uploadedBetween` is an API filter only. The tag and author values are an `enum` built from the library's actual vocabulary (`tagVocabulary`, `filterValues`), so the agent picks real values instead of inventing them. When a library has more than 100 tag or author values, that enum is dropped and the description lists the 50 most used. The tool name is a slug of the library name, made unique per agent by the platform if needed. The platform maps a tool call back to `POST …/search` with the tool's `libraryId` and the calling agent's `X-Agent-Id`; the library is never an agent-supplied argument.
 
+### 6.4a Prototype performance views
+
+`GET /v1/libraries/{libraryId}/metrics` returns current inventory, per-document generation measurements, and a bounded retrieval/ingestion event history. It requires the platform credential and `X-Agent-Id` and applies §5's binding backstop. `processingMetrics` on documents captures worker stage times, chunk/token distribution, provider-reported embedding usage/retries and chunk-write RU; older generations without instrumentation remain explicitly unmeasured. Query embedding usage is also included in search's `usage`.
+
+The demo exposes **Library Performance** and per-answer model/retrieval breakdowns in Chat. Model tokens are cumulative across the turn, with cached/reasoning subsets reported separately when available. A turn can use multiple libraries, so model usage is not allocated artificially to one library.
+
+`FLI_METRICS_FILE` is an optional content-free single-host journal shared by prototype API/worker processes, outside the repository. It adds no Cosmos telemetry writes; the dashboard scans at most 4 MiB / 2,000 matching events and labels that window. `DEMO_METRICS_FILE` optionally captures generic per-turn metrics externally. Neither sink writes source text/prompts. This is not the future production Log Analytics routing report. The full measurement definitions, exclusions, configuration and validation are in [observability.md](observability.md).
+
 ### 6.5 Search usage (enhancement 3)
 
 `POST /v1/search-events/{telemetryId}/usage` with `{"usedChunkIds": ["…"]}`. Optional. The platform calls it after a turn to report which results the agent actually cited. `204`.
+
+### 6.6 Adaptive document retrieval
+
+`GET …/tools` returns three ready-to-attach function definitions: passage search, file discovery, and complete-document reading. The singular `/tool` remains search-only for compatibility. The platform binds every definition to one attached library and supplies `X-Agent-Id`; the model supplies neither library ID nor agent ID. A REST or MCP host can present these definitions; this implementation uses REST and adds no MCP server.
+
+| Method and path | Body | Result |
+|---|---|---|
+| `GET /v1/libraries/{libraryId}/tools` | — | `{tools: [...]}`, with the personal-library backstop |
+| `POST …/documents:discover` | `{filters?, fileNames?, fileNameContains?, after?, limit?}` | Bounded catalogue page `{documents, hasMore, nextAfter, coverage, usage}` |
+| `POST …/documents:read` | `{documents: [{documentId, generation?}], includeText?: true, maxTokens?: 32000}` | Complete extracted sections for every selected file, or no text and an explicit budget/error result |
+
+The agent chooses and revises the evidence scope from the user's intent: passage retrieval for localized facts, complete text for full summaries/critiques or explicit whole-file requests, and a mixture whenever needed. Both full files → supporting passages and passages → complete parent files work within one turn and can repeat. The agent does not routinely ask permission for these choices; it clarifies meaningful ambiguity or an inability to meet the requested scope. Best-answer quality takes priority over saving tokens. Full reads and passages share the same remaining context budget.
+
+Discovery filters document records directly, by the same author/tag/file-type/date/period semantics as search, plus case-insensitive exact filenames or literal name fragments. Names may be duplicated; return distinct IDs. It includes unreadable uploads so an “all matching files” answer can disclose them. Deleting documents are excluded. Follow `nextAfter` with unchanged selectors until `hasMore=false`; defaults to 50 records, maximum 100, ordered by ID. Pagination is not a concurrent snapshot. Semantic top hits are candidates, not an exhaustive document set. Search results now also carry their active `generation`, and the demo preserves both this and `documentId` for subsequent reads.
+
+Read takes 1–20 distinct IDs, optionally pinned to active generations. It returns all stored extracted sections, headings and locations in reading order, with no per-section truncation, or no text from the batch if its projected serialized size exceeds `maxTokens` (maximum 200,000). `includeText=false` returns inspection manifests/estimates without adding file text to model context. The reader reports `complete`, `disposition` (`complete`, `inspected`, `budget_exceeded`), `estimatedTokens`, `tokenizer`, and usage. A token estimate is not a dollar-price, time or model-token guarantee. An oversized file cannot be made to fit by silently clipping it.
+
+The worker stores pre-chunking sections at `{libraryId}/{documentId}/text/{generation}/sections.json` in Blob and commits their descriptor with the generation. It validates their digest and section count on reading. Artifacts follow generation replacement/deletion/purge rules. Old documents can return all active indexed chunks, count/index checked and labelled `indexed_chunks`, with overlap/repeated-heading disclosure. This fallback is complete indexed text, not reconstructed original layout. A complete text read does not imply visual figures, attachments or unsupported content were extracted.
+
+The reader rechecks every document's active generation, metadata version and deletion state, and library availability after fetching. A detected change refuses the batch (`409 document_changed`). A missing/deleting file is `404 document_not_found`; no active generation is `409 document_not_ready`; unavailable/incomplete text is `409 document_text_unavailable` / `document_text_incomplete`. No error returns another selected file's contents. Existing cross-client Session-consistency limits (N13) still apply.
+
+The demo adopts `/tools`, passes full reads without its passage character cap, keeps all tool evidence during a turn, and applies a configurable total context budget (default 64,000, with an answer reserve). It shows operation, completeness and estimated tokens alongside RU and latency. Generated per-document descriptions (when proposals run) identify subject/purpose from opening text and are labelled as discovery hints. They are never substitutes for reading the file.
+
+The complete contract, examples, integration mapping, compatibility, tests and rollout limits are in [document-retrieval.md](document-retrieval.md). The implementation and a live four-paper smoke check passed; broad answer-quality evaluation remains outstanding (E34, E35).
 
 ## 7. Ingestion
 
@@ -348,9 +384,10 @@ An `ingest` whose generation is no longer pending is completed without processin
 3. Extract (§7.3). Encrypted, password-protected, unsupported and failed files end here with `status: failed` and a `statusDetail`.
 4. Chunk the text (§7.4). A document with more than `INGEST_MAX_CHUNKS_PER_DOCUMENT` chunks ends here with `status: failed`, `too_many_chunks`, before anything is embedded (`evidence.md` E29).
 5. Extract and describe images (§7.5).
-6. Propose tags, period and author (§9.1). If the library has `autoAcceptTagProposals`, the accepted values go into the chunks written in step 8. A failed proposal call does not fail the document: it is logged, and the document proceeds without proposals.
+6. Propose tags, period, author and a bounded discovery description from opening text (§9.1, §6.6). If the library has `autoAcceptTagProposals`, the accepted values go into the chunks written in step 8. A failed proposal call does not fail the document: it is logged, and the document proceeds without proposals.
 7. Embed every chunk's `text` with the embedding deployment, in batches of 16, honouring `Retry-After` on 429.
 8. Upsert all chunks of generation G. Writes share one cap across the whole worker, `COSMOS_WRITE_CONCURRENCY` (default 2), not a cap per document. On a 429 that outlasts the SDK's own retries, wait `x-ms-retry-after-ms` and retry. Eight concurrent writers exhausted the SDK's retries on serverless within about 100 writes (`evidence.md` E10). Deterministic ids make retries safe.
+   Before commit, save the pre-chunking sections in the generation’s text Blob and record its descriptor (§6.6).
 9. Commit: set `activeGeneration: G`, `pendingGeneration: null`, `status: ready`, counts; copy `pendingFile` over the record's file fields and clear it. `authoredAt` is taken from the file of generation G, since it only ever comes from the file; `author` keeps any value already set. Until this moment search keeps returning the previous generation, if any; from it, search returns generation G and ignores older ones (§8 step 6). The step 6 proposals are settled on the record as it reads now, so a `PATCH` made meanwhile is kept, and its `retag` follows in session order.
 10. If G > 1, enqueue `purgeDocument`. It also runs after a generation is abandoned (the document was deleted or replaced while G was written) and after a final failure, so half-written chunks never linger.
 11. Recompute the library's `tagVocabulary`, `filterValues` and `stats` from the `documents` container (a single-partition query). Enqueue `proposeDescription` when the library has no proposal yet, when its document count has moved by 10 or more since the last proposal, or when 24 hours have passed and the count has changed.

@@ -18,6 +18,8 @@ from __future__ import annotations
 
 import asyncio
 from collections.abc import Awaitable, Callable
+from contextlib import contextmanager
+from contextvars import ContextVar
 from dataclasses import dataclass, field
 from typing import Protocol
 
@@ -50,6 +52,20 @@ class EmbeddingUsage:
     prompt_tokens: int = 0
     throttled: int = 0
     retries: int = 0
+    tokens_reported: bool = False
+
+
+_ACTIVE_USAGE: ContextVar[EmbeddingUsage | None] = ContextVar("embedding_usage", default=None)
+
+
+@contextmanager
+def measure_embeddings():
+    usage = EmbeddingUsage()
+    token = _ACTIVE_USAGE.set(usage)
+    try:
+        yield usage
+    finally:
+        _ACTIVE_USAGE.reset(token)
 
 
 @dataclass
@@ -69,6 +85,11 @@ class AzureOpenAIEmbedder:
     usage: EmbeddingUsage = field(default_factory=EmbeddingUsage)
     governor: Governor | None = None  # ingestion paces embeddings as a workload; search passes none
 
+    def _count(self, field: str, value: int) -> None:
+        setattr(self.usage, field, getattr(self.usage, field) + value)
+        if (active := _ACTIVE_USAGE.get()) is not None:
+            setattr(active, field, getattr(active, field) + value)
+
     async def embed(self, texts: list[str]) -> list[list[float]]:
         vectors: list[list[float]] = []
         for start in range(0, len(texts), self.batch_size):
@@ -79,7 +100,7 @@ class AzureOpenAIEmbedder:
         url = f"{self.endpoint.rstrip('/')}/openai/deployments/{self.deployment}/embeddings"
         for attempt in range(self.max_attempts):
             token = await self.token_provider()
-            self.usage.requests += 1
+            self._count("requests", 1)
 
             async def post(token: str = token) -> httpx.Response:  # bound now, not at call time
                 return await self.http.post(
@@ -95,14 +116,18 @@ class AzureOpenAIEmbedder:
             except httpx.TransportError as exc:
                 if attempt + 1 == self.max_attempts:
                     raise EmbeddingError(f"embedding transport failure: {type(exc).__name__}") from exc
-                self.usage.retries += 1
+                self._count("retries", 1)
                 await self.sleep(backoff_seconds(attempt))
                 continue
             if response.status_code == 200:
                 if self.governor:
                     self.governor.record_success()
                 body = response.json()
-                self.usage.prompt_tokens += int(body.get("usage", {}).get("prompt_tokens", 0))
+                self._count("prompt_tokens", int(body.get("usage", {}).get("prompt_tokens", 0)))
+                if "prompt_tokens" in body.get("usage", {}):
+                    self.usage.tokens_reported = True
+                    if (active := _ACTIVE_USAGE.get()) is not None:
+                        active.tokens_reported = True
                 data = sorted(body["data"], key=lambda d: d["index"])
                 if len(data) != len(batch):
                     raise EmbeddingError("embedding response cardinality mismatch")
@@ -112,7 +137,7 @@ class AzureOpenAIEmbedder:
                 return vectors
             if response.status_code == 429 or response.status_code >= 500:
                 if response.status_code == 429:
-                    self.usage.throttled += 1
+                    self._count("throttled", 1)
                 wait = parse_retry_after(response.headers.get("Retry-After"))
                 if attempt + 1 == self.max_attempts:
                     raise EmbeddingError(
@@ -120,7 +145,7 @@ class AzureOpenAIEmbedder:
                         throttled=response.status_code == 429,
                         retry_after=wait,
                     )
-                self.usage.retries += 1
+                self._count("retries", 1)
                 if self.governor:  # the governor's pause is enforced on the next run(); do not wait twice
                     self.governor.record_throttle(
                         wait, status=response.status_code, resourceType="embeddings", requestClass="POST"

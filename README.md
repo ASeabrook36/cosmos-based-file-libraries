@@ -8,7 +8,7 @@ A search service that stores agent file libraries in Azure Cosmos DB instead of 
 
 - Admins and users upload files into libraries.
 - The service extracts the text and describes the images, embeds both, and stores everything in one Cosmos container.
-- Agents search a library through a tool the platform attaches to them.
+- Agents choose passage search, complete-document reads, or both through tools the platform attaches to them.
 - Personal agents each get their own library, which no other agent can search.
 
 It removes the limit that prompted it. Azure AI Search allows 200 indexes per service on the S2 and S3 tiers, and the current design uses one index per library. Here a library is a value stored on each record, not an object the service counts, so the number of libraries has no design limit.
@@ -70,11 +70,25 @@ Phases 0–3 of `docs/build-plan.md` have passed on live Azure.
 
 Next are Phase 3B (images) and Phase 4 (a thousand libraries in one container, measured). The design rests on earlier measurements of these Cosmos features on live Azure (2026). `docs/evidence.md` traces each decision to them and lists what is not yet proven.
 
+## Complete documents and supporting passages
+
+The next enhancement is implemented and its live smoke check passed: an agent can find files by name or metadata, read one or several complete extracted documents, and combine them with relevant passages from other files in the same question. It can go in either direction—search → full reads or full reads → supporting searches—and repeat as needed, without routine user confirmation. The agent weighs context tokens, latency and attention against answer quality.
+
+The new `/tools` bundle exposes all three operations. Full reads report size and completeness and return no text when a complete selection cannot fit; they never silently clip a file. Existing files remain readable as complete indexed passages, with overlaps disclosed; new ingestion preserves the extraction before chunking. Text extraction still has its existing visual/attachment limitations.
+
+The demo uses these tools and displays their operation, tokens and completeness. Both explicit retrieval sequences passed against live Azure and a real model; human answer-quality and broader routing evaluation remain pending. See [the API, integration and rollout notes](docs/document-retrieval.md).
+
+## Prototype performance views
+
+Chat shows retrieval RU/time, total response time and actual cumulative model token use, with per-call breakdowns and quota-wait timing. **Library Performance** shows current document/chunk/vector inventory, captured ingestion/embedding measurements and a bounded retrieval log with RU, latency, results and calling agents. Old measurements are shown as unavailable. Runtime telemetry stays outside the reference repository. See [observability.md](docs/observability.md) for setup, exclusions and the prototype/production boundary.
+
 ## What's here
 
 | Path | What it is | For |
 |---|---|---|
 | `docs/brief.md` | The case for the change, in two pages | Anyone deciding whether to adopt it |
+| `docs/observability.md` | Prototype performance views, metric definitions, exclusions and telemetry setup | Azure architects and AI developers |
+| `docs/document-retrieval.md` | Passage/full-file selection, mixed retrieval, API contracts, agent guidance and rollout | Platform integrators and reviewers |
 | `docs/spec.md` | What to build: components, data model, permissions, API, ingestion, search | Whoever builds it |
 | `docs/build-plan.md` | Build order, demo-first, with an exit check per phase and the demo script | Whoever builds it |
 | `docs/evidence.md` | Each decision, the measurement behind it, and what is not proven | Reviewers, and anyone challenging a decision |
@@ -147,12 +161,12 @@ flowchart LR
 
 | Box | What it is | Its job |
 |---|---|---|
-| Admin, Agent | The platform's pages and agent loop; in the demo, Streamlit (`demo/`) | Create libraries, upload, review proposals; answer questions with one search tool per attached library |
+| Admin, Agent | The platform's pages and agent loop; in the demo, Streamlit (`demo/`) | Create libraries, upload, review proposals; answer questions with search, discovery and full-read tools per attached library |
 | API | `fli-api` (FastAPI); local today, Container Apps in Phase 5 | Libraries, documents, search, tool definitions; checks a personal library belongs to the agent searching |
 | Queue | Service Bus queue `ingest`, one session per library | Work for the worker; one library at a time per lane, up to 8 libraries at once |
 | Worker | `fli-worker` | Extract, chunk, propose tags, embed, write, retag, purge |
 | Cosmos DB | NoSQL, serverless, vector search, continuous backup | Libraries, documents and passages ([detail below](#the-cosmos-containers-in-detail)) |
-| Blob Storage | Container `files` | Original files, one per version, to rebuild from and hand back |
+| Blob Storage | Container `files` | Original files and complete extracted text, one per version, to rebuild from and hand back |
 | Azure OpenAI | `text-embedding-3-large` (3,072 dimensions) and a chat deployment | Vectors for passages and questions; proposed tags, periods, authors and descriptions; the demo agent |
 | Document Intelligence | `prebuilt-read` | OCR for PDFs with no text layer |
 
@@ -228,3 +242,9 @@ eval "$(.venv/bin/python scripts/deployment_env.py -g "$RG")" && .venv/bin/strea
 ```
 
 The corpus folder holds `groups/<library name>/` subfolders, one shared library each. Agents and their attachments are stored in `~/.fli-demo/state.json` (`DEMO_STATE_FILE` to change it), never in the index. Load documents a few minutes before searching: the vector index engages minutes after writes (`docs/evidence.md` E25).
+
+## Synthetic upload fixtures
+
+The existing sample-document generator is included for functional hand-testing of uploads, formats, metadata and failure handling. Install with `python -m pip install -e '.[samples]'`, then run `python -m scripts.sample_docs.build`. It writes an ignored `sample-docs/` directory with a manifest and answer key. An optional output-directory argument is supported; **the generator replaces that directory if it already exists**. Use a dedicated disposable directory.
+
+These invented fixtures are not the real-document demo corpus and must not be used to claim semantic-search quality, recall or production performance. The evidence above uses real documents.

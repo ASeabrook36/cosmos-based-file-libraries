@@ -18,8 +18,11 @@ from __future__ import annotations
 
 import copy
 import itertools
+import re
 from collections.abc import Callable
 from typing import Any, Protocol
+
+from fli.query import RenderedQuery
 
 Record = dict[str, Any]
 ResponseHook = Callable[[Any], None]  # azure-core raw_response_hook: called with each pipeline response
@@ -45,6 +48,7 @@ class LibraryStore(Protocol):
 
 
 class DocumentStore(Protocol):
+    async def discover(self, library_id: str, query: RenderedQuery, cost: ResponseHook) -> list[Record]: ...
     async def get(
         self, library_id: str, document_id: str, *, raw_response_hook: ResponseHook | None = None
     ) -> Record | None: ...
@@ -119,8 +123,11 @@ class _CosmosContainer:
         except CosmosResourceNotFoundError:  # already gone: a retried purge
             pass
 
-    async def query(self, sql: str, params: list[dict[str, Any]], partition_key: str | None) -> list[Record]:
-        items = self._c.query_items(sql, parameters=params, partition_key=partition_key)
+    async def query(
+        self, sql: str, params: list[dict[str, Any]], partition_key: str | None, hook: ResponseHook | None = None
+    ) -> list[Record]:
+        metering = {"raw_response_hook": hook} if hook else {}
+        items = self._c.query_items(sql, parameters=params, partition_key=partition_key, **metering)
         return [item async for item in items]
 
 
@@ -148,6 +155,9 @@ class CosmosLibraryStore:
 class CosmosDocumentStore:
     def __init__(self, container: Any) -> None:
         self._c = _CosmosContainer(container)
+
+    async def discover(self, library_id: str, query: RenderedQuery, cost: ResponseHook) -> list[Record]:
+        return await self._c.query(query.sql, query.parameters, library_id, cost)
 
     async def get(
         self, library_id: str, document_id: str, *, raw_response_hook: ResponseHook | None = None
@@ -226,6 +236,40 @@ class MemoryLibraryStore:
 class MemoryDocumentStore:
     def __init__(self) -> None:
         self.m = _Memory()
+
+    async def discover(self, library_id: str, query: RenderedQuery, cost: ResponseHook) -> list[Record]:
+        params = {p["name"]: p["value"] for p in query.parameters}
+
+        def selected(doc: Record) -> bool:
+            if doc.get("status") == "deleting" or doc["id"] <= params.get("@after", ""):
+                return False
+            for prefix, field in (("au", "author"), ("ft", "fileType"), ("name", "fileName")):
+                values = [v for k, v in params.items() if re.fullmatch(rf"@{prefix}\d+", k)]
+                if prefix == "name":
+                    values = [v.casefold() for v in values]
+                    value = (doc.get(field) or "").casefold()
+                else:
+                    value = doc.get(field)
+                if values and value not in values:
+                    return False
+            if params.get("@contains", "").casefold() not in (doc.get("fileName") or "").casefold():
+                return False
+            if any(v not in doc.get("facets", []) for k, v in params.items() if re.fullmatch(r"@tag\d+", k)):
+                return False
+            if "@pFrom" in params and not (
+                doc.get("periodStart")
+                and doc.get("periodEnd")
+                and doc["periodStart"] <= params["@pTo"]
+                and doc["periodEnd"] >= params["@pFrom"]
+            ):
+                return False
+            for lo, hi, field in (("@aFrom", "@aTo", "authoredAt"), ("@uFrom", "@uTo", "uploadedAt")):
+                if lo in params and not (doc.get(field) and params[lo] <= doc[field] < params[hi]):
+                    return False
+            return True
+
+        rows = [copy.deepcopy(d) for (lib, _), d in self.m.items.items() if lib == library_id and selected(d)]
+        return sorted(rows, key=lambda d: d["id"])[: int(query.sql.split()[2])]
 
     async def get(
         self, library_id: str, document_id: str, *, raw_response_hook: ResponseHook | None = None

@@ -15,6 +15,7 @@ from fli.auth import check_auth_supported
 from fli.blobs import AzureBlobs, BlobStore
 from fli.config import ConfigError, Settings
 from fli.errors import ApiError
+from fli.metrics import record as record_metric
 from fli.queue import Queue, ServiceBusQueue
 from fli.search import CosmosChunkReader, Searcher
 from fli.store import CosmosDocumentStore, CosmosLibraryStore, DocumentStore, LibraryStore
@@ -124,17 +125,52 @@ def create_app(
     async def model_invalid(_: Request, exc: ValidationError) -> JSONResponse:
         return _invalid(exc)
 
+    @app.middleware("http")
+    async def retrieval_errors(request: Request, call_next):
+        import time
+
+        started = time.perf_counter()
+        operations = {"/search": "search", "/documents:read": "read", "/documents:discover": "discover"}
+        operation = next((v for k, v in operations.items() if request.url.path.endswith(k)), None)
+        try:
+            response = await call_next(request)
+        except Exception:
+            if operation and (library_id := request.path_params.get("library_id")):
+                record_metric(
+                    "error",
+                    library_id,
+                    agentId=request.headers.get("X-Agent-Id"),
+                    failedOperation=operation,
+                    status=500,
+                    totalMs=round((time.perf_counter() - started) * 1000, 1),
+                )
+            raise
+        if operation and response.status_code >= 400 and (library_id := request.path_params.get("library_id")):
+            record_metric(
+                "error",
+                library_id,
+                agentId=request.headers.get("X-Agent-Id"),
+                failedOperation=operation,
+                status=response.status_code,
+                totalMs=round((time.perf_counter() - started) * 1000, 1),
+            )
+        return response
+
     @app.get("/healthz")
     async def healthz() -> dict[str, str]:
         return {"status": "ok"}
 
     from fli.api import documents as document_routes
     from fli.api import libraries as library_routes
+    from fli.api import metrics as metrics_routes
+    from fli.api import reading as reading_routes
     from fli.api import search as search_routes
 
     app.include_router(library_routes.router)
     app.include_router(document_routes.router)
     app.include_router(search_routes.router)
+    app.include_router(reading_routes.router)
+    app.include_router(metrics_routes.router)
     return app
 
 
