@@ -4,13 +4,13 @@
 
 ## The problem
 
-Agents on the platform answer questions from file libraries. A user or admin uploads documents, the platform indexes them, and an agent with the library attached can search it when a question calls for it.
+Agents can answer questions from "file libraries". A user or admin uploads documents which are stored, and a process can then index them, and an agent with the library attached can search it when a question calls for it.
 
-Today each library is its own Azure AI Search index. An index is something the search service creates and counts, and the service caps the count: 200 indexes on the S2 and S3 tiers. Every personal agent with files needs a library, every user can build a personal agent, and admins create hundreds of libraries for official agents. The cap is reached however small the libraries are.
+One current solutions for this index is Azure AI Search Service index. This service counts each index, and the service caps the count: 200 indexes on the S2 and S3 tiers. Given that every agent with files needs a library, every user could build a personal agent, and admin could create hundreds of shared libraries for official agents, this limit is an issue, and the cap is reached however small the libraries are.
 
 ## The change
 
-Move file libraries to Azure Cosmos DB, and make a library a **value stored on each record** rather than an object the service counts.
+The proposal is to move file libraries to Azure Cosmos DB, and make a library a **value stored on each record** rather than an object the service counts.
 
 - **One container, every library.** Every searchable piece of every document carries its library's ID. Cosmos uses that ID to store each library's content together and to build a **separate vector index for each library inside the same container**. (A vector index is what lets search find text by meaning rather than exact words.) Adding a library adds records, not infrastructure, so there is no design limit on the number of libraries.
 - **Cosmos holds everything that is searched.** That means the text, the vectors, the document and library details, and the tags. Blob storage keeps only the original files and images, to hand back to users.
