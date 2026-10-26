@@ -56,12 +56,13 @@ The design reuses earlier measurements of the same Cosmos features on live Azure
 4. The agent finds a chart inside a slide deck and shows it.
 5. A user's personal agent answers from that user's own files.
 6. That personal library cannot be attached to an official agent, and is refused even if forced.
-7. The library usage report.
+7. The prototype Library Performance view for current inventory, ingestion measurements and bounded retrieval history; production routing analytics remain future work.
+8. An agent combines whole-file reads with selected passages from other documents in either order.
 
 ## What is not proven yet
 
-- **This exact combination of Cosmos settings has never been built together.** Each was measured separately. The first build includes a test that proves the combination before anything depends on it.
-- **The settings were tested on public reference text, not workplace documents.** The demo corpus will be real business documents.
+- **This exact combination of Cosmos settings has been built and passed its canary at small scale.** Large libraries, multi-partition behavior and production operations remain unmeasured.
+- **The settings were tested on public reference text, not workplace documents.** Live retrieval checks also used published research papers. A workplace corpus and its task quality remain unevaluated.
 - **The chosen compression method is a Microsoft preview feature.** A generally available alternative exists at slightly lower accuracy.
 - **Very large deployments (millions of searchable pieces spread over many servers) are untested.** The design should behave the same at that size, but nobody has measured it.
 - **Microsoft's documentation asks users of this partitioning and vector-search combination to contact the Cosmos team.** That is a step before production.

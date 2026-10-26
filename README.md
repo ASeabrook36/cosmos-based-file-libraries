@@ -7,7 +7,7 @@
 A search service that stores agent file libraries in Azure Cosmos DB instead of Azure AI Search.
 
 - Admins and users upload files into libraries.
-- The service extracts the text and describes the images, embeds both, and stores everything in one Cosmos container.
+- Cosmos stores searchable passage text, vectors and metadata. Blob holds original files and versioned complete-text extractions; image processing remains Phase 3B.
 - Agents choose passage search, complete-document reads, or both through tools the platform attaches to them.
 - Personal agents each get their own library, which no other agent can search.
 
@@ -72,11 +72,11 @@ Next are Phase 3B (images) and Phase 4 (a thousand libraries in one container, m
 
 ## Complete documents and supporting passages
 
-The next enhancement is implemented and its live smoke check passed: an agent can find files by name or metadata, read one or several complete extracted documents, and combine them with relevant passages from other files in the same question. It can go in either direction—search → full reads or full reads → supporting searches—and repeat as needed, without routine user confirmation. The agent weighs context tokens, latency and attention against answer quality.
+Agents can find files by name or metadata, read one or several complete extracted documents, and combine them with relevant passages from other files in the same question. They can alternate between complete reads and passage searches in either order, without routine user confirmation. The library service presents both options with size, completeness, provenance, budget and retrieval-cost information; agent builders and library owners supply the guidance that shapes scope decisions.
 
-The new `/tools` bundle exposes all three operations. Full reads report size and completeness and return no text when a complete selection cannot fit; they never silently clip a file. Existing files remain readable as complete indexed passages, with overlaps disclosed; new ingestion preserves the extraction before chunking. Text extraction still has its existing visual/attachment limitations.
+The `/tools` bundle exposes discovery, full reads and passage search. Full reads report size and completeness and return no text when a complete selection cannot fit; they never silently clip a file. Existing files remain readable as complete indexed passages, with overlaps disclosed; new ingestion preserves the extraction before chunking. Text extraction retains its existing visual and attachment limitations.
 
-The demo uses these tools and displays their operation, tokens and completeness. Both explicit retrieval sequences passed against live Azure and a real model; human answer-quality and broader routing evaluation remain pending. See [the API, integration and rollout notes](docs/document-retrieval.md).
+Both explicit mixed-retrieval sequences passed against live Azure and a real model. In a later manual pair, mixed retrieval reduced input to the final answer call by 37.3%, while cumulative tokens, retrieval RU and retrieval time increased; the runs used different wording, so this is composition evidence rather than a controlled cost, speed, attention or accuracy result. Human answer-quality review and broader agent-routing evaluation remain pending. See [the API, integration and rollout notes](docs/document-retrieval.md) and the [comparison record](records/full-vs-mixed-retrieval-20261026.json).
 
 ## Prototype performance views
 
@@ -101,6 +101,7 @@ Chat shows retrieval RU/time, total response time and actual cumulative model to
 | `src/fli_demo/`, `demo/` | The demo platform: the index client, the agent–library attachments (kept outside the index) and the agent loop; the Streamlit pages | Anyone running the demo |
 | `scripts/canary.py` | Proves a newly deployed account's vector and hybrid search work (CLAUDE.md rule 11) | Whoever deploys it |
 | `scripts/load_demo_corpus.py` | Loads a folder of documents into shared libraries through the API | Anyone running the demo |
+| `scripts/sample_docs/` | Generates invented, multi-format upload fixtures for functional hand-testing | Anyone checking file handling; not a search-quality corpus |
 | `scripts/deployment_env.py` | Prints a deployment's outputs as `export` lines, for the demo commands below | Anyone running the demo |
 | `scripts/phase1_exit.py`, `scripts/phase3_exit.py` | Exit checks driven through the running API; each writes a record to `records/` | Whoever runs an exit check |
 | `records/` | Canary and exit-check records, committed | Reviewers |
@@ -177,6 +178,8 @@ Application Insights is deployed too; search events start arriving in Phase 4.
 **Ingest.** The worker reads the original and extracts its text (OCR only when a PDF has no text layer), chunks it into about 500 tokens per section, and asks the chat model for tags, a period and an author. It embeds the chunks, writes them under a new generation, and commits: from that moment search returns the new generation and ignores older ones, which a `purgeDocument` message then deletes. The library's tag vocabulary and filter values are recomputed, and a library description is proposed when enough has changed.
 
 **Search.** An agent's tool call carries only a question and filters. The platform maps the tool to the library it attached and calls `POST /v1/libraries/{id}/search` with the agent's id. The API point-reads the library and refuses a personal library to any other agent, embeds the question, and runs one Cosmos query scoped to that library. It drops chunks of replaced or deleted documents and returns passages with file, page or slide, and a coverage note saying what the filters left out.
+
+**Discover and read.** The platform attaches the library-bound tools from `GET /v1/libraries/{id}/tools`. An agent can enumerate documents by name or metadata, use passage search to identify likely files, inspect full-text size, and read one or more complete extractions. It can then search other files for supporting passages or read more files as needed in the same question. The library service supplies the operations, completeness and budget limits; the consuming agent's builder and library owner guide how it chooses among them.
 
 **Metadata changes.** Accepting a proposal or editing a document's tags updates the document record at once and queues `retag`, which copies the metadata onto every chunk so filters run inside the vector query.
 
