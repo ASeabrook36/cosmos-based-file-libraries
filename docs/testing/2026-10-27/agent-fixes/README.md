@@ -1,6 +1,6 @@
 # Agent capability implementation and iterative replays
 
-These user-authorized evaluation captures preserve implementation learning for cloud-only continuation. Original test sources and questions are unchanged; no re-ingestion, embedding/index policy, image cap, model deployment or context-budget increase was used. All four replay snapshot checks report unchanged source generations, revisions and artifact hashes. The same 48,000-token budget was used. A replay starts fresh, then carries the first two casual turns and the three-turn meeting sequence in the same conversation, matching the original casual order.
+These user-authorized evaluation captures preserve implementation findings for reproducible development and review. Original test sources and questions are unchanged; no re-ingestion, embedding/index policy, image cap, model deployment or context-budget increase was used. All four replay snapshot checks report unchanged source generations, revisions and artifact hashes. The same 48,000-token budget was used. A replay starts fresh, then carries the first two casual turns and the three-turn meeting sequence in the same conversation, matching the original casual order.
 
 | Capture | Adapter stage | What it established |
 |---|---|---|

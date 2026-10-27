@@ -1,15 +1,23 @@
 # Portable retrieval evidence and replay pack
 
-This pack preserves the development-relevant material from the issue #2 smoke checks, two eight-question manual runs and three casual-reference cases (the last case has three turns). It was committed at the user's request so a cloud-only agent can review actual questions/answers and continue from the findings without access to local temporary files.
+This pack preserves the development-relevant material from the issue #2 smoke checks, two eight-question manual runs and three casual-reference cases (the last case has three turns). It was committed at the user's request for reproducible development and review without relying on uncommitted local files.
 
 ## Entry points
 
-- [Cloud handoff](../../../HANDOFF.md): current implementation, proposed versus implemented work, setup and continuation boundaries.
+- [Current retrieval contract](../../agent-retrieval.md), [specification](../../spec.md) and [build plan](../../build-plan.md): implementation and development status.
 - [Evidence review](../../consults/2026-10-27-agent-retrieval-test-review.md): measured results and limits.
-- [Proposed strategy](../../consults/2026-10-27-agent-retrieval-strategy.md): recommended next changes; still proposed.
+- [Original strategy](../../consults/2026-10-27-agent-retrieval-strategy.md): rationale for the subsequently implemented capability package; [planned roadmap](../../consults/2026-10-27-retrieval-roadmap.md): future work.
 - [Exact original fixture files and hashes](../../../tests/fixtures/retrieval-review/README.md).
 - [Matched questions](matched-questions.md), [reviewer checklist](reviewer-checklist.md) and [results template](results-template.md). Only questions 1–8 were run in the recorded pair; questions 9–10 were optional and have no recorded outcome.
 - [Exact casual cases and reviewer findings](casual-cases.json). Preserve the spelling/ambiguity during replay. Do not inject reviewer findings or expected answers into the agent.
+
+## Reproduce the scenarios
+
+Use an authorized deployment configured through the [infrastructure guide](../../../infra/README.md) and [demo setup](../../../README.md#run-the-demo). Keep its credentials/settings outside Git. Upload the unchanged [fixture bytes](../../../tests/fixtures/retrieval-review/README.md); create one library per file and a combined library for the paired comparison. Resolve fresh document/image IDs from tools; sanitized historical placeholders are not live selectors.
+
+The original pair used default agent instructions, the same deployed chat model, a 48,000-token context budget and enabled image inputs. Each eight-question suite ran consecutively in one conversation, separate libraries first. The casual suite started a new conversation and retained preceding casual turns. Independent image descriptions and different model/tool paths prevent treating these runs as a controlled library-layout benchmark. Keep the same source/model/budget/question order for future comparisons and state any differences.
+
+The four-format smoke harness is documented by `python -m scripts.phase3b_exit --help`. The opt-in `scripts/evaluate_agent_retrieval.py` replays against existing libraries without ingestion/index writes. Keep harness state and raw captures outside the repository, publish sanitized findings, and retain content-free routine telemetry. Source comparison and failure review can also use the committed answers, original files and source-region responses offline. Do not hard-code these questions, pages or expected answers into production routing.
 
 ## Captured outputs
 
@@ -36,6 +44,6 @@ Runtime library/agent/document identifiers and user-chosen test-agent/library la
 
 The compact/full-response artifacts preserve the distinctions between generated descriptions, source captions, source body text and model interpretation. Do not turn a generated description or an observed model answer into a verified source fact. Read the report's actual pages before making statistical claims. Source assets retain their original attribution; no new reuse permission is asserted.
 
-[manifest.json](manifest.json) provides byte sizes/hashes for exported artifacts. Summary records are in [records](../../../records/README.md); the day review links their measured scope and caveats. Exact cloud runtime credentials/IDs are intentionally unnecessary: obtain fresh authorized settings and resolve fresh IDs when replaying against a deployment.
+[manifest.json](manifest.json) provides byte sizes/hashes for exported artifacts. Summary records are in [records](../../../records/README.md); the day review links their measured scope and caveats. Obtain fresh authorized settings and resolve fresh IDs when replaying against a deployment; historical runtime credentials/IDs are not required.
 
 Subsequent user-authorized implementation and [four iterative frozen-corpus replays](agent-fixes/README.md) preserve the new capabilities, actual answers, measured costs, regressions and remaining model-quality gaps. See the [current contract](../../agent-retrieval.md) and E49.

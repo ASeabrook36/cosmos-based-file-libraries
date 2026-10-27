@@ -6,7 +6,7 @@
 
 A search service that stores agent file libraries in Azure Cosmos DB instead of Azure AI Search.
 
-For cloud-only continuation, start with [HANDOFF.md](HANDOFF.md). The [portable test/evidence pack](docs/testing/2026-10-27/README.md) includes the exact corpus, questions, sanitized observed answers/traces and review figures.
+The [specification](docs/spec.md), [build plan](docs/build-plan.md) and [current retrieval contract](docs/agent-retrieval.md) describe the implementation. The [planned retrieval roadmap](docs/consults/2026-10-27-retrieval-roadmap.md) records the next priorities. The [test/evidence pack](docs/testing/2026-10-27/README.md) includes the exact corpus, questions, sanitized observed answers/traces and review figures.
 
 - Admins and users upload files into libraries.
 - Cosmos stores searchable text passages and image descriptions, vectors and metadata. Blob holds originals, complete extracted text and image/caption assets; selected figures can appear inline with an answer.
@@ -118,6 +118,9 @@ Chat shows retrieval RU/time, total response time and actual cumulative model to
 | `docs/observability.md` | Prototype performance views, metric definitions, exclusions and telemetry setup | Azure architects and AI developers |
 | `docs/image-retrieval.md` | Figure/caption ingestion, semantic retrieval, inline rendering, processing bounds and rollout | Platform integrators and reviewers |
 | `docs/document-retrieval.md` | Passage/full-file selection, mixed retrieval, API contracts, agent guidance and rollout | Platform integrators and reviewers |
+| `docs/agent-retrieval.md` | Current file discovery, scoped evidence retrieval, bounded reads and selected-image inspection contract | Platform integrators and developers |
+| `docs/consults/2026-10-27-retrieval-roadmap.md` | Planned compact REST responses, shared section summaries and document summaries, in priority order | Developers and product reviewers |
+| `docs/testing/2026-10-27/` | Reproducible retrieval corpus, questions, observed results and evaluation limits | Developers and reviewers |
 | `docs/spec.md` | What to build: components, data model, permissions, API, ingestion, search | Whoever builds it |
 | `docs/build-plan.md` | Build order, demo-first, with an exit check per phase and the demo script | Whoever builds it |
 | `docs/evidence.md` | Each decision, the measurement behind it, and what is not proven | Reviewers, and anyone challenging a decision |
@@ -148,6 +151,8 @@ python3 -m venv .venv && .venv/bin/pip install -e '.[dev,demo]'
 .venv/bin/python -m pytest
 .venv/bin/ruff check . && .venv/bin/ruff format --check .
 ```
+
+Unit/API tests use in-memory services and need no Azure credentials. Live Cosmos ranking cannot be reproduced by the emulator; local tests check query construction and invariants, while canary/integration runs measure deployed behavior. The [test pack](docs/testing/2026-10-27/README.md#reproduce-the-scenarios) explains how to reproduce the recorded retrieval scenarios.
 
 To deploy and run the canary, follow `infra/README.md`.
 

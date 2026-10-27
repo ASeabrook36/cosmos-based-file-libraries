@@ -1,13 +1,13 @@
 [
   {
     "file": "README.md",
-    "bytes": 5708,
-    "sha256": "7b745195f849d4168105828e107284c602e4143f08ef2ffcfe25aca6088e5045"
+    "bytes": 7365,
+    "sha256": "ba91b9478932c04c96a6b20bc65d08407238cb86e1e0a49fb7fd2f0562e53b5c"
   },
   {
     "file": "agent-fixes/README.md",
-    "bytes": 5877,
-    "sha256": "36126eeb39001cc272d689f9ee0c6bcbf5383038af766386e9a66c79e0f2189e"
+    "bytes": 5889,
+    "sha256": "2edcce1a835b1b13df529ffeb70413ada14e67aeaec1f56a5bf92a56f96e6520"
   },
   {
     "file": "agent-fixes/live-capability-probes.json",
