@@ -1,0 +1,299 @@
+{
+  "check": "retrieval-followups",
+  "complete": true,
+  "documents": [
+    {
+      "fileType": "pdf",
+      "imageCount": 1,
+      "interleaved": true,
+      "sectionTextUnchanged": true,
+      "rawTokens": 1607,
+      "projectedTokens": 1113,
+      "readUsage": {
+        "requestCharge": 4.38,
+        "totalMs": 244.1
+      },
+      "sourceSha256": "f5711e42104eca3590851f0080029e66ce2dbe24e615376a519a32a4796b2649"
+    },
+    {
+      "fileType": "docx",
+      "imageCount": 1,
+      "interleaved": true,
+      "sectionTextUnchanged": true,
+      "rawTokens": 1339,
+      "projectedTokens": 929,
+      "readUsage": {
+        "requestCharge": 4.38,
+        "totalMs": 188.6
+      },
+      "sourceSha256": "c4ad373513171777cf4dabe6161be7b44da6a848c658e7ec134f99b823948176"
+    },
+    {
+      "fileType": "pptx",
+      "imageCount": 1,
+      "interleaved": true,
+      "sectionTextUnchanged": true,
+      "rawTokens": 1310,
+      "projectedTokens": 907,
+      "readUsage": {
+        "requestCharge": 4.38,
+        "totalMs": 195.8
+      },
+      "sourceSha256": "5339dfe6d187dd1f2e75ddeaaaf02bad3f992b150a25f86aa446806b82d745a4"
+    },
+    {
+      "fileType": "image",
+      "imageCount": 1,
+      "interleaved": true,
+      "sectionTextUnchanged": true,
+      "rawTokens": 1211,
+      "projectedTokens": 806,
+      "readUsage": {
+        "requestCharge": 4.38,
+        "totalMs": 187.7
+      },
+      "sourceSha256": "e476efb3a14c6110d7f5dd87b92dc0a80252b22df846e033d3c4575014b7d27a"
+    }
+  ],
+  "models": [
+    {
+      "case": "vague-figure",
+      "modelCalls": 2,
+      "toolCalls": 1,
+      "operations": [
+        "search"
+      ],
+      "selectedImages": 1,
+      "nativeImagesSupplied": true,
+      "signedLinksAbsentFromToolText": true,
+      "totalMs": 14210.061457939446,
+      "retrievalMs": 747.1846250118688,
+      "requestCharge": 15.5,
+      "usage": [
+        {
+          "completion_tokens": 68,
+          "prompt_tokens": 2509,
+          "total_tokens": 2577,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": 0,
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": 0,
+            "text_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cache_write_tokens": null,
+            "cached_tokens": 0,
+            "image_tokens": null,
+            "text_tokens": null
+          },
+          "latency_checkpoint": {
+            "engine_tbt_ms": 7,
+            "engine_ttft_ms": 80,
+            "engine_ttlt_ms": 843,
+            "pre_inference_ms": 318,
+            "service_tbt_ms": 7,
+            "service_ttft_ms": 633,
+            "service_ttlt_ms": 1390,
+            "user_visible_ttft_ms": 314
+          }
+        },
+        {
+          "completion_tokens": 1024,
+          "prompt_tokens": 5535,
+          "total_tokens": 6559,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": 0,
+            "audio_tokens": 0,
+            "reasoning_tokens": 704,
+            "rejected_prediction_tokens": 0,
+            "text_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cache_write_tokens": null,
+            "cached_tokens": 0,
+            "image_tokens": null,
+            "text_tokens": null
+          },
+          "latency_checkpoint": {
+            "engine_tbt_ms": 8,
+            "engine_ttft_ms": 341,
+            "engine_ttlt_ms": 8359,
+            "pre_inference_ms": 856,
+            "service_tbt_ms": 8,
+            "service_ttft_ms": 1534,
+            "service_ttlt_ms": 9688,
+            "user_visible_ttft_ms": 678
+          }
+        }
+      ]
+    },
+    {
+      "case": "whole-file-with-support",
+      "modelCalls": 4,
+      "toolCalls": 4,
+      "operations": [
+        "discover",
+        "search",
+        "read",
+        "images"
+      ],
+      "selectedImages": 1,
+      "nativeImagesSupplied": true,
+      "signedLinksAbsentFromToolText": true,
+      "totalMs": 31131.764583056793,
+      "retrievalMs": 1654.2285420000553,
+      "requestCharge": 38.95,
+      "usage": [
+        {
+          "completion_tokens": 102,
+          "prompt_tokens": 2510,
+          "total_tokens": 2612,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": 0,
+            "audio_tokens": 0,
+            "reasoning_tokens": 64,
+            "rejected_prediction_tokens": 0,
+            "text_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cache_write_tokens": null,
+            "cached_tokens": 2304,
+            "image_tokens": null,
+            "text_tokens": null
+          },
+          "latency_checkpoint": {
+            "engine_tbt_ms": 7,
+            "engine_ttft_ms": 41,
+            "engine_ttlt_ms": 879,
+            "pre_inference_ms": 119,
+            "service_tbt_ms": 7,
+            "service_ttft_ms": 669,
+            "service_ttlt_ms": 1497,
+            "user_visible_ttft_ms": 550
+          }
+        },
+        {
+          "completion_tokens": 58,
+          "prompt_tokens": 2737,
+          "total_tokens": 2795,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": 0,
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": 0,
+            "text_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cache_write_tokens": null,
+            "cached_tokens": 2432,
+            "image_tokens": null,
+            "text_tokens": null
+          },
+          "latency_checkpoint": {
+            "engine_tbt_ms": 7,
+            "engine_ttft_ms": 45,
+            "engine_ttlt_ms": 743,
+            "pre_inference_ms": 900,
+            "service_tbt_ms": 11,
+            "service_ttft_ms": 1684,
+            "service_ttlt_ms": 2685,
+            "user_visible_ttft_ms": 784
+          }
+        },
+        {
+          "completion_tokens": 653,
+          "prompt_tokens": 4892,
+          "total_tokens": 5545,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": 0,
+            "audio_tokens": 0,
+            "reasoning_tokens": 512,
+            "rejected_prediction_tokens": 0,
+            "text_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cache_write_tokens": null,
+            "cached_tokens": 0,
+            "image_tokens": null,
+            "text_tokens": null
+          },
+          "latency_checkpoint": {
+            "engine_tbt_ms": 8,
+            "engine_ttft_ms": 127,
+            "engine_ttlt_ms": 5755,
+            "pre_inference_ms": 123,
+            "service_tbt_ms": 8,
+            "service_ttft_ms": 908,
+            "service_ttlt_ms": 6531,
+            "user_visible_ttft_ms": 785
+          }
+        },
+        {
+          "completion_tokens": 2077,
+          "prompt_tokens": 7684,
+          "total_tokens": 9761,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": 0,
+            "audio_tokens": 0,
+            "reasoning_tokens": 1216,
+            "rejected_prediction_tokens": 0,
+            "text_tokens": null
+          },
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cache_write_tokens": null,
+            "cached_tokens": 2432,
+            "image_tokens": null,
+            "text_tokens": null
+          },
+          "latency_checkpoint": {
+            "engine_tbt_ms": 7,
+            "engine_ttft_ms": 326,
+            "engine_ttlt_ms": 15590,
+            "pre_inference_ms": 324,
+            "service_tbt_ms": 7,
+            "service_ttft_ms": 964,
+            "service_ttlt_ms": 16221,
+            "user_visible_ttft_ms": 640
+          }
+        }
+      ]
+    }
+  ],
+  "groupedSearch": {
+    "documents": 4,
+    "parentSizesPresent": true,
+    "usage": {
+      "requestCharge": 15.27,
+      "totalMs": 1531.8,
+      "embeddingMs": 951.1,
+      "embeddingTokens": 6
+    }
+  },
+  "pageRead": {
+    "images": 1,
+    "usage": {
+      "requestCharge": 4.38,
+      "totalMs": 248.2
+    }
+  },
+  "localValidation": {
+    "testsPassed": 600,
+    "pythonVersion": "3.14",
+    "ruffCheck": true,
+    "ruffFormatCheck": true,
+    "referencePrivacyCheck": true
+  },
+  "limitations": [
+    "Small invented corpus; broad recall and answer quality not evaluated.",
+    "No controlled latency or ingestion speedup comparison.",
+    "The mixed model case requested a redundant same-page image read alongside the complete read."
+  ],
+  "temporaryLibraryCleanupQueued": true
+}

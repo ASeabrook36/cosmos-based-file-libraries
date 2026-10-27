@@ -212,6 +212,7 @@ async def run(settings: Settings, stopping: asyncio.Event) -> None:
             image_min_bytes=settings.image_min_bytes,
             image_max_per_document=settings.image_max_per_document,
             image_asset_max_per_document=settings.image_asset_max_per_document,
+            vision_concurrency=settings.vision_concurrency,
         )
 
         async def take_session() -> bool:

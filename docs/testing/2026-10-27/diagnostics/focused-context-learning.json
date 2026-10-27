@@ -1,0 +1,241 @@
+{
+  "library": {
+    "libraryId": "combined-library",
+    "name": "combined-library"
+  },
+  "coverage": {
+    "searched": "combined-library (4 documents)",
+    "filtersApplied": {
+      "fileTypes": [
+        "pdf"
+      ],
+      "contentKinds": [
+        "text"
+      ]
+    },
+    "notes": [
+      "1 visual candidates were skipped by configured size, format or per-document limits; search does not cover those visuals."
+    ],
+    "distinctDocuments": false,
+    "resultCount": 8,
+    "disposition": "results"
+  },
+  "results": [
+    {
+      "rank": 1,
+      "chunkId": "combined-library-pdf-document:1:164",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 59
+      },
+      "heading": "Digital empathy is emerging as a key differentiator in the design of AI conversational agents",
+      "contentKind": "text",
+      "text": "Digital empathy is emerging as a key differentiator in the design of AI conversational agents\nThinking, Learning, and Psychological Influences aka.ms/nfw",
+      "neighbors": [
+        {
+          "chunkIndex": 163,
+          "text": "Digital empathy is emerging as a key differentiator in the design of AI conversational agents\nMicrosoft Study: Das Swain, V. et al. (2025). AL On My Shoulder: Supporting Emotional Labor In Front-Office Roles With An LLM-Based Empathetic Coworker. CHI. Sanders, M. Z. (2025). How People Are Really Using Gen Al In 2025. Harvard Business Review. Microsoft Study: Chandra, M. et al. (2025). Longitudinal Study On Social and Emotional Use Of Al Conversational Agent. arXiv Working Paper. Howcroft, A. et al. (2025). Al Chatbots Versus Human Healthcare Professionals: A Systematic Review And Meta Analysis Of Empathy In Patient Care. British Medical Bulletin. Rubin, M., et al. (2025). Comparing The Value Of Perceived Human Versus Al-Generated Empathy. Nature Human Behaviour. 58"
+        },
+        {
+          "chunkIndex": 165,
+          "text": "Growing evidence suggests psychological well-being should be a core AI design and governance criterion\nGrowing evidence suggests psychological well-being should be a core AI design and governance criterion \u00b7 Psychological well-being is the state of feeling mentally healthy, resilient, and fulfilled through positive emotions, life satisfaction, and purpose (Yi\u011fit & \u00c7akmak, 2024). \u00b7 Whether explicitly designed to be companions or not, users are appropriating conversational Al tools for social and emotional purposes (Laestadius et al., 2022; Siddals et al., 2024). These systems can fill emotional, social, and informational gaps, providing 24/7 availability and perceived non-judgmental communication that some associate with temporary improvement in well-being (Zhang et al., 2025). . However, reliance on Al for companionship and unconditional validation may have psychological risks, such as dependence, distorted self-perception, and reinforcement of maladaptive behaviors or beliefs, and may reshape social norms around relational technology (Huang et al., 2024; Marriott & Pitardi, 2024). . These impacts likely emerge from complex, long-term interactions between often unobservable factors (e.g., user's disposition, environments) and Al design, making it difficult to isolate any one technology feature as the cause for psychological harm or benefit (Fang et al., 2024; Chandra et al., 2024). Psychological impact of AI on human is highly context- and interaction-dependent. Conceptualizing psychological risks must take the full dynamic user context into account (Chandra et al., 2025). . This research raises questions about how Al designers might establish ethical norms that preserve human well-being, invest in community-driven evaluation, conduct longitudinal monitoring, and include guardrails and supportive prosocial user experiences. Yi\u011fit, B. and \u00c7akmak, B.Y. (2024). Discovering Psychological Well-Being: A Bibliometric Review. Journal of Happiness Studies. Laestadius, L. et al. (2024). Too Human And Not Human Enough: A Grounded Theory Analysis Of Mental Health Harms From Emotional Dependence On The Social Chatbot Replika. New Media & Society. Siddals, S., et al. (2024)."
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 2,
+      "chunkId": "combined-library-pdf-document:1:116",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 43
+      },
+      "heading": "Proactivity transforms Al from a passive tool into more of a \"team member\"",
+      "contentKind": "text",
+      "text": "Proactivity transforms Al from a passive tool into more of a \"team member\"\nProactivity transforms Al from a passive tool into more of a \"team member\" . When a collaborative Al is developed to be more proactive, it starts to take on roles more akin to being a \"team member\" - raising new ideas, identifying risks, and suggesting next steps. \u00b7 Huang et al. (2025) demonstrate that proactive information gathering fundamentally changes the role of LLMs from passive responders to collaborative thought partners, improving user satisfaction by 42%. Their qualitative evaluations showed that users interpret proactive questioning as engagement and competence-traits associated with teammates rather than tools. \u00b7 Liu et al. (2025a) introduce Thoughtful Al as a paradigm shift from reactive, turn-based systems to agents that continuously think out loud and share their evolving reasoning during interactions, fostering proactive behavior and cognitively aligned collaboration. They argue this approach transforms Al from a passive tool into a thought partner, capable of initiating dialogue, suggesting next steps, and adapting as the conversation evolves. \u00b7 Commonly-used NLP techniques like next speaker prediction fall short in multi-party dynamics, where conversations are fluid and overlapping. Predicting the next speaker does not help the AI determine the optimal timing for its own intervention without disrupting the flow. It also fails to capture the underlying motivation or reasoning behind speaking turns, so the Al cannot assess whether its contribution would add value at that moment (Liu et al., 2025b). \u00b7 New techniques allow an Al to decide when to speak up and contribute during group interactions. For example, Lu et al. (2024) explore anticipatory planning and timing, showing that AI can learn when to intervene by predicting tasks and leveraging human feedback. By fine-tuning on timing decisions, the model learned conversational dynamics (e.g. pauses, topic shifts) and task progression cues to identify opportune moments for contribution. \u00b7 Drawing from cognitive psychology and real human turn-taking data, Liu et al. (2025b) show that modeling human-like turn- taking and timing through internal reasoning improves perceived intelligence and appropriateness of Al contributions. Microsoft Study: Huang, T. et al. (2025). Teaching Language Models To Gather Information Proactively. EMNLP. Liu, X. et al. (2025a).",
+      "neighbors": [
+        {
+          "chunkIndex": 115,
+          "text": "AI can drive goal clarity for effective meetings and smarter workflows\nAI for Teamwork aka.ms/nfw"
+        },
+        {
+          "chunkIndex": 117,
+          "text": "Proactivity transforms Al from a passive tool into more of a \"team member\"\nMicrosoft Study: Huang, T. et al. (2025). Teaching Language Models To Gather Information Proactively. EMNLP. Liu, X. et al. (2025a). Interacting with Thoughtful Al. arXiv Working Paper. Liu, X. et al. (2025b). Proactive Conversational Agents with Inner Thoughts. CHI. Lu, Y. et al. (2024). Proactive Agent: Shifting LLM Agents from Reactive Responses to Active Assistance. ICLR. 43"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 3,
+      "chunkId": "combined-library-pdf-document:1:67",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 26
+      },
+      "heading": "Human-AI co-creation is shifting from one-shot outputs to context-aware, interaction-driven partnerships",
+      "contentKind": "text",
+      "text": "Human-AI co-creation is shifting from one-shot outputs to context-aware, interaction-driven partnerships\nHuman-AI co-creation is shifting from one-shot outputs to context-aware, interaction-driven partnerships \u00b7 Modern LLMs have fundamentally shifted content creation workflows from assuming perfect results in a single attempt to engaging in iterative, multi-turn collaborative refinement (Mysore et al., 2025). This transformation reflects both technological advances in LLM capabilities and profound changes in how users perceive and interact with AI (Reza et al., 2025), increasingly viewing it as a creative partner rather than a passive tool (Wan et al., 2024). . These patterns are emerging consistently across diverse domains-from writing and design (Zhou et al., 2024) to workplace communication (Das et al., in prep.) and software development (Deineha et al., 2025). \u00b7 Large-scale empirical analysis of real-world LLM-assisted writing reveals that users rarely accept AI's initial outputs passively. Instead, they engage in complex, multi-turn dialogues characterized by Prototypical Human-AI Collaboration Behaviors (PATHs)-including revising intents, exploring alternatives, asking clarifying questions, and iteratively adjusting style and content (Mysore et al., 2025). \u00b7 Recent studies show modern Al enables non-linear collaboration frameworks where humans and AI iteratively diverge (exploring ideas) and converge (refining toward consensus), replacing rigid task delegation. This shift mirrors creative prototyping-users experiment, test alternatives, and refine through iterative feedback (Zhou et al., 2024; Yukita et al., 2025). Users follow up their original requests to collaborate with LLMs in writing sessions. Mysore et al. (2025) identify prototypical human-AI collaboration behaviors (PATHs) and find statistically significant correlations between users' writing intents and PATHs. Microsoft Study: Mysore, S. et al. (2025). Prototypical Human-AI Collaboration Behaviors from LLM-Assisted Writing in the Wild. EMNLP. Reza, M. et al. (2025). Co-Writing with Al, on Human Terms: Aligning Research with User Demands Across the Writing Process. CSCW. Wan, Q. et al. (2024).",
+      "neighbors": [
+        {
+          "chunkIndex": 66,
+          "text": "Establishing common ground is essential for human-AI collaboration (2)\nHuman-AI Collaboration aka.ms/nfw"
+        },
+        {
+          "chunkIndex": 68,
+          "text": "Human-AI co-creation is shifting from one-shot outputs to context-aware, interaction-driven partnerships\nReza, M. et al. (2025). Co-Writing with Al, on Human Terms: Aligning Research with User Demands Across the Writing Process. CSCW. Wan, Q. et al. (2024). \"It Felt Like Having a Second Mind\": Investigating Human-Al Co-creativity in Prewriting with Large Language Models. CSCW. Zhou, J. et al. (2024). Understanding Nonlinear Collaboration between Human and Al Agents: A Co-design Framework for Creative Design. CHI. Microsoft Study: Das, D. et al. (in prep.). Not Just My Style: Toward Contextual Personalization in Al-Assisted Workplace Communication. Deineha, O. et al. (2025). Human-AI Cooperation in Pair Programming (GPT-4 vs Code Llama). Information Technology and Computer Engineering. Yukita, D et al. (2025). Reassessing Collaborative Writing Theories and Frameworks in the Age of LLMs: What Still Applies and What We Must Leave Behind. arXiv Working Paper. 26"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 4,
+      "chunkId": "combined-library-pdf-document:1:103",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 38
+      },
+      "heading": "AI currently works better for individuals than it does for teams, but improving collaborative AI systems is an active research area",
+      "contentKind": "text",
+      "text": "AI currently works better for individuals than it does for teams, but improving collaborative AI systems is an active research area\nHBS Working Paper. Yang, D. et al. (2025). Socially Aware Language Technologies: Perspectives and Practices. ACL. Microsoft Study: Laban, P. et al. (2025). LLMs Get Lost In Multi-Turn Conversation. arXiv Working Paper. Nath, A. et al. (2025). Frictional Agent Alignment Framework: Slow Down and Don't Break Things. ACL. Clark, H. H. (1996). Using Language. Cambridge University Press. Huang, T. et al. (2025). Teaching Language Models To Gather Information Proactively. EMNLP. Liu, X. et al. (2025). Proactive Conversational Agents with Inner Thoughts. CHI. Microsoft Study: Alsobay, M. et al. (2025). Bringing Everyone to the Table: An Experimental Study of LLM-Facilitated Group Decision Making. arXiv Working Paper. Woolley, A.W. (2025). Generative Al and collaboration: opportunities for cultivating collective intelligence. Journal of Organization Design. 38",
+      "neighbors": [
+        {
+          "chunkIndex": 102,
+          "text": "AI currently works better for individuals than it does for teams, but improving collaborative AI systems is an active research area\nAI currently works better for individuals than it does for teams, but improving collaborative AI systems is an active research area \u00b7 Al has been more successful at improving productivity at the individual scale than at the team scale (Schmutz et al., 2024; Dell'Acqua et al., 2025; Yang et al. 2025). \u00b7 Factors that have been identified as potential causes include instruction tuning practices (e.g. Laban et al., 2025; Nath et al., 2025), Als having relatively limited knowledge of critical social dynamics like (interpersonal) grounding (Clark, 1996), challenges with turn-taking dynamics and proactivity (Huang et al., 2025; Liu et al., 2025), the need for new evaluation frameworks (e.g. Alsobay et al., 2025), and the substantially greater complexity of team goals vs. individual goals (Woolley, 2025). \u00b7 Researchers are betting on two broad routes to improve Al for teams: (1) process-focused strategies, i.e. building AI to support specific team processes like information sharing (e.g. Huang et al., 2025) and (2) outcome-focused strategies, i.e. training end-to-end Al systems that attempt to learn from short- and long-range team outcomes (e.g. Nath et al., 2025). Figure 2: Average Solution Quality Dell'Acqua et al. (2025) found that individuals w/ an Al did just as well as a team (pair) of people in a laboratory task, at least in terms of average performance. Schmutz, J. B. et al. (2024). AI-teaming: Redefining collaboration in the digital era. Current Opinion in Psychology. Dell'Acqua, F. et al. (2025). The Cybernetic Teammate: A Field Experiment on Generative Al Reshaping Teamwork and Expertise. HBS Working Paper. Yang, D. et al. (2025). Socially Aware Language Technologies: Perspectives and Practices. ACL. Microsoft Study: Laban, P. et al. (2025)."
+        },
+        {
+          "chunkIndex": 104,
+          "text": "AI currently works better for individuals than it does for teams, but improving collaborative AI systems is an active research area\nAI for Teamwork aka.ms/nfw"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 5,
+      "chunkId": "combined-library-pdf-document:1:145",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 52
+      },
+      "heading": "Four considerations for effective AI integration into the classroom",
+      "contentKind": "text",
+      "text": "Four considerations for effective AI integration into the classroom\n(2025). From chalkboards to chatbots: Evaluating The Impact Of Generative Al On Learning Outcomes In Nigeria. World Bank Group. Yu, R. et al. (2024). Whose Chatgpt? Unveiling Real-World Educational Inequalities Introduced By Large Language Models. arXiv Working Paper. Zhang, C. et al. (2024). College Students' Literacy, Chatgpt Activities, Educational Outcomes, And Trust From A Digital Divide Perspective. New Media & Society. 52",
+      "neighbors": [
+        {
+          "chunkIndex": 144,
+          "text": "Four considerations for effective AI integration into the classroom\nFour considerations for effective AI integration into the classroom 1. Ensure student readiness. Students need enough domain knowledge to be able to evaluate AI outputs. 2. Teach AI literacy. Help students understand the basics of AI, including that it makes mistakes. 3. Use AI as a supplement. Teacher guidance and human connection are central to learning. AI cannot replace that, but it can supplement with personalized explanations and examples. 4. Foster cognitive engagement with AI. Encourage AI usage that helps students evaluate their skills and think critically. Effective AI integration into the classroom will require training programs to manage attitudes towards use as will as new specific skills (Adapted from Walker & Vorvoreanu, 2025). Microsoft Study: Walker, K. and Vorvoreanu, M. (2025). Learning Outcomes With GenAI In The Classroom: A Review Of Empirical Evidence. Microsoft. Melumad, S. et al. (2025). Experimental Evidence Of The Effects Of Large Language Models Versus Web Search On Depth Of Learning. PNAS NEXUS. Stadler, M. et al. (2024). Cognitive Ease At A Cost: : LIms Reduce Mental Effort But Compromise Depth In Student Scientific Inquiry. Computers in Human Behavior. Kestin, G. et al. (2025). Al Tutoring Outperforms In-class Active Learning: An RCT Introducing A Novel Research-based Design In An Authentic Educational Setting. Nature Scientific Reports. Microsoft Study: Simkute, A. et al. (2024). The New Calculator? Practices, Norms, And Implications Of Generative Al In Higher Education. arXiv Working Paper. Urban, M. et al. (2024). Chatgpt Improves Creative Problem-Solving Performance In University Students: An Experimental Study. Computers & Education. DeSimone, M. et al. (2025). From chalkboards to chatbots: Evaluating The Impact Of Generative Al On Learning Outcomes In Nigeria. World Bank Group. Yu, R. et al. (2024). Whose Chatgpt?"
+        },
+        {
+          "chunkIndex": 146,
+          "text": "Four considerations for effective AI integration into the classroom\nThinking, Learning, and Psychological Influences aka.ms/nfw"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 6,
+      "chunkId": "combined-library-pdf-document:1:146",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 53
+      },
+      "heading": "Four considerations for effective AI integration into the classroom",
+      "contentKind": "text",
+      "text": "Four considerations for effective AI integration into the classroom\nThinking, Learning, and Psychological Influences aka.ms/nfw",
+      "neighbors": [
+        {
+          "chunkIndex": 145,
+          "text": "Four considerations for effective AI integration into the classroom\n(2025). From chalkboards to chatbots: Evaluating The Impact Of Generative Al On Learning Outcomes In Nigeria. World Bank Group. Yu, R. et al. (2024). Whose Chatgpt? Unveiling Real-World Educational Inequalities Introduced By Large Language Models. arXiv Working Paper. Zhang, C. et al. (2024). College Students' Literacy, Chatgpt Activities, Educational Outcomes, And Trust From A Digital Divide Perspective. New Media & Society. 52"
+        },
+        {
+          "chunkIndex": 147,
+          "text": "For ideation, AI has persistent risks and fragile benefits without careful use\nFor ideation, AI has persistent risks and fragile benefits without careful use \u00b7 Designing Al-driven creativity support tools requires carefully considering the creative process and its various stages, as well as how such tools can impact creative thinking in the long term (Tankelevitch et al., 2025). \u00b7 Qin et al.'s (2025) lab study found that using LLMs before independent ideation reduced the number of original ideas and lowered creative self-efficacy, compared to use after independent ideation. . Kumar et al.'s (2025) lab study found that those doing unassisted ideation with no exposure to LLMs had the best outcomes. Those using LLM assistance got a performance boost by cognitively offloading the work to the AI, not from collaboratively producing ideas. Individuals exposed to LLM strategies or guidance performed worse in later unassisted rounds. Overall, LLM-generated strategies reduced idea diversity, and effects continued even after AI use stopped. \u00b7 LLM support did not impact the number of ideas produced in Bangerl et al.'s (2025) lab study of group ideation, but it did significantly reduce group elaboration of those ideas. This is again possibly due to increased cognitive offloading to the Al. Similarly to Kumar et al.'s (2025) study, this effect carried over even when not using LLMs. \u00b7 One key design task is problem reframing (exploring what a problem is about). In Shin et al.'s (2025) lab study, using LLMs did not improve the usefulness of problem frames, (regardless of whether LLMs directly provided frames, were used in a free-form manner, or used in a structured process). Expert designers produced somewhat more novel frames than novice designers, but these more novel frames were not also more useful. \u00b7 A systematic review (Heigl, 2025) finds that longitudinal and field studies of Al and creativity are still rare and will be needed to understand and plan for the complex issues arising from AI in creative work. Microsoft Study: Tankelevitch, L. et al. (2025)."
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 7,
+      "chunkId": "combined-library-pdf-document:1:153",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 55
+      },
+      "heading": "Workplace learning can combat AI overreliance and cognitive atrophy",
+      "contentKind": "text",
+      "text": "Workplace learning can combat AI overreliance and cognitive atrophy\nWorkplace learning can combat AI overreliance and cognitive atrophy \u00b7 Blind trust (Benzing et al., 2025), overreliance (Passi et al., 2024), and cognitive offloading (Gerlich, 2025) are risks of human-Al interactions. Benzing et al.'s (2025) survey of 1,800 global full-time English-speaking employees found that 2 in 3 employees report trusting AI agents; however, 60% skip accuracy checks in AI output. \u00b7 Workplace learning plays a crucial role in combatting these risks, while also driving the employee engagement and resilience required for successful AI workforce transformation (Malik & Garg, 2017). Teams with strong Al readiness (including skills and literacy) report greater individual and collective value from Al, such as higher productivity, better decision- making, and more creative, collaborative teams (Benzing et al., 2025; Xue & Song, 2025). \u00b7 Human-Al interactions that are discursive and progressive promote cognitive enrichment and combat cognitive atrophy (Danry et al., 2023), which are the core elements of traditional Socratic learning methods used to develop metacognition and critical thinking. \u00b7 Given its ability to provide personalized, adaptive, role- and task-based learning while incorporating context, memory, and conversational turns, AI presents a promising new learning modality (Joshi, 2025; Tomitsu, 2025). There is opportunity to develop novel interactive learning experiences, like assessment-based dialogic questioning (Hung et al., 2024), to drive employee engagement through workplace upskilling. Workplace learning and experimentation create a cycle for Agentic AI adoption (Adapted from Benzing et al., 2025). Microsoft Study: Benzing, M. et al. (2025). 2025 Agentic Teaming & Trust Report. Microsoft. Microsoft Study: Passi, S. et al. (2024). Appropriate Reliance On Generative Al: Research Synthesis. Microsoft. Gerlich, M. (2025). Al Tools In Society: Implications Of Cognitive Offloading And The Future Of Critical Thinking. Societies. Malik, P. and Garg, P.",
+      "neighbors": [
+        {
+          "chunkIndex": 152,
+          "text": "Thinking, Learning, and Psychological Influences\nThinking, Learning, and Psychological Influences aka.ms/nfw"
+        },
+        {
+          "chunkIndex": 154,
+          "text": "Workplace learning can combat AI overreliance and cognitive atrophy\nMicrosoft. Gerlich, M. (2025). Al Tools In Society: Implications Of Cognitive Offloading And The Future Of Critical Thinking. Societies. Malik, P. and Garg, P. (2017). Learning Organization And Work Engagement: The Mediating Role Of Employee Resilience. The International Journal of Human Resource Management. Xue, S. and Song, Y. (2025) Unlocking The Synergy: Increasing Productivity Through Human-ai Collaboration In The Industry 5.0 Era. Computers & Industrial Engineering. Danry, V. et al. (2023). Don't Just Tell Me, Ask Me: Al Systems that Intelligently Frame Explanations as Questions Improve Human Logical Discernment Accuracy Over Causal Al Explanations. CHI. Joshi, S. (2025). Agentic Generative Al And The Future US Workforce: Advancing Innovation And National Competitiveness. International Journal of Research and Review. Tomitsu, H. et al. (2025). The Cognitive Mirror: A Framework For Al-powered Metacognition And Self-regulated Learning. Frontiers in Education. Hung, J. et al. (2024). Socratic Mind: Scalable Oral Assessment Powered By Al. Learning@ Scale. 55"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 8,
+      "chunkId": "combined-library-pdf-document:1:120",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 44
+      },
+      "heading": "Team AI alignment should reward deliberation and long-horizon goals",
+      "contentKind": "text",
+      "text": "Team AI alignment should reward deliberation and long-horizon goals\nACL. Microsoft Study: Wu, S. et al. (2025). COLLABLLM: From Passive Responders to Active Collaborators. ICML. Clark, H. H. (1996). Using Language. Cambridge University Press. 44",
+      "neighbors": [
+        {
+          "chunkIndex": 119,
+          "text": "Team AI alignment should reward deliberation and long-horizon goals\nTeam AI alignment should reward deliberation and long-horizon goals \u00b7 Standard RLHF-inspired alignment techniques that are essential to the success of Al models (e.g., PPO, DPO) fail to maintain reliability in extended multi-turn (Laban et al., 2025) and multi-party dialogues (Nath et al., 2025a; 2025b) because they assume static, single-user interactions and optimize for narrow, turn-level rewards (Wu et al., 2025). \u00b7 Wu et al. (2025) highlight the limitations of traditional alignment methods that optimize for single-turn correctness and immediate user satisfaction, and propose a multi-turn reward function that evaluates responses based on their long-term impact on collaboration, boosting task success by 18.5% and user satisfaction by 17.6%. \u00b7 Nath et al. (2025a) show that standard alignment techniques lose their reliability in long multi-turn, multi-party conversations, as these methods assume a static mapping from the agent's action to the outcome and fail to account for the complexity of group conversations where each participant can alter the course of those actions. COLLABLLM incorporates multiturn-aware rewards from collaborative simulation, enabling forward-looking strategies (Wu et al., 2025). \u00b7 Nath et al. (2025b) propose a \"Frictional Agent Alignment Framework\" that explicitly models conversation state and frictive conditions (Clark, 1996), accounts for group dynamics where collaborator responses can alter effects of intervention, and optimizes for collaborative processes like common-ground construction and deliberation. Microsoft Study: Laban, P. et al (2025). LLMs Get Lost In Multi-Turn Conversation. arXiv Working Paper. Nath, A. et al. (2025a). Let's Roleplay: Examining LLM Alignment in Collaborative Dialogues. CEUR-WS. Nath, A. et al. (2025b). Frictional Agent Alignment Framework: Slow Down and Don't Break Things. ACL. Microsoft Study: Wu, S. et al. (2025). COLLABLLM: From Passive Responders to Active Collaborators. ICML. Clark, H. H. (1996)."
+        },
+        {
+          "chunkIndex": 121,
+          "text": "Team AI alignment should reward deliberation and long-horizon goals\nAI for Teamwork aka.ms/nfw"
+        }
+      ],
+      "image": null
+    }
+  ]
+}

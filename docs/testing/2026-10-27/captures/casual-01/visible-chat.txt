@@ -1,0 +1,47 @@
+Send retrieved images to the model
+
+Chat
+
+there was a cool blue chart about human work vs machine work. can you remember whether human work that should be automated was bigger than the thing for machine work?
+
+Yes — that’s the concentric-blue diagram in the Microsoft New Future of Work Report (2025). Here’s the figure from the report:
+
+Nearby caption (inferred): Opportunities for augmenting humans are far greater than opportunities to automate existing tasks (Adapted from Brynjolfsson, 2022). — New-Future-Of-Work-Report-2025.pdf (page 23)
+
+What it shows (New-Future-Of-Work-Report-2025.pdf, page 23):
+
+The smallest central circle is labeled "Human tasks that machines should automate."
+
+A larger inner ring is labeled "Human tasks that machines could automate."
+
+The largest outer circle is "Tasks that humans can do."
+
+A pointer to the right labels "New tasks that humans can do with the help of machines."
+
+So no — the "human tasks that machines should automate" area is smaller than the other human-task areas (it’s the smallest circle). The figure’s point (captioned “Opportunities for augmenting humans are far greater than opportunities to automate existing tasks”) is that augmentation/new tasks with machines is a much bigger opportunity than simply automating existing human tasks (New-Future-Of-Work-Report-2025.pdf, p.23).
+
+Other image candidates (3; not selected in this answer)
+
+Cosmos RU · retrieval
+
+21.50
+
+Retrieval time
+
+0.88 s
+
+Total response time
+
+14.64 s
+
+Model tokens
+
+11,106
+
+Actual input: 9,881 tokens · output: 1,225 tokens. Cumulative across model calls; full-document size estimates are separate.
+
+Performance breakdown
+
+Tool called: search_library_combined_library → combined-library · 880 ms · 21.5 RU
+
+entry area (settable) Ask a question

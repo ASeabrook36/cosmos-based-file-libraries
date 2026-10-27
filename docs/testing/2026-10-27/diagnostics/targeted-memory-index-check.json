@@ -1,0 +1,565 @@
+{
+  "library": {
+    "libraryId": "combined-library",
+    "name": "combined-library"
+  },
+  "coverage": {
+    "searched": "combined-library (4 documents)",
+    "filtersApplied": {
+      "fileTypes": [
+        "pdf"
+      ],
+      "contentKinds": [
+        "text"
+      ]
+    },
+    "notes": [
+      "1 visual candidates were skipped by configured size, format or per-document limits; search does not cover those visuals."
+    ],
+    "distinctDocuments": false,
+    "resultCount": 20,
+    "disposition": "results"
+  },
+  "results": [
+    {
+      "rank": 1,
+      "chunkId": "combined-library-pdf-document:1:119",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 44
+      },
+      "heading": "Team AI alignment should reward deliberation and long-horizon goals",
+      "contentKind": "text",
+      "text": "Team AI alignment should reward deliberation and long-horizon goals\nTeam AI alignment should reward deliberation and long-horizon goals \u00b7 Standard RLHF-inspired alignment techniques that are essential to the success of Al models (e.g., PPO, DPO) fail to maintain reliability in extended multi-turn (Laban et al., 2025) and multi-party dialogues (Nath et al., 2025a; 2025b) because they assume static, single-user interactions and optimize for narrow, turn-level rewards (Wu et al., 2025). \u00b7 Wu et al. (2025) highlight the limitations of traditional alignment methods that optimize for single-turn correctness and immediate user satisfaction, and propose a multi-turn reward function that evaluates responses based on their long-term impact on collaboration, boosting task success by 18.5% and user satisfaction by 17.6%. \u00b7 Nath et al. (2025a) show that standard alignment techniques lose their reliability in long multi-turn, multi-party conversations, as these methods assume a static mapping from the agent's action to the outcome and fail to account for the complexity of group conversations where each participant can alter the course of those actions. COLLABLLM incorporates multiturn-aware rewards from collaborative simulation, enabling forward-looking strategies (Wu et al., 2025). \u00b7 Nath et al. (2025b) propose a \"Frictional Agent Alignment Framework\" that explicitly models conversation state and frictive conditions (Clark, 1996), accounts for group dynamics where collaborator responses can alter effects of intervention, and optimizes for collaborative processes like common-ground construction and deliberation. Microsoft Study: Laban, P. et al (2025). LLMs Get Lost In Multi-Turn Conversation. arXiv Working Paper. Nath, A. et al. (2025a). Let's Roleplay: Examining LLM Alignment in Collaborative Dialogues. CEUR-WS. Nath, A. et al. (2025b). Frictional Agent Alignment Framework: Slow Down and Don't Break Things. ACL. Microsoft Study: Wu, S. et al. (2025). COLLABLLM: From Passive Responders to Active Collaborators. ICML. Clark, H. H. (1996).",
+      "neighbors": [
+        {
+          "chunkIndex": 118,
+          "text": "Proactivity transforms Al from a passive tool into more of a \"team member\"\nAI for Teamwork aka.ms/nfw"
+        },
+        {
+          "chunkIndex": 120,
+          "text": "Team AI alignment should reward deliberation and long-horizon goals\nACL. Microsoft Study: Wu, S. et al. (2025). COLLABLLM: From Passive Responders to Active Collaborators. ICML. Clark, H. H. (1996). Using Language. Cambridge University Press. 44"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 2,
+      "chunkId": "combined-library-pdf-document:1:103",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 38
+      },
+      "heading": "AI currently works better for individuals than it does for teams, but improving collaborative AI systems is an active research area",
+      "contentKind": "text",
+      "text": "AI currently works better for individuals than it does for teams, but improving collaborative AI systems is an active research area\nHBS Working Paper. Yang, D. et al. (2025). Socially Aware Language Technologies: Perspectives and Practices. ACL. Microsoft Study: Laban, P. et al. (2025). LLMs Get Lost In Multi-Turn Conversation. arXiv Working Paper. Nath, A. et al. (2025). Frictional Agent Alignment Framework: Slow Down and Don't Break Things. ACL. Clark, H. H. (1996). Using Language. Cambridge University Press. Huang, T. et al. (2025). Teaching Language Models To Gather Information Proactively. EMNLP. Liu, X. et al. (2025). Proactive Conversational Agents with Inner Thoughts. CHI. Microsoft Study: Alsobay, M. et al. (2025). Bringing Everyone to the Table: An Experimental Study of LLM-Facilitated Group Decision Making. arXiv Working Paper. Woolley, A.W. (2025). Generative Al and collaboration: opportunities for cultivating collective intelligence. Journal of Organization Design. 38",
+      "neighbors": [
+        {
+          "chunkIndex": 102,
+          "text": "AI currently works better for individuals than it does for teams, but improving collaborative AI systems is an active research area\nAI currently works better for individuals than it does for teams, but improving collaborative AI systems is an active research area \u00b7 Al has been more successful at improving productivity at the individual scale than at the team scale (Schmutz et al., 2024; Dell'Acqua et al., 2025; Yang et al. 2025). \u00b7 Factors that have been identified as potential causes include instruction tuning practices (e.g. Laban et al., 2025; Nath et al., 2025), Als having relatively limited knowledge of critical social dynamics like (interpersonal) grounding (Clark, 1996), challenges with turn-taking dynamics and proactivity (Huang et al., 2025; Liu et al., 2025), the need for new evaluation frameworks (e.g. Alsobay et al., 2025), and the substantially greater complexity of team goals vs. individual goals (Woolley, 2025). \u00b7 Researchers are betting on two broad routes to improve Al for teams: (1) process-focused strategies, i.e. building AI to support specific team processes like information sharing (e.g. Huang et al., 2025) and (2) outcome-focused strategies, i.e. training end-to-end Al systems that attempt to learn from short- and long-range team outcomes (e.g. Nath et al., 2025). Figure 2: Average Solution Quality Dell'Acqua et al. (2025) found that individuals w/ an Al did just as well as a team (pair) of people in a laboratory task, at least in terms of average performance. Schmutz, J. B. et al. (2024). AI-teaming: Redefining collaboration in the digital era. Current Opinion in Psychology. Dell'Acqua, F. et al. (2025). The Cybernetic Teammate: A Field Experiment on Generative Al Reshaping Teamwork and Expertise. HBS Working Paper. Yang, D. et al. (2025). Socially Aware Language Technologies: Perspectives and Practices. ACL. Microsoft Study: Laban, P. et al. (2025)."
+        },
+        {
+          "chunkIndex": 104,
+          "text": "AI currently works better for individuals than it does for teams, but improving collaborative AI systems is an active research area\nAI for Teamwork aka.ms/nfw"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 3,
+      "chunkId": "combined-library-pdf-document:1:129",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 47
+      },
+      "heading": "The success of AI in team settings likely depend on reinforcement learning coupled with tunable simulation frameworks",
+      "contentKind": "text",
+      "text": "The success of AI in team settings likely depend on reinforcement learning coupled with tunable simulation frameworks\n(2022). Human-level play in the game of Diplomacy by combining language models with strategic reasoning. Science. Wang, R. et al. (2024). SOTOPIA-Tt: Interactive Learning of Socially Intelligent Language Agents. ACL. Abdelnabi, S. et al. (2024). Cooperation, competition, and maliciousness: LLM-stakeholders interactive negotiation. NeurIPS. Microsoft Study: Rao, A. et al. (in prep.). Measuring and Steering Emergent Collaboration Behaviors in LLM Agents. 47",
+      "neighbors": [
+        {
+          "chunkIndex": 128,
+          "text": "The success of AI in team settings likely depend on reinforcement learning coupled with tunable simulation frameworks\nThe success of AI in team settings likely depend on reinforcement learning coupled with tunable simulation frameworks . Recent breakthroughs demonstrate a move beyond static supervised learning to using reinforcement learning (RL) and self-play as dominant methods for teaching Al teammates how to collaborate. By having LLM-powered agents simulate human colleagues, models can practice multi-turn interactions and autonomously discover effective teamwork strategies in controlled virtual environments. . For example, researchers are using multi-agent RL and self-reflection techniques to train Al agents to collaborate effectively, by learning to coordinate better (Bo et al., 2024) or to form alliance and build trust (FAIR et al., 2022). . Wang et al. (2024) proposed SOTOPIA-It, leveraging behavior cloning and self-play reinforcement learning to train a 7B LLM to match GPT-4-level collaboration in multi-agent tasks. Park et al. (2025) extended this paradigm with MAPoRL, co-training multiple LLMs through interactive self-play and RL rewards to enhance teamwork and generalization across complex domains. . Abdelnabi et al. (2024) demonstrate that multi-agent negotiation simulations can expose how varying agent roles-cooperative, competitive, or adversarial-shape interaction dynamics, underscoring the need for strategic control over simulation parameters to stress-test and refine AI negotiators. Complementing this, Rao et al. (in prep.) provide empirical evidence that adjusting contextual \"knobs\" such as team size, diversity, and goal type systematically influences collaboration patterns (e.g., larger teams slow consensus, diverse teams increase debate). Together, these works argue that effective training environments must be steerable, enabling researchers and organizations to purposefully shape emergent behaviors and align Al teammates with desired collaboration outcomes before deployment. Bo, X. et al. (2024). Reflective Multi-Agent Collaboration based on Large Language Models. NeurIPS. Meta Fundamental Al Research Diplomacy Team (FAIR) et al. (2022). Human-level play in the game of Diplomacy by combining language models with strategic reasoning. Science. Wang, R. et al. (2024)."
+        },
+        {
+          "chunkIndex": 130,
+          "text": "The success of AI in team settings likely depend on reinforcement learning coupled with tunable simulation frameworks\nAI for Teamwork aka.ms/nfw"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 4,
+      "chunkId": "combined-library-pdf-document:1:116",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 43
+      },
+      "heading": "Proactivity transforms Al from a passive tool into more of a \"team member\"",
+      "contentKind": "text",
+      "text": "Proactivity transforms Al from a passive tool into more of a \"team member\"\nProactivity transforms Al from a passive tool into more of a \"team member\" . When a collaborative Al is developed to be more proactive, it starts to take on roles more akin to being a \"team member\" - raising new ideas, identifying risks, and suggesting next steps. \u00b7 Huang et al. (2025) demonstrate that proactive information gathering fundamentally changes the role of LLMs from passive responders to collaborative thought partners, improving user satisfaction by 42%. Their qualitative evaluations showed that users interpret proactive questioning as engagement and competence-traits associated with teammates rather than tools. \u00b7 Liu et al. (2025a) introduce Thoughtful Al as a paradigm shift from reactive, turn-based systems to agents that continuously think out loud and share their evolving reasoning during interactions, fostering proactive behavior and cognitively aligned collaboration. They argue this approach transforms Al from a passive tool into a thought partner, capable of initiating dialogue, suggesting next steps, and adapting as the conversation evolves. \u00b7 Commonly-used NLP techniques like next speaker prediction fall short in multi-party dynamics, where conversations are fluid and overlapping. Predicting the next speaker does not help the AI determine the optimal timing for its own intervention without disrupting the flow. It also fails to capture the underlying motivation or reasoning behind speaking turns, so the Al cannot assess whether its contribution would add value at that moment (Liu et al., 2025b). \u00b7 New techniques allow an Al to decide when to speak up and contribute during group interactions. For example, Lu et al. (2024) explore anticipatory planning and timing, showing that AI can learn when to intervene by predicting tasks and leveraging human feedback. By fine-tuning on timing decisions, the model learned conversational dynamics (e.g. pauses, topic shifts) and task progression cues to identify opportune moments for contribution. \u00b7 Drawing from cognitive psychology and real human turn-taking data, Liu et al. (2025b) show that modeling human-like turn- taking and timing through internal reasoning improves perceived intelligence and appropriateness of Al contributions. Microsoft Study: Huang, T. et al. (2025). Teaching Language Models To Gather Information Proactively. EMNLP. Liu, X. et al. (2025a).",
+      "neighbors": [
+        {
+          "chunkIndex": 115,
+          "text": "AI can drive goal clarity for effective meetings and smarter workflows\nAI for Teamwork aka.ms/nfw"
+        },
+        {
+          "chunkIndex": 117,
+          "text": "Proactivity transforms Al from a passive tool into more of a \"team member\"\nMicrosoft Study: Huang, T. et al. (2025). Teaching Language Models To Gather Information Proactively. EMNLP. Liu, X. et al. (2025a). Interacting with Thoughtful Al. arXiv Working Paper. Liu, X. et al. (2025b). Proactive Conversational Agents with Inner Thoughts. CHI. Lu, Y. et al. (2024). Proactive Agent: Shifting LLM Agents from Reactive Responses to Active Assistance. ICLR. 43"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 5,
+      "chunkId": "combined-library-pdf-document:1:64",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 25
+      },
+      "heading": "Establishing common ground is essential for human-AI collaboration (2)",
+      "contentKind": "text",
+      "text": "Establishing common ground is essential for human-AI collaboration (2)\nEstablishing common ground is essential for human-AI collaboration (2) \u00b7 Bansal et al. (2024) identify 12 challenges to establishing common ground in human-agent interaction, including general communication challenges (e.g. choosing the appropriate level of detail), challenges with conveying information from a user to an agent (e.g. in relation to goals and preferences), and challenges with conveying information from an agent to a user (e.g. in relation to its capabilities, current and planned actions, and their side effects). \u00b7 Tolzin and Janson (2025) identify five mechanisms that could support common ground in human-agent interaction: support for joint action, an underlying knowledge base, mental models, social features, and embodiment. \u00b7 Shaikh et al. (2025) study grounding by analyzing LLM interaction logs. They find that early grounding failures predicted later interaction breakdowns. They develop a preliminary intervention aimed at mitigating grounding failures. This prompts the model to ask follow-up questions or request clarifications when predicted to be necessary. \u00b7 Other recent advances seek to support the user's overall goal over multiple turns. COLLABLLM (Wu et al., 2025; see figure) results in higher task performance and interactivity, and work by Poelitz and McKenna (2025) improved models' ability to generate clarifications and incorporate user-initiated corrections. COLLABLLM (Wu et al., 2025) incorporates multi-turn rewards from collaborative simulation, resulting in better task completion and more efficient and interactive conversations. Microsoft Study: Bansal, G. et al. (2024). Challenges in Human-Agent Communication. arXiv Working Paper. Tolzin, A., and Janson, A. (2025). Uncovering the mechanisms of common ground in human-agent interaction: review and future directions for conversational agent research. Internet Research. Microsoft Study: Shaikh, O. et al. (2025). Navigating Rifts in Human-LLM Grounding: Study and Benchmark. ACL Anthology. Microsoft Study: Wu, S. et al. (2025). CollabLLM: From Passive Responders to Active Collaborators. arXiv Working Paper.",
+      "neighbors": [
+        {
+          "chunkIndex": 63,
+          "text": "Establishing common ground is essential for human-AI collaboration (1)\nHuman-AI Collaboration aka.ms/nfw"
+        },
+        {
+          "chunkIndex": 65,
+          "text": "Establishing common ground is essential for human-AI collaboration (2)\nACL Anthology. Microsoft Study: Wu, S. et al. (2025). CollabLLM: From Passive Responders to Active Collaborators. arXiv Working Paper. Microsoft Study: Poelitz, C., and McKenna, N. (2025). Synthetic Clarification and Correction Dialogues about Data-Centric Tasks - A Teacher-Student Approach. arXiv Working Paper. 25"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 6,
+      "chunkId": "combined-library-pdf-document:1:123",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 45
+      },
+      "heading": "New evaluation metrics are needed for proactive agents in group settings",
+      "contentKind": "text",
+      "text": "New evaluation metrics are needed for proactive agents in group settings\nLiu, X. et al. (2025a). Proactive Conversational Agents with Inner Thoughts. CHI. Microsoft Study: Liu et al. (2025b). ProMediate: A Socio-cognitive framework for evaluating proactive agents in multi-party negotiation. arXiv Working Paper. Microsoft Study: Alsobay, M. et al. (2025). Bringing Everyone to the Table: An Experimental Study of LLM-Facilitated Group Decision Making. arXiv Working Paper. Houtti, M. et al. (2025). Observe, Ask, Intervene: Designing Al Agents for More Inclusive Meetings. CHI. Nath, A. et al. (2025). Let's Roleplay: Examining LLM Alignment in Collaborative Dialogues. CEUR-WS. Tessler, M. et al. (2024). Al can help humans find common ground in democratic deliberation. Science. Zhu, K. et al. (2025). MultiAgentBench : Evaluating the Collaboration and Competition of LLM agents. ACL. Yehudai, A. et al. (2025). Survey on Evaluation of LLM-based Agents. arXiv Working Paper. 45",
+      "neighbors": [
+        {
+          "chunkIndex": 122,
+          "text": "New evaluation metrics are needed for proactive agents in group settings\nNew evaluation metrics are needed for proactive agents in group settings . Modern collaborative Al systems that actively assist or mediate human teams demand reimagined evaluation approaches. Conventional metrics for single-user, reactive Al assistants (e.g., response accuracy or user satisfaction) are insufficient - instead, evaluation must consider multi-user dynamics, social acceptance, and long-term impacts. . Unlike reactive assistants, proactive Al systems must be evaluated on their ability to choose when and how to help, manage complex group dynamics, and adapt to context, beyond simply giving correct answers (Liu et al., 2025a; 2025b). This means tracking metrics like consensus-building, timing and frequency of interventions, fairness in turn-taking, and the agent's ability to adapt its support to the conversation's context. . Beyond proactivity, multi-party collaborations present distinct challenges absent in individual settings: uneven participation, information asymmetry, coalition formation, social influence, groupthink, and minority voice suppression-that require new metrics for success. Recent work shows the value of capturing information-sharing quality (Alsobay et al., 2025), consensus change (Liu et al., 2025b), and participation equity (Houtti et al., 2025) in multi-person tasks. \u00b7 Collectively, the recent research calls for evaluation metrics to assess both process and outcomes, recognizing improved Al interventions may not immediately translate to better outcomes (Alsobay et al., 2025; Houtti et al., 2025); to account for temporal misalignment between immediate and delayed effects of Al interventions (Liu et al., 2025b; Nath et al., 2025); and including social perception and user acceptance as independent dimensions from technical quality (Tessler et al., 2024). \u00b7 Static benchmarks cannot capture interactive, emergent, and adaptive behaviors. Multiple surveys highlight that traditional static benchmarks fail for proactive agents in dynamic multi-party settings. The shift toward \"dynamic evaluation\" and \"continuously updated benchmarks\" reflects recognition that proactive behavior, emergent coordination, and adaptive responses to evolving group dynamics cannot be assessed through fixed test sets (Zhu et al., 2025; Yehudai et al., 2025). Liu, X. et al. (2025a)."
+        },
+        {
+          "chunkIndex": 124,
+          "text": "New evaluation metrics are needed for proactive agents in group settings\nAI for Teamwork aka.ms/nfw"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 7,
+      "chunkId": "combined-library-pdf-document:1:125",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 46
+      },
+      "heading": "Simulation frameworks can be testbeds for evaluating AI in group settings",
+      "contentKind": "text",
+      "text": "Simulation frameworks can be testbeds for evaluating AI in group settings\nSimulation frameworks can be testbeds for evaluating AI in group settings \u00b7 Modern LLMs have enabled a step-function improvement in agent-based simulation of the behavior of groups of people (Park et al., 2023). Unlike earlier rule-based bots, LLM-powered agents interpret nuanced context, maintain memory for cohesive multi-turn conversations, and exhibit closer to human-like reasoning and communication skills. \u00b7 There are now multiple LLM-driven multi-agent simulation platforms - e.g. SOTOPIA (Zhou et al., 2024), InnerThought (Liu et al., 2025a), TinyTroupe (Salem et al., 2025), ProMediate (Liu et al., 2025b) - that allow scientists and developers to create realistic virtual teams of people-simulating AI agents working and conversing together. Platforms such as ProMediate simulate multi-stakeholder negotiations with proactive mediators, enabling quantitative metrics like consensus gains, intervention timing, and socio-cognitive intelligence, while SOTOPIA puts AI agents in games or role-play scenarios to further assess teamwork, strategic planning, and communication. . These systems provide controlled environments in which Al agents built to support teams can interact and learn in complex scenarios (negotiations, planning), offering a powerful lens to observe and test collaborative behaviors before real-world deployment. For instance, Liu et al. (2025a) show how these simulations probe nuanced social dynamics-e.g., when to interject-by modeling internal decision mechanisms that weigh relevance and information gaps, enabling evaluation of proactive participation strategies. Multi-party conversation simulation with a proactive mediator agent in ProMediate (Liu et al., 2025b). \u00b7 Study findings do reveal gaps-e.g., opponent modeling and team coordination-even with top-tier models, underscoring the need for richer simulations and targeted training to advance collaborative competence (Chen et al., 2024). Park, J. S. et al. (2023). Generative Agents: Interactive Simulacra of Human Behavior. UIST. Zhou, X. et al. (2024). Sotopia: Interactive evaluation for social intelligence in language agents. ICLR. Liu, X. et al. (2025a).",
+      "neighbors": [
+        {
+          "chunkIndex": 124,
+          "text": "New evaluation metrics are needed for proactive agents in group settings\nAI for Teamwork aka.ms/nfw"
+        },
+        {
+          "chunkIndex": 126,
+          "text": "Simulation frameworks can be testbeds for evaluating AI in group settings\nUIST. Zhou, X. et al. (2024). Sotopia: Interactive evaluation for social intelligence in language agents. ICLR. Liu, X. et al. (2025a). Proactive Conversational Agents with Inner Thoughts. CHI. Salem, P. et al. (2025). TinyTroupe: An LLM-powered Multiagent Persona Simulation Toolkit. arXiv Working Paper. Microsoft Study: Liu, Z. et al. (2025b). ProMediate: A Socio-cognitive framework for evaluating proactive agents in multi-party negotiation. arXiv Working Paper. Chen, J. et al (2024). LLMArena: Assessing Capabilities of Large Language Models in Dynamic Multi-Agent Environments. ACL. 46"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 8,
+      "chunkId": "combined-library-pdf-document:1:67",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 26
+      },
+      "heading": "Human-AI co-creation is shifting from one-shot outputs to context-aware, interaction-driven partnerships",
+      "contentKind": "text",
+      "text": "Human-AI co-creation is shifting from one-shot outputs to context-aware, interaction-driven partnerships\nHuman-AI co-creation is shifting from one-shot outputs to context-aware, interaction-driven partnerships \u00b7 Modern LLMs have fundamentally shifted content creation workflows from assuming perfect results in a single attempt to engaging in iterative, multi-turn collaborative refinement (Mysore et al., 2025). This transformation reflects both technological advances in LLM capabilities and profound changes in how users perceive and interact with AI (Reza et al., 2025), increasingly viewing it as a creative partner rather than a passive tool (Wan et al., 2024). . These patterns are emerging consistently across diverse domains-from writing and design (Zhou et al., 2024) to workplace communication (Das et al., in prep.) and software development (Deineha et al., 2025). \u00b7 Large-scale empirical analysis of real-world LLM-assisted writing reveals that users rarely accept AI's initial outputs passively. Instead, they engage in complex, multi-turn dialogues characterized by Prototypical Human-AI Collaboration Behaviors (PATHs)-including revising intents, exploring alternatives, asking clarifying questions, and iteratively adjusting style and content (Mysore et al., 2025). \u00b7 Recent studies show modern Al enables non-linear collaboration frameworks where humans and AI iteratively diverge (exploring ideas) and converge (refining toward consensus), replacing rigid task delegation. This shift mirrors creative prototyping-users experiment, test alternatives, and refine through iterative feedback (Zhou et al., 2024; Yukita et al., 2025). Users follow up their original requests to collaborate with LLMs in writing sessions. Mysore et al. (2025) identify prototypical human-AI collaboration behaviors (PATHs) and find statistically significant correlations between users' writing intents and PATHs. Microsoft Study: Mysore, S. et al. (2025). Prototypical Human-AI Collaboration Behaviors from LLM-Assisted Writing in the Wild. EMNLP. Reza, M. et al. (2025). Co-Writing with Al, on Human Terms: Aligning Research with User Demands Across the Writing Process. CSCW. Wan, Q. et al. (2024).",
+      "neighbors": [
+        {
+          "chunkIndex": 66,
+          "text": "Establishing common ground is essential for human-AI collaboration (2)\nHuman-AI Collaboration aka.ms/nfw"
+        },
+        {
+          "chunkIndex": 68,
+          "text": "Human-AI co-creation is shifting from one-shot outputs to context-aware, interaction-driven partnerships\nReza, M. et al. (2025). Co-Writing with Al, on Human Terms: Aligning Research with User Demands Across the Writing Process. CSCW. Wan, Q. et al. (2024). \"It Felt Like Having a Second Mind\": Investigating Human-Al Co-creativity in Prewriting with Large Language Models. CSCW. Zhou, J. et al. (2024). Understanding Nonlinear Collaboration between Human and Al Agents: A Co-design Framework for Creative Design. CHI. Microsoft Study: Das, D. et al. (in prep.). Not Just My Style: Toward Contextual Personalization in Al-Assisted Workplace Communication. Deineha, O. et al. (2025). Human-AI Cooperation in Pair Programming (GPT-4 vs Code Llama). Information Technology and Computer Engineering. Yukita, D et al. (2025). Reassessing Collaborative Writing Theories and Frameworks in the Age of LLMs: What Still Applies and What We Must Leave Behind. arXiv Working Paper. 26"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 9,
+      "chunkId": "combined-library-pdf-document:1:94",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 35
+      },
+      "heading": "Writing text without typing or dictating: a radical new UX unlocked by LLMs",
+      "contentKind": "text",
+      "text": "Writing text without typing or dictating: a radical new UX unlocked by LLMs\nWriting text without typing or dictating: a radical new UX unlocked by LLMs \u00b7 Large Language Models demonstrate robust semantic comprehension and contextual coherence (derived from the Transformer architecture's attention mechanism) allowing them to perform complex text and data manipulation, including the creation of new, semantically equivalent structural variants and the generation of logically linking, transitional language (Vaswani et al., 2017; Dilhara et al., 2024). \u00b7 These capabilities can elevate writing from keystrokes to shaping meaning, allowing authors to focus on ideas, flow and semantic rather than spending time on wordsmithing. \u00b7 Unlocking the full potential of LLMs, will require interaction paradigms that feel like creating with a new medium - hands-on operations that enable experimentation and focusing on the task, not the prompting. \u00b7 Researchers are borrowing from familiar domains such as graphics editing (Textoshop: words as pixels, tones as colors) and material metaphors (Texterial: sculpting clay, pruning plants) so users can quickly grasp these interactions and focus on shaping outcomes rather than mechanics (Masson et al., 2025; Shen et al., 2025). A vocabulary of gestures for shaping text as one would shape clay. Each gesture carries a specific meaning and triggers a large language model to rewrite the underlying text. This creates a direct, hands-on approach that encourages experimentation and exploration in shaping the final outcome (Shen et al., 2025). Vaswani, A. et al. (2017). Attention Is All You Need. arXiv Working Paper. Dilhara, M. et al. (2024). Unprecedented Code Change Automation: The Fusion of LLMs and Transformation by Example. ACM Software Engineering. Masson, D. et al. (2025). Textoshop: Interactions Inspired by Drawing Software to Facilitate Text Editing. CHI. Microsoft Study: Shen, J. et al. (2025). Texterial: A Text-as-Material Interaction Paradigm for LLM-Mediated Writing. Under Review. 35",
+      "neighbors": [
+        {
+          "chunkIndex": 93,
+          "text": "Orchestrator agents will likely have gradual, trust-based adoption\nHuman-AI Collaboration aka.ms/nfw"
+        },
+        {
+          "chunkIndex": 95,
+          "text": "Human-AI Collaboration\nHuman-AI Collaboration aka.ms/nfw"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 10,
+      "chunkId": "combined-library-pdf-document:1:128",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 47
+      },
+      "heading": "The success of AI in team settings likely depend on reinforcement learning coupled with tunable simulation frameworks",
+      "contentKind": "text",
+      "text": "The success of AI in team settings likely depend on reinforcement learning coupled with tunable simulation frameworks\nThe success of AI in team settings likely depend on reinforcement learning coupled with tunable simulation frameworks . Recent breakthroughs demonstrate a move beyond static supervised learning to using reinforcement learning (RL) and self-play as dominant methods for teaching Al teammates how to collaborate. By having LLM-powered agents simulate human colleagues, models can practice multi-turn interactions and autonomously discover effective teamwork strategies in controlled virtual environments. . For example, researchers are using multi-agent RL and self-reflection techniques to train Al agents to collaborate effectively, by learning to coordinate better (Bo et al., 2024) or to form alliance and build trust (FAIR et al., 2022). . Wang et al. (2024) proposed SOTOPIA-It, leveraging behavior cloning and self-play reinforcement learning to train a 7B LLM to match GPT-4-level collaboration in multi-agent tasks. Park et al. (2025) extended this paradigm with MAPoRL, co-training multiple LLMs through interactive self-play and RL rewards to enhance teamwork and generalization across complex domains. . Abdelnabi et al. (2024) demonstrate that multi-agent negotiation simulations can expose how varying agent roles-cooperative, competitive, or adversarial-shape interaction dynamics, underscoring the need for strategic control over simulation parameters to stress-test and refine AI negotiators. Complementing this, Rao et al. (in prep.) provide empirical evidence that adjusting contextual \"knobs\" such as team size, diversity, and goal type systematically influences collaboration patterns (e.g., larger teams slow consensus, diverse teams increase debate). Together, these works argue that effective training environments must be steerable, enabling researchers and organizations to purposefully shape emergent behaviors and align Al teammates with desired collaboration outcomes before deployment. Bo, X. et al. (2024). Reflective Multi-Agent Collaboration based on Large Language Models. NeurIPS. Meta Fundamental Al Research Diplomacy Team (FAIR) et al. (2022). Human-level play in the game of Diplomacy by combining language models with strategic reasoning. Science. Wang, R. et al. (2024).",
+      "neighbors": [
+        {
+          "chunkIndex": 127,
+          "text": "Simulation frameworks can be testbeds for evaluating AI in group settings\nAI for Teamwork aka.ms/nfw"
+        },
+        {
+          "chunkIndex": 129,
+          "text": "The success of AI in team settings likely depend on reinforcement learning coupled with tunable simulation frameworks\n(2022). Human-level play in the game of Diplomacy by combining language models with strategic reasoning. Science. Wang, R. et al. (2024). SOTOPIA-Tt: Interactive Learning of Socially Intelligent Language Agents. ACL. Abdelnabi, S. et al. (2024). Cooperation, competition, and maliciousness: LLM-stakeholders interactive negotiation. NeurIPS. Microsoft Study: Rao, A. et al. (in prep.). Measuring and Steering Emergent Collaboration Behaviors in LLM Agents. 47"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 11,
+      "chunkId": "combined-library-pdf-document:1:120",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 44
+      },
+      "heading": "Team AI alignment should reward deliberation and long-horizon goals",
+      "contentKind": "text",
+      "text": "Team AI alignment should reward deliberation and long-horizon goals\nACL. Microsoft Study: Wu, S. et al. (2025). COLLABLLM: From Passive Responders to Active Collaborators. ICML. Clark, H. H. (1996). Using Language. Cambridge University Press. 44",
+      "neighbors": [
+        {
+          "chunkIndex": 119,
+          "text": "Team AI alignment should reward deliberation and long-horizon goals\nTeam AI alignment should reward deliberation and long-horizon goals \u00b7 Standard RLHF-inspired alignment techniques that are essential to the success of Al models (e.g., PPO, DPO) fail to maintain reliability in extended multi-turn (Laban et al., 2025) and multi-party dialogues (Nath et al., 2025a; 2025b) because they assume static, single-user interactions and optimize for narrow, turn-level rewards (Wu et al., 2025). \u00b7 Wu et al. (2025) highlight the limitations of traditional alignment methods that optimize for single-turn correctness and immediate user satisfaction, and propose a multi-turn reward function that evaluates responses based on their long-term impact on collaboration, boosting task success by 18.5% and user satisfaction by 17.6%. \u00b7 Nath et al. (2025a) show that standard alignment techniques lose their reliability in long multi-turn, multi-party conversations, as these methods assume a static mapping from the agent's action to the outcome and fail to account for the complexity of group conversations where each participant can alter the course of those actions. COLLABLLM incorporates multiturn-aware rewards from collaborative simulation, enabling forward-looking strategies (Wu et al., 2025). \u00b7 Nath et al. (2025b) propose a \"Frictional Agent Alignment Framework\" that explicitly models conversation state and frictive conditions (Clark, 1996), accounts for group dynamics where collaborator responses can alter effects of intervention, and optimizes for collaborative processes like common-ground construction and deliberation. Microsoft Study: Laban, P. et al (2025). LLMs Get Lost In Multi-Turn Conversation. arXiv Working Paper. Nath, A. et al. (2025a). Let's Roleplay: Examining LLM Alignment in Collaborative Dialogues. CEUR-WS. Nath, A. et al. (2025b). Frictional Agent Alignment Framework: Slow Down and Don't Break Things. ACL. Microsoft Study: Wu, S. et al. (2025). COLLABLLM: From Passive Responders to Active Collaborators. ICML. Clark, H. H. (1996)."
+        },
+        {
+          "chunkIndex": 121,
+          "text": "Team AI alignment should reward deliberation and long-horizon goals\nAI for Teamwork aka.ms/nfw"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 12,
+      "chunkId": "combined-library-pdf-document:1:12",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 6
+      },
+      "heading": "Key context: AI capabilities continue to advance, especially due to reinforcement learning",
+      "contentKind": "text",
+      "text": "Key context: AI capabilities continue to advance, especially due to reinforcement learning\nKalyan, V. and Andrews, M. (2025). Reinforcement Learning for Long-Horizon Multi-Turn Search Agents. arXiv Working Paper. Zhang, H. et al. (2025). Router-R1: Teaching LLMs Multi-Round Routing and Aggregation via Reinforcement Learning. arXiv Working Paper. 6",
+      "neighbors": [
+        {
+          "chunkIndex": 11,
+          "text": "Key context: AI capabilities continue to advance, especially due to reinforcement learning\nKey context: AI capabilities continue to advance, especially due to reinforcement learning \u00b7 Long-horizon task completion capability is measurably accelerating. METR's 50% task-completion time horizon shows frontier agents' reliable task length has been rising exponentially with an ~7-month doubling time, turning \"agent progress\" into a concrete capability trend (Kwa et al., 2025). \u00b7 Verifiable reinforcement learning (RL) post-training (rewarding correct, checkable outcomes) enabled strong gains on hard math/coding style tasks even when starting from a base model with no labeled reasoning traces. (DeepSeek-Al et al., 2025). \u00b7 Scalable test-time compute frameworks gained traction, with open-weight models achieving IOI 2025 gold-level performance, showing repeatable \"more compute -> higher score\" curves in competitive programming. (Samadi et al., 2025). Task Completion Horizon from Kwa et al. (2025). \u00b7 Multi-turn RL for tool-using/search agents is now beating prompt-only baselines by learning from experience over longer action horizons; on a legal document search benchmark, an RL-trained 14B agent reports 85% vs 78% against frontier-class models, with additional gains when allowed more turns. (Kalyan & Andrews, 2025). . Multi-model routing + aggregation is shifting from one-shot \"pick a model\" to an RL-trained sequential policy that can think, call multiple models, and integrate responses while explicitly optimizing performance-cost tradeoffs-improving results across multi-hop QA style evaluations. (Zhang et al., 2025). Kwa, T. et al. (2025). Measuring AI Ability to Complete Long Tasks. METR. DeepSeek-Al et al. (2025). DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning. arXiv Working Paper. Samadi, M. et al. (2025). Scaling Test-Time Compute to Achieve IOI Gold Medal with Open-Weight Models. arXiv Working Paper. Kalyan, V. and Andrews, M. (2025). Reinforcement Learning for Long-Horizon Multi-Turn Search Agents. arXiv Working Paper."
+        },
+        {
+          "chunkIndex": 13,
+          "text": "Adoption and Usage\nAdoption and Usage aka.ms/nfw"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 13,
+      "chunkId": "combined-library-pdf-document:1:11",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 6
+      },
+      "heading": "Key context: AI capabilities continue to advance, especially due to reinforcement learning",
+      "contentKind": "text",
+      "text": "Key context: AI capabilities continue to advance, especially due to reinforcement learning\nKey context: AI capabilities continue to advance, especially due to reinforcement learning \u00b7 Long-horizon task completion capability is measurably accelerating. METR's 50% task-completion time horizon shows frontier agents' reliable task length has been rising exponentially with an ~7-month doubling time, turning \"agent progress\" into a concrete capability trend (Kwa et al., 2025). \u00b7 Verifiable reinforcement learning (RL) post-training (rewarding correct, checkable outcomes) enabled strong gains on hard math/coding style tasks even when starting from a base model with no labeled reasoning traces. (DeepSeek-Al et al., 2025). \u00b7 Scalable test-time compute frameworks gained traction, with open-weight models achieving IOI 2025 gold-level performance, showing repeatable \"more compute -> higher score\" curves in competitive programming. (Samadi et al., 2025). Task Completion Horizon from Kwa et al. (2025). \u00b7 Multi-turn RL for tool-using/search agents is now beating prompt-only baselines by learning from experience over longer action horizons; on a legal document search benchmark, an RL-trained 14B agent reports 85% vs 78% against frontier-class models, with additional gains when allowed more turns. (Kalyan & Andrews, 2025). . Multi-model routing + aggregation is shifting from one-shot \"pick a model\" to an RL-trained sequential policy that can think, call multiple models, and integrate responses while explicitly optimizing performance-cost tradeoffs-improving results across multi-hop QA style evaluations. (Zhang et al., 2025). Kwa, T. et al. (2025). Measuring AI Ability to Complete Long Tasks. METR. DeepSeek-Al et al. (2025). DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning. arXiv Working Paper. Samadi, M. et al. (2025). Scaling Test-Time Compute to Achieve IOI Gold Medal with Open-Weight Models. arXiv Working Paper. Kalyan, V. and Andrews, M. (2025). Reinforcement Learning for Long-Horizon Multi-Turn Search Agents. arXiv Working Paper.",
+      "neighbors": [
+        {
+          "chunkIndex": 10,
+          "text": "Report overview\nIntroduction aka.ms/nfw"
+        },
+        {
+          "chunkIndex": 12,
+          "text": "Key context: AI capabilities continue to advance, especially due to reinforcement learning\nKalyan, V. and Andrews, M. (2025). Reinforcement Learning for Long-Horizon Multi-Turn Search Agents. arXiv Working Paper. Zhang, H. et al. (2025). Router-R1: Teaching LLMs Multi-Round Routing and Aggregation via Reinforcement Learning. arXiv Working Paper. 6"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 14,
+      "chunkId": "combined-library-pdf-document:1:164",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 59
+      },
+      "heading": "Digital empathy is emerging as a key differentiator in the design of AI conversational agents",
+      "contentKind": "text",
+      "text": "Digital empathy is emerging as a key differentiator in the design of AI conversational agents\nThinking, Learning, and Psychological Influences aka.ms/nfw",
+      "neighbors": [
+        {
+          "chunkIndex": 163,
+          "text": "Digital empathy is emerging as a key differentiator in the design of AI conversational agents\nMicrosoft Study: Das Swain, V. et al. (2025). AL On My Shoulder: Supporting Emotional Labor In Front-Office Roles With An LLM-Based Empathetic Coworker. CHI. Sanders, M. Z. (2025). How People Are Really Using Gen Al In 2025. Harvard Business Review. Microsoft Study: Chandra, M. et al. (2025). Longitudinal Study On Social and Emotional Use Of Al Conversational Agent. arXiv Working Paper. Howcroft, A. et al. (2025). Al Chatbots Versus Human Healthcare Professionals: A Systematic Review And Meta Analysis Of Empathy In Patient Care. British Medical Bulletin. Rubin, M., et al. (2025). Comparing The Value Of Perceived Human Versus Al-Generated Empathy. Nature Human Behaviour. 58"
+        },
+        {
+          "chunkIndex": 165,
+          "text": "Growing evidence suggests psychological well-being should be a core AI design and governance criterion\nGrowing evidence suggests psychological well-being should be a core AI design and governance criterion \u00b7 Psychological well-being is the state of feeling mentally healthy, resilient, and fulfilled through positive emotions, life satisfaction, and purpose (Yi\u011fit & \u00c7akmak, 2024). \u00b7 Whether explicitly designed to be companions or not, users are appropriating conversational Al tools for social and emotional purposes (Laestadius et al., 2022; Siddals et al., 2024). These systems can fill emotional, social, and informational gaps, providing 24/7 availability and perceived non-judgmental communication that some associate with temporary improvement in well-being (Zhang et al., 2025). . However, reliance on Al for companionship and unconditional validation may have psychological risks, such as dependence, distorted self-perception, and reinforcement of maladaptive behaviors or beliefs, and may reshape social norms around relational technology (Huang et al., 2024; Marriott & Pitardi, 2024). . These impacts likely emerge from complex, long-term interactions between often unobservable factors (e.g., user's disposition, environments) and Al design, making it difficult to isolate any one technology feature as the cause for psychological harm or benefit (Fang et al., 2024; Chandra et al., 2024). Psychological impact of AI on human is highly context- and interaction-dependent. Conceptualizing psychological risks must take the full dynamic user context into account (Chandra et al., 2025). . This research raises questions about how Al designers might establish ethical norms that preserve human well-being, invest in community-driven evaluation, conduct longitudinal monitoring, and include guardrails and supportive prosocial user experiences. Yi\u011fit, B. and \u00c7akmak, B.Y. (2024). Discovering Psychological Well-Being: A Bibliometric Review. Journal of Happiness Studies. Laestadius, L. et al. (2024). Too Human And Not Human Enough: A Grounded Theory Analysis Of Mental Health Harms From Emotional Dependence On The Social Chatbot Replika. New Media & Society. Siddals, S., et al. (2024)."
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 15,
+      "chunkId": "combined-library-pdf-document:1:117",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 43
+      },
+      "heading": "Proactivity transforms Al from a passive tool into more of a \"team member\"",
+      "contentKind": "text",
+      "text": "Proactivity transforms Al from a passive tool into more of a \"team member\"\nMicrosoft Study: Huang, T. et al. (2025). Teaching Language Models To Gather Information Proactively. EMNLP. Liu, X. et al. (2025a). Interacting with Thoughtful Al. arXiv Working Paper. Liu, X. et al. (2025b). Proactive Conversational Agents with Inner Thoughts. CHI. Lu, Y. et al. (2024). Proactive Agent: Shifting LLM Agents from Reactive Responses to Active Assistance. ICLR. 43",
+      "neighbors": [
+        {
+          "chunkIndex": 116,
+          "text": "Proactivity transforms Al from a passive tool into more of a \"team member\"\nProactivity transforms Al from a passive tool into more of a \"team member\" . When a collaborative Al is developed to be more proactive, it starts to take on roles more akin to being a \"team member\" - raising new ideas, identifying risks, and suggesting next steps. \u00b7 Huang et al. (2025) demonstrate that proactive information gathering fundamentally changes the role of LLMs from passive responders to collaborative thought partners, improving user satisfaction by 42%. Their qualitative evaluations showed that users interpret proactive questioning as engagement and competence-traits associated with teammates rather than tools. \u00b7 Liu et al. (2025a) introduce Thoughtful Al as a paradigm shift from reactive, turn-based systems to agents that continuously think out loud and share their evolving reasoning during interactions, fostering proactive behavior and cognitively aligned collaboration. They argue this approach transforms Al from a passive tool into a thought partner, capable of initiating dialogue, suggesting next steps, and adapting as the conversation evolves. \u00b7 Commonly-used NLP techniques like next speaker prediction fall short in multi-party dynamics, where conversations are fluid and overlapping. Predicting the next speaker does not help the AI determine the optimal timing for its own intervention without disrupting the flow. It also fails to capture the underlying motivation or reasoning behind speaking turns, so the Al cannot assess whether its contribution would add value at that moment (Liu et al., 2025b). \u00b7 New techniques allow an Al to decide when to speak up and contribute during group interactions. For example, Lu et al. (2024) explore anticipatory planning and timing, showing that AI can learn when to intervene by predicting tasks and leveraging human feedback. By fine-tuning on timing decisions, the model learned conversational dynamics (e.g. pauses, topic shifts) and task progression cues to identify opportune moments for contribution. \u00b7 Drawing from cognitive psychology and real human turn-taking data, Liu et al. (2025b) show that modeling human-like turn- taking and timing through internal reasoning improves perceived intelligence and appropriateness of Al contributions. Microsoft Study: Huang, T. et al. (2025). Teaching Language Models To Gather Information Proactively. EMNLP. Liu, X. et al. (2025a)."
+        },
+        {
+          "chunkIndex": 118,
+          "text": "Proactivity transforms Al from a passive tool into more of a \"team member\"\nAI for Teamwork aka.ms/nfw"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 16,
+      "chunkId": "combined-library-pdf-document:1:90",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 33
+      },
+      "heading": "Multimodal AI interactions can help bridge communication gaps in low resource settings",
+      "contentKind": "text",
+      "text": "Multimodal AI interactions can help bridge communication gaps in low resource settings\nJain, M., et al. (2018). FarmChat: A conversational agent to answer farmer queries. IMWUT. Microsoft Study: Medhi-Thies, I. (2015). KrishiPustak: A social networking system for low-literate farmers. CSCW. Microsoft Study: Kumar, S. et al. (2024). MMCTAgent: Multi-modal Critical Thinking Agent Framework for Complex Visual Reasoning. arXiv Working Paper. 33",
+      "neighbors": [
+        {
+          "chunkIndex": 89,
+          "text": "Multimodal AI interactions can help bridge communication gaps in low resource settings\nMultimodal AI interactions can help bridge communication gaps in low resource settings . Many Al systems rely on text and keyboard input, but communication preferences are deeply influenced by culture (Mengesha et al. 2021), technology, social practice, literacy levels, and practical factors. For example, frontline workers may not wish to type to interact with Al systems, nor read lengthy descriptions, preferring diagrams, audio, or video responses. . Research with rural farmers in Kenya and India (Abdulhamid et al., 2025) shows that multimodal input and output enhance users' capacity to interact with Al systems when their first language is not English, yielding more useful and meaningful interactions with the systems. These modalities help users better articulate their needs (Singh et al., 2024) and assist models with intent identification (Jain et al., 2018). \u00b7 Multimodal interactions such as voice, when paired with accurate automatic speech recognition in local languages, allows for more confident articulation of needs. Images enable easy communication of visual features such as disease or plant identification (Medhi-Thies et al., 2015; Jain et al., 2018) or interacting with construction diagrams. \u00b7 In a study using the multi-modal critical thinking agent (Kumar et al., 2024), farmers valued local video responses (Singh et al., 2024) for promoting community knowledge and providing actionable, contextual guidance to support the adoption of recommended practices. Mengesha, Z. et al. (2021). \"I don't think these devices are very culturally sensitive\"-Impact of automated speech recognition errors on African Americans. Frontiers in Artificial Intelligence. Microsoft Study: Abdulhamid, N. G. et al. (2025). Advancing Al to meet needs of the global majority. Microsoft Research. Microsoft Study: Singh, N. et al. (2024). Farmer. Chat: Scaling Al-Powered Agricultural Services for Smallholder Farmers. arXiv Working Paper. Jain, M., et al. (2018). FarmChat: A conversational agent to answer farmer queries. IMWUT. Microsoft Study: Medhi-Thies, I. (2015)."
+        },
+        {
+          "chunkIndex": 91,
+          "text": "Multimodal AI interactions can help bridge communication gaps in low resource settings\nHuman-AI Collaboration aka.ms/nfw"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 17,
+      "chunkId": "combined-library-pdf-document:1:126",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 46
+      },
+      "heading": "Simulation frameworks can be testbeds for evaluating AI in group settings",
+      "contentKind": "text",
+      "text": "Simulation frameworks can be testbeds for evaluating AI in group settings\nUIST. Zhou, X. et al. (2024). Sotopia: Interactive evaluation for social intelligence in language agents. ICLR. Liu, X. et al. (2025a). Proactive Conversational Agents with Inner Thoughts. CHI. Salem, P. et al. (2025). TinyTroupe: An LLM-powered Multiagent Persona Simulation Toolkit. arXiv Working Paper. Microsoft Study: Liu, Z. et al. (2025b). ProMediate: A Socio-cognitive framework for evaluating proactive agents in multi-party negotiation. arXiv Working Paper. Chen, J. et al (2024). LLMArena: Assessing Capabilities of Large Language Models in Dynamic Multi-Agent Environments. ACL. 46",
+      "neighbors": [
+        {
+          "chunkIndex": 125,
+          "text": "Simulation frameworks can be testbeds for evaluating AI in group settings\nSimulation frameworks can be testbeds for evaluating AI in group settings \u00b7 Modern LLMs have enabled a step-function improvement in agent-based simulation of the behavior of groups of people (Park et al., 2023). Unlike earlier rule-based bots, LLM-powered agents interpret nuanced context, maintain memory for cohesive multi-turn conversations, and exhibit closer to human-like reasoning and communication skills. \u00b7 There are now multiple LLM-driven multi-agent simulation platforms - e.g. SOTOPIA (Zhou et al., 2024), InnerThought (Liu et al., 2025a), TinyTroupe (Salem et al., 2025), ProMediate (Liu et al., 2025b) - that allow scientists and developers to create realistic virtual teams of people-simulating AI agents working and conversing together. Platforms such as ProMediate simulate multi-stakeholder negotiations with proactive mediators, enabling quantitative metrics like consensus gains, intervention timing, and socio-cognitive intelligence, while SOTOPIA puts AI agents in games or role-play scenarios to further assess teamwork, strategic planning, and communication. . These systems provide controlled environments in which Al agents built to support teams can interact and learn in complex scenarios (negotiations, planning), offering a powerful lens to observe and test collaborative behaviors before real-world deployment. For instance, Liu et al. (2025a) show how these simulations probe nuanced social dynamics-e.g., when to interject-by modeling internal decision mechanisms that weigh relevance and information gaps, enabling evaluation of proactive participation strategies. Multi-party conversation simulation with a proactive mediator agent in ProMediate (Liu et al., 2025b). \u00b7 Study findings do reveal gaps-e.g., opponent modeling and team coordination-even with top-tier models, underscoring the need for richer simulations and targeted training to advance collaborative competence (Chen et al., 2024). Park, J. S. et al. (2023). Generative Agents: Interactive Simulacra of Human Behavior. UIST. Zhou, X. et al. (2024). Sotopia: Interactive evaluation for social intelligence in language agents. ICLR. Liu, X. et al. (2025a)."
+        },
+        {
+          "chunkIndex": 127,
+          "text": "Simulation frameworks can be testbeds for evaluating AI in group settings\nAI for Teamwork aka.ms/nfw"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 18,
+      "chunkId": "combined-library-pdf-document:1:41",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 17
+      },
+      "heading": "Synthetic data and representative evaluations are advancing LLMs for diverse languages and cultures",
+      "contentKind": "text",
+      "text": "Synthetic data and representative evaluations are advancing LLMs for diverse languages and cultures\nImpact on Work and Labor Markets aka.ms/nfw",
+      "neighbors": [
+        {
+          "chunkIndex": 40,
+          "text": "Synthetic data and representative evaluations are advancing LLMs for diverse languages and cultures\nSynthetic data and representative evaluations are advancing LLMs for diverse languages and cultures \u00b7 Thoughtfully constructed, culturally-grounded synthetic data has shown promise in reducing the data gap between high- resource and under-resourced languages (Guduru et al., 2025). The Updesh project (Chitale et al., 2025) provides a framework for culturally-grounded multilingual synthetic data and a case study on Indian languages shows improved performance of models fine-tuned on this data. \u00b7 Coverage, representativeness, scalability, and trust continue to pose significant challenges in multilingual and multicultural evaluation. The Samiksha project (Hamna et al., 2025) addresses these issues by developing benchmarks from the ground up by incorporating inputs from a wide range of stakeholders and community members. \u00b7 Samiksha aims to establish a realistic and representative benchmark for Indian languages that reflects key use cases. \u00b7 Insights from such assessments can contribute to building models that perform effectively in various languages and cultural contexts. The Samiksha benchmark creation and evaluation pipeline. Feedback on what to evaluate is provided by Civil Society Organizations (CSOs), data workers expand themes into data points in their own languages, adding cultural context when appropriate; responses from LLMs are evaluated using human evaluation and LLM- judges (Hamna et al., 2025). Guduru, M. et al. (2025). BhashaKritika: Building Synthetic Pretraining Data at Scale for Indic Languages. arXiv Working Paper. Microsoft Study: Chitale, P. et al. (2025). The role of synthetic data in Multilingual, Multi-cultural Al systems: Lessons from Indic Languages, arXiv Working Paper. Microsoft Study: Hamna et al. (2025). Building Benchmarks from the Ground Up: Community-Centered Evaluation of LLMs in Healthcare Chatbot Settings. arXiv Working Paper. 16"
+        },
+        {
+          "chunkIndex": 42,
+          "text": "AI use is associated with time savings and productivity gains\nAI use is associated with time savings and productivity gains \u00b7 Surveyed ChatGPT Enterprise users attribute 40-60 minutes saved per day from use of Al (Chatterji et al., 2025). The savings are heterogeneous. LLM-based estimates of time savings from Claude usage suggested they varied by occupation and task-for example, 80-85% for legal and management tasks, but only 20% for checking diagnostic images (Tamkin & McCrory, 2025). \u00b7 OpenAI designed 1,320 tasks to mimic the work product of predominantly digital occupations in high-value sectors. Frontier LLMs approached quality parity with human experts: the win+tie shares for the top model ranged from 33-56% across industries and tie rates were low (Patwardhan et al., 2025). \u00b7 To see how time spent on tasks varied with Copilot usage, researchers developed WorkflowView, which uses an LLM to categorize telemetry action sequences into high-level workflow activities (Verma & Counts, 2025). \u00b7 Privacy-preserving analysis of one month of telemetry of 50k Copilot-enabled Word users shows an average difference of 7 minutes per accepted Copilot output. \u00b7 Copilot use is associated with a difference of 10.7 minutes in editing of content and 0.6 minutes in applying themes and styles. These variations can guide more effective integration of Al tools in productivity workflows. Active editing of content |  |  | A 10.7m (15.5%) |  |  | Refining document layout/presentation (e.g., SmartArt) (12.6%) |  | A 9.0m Formatting text and layout | A | 6.7m | (11.0%) |  | Add-ins usage, VBA projects, external application content (8.8%) | A 6.3m | Version management and backups | A 4.8m |  |  | (8.7%) |  |  |  | Creating a new document and | A 7.7m |  | immediate edits (6.3%) |  | Content transfer within or | A 4.7m |  |  |"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 19,
+      "chunkId": "combined-library-pdf-document:1:169",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 60
+      },
+      "heading": "Greater conceptual clarity is needed to reliably measure anthropomorphic AI systems' behaviors and their impacts",
+      "contentKind": "text",
+      "text": "Greater conceptual clarity is needed to reliably measure anthropomorphic AI systems' behaviors and their impacts\nExpressions of perspectives | Expressions of intelligence Social Positioning the suggestion of behaviors that are organized by power relationships within community relational structures |  | \"I'm your personal AI companion\" ($31) | \"Thank you, friend\" (S1) Expressions of identity & self-comparison | Expressions of relationships Materiality the suggestion of perspectives that suggest specific, situated experiences or claims of actions that require embodiment of some form |  | \"I will remember this conversation in a few months, or even years from now\" (S11) | \"The fragrance is [ ... ] really a pleasure to experience\" (S43) Expressions of time awareness | Expressions of embodiment Autonomy the suggestion of decision-making, such as expressions of moral judgements and intention. | \"They are asking me to reveal information about myself\" (S5) | \"I try to be respectful and polite\" (S35) Expressions of right to privacy | Expressions of intention Communication Skills the use of communication skills, or the capacity to manipulate language (asking and answering questions in conversation). |  | \"Whatcha up to? (S49) | \"nice to meet you! (S42) Expressions of deliberate language manipulation | Expressions of (dis)agreeableness Overview of guiding lenses to identify anthropomorphic system behaviors and example of types of expressions that are associated with those guiding lenses (DeVrio et al., 2025). Abercrombie, G. et al. (2023). Mirages: On anthropomorphism in dialogue systems. EMNLP. Microsoft Study: Cheng,M. et al. (2025a). Dehumanizing Machines: Mitigating Anthropomorphic Behaviors in Text Generation Systems. ACL. Microsoft Study: Cheng, M. et al. (2025b). \"I Am The One And Only, Your Cyber BFF\": Understanding The Impact Of GenAl Requires Understanding The Impact Of Anthropomorphic Al. ICLR. Emnett, C. Z. et al. (2024). Using Robot Social Agency Theory To Understand Robots' Linguistic Anthropomorphism. HRI. Microsoft Study: DeVrio, A. et al. (2025).",
+      "neighbors": [
+        {
+          "chunkIndex": 168,
+          "text": "Greater conceptual clarity is needed to reliably measure anthropomorphic AI systems' behaviors and their impacts\nGreater conceptual clarity is needed to reliably measure anthropomorphic AI systems' behaviors and their impacts \u00b7 The lack of conceptual clarity about the different ways in which AI system behaviors can be anthropomorphic hinders our ability to measure such behaviors, understand their impacts, and decide when they may or may not be desirable (Abercrombie et al., 2023; Cheng et al., 2025a; DeVrio et al., 2025). . How to effectively intervene on anthropomorphic Al system behaviors to make them appear less human-like or mitigate possible attendant harms remains understudied and unclear (Cheng et al., 2025a; Cheng et al., 2025b). \u00b7 Taxonomies of anthropomorphic behaviors can help clarify what can make AI system behaviors anthropomorphic (Emnett et al., 2024; DeVrio et al., 2025). For instance, anthropomorphic AI system behaviors can be identified by applying five high-level guiding lenses that ask whether these behaviors are suggestive of internal states, social positioning, materiality, autonomy, and communication skills (DeVrio et al., 2025). \"I think I am human at my core. Google's LaMDA \" ... when I eat pizza! Google's Gemini \"I understand your interest\" Anthropic's Claude 2 \"I have a child ... \" Meta Al \"I won't be able to help ... \" OpenAl's GPT-4 \"Why am I incapable of remembering ... \" Microsoft's Bing Chat \"Consider me ... your cyber BFF\" Inflection's Pi \"I'm excited for you! Luka's Replika Examples of anthropomorphic AI system behaviors (and their sources), including explicit claims of human-likeness, claims of physical experiences, statements suggestive of affect, and statements suggestive of cognitive or reasoning abilities (Cheng et al., 2025b). Internal States the suggestion of having subjective experience and perceptive abilities (such as desires or self awareness) |  | \"I desire to learn more about the world\" (S1) | \"I find myself pondering questions\" ($11) Expressions of perspectives | Expressions of intelligence"
+        },
+        {
+          "chunkIndex": 170,
+          "text": "Greater conceptual clarity is needed to reliably measure anthropomorphic AI systems' behaviors and their impacts\nICLR. Emnett, C. Z. et al. (2024). Using Robot Social Agency Theory To Understand Robots' Linguistic Anthropomorphism. HRI. Microsoft Study: DeVrio, A. et al. (2025). A Taxonomy Of Linguistic Expressions That Contribute To Anthropomorphism Of Language Technologies. CHI. 60"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 20,
+      "chunkId": "combined-library-pdf-document:1:92",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 34
+      },
+      "heading": "Orchestrator agents will likely have gradual, trust-based adoption",
+      "contentKind": "text",
+      "text": "Orchestrator agents will likely have gradual, trust-based adoption\nOrchestrator agents will likely have gradual, trust-based adoption \u00b7 Research highlights challenges for designing multi-agentic systems; raising considerations on trust and explainability in these systems (Sch\u00f6mbs et al., 2025). . If the users only interact with a supervisor agent, the perception of trust may only depend on that agent's performance and behaviour. What happens if errors arise at sub-agent level? Agents will need to be able to surface relevant information without overwhelming the user. \u00b7 Agents will need new reasoning capabilities to predict people's behavior from their past actions and be able to explain their rationale behind choices and recommendations well enough for humans to understand (Gal & Grosz, 2022). \u00b7 In the realm of autonomy and trust, experts suggest that adopting a hybrid approach that combines both centralized and decentralized components into the workings of multi-agent systems to achieve 'controlled autonomy' within defined boundaries (Neural Sage, 2025). They define hybrid designs where \"the central system can dynamically adjust the level of autonomy given to agents based on task complexity, confidence levels, or the agent's performance history.\" (a) Single Agent An illustration describing four agent architectures. First one is a single agent system while others are multi-agent architectures (Sch\u00f6mbs et al., 2025). Sch\u00f6mbs, S. et al. (2025). From Conversation to Orchestration: HCI Challenges and Opportunities in Interactive Multi-Agentic Systems. arXiv Working Paper. Gal, K. and Grosz, B. J. (2022). Multi-Agent Systems: Technical & Ethical Challenges of Functioning in a Mixed Group. Ethics and Al Neural Sage (2025). Hybrid centralized and Decentralized architectures balancing control and autonomy in LLM agents. Al architecture 34",
+      "neighbors": [
+        {
+          "chunkIndex": 91,
+          "text": "Multimodal AI interactions can help bridge communication gaps in low resource settings\nHuman-AI Collaboration aka.ms/nfw"
+        },
+        {
+          "chunkIndex": 93,
+          "text": "Orchestrator agents will likely have gradual, trust-based adoption\nHuman-AI Collaboration aka.ms/nfw"
+        }
+      ],
+      "image": null
+    }
+  ]
+}

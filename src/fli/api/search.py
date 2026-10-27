@@ -99,6 +99,7 @@ class SearchBody(BaseModel):
     filters: Filters | None = None
     top: StrictInt | None = None
     includeNeighbors: StrictBool = False
+    distinctDocuments: StrictBool = False
 
 
 @router.post("/search")
@@ -119,5 +120,7 @@ async def search(
     return await searcher.search(
         library_id,
         x_agent_id,
-        SearchRequest(body.query, top, body.includeNeighbors, filters.to_search(), filters.applied()),
+        SearchRequest(
+            body.query, top, body.includeNeighbors, filters.to_search(), filters.applied(), body.distinctDocuments
+        ),
     )

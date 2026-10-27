@@ -1,0 +1,305 @@
+Send retrieved images to the model
+
+Chat
+
+there was a cool blue chart about human work vs machine work. can you remember whether human work that should be automated was bigger than the thing for machine work?
+
+Yes — that’s the concentric-blue diagram in the Microsoft New Future of Work Report (2025). Here’s the figure from the report:
+
+Nearby caption (inferred): Opportunities for augmenting humans are far greater than opportunities to automate existing tasks (Adapted from Brynjolfsson, 2022). — New-Future-Of-Work-Report-2025.pdf (page 23)
+
+What it shows (New-Future-Of-Work-Report-2025.pdf, page 23):
+
+The smallest central circle is labeled "Human tasks that machines should automate."
+
+A larger inner ring is labeled "Human tasks that machines could automate."
+
+The largest outer circle is "Tasks that humans can do."
+
+A pointer to the right labels "New tasks that humans can do with the help of machines."
+
+So no — the "human tasks that machines should automate" area is smaller than the other human-task areas (it’s the smallest circle). The figure’s point (captioned “Opportunities for augmenting humans are far greater than opportunities to automate existing tasks”) is that augmentation/new tasks with machines is a much bigger opportunity than simply automating existing human tasks (New-Future-Of-Work-Report-2025.pdf, p.23).
+
+Other image candidates (3; not selected in this answer)
+
+Cosmos RU · retrieval
+
+21.50
+
+Retrieval time
+
+0.88 s
+
+Total response time
+
+14.64 s
+
+Model tokens
+
+11,106
+
+Actual input: 9,881 tokens · output: 1,225 tokens. Cumulative across model calls; full-document size estimates are separate.
+
+Performance breakdown
+
+Tool called: search_library_combined_library → combined-library · 880 ms · 21.5 RU
+
+i can't remember, in the garden is there a stand pipe in plot for? can't remember which ones had them. i thought that one was on the waiting list too and someone was asking about whether there's a pipe
+
+01-allotment-seasonal-planting-guide.docx (paragraph 4)
+
+Short answer, from the site plan in 01-allotment-seasonal-planting-guide.docx (image in the Early spring section / paragraph 4):
+
+Standpipes (blue "W") are shown inside Plot 1 and a second "W" just outside the right-hand edge of the lower row — i.e., not inside Plots 5 or 8.
+
+Amber plots 5 and 8 are the ones on the waiting list (note under the image: "Amber plots 5 and 8: waiting list.").
+
+So the plot(s) on the waiting list (5 and 8) do not show a standpipe on that map; the nearest marked taps are at Plot 1 and the external marker at the right-hand side of the lower row (01-allotment-seasonal-planting-guide.docx, paragraph 4).
+
+Cosmos RU · retrieval
+
+29.37
+
+Retrieval time
+
+1.83 s
+
+Total response time
+
+29.31 s
+
+Model tokens
+
+30,627
+
+Actual input: 28,488 tokens · output: 2,139 tokens. Cumulative across model calls; full-document size estimates are separate.
+
+Performance breakdown
+
+Tool called: search_library_combined_library → combined-library · 615 ms · 9.56 RU
+
+Tool called: search_library_combined_library → combined-library · 664 ms · 9.56 RU
+
+Tool called: find_documents_library_combined_library → combined-library · 178 ms · 5.69 RU
+
+Tool called: read_documents_library_combined_library → combined-library · 372 ms · 4.56 RU
+
+I need to know a good quick summary of the Microsoft document or the research whatever it said about how the more context and continuity you give to an agent the better it's gonna help the human, I'm trying to make this case in a meeting next week and I need to be able to pull easily from the relevant statistics or research and whatever Microsoft has got that's like visually interesting and helpful for this
+
+Short answer up front
+
+Yes — the Microsoft New Future of Work Report (2025) argues that giving AI agents more shared context and continuity improves their value for people by enabling augmentation (new, higher‑value work) and better collective productivity, not just narrow automation. Key places to cite: New-Future-Of-Work-Report-2025.pdf, pp. 3, 23, and 32. (I could not finish a full-document read because the tool hit a retrieval budget limit; I used only the pages cited.)
+
+Quick evidence-backed summary you can read or paste into a slide
+
+Core claim: AI’s next frontier is collective productivity — agents must be designed to support shared goals, group context, and norms of cooperation to help teams get better together (New-Future-Of-Work-Report-2025.pdf, p.3).
+
+Augmentation vs automation: the report emphasizes that “opportunities for augmenting humans are far greater than opportunities to automate existing tasks,” and automation-first approaches tend to cap upside while augmentation/innovation create new categories of work and value (New-Future-Of-Work-Report-2025.pdf, p.23).
+
+Practical implication: more continuity/context (shared history, group context, and ongoing state) lets agents augment human work — e.g., keep threads of a project, maintain team norms, and suggest new tasks — rather than only performing one-off automations (New-Future-Of-Work-Report-2025.pdf, pp.3, 23).
+
+Supporting literature: the report points to recent HCI and AI studies on human–AI cooperation, co-design, and pair programming that study collaboration patterns and agent roles (see the references collected on New-Future-Of-Work-Report-2025.pdf, p.32).
+
+Suggested short slide text + speaker notes (ready for your meeting)
+
+Slide headline: “Context & Continuity = Better Human–AI Partnership”
+
+Slide bullets:
+
+“AI boosts collective productivity when it knows the team’s goals, history and norms.” (cite: New-Future-Of-Work-Report-2025.pdf, p.3)
+
+“Augmentation > automation: designing for continuity creates new value, not just cost savings.” (cite: New-Future-Of-Work-Report-2025.pdf, p.23)
+
+Speaker note (one line): “Microsoft’s 2025 New Future of Work report argues that agents with shared context and continuity support higher-value, collaborative work — the report contrasts augmentation (big upside) with automation (limited upside).” (cite: New-Future-Of-Work-Report-2025.pdf, pp.3, 23)
+
+Visuals the report offers that help sell the idea
+
+Concentric diagram on augmentation vs automation (visually shows augmentation/new tasks >> simple automation): New-Future-Of-Work-Report-2025.pdf, p.23 — this is a strong visual to put on a slide to argue that continuity/context enables augmentation.
+
+A succinct quote or framing sentence from the report’s intro about shifting from individual to collective productivity (New-Future-Of-Work-Report-2025.pdf, p.3) — place this as a pull-quote on the slide.
+
+What I could not confirm yet (and can fetch for you)
+
+Exact numeric statistics (percent improvements, survey numbers) — the report text I accessed uses phrases like “substantial gains” but I didn’t retrieve every page to confirm any specific numeric claims. If you want hard numbers for your meeting, I can (a) finish reading the report and extract any survey/experiment statistics, and (b) pull the p.23 figure as a high-resolution image for your slide.
+
+Full bibliography details for the HCI/experiment studies referenced (there are citations on p.32 that you may want to include as backup references).
+
+Next steps I can do right away (pick one)
+
+Pull the p.23 concentric diagram as a slide-ready image and a caption (I’ll cite New-Future-Of-Work-Report-2025.pdf, p.23).
+
+Finish reading the report to extract any numeric stats and the strongest single-sentence quotes (I’ll list exact pages).
+
+Extract the ref list on p.32 so you can cite the underlying academic studies in your slide notes.
+
+Which would you like me to do?
+
+Other image candidates (1; not selected in this answer)
+
+Cosmos RU · retrieval
+
+321.88
+
+Retrieval time
+
+9.82 s
+
+Total response time
+
+105.96 s
+
+Model tokens
+
+106,963
+
+Actual input: 101,715 tokens · output: 5,248 tokens. Cumulative across model calls; full-document size estimates are separate.
+
+Quota retry waits: 30.0 s across 1 retries, included in total response time.
+
+Performance breakdown
+
+Tool called: search_library_combined_library → combined-library · 1132 ms · 29.09 RU
+
+Tool called: search_library_combined_library → combined-library · 512 ms · 28.74 RU
+
+Tool called: search_library_combined_library → combined-library · 561 ms · 28.5 RU
+
+Tool called: search_library_combined_library → combined-library · 387 ms · 30.28 RU
+
+Tool called: search_library_combined_library → combined-library · 422 ms · 28.75 RU
+
+Tool called: search_library_combined_library → combined-library · 727 ms · 28.65 RU
+
+Tool called: search_library_combined_library → combined-library · 880 ms · 29.53 RU
+
+Tool called: read_documents_library_combined_library → combined-library · 219 ms · 3.42 RU
+
+Tool called: search_library_combined_library → combined-library · 1000 ms · 28.67 RU
+
+Tool called: search_library_combined_library → combined-library · 931 ms · 28.78 RU
+
+Tool called: search_library_combined_library → combined-library · 1255 ms · 28.66 RU
+
+Tool called: search_library_combined_library → combined-library · 1791 ms · 28.81 RU
+
+any images from the research i can re-use?
+
+Short answer — yes. The Microsoft New Future of Work Report (2025) contains several clear, presentation‑friendly figures you can reuse in an internal slide/deck (but see the note on permissions below). The most useful candidates:
+
+Concentric diagram (qualitative): “Opportunities for augmenting humans are far greater than opportunities to automate existing tasks.” — New-Future-Of-Work-Report-2025.pdf, p.23. This is the blue concentric circles visual you remembered and is excellent for a single-slide headline.
+
+(Shown earlier):
+
+Nearby caption (inferred): Opportunities for augmenting humans are far greater than opportunities to automate existing tasks (Adapted from Brynjolfsson, 2022). — New-Future-Of-Work-Report-2025.pdf (page 23)
+
+Team readiness / adoption cycle (conceptual): “Workplace learning and experimentation create a cycle for Agentic AI adoption” — New-Future-Of-Work-Report-2025.pdf, p.55. Good as a how-to / next-steps slide (shows the elements teams need for agent adoption).
+
+Human–AI effect-size panels (quantitative): multi-panel forest/summary of effect sizes for “Human–AI synergy” and “Human augmentation” with summary counts and average Hedges’ g — New-Future-Of-Work-Report-2025.pdf, p.73. Very useful if you want actual study counts/summary statistics (the figure annotates n and average g values).
+
+Headcount / exposure trend panels (time series): headcount trends by career cohort (visual) — New-Future-Of-Work-Report-2025.pdf, p.70. Useful if you want to show how exposure trends differ by cohort.
+
+Inequality cascade (risk conceptual): “Inequality Cascades of Workplace AI Systems” — New-Future-Of-Work-Report-2025.pdf, p.74. Useful if you need a slide about risks and governance.
+
+Cover / banner art (styling): title and banner images suitable for slide backgrounds or visual continuity — New-Future-Of-Work-Report-2025.pdf, pp.1, 4.
+
+What I can do next (pick one)
+
+Export selected figures as slide‑ready image crops (high‑res), with source captions and suggested short slide text + a one‑line speaker note for each figure. (I can fetch p.55, p.70, p.73, p.74 on request.)
+
+Extract the numeric callouts from the p.73 effect‑size figure (counts n, average g, % outperforming/underperforming) so you can cite them verbatim in your slide.
+
+Prepare a single 2‑slide pack: (1) headline visual (p.23) + 1‑line takeaway; (2) supporting evidence (p.73 numeric summary + p.55 readiness cycle).
+
+Permission / reuse note
+
+These images are from a Microsoft report. I can prepare images for internal presentation and provide the exact caption and citation (file + page) to include on the slide (e.g., “Microsoft, New Future of Work Report, 2025, p.23”).
+
+I’m not able to grant copyright permission — for any public redistribution, publication, or commercial reuse you should check the report’s copyright/permissions statement or contact Microsoft for reuse rights. If you want, I can search the report for any explicit licensing or “reuse” statement.
+
+Which figures should I pull as high‑res crops and captions for your slides (I can fetch up to the pages you pick)?
+
+Other image candidates (7; not selected in this answer)
+
+Cosmos RU · retrieval
+
+13.73
+
+Retrieval time
+
+1.04 s
+
+Total response time
+
+16.27 s
+
+Model tokens
+
+16,701
+
+Actual input: 14,864 tokens · output: 1,837 tokens. Cumulative across model calls; full-document size estimates are separate.
+
+Performance breakdown
+
+Tool called: search_library_combined_library → combined-library · 1044 ms · 13.73 RU
+
+can't you just show me the images that might be helpful? i remember there being some
+
+Here are several visuals from the Microsoft New Future of Work Report (2025) that are most useful for a slide arguing “more context/continuity = better help from agents.” I’ve shown each figure and noted its source (file + page). Tell me which ones you want exported as slide‑ready crops or if you want the exact numbers called out from any figure.
+
+Concentric diagram — shows augmentation >> automation (great single‑slide headline)
+
+Nearby caption (inferred): Opportunities for augmenting humans are far greater than opportunities to automate existing tasks (Adapted from Brynjolfsson, 2022). — New-Future-Of-Work-Report-2025.pdf (page 23)
+
+Source: New-Future-Of-Work-Report-2025.pdf, p.23
+
+Effect‑size panels — many human+AI experiments summarized (good for evidence/quantitative slide)
+
+New-Future-Of-Work-Report-2025.pdf (page 73)
+
+Source: New-Future-Of-Work-Report-2025.pdf, p.73
+
+Headcount / exposure trend panels — cohort exposure trends over time (useful for showing differential impacts)
+
+New-Future-Of-Work-Report-2025.pdf (page 70)
+
+Source: New-Future-Of-Work-Report-2025.pdf, p.70
+
+Occupation applicability scatter — which occupations score high on goal/applicability (helps show where context matters)
+
+New-Future-Of-Work-Report-2025.pdf (page 13)
+
+Source: New-Future-Of-Work-Report-2025.pdf, p.13 Quick notes
+
+If you want hard numbers from the effect‑size figure (p.73) or the exact legend details from the cohort charts (p.70), I can extract those values and give text you can paste into speaker notes.
+
+I can also export any of the images as slide‑ready high‑resolution crops and include the precise caption + citation to place on the slide.
+
+Permission reminder: these are Microsoft report figures — I can prepare them for internal use and provide citation text, but I can’t grant external/public reuse rights; check the report for licensing if you plan to publish.
+
+Which image(s) should I crop/export for your slide deck, or would you like me to pull the numeric callouts from p.73 next?
+
+Other image candidates (4; not selected in this answer)
+
+Cosmos RU · retrieval
+
+13.92
+
+Retrieval time
+
+0.99 s
+
+Total response time
+
+20.30 s
+
+Model tokens
+
+18,429
+
+Actual input: 16,444 tokens · output: 1,985 tokens. Cumulative across model calls; full-document size estimates are separate.
+
+Performance breakdown
+
+Tool called: search_library_combined_library → combined-library · 995 ms · 13.92 RU
+
+entry area (settable) Ask a question

@@ -1,0 +1,475 @@
+Help for Model context budget (tokens)
+
+(settable, integer) Description: Model context budget (tokens), Value: 48000, ID: :r3p5:
+
+(settable, integer) Description: Send retrieved images to the model, Value: 1
+
+Send retrieved images to the model
+
+Help for Send retrieved images to the model
+
+(collapsed) Description: Expand sidebar, Secondary Actions: Expand
+
+Deploy
+
+Chat
+
+(collapsed, settable) Description: Agent, Value: separate-libraries-agent (official), ID: react-aria4920768799-:r3q6:, Secondary Actions: Expand
+
+According to the allotment planting guide, when should Swift first early potatoes be planted, and what spacing does it recommend? Give a concise answer and cite the file and location.
+
+Plant Swift first earlies on 20 March; space plants 30 cm apart in rows 60 cm apart. (01-allotment-seasonal-planting-guide.docx — Early spring, paragraph 3)
+
+Cosmos RU · retrieval
+
+8.93
+
+Retrieval time
+
+0.73 s
+
+Total response time
+
+8.24 s
+
+Model tokens
+
+18,110
+
+Actual input: 17,727 tokens · output: 383 tokens. Cumulative across model calls; full-document size estimates are separate.
+
+(collapsed) Performance breakdown, Secondary Actions: Expand
+
+Performance breakdown
+
+(collapsed) Tool called: search_library_word_planting_guide → single-word-library · 731 ms · 8.93 RU, Secondary Actions: Expand
+
+Tool called: search_library_word_planting_guide → single-word-library · 731 ms · 8.93 RU
+
+I remember a map of an allotment with some plots highlighted as being on a waiting list. Find that map, show it inline, and tell me which plots are highlighted. Include its source caption if one was identified, and cite the file and location.
+
+Fullscreen: 01-allotment-seasonal-planting-guide.docx (paragraph 4)
+
+01-allotment-seasonal-planting-guide.docx (paragraph 4)
+
+Highlighted plots: Plot 5 and Plot 8 (amber — on the waiting list). Source caption / nearby text: "Amber plots 5 and 8: waiting list. Shed and compost bins at the south gate." (01-allotment-seasonal-planting-guide.docx — paragraph 4). Note: no formal image.caption was extracted; the quoted caption text comes from the nearby document text (paragraph 4).
+
+Cosmos RU · retrieval
+
+7.69
+
+Retrieval time
+
+1.03 s
+
+Total response time
+
+12.98 s
+
+Model tokens
+
+20,547
+
+Actual input: 19,534 tokens · output: 1,013 tokens. Cumulative across model calls; full-document size estimates are separate.
+
+(collapsed) Performance breakdown, Secondary Actions: Expand
+
+Performance breakdown
+
+(collapsed) Tool called: search_library_word_planting_guide → single-word-library · 1032 ms · 7.69 RU, Secondary Actions: Expand
+
+Tool called: search_library_word_planting_guide → single-word-library · 1032 ms · 7.69 RU
+
+In the wetland restoration presentation, how much has the water table risen? Also find and show the trail-sign picture from that presentation and tell me the full circuit distance. Cite the relevant slides and distinguish information from the slide text from information on the sign.
+
+Water table rise: "Water table up 38 cm." (12-wetland-restoration-project.pptx — slide 4, "Results so far" slide text).
+
+Trail-sign image (slide 5):
+
+Fullscreen: 12-wetland-restoration-project.pptx (slide 5)
+
+12-wetland-restoration-project.pptx (slide 5)
+
+Full circuit distance on the sign: "Full circuit ...... 6.4 km." (12-wetland-restoration-project.pptx — slide 5, image of the Heron Loop sign). Notes: the 38 cm number is taken from the slide text (slide 4). The 6.4 km value is read from the text printed on the trail sign shown in the image (slide 5). No formal image.caption was extracted for the sign; the image is accompanied by the slide heading "Visiting the fen."
+
+Cosmos RU · retrieval
+
+17.37
+
+Retrieval time
+
+1.99 s
+
+Total response time
+
+19.68 s
+
+Model tokens
+
+30,784
+
+Actual input: 29,204 tokens · output: 1,580 tokens. Cumulative across model calls; full-document size estimates are separate.
+
+(collapsed) Performance breakdown, Secondary Actions: Expand
+
+Performance breakdown
+
+(collapsed) Tool called: search_library_wetland_project → single-presentation-library · 900 ms · 9.19 RU, Secondary Actions: Expand
+
+Tool called: search_library_wetland_project → single-presentation-library · 900 ms · 9.19 RU
+
+(collapsed) Tool called: search_library_wetland_project → single-presentation-library · 1087 ms · 8.18 RU, Secondary Actions: Expand
+
+Tool called: search_library_wetland_project → single-presentation-library · 1087 ms · 8.18 RU
+
+Find and show the monthly single-chart-library for Glen Orrin. Which months were the wettest and driest, what were their rainfall totals, and what was the difference in millimetres? Cite the image file.
+
+Fullscreen: 01-rainfall-bar-chart.png
+
+01-rainfall-bar-chart.png
+
+Wettest: November — 204 mm. (01-rainfall-bar-chart.png — image)
+
+Driest: June — 58 mm. (01-rainfall-bar-chart.png — image)
+
+Difference: 204 − 58 = 146 mm. (01-rainfall-bar-chart.png — image)
+
+Cosmos RU · retrieval
+
+7.90
+
+Retrieval time
+
+0.46 s
+
+Total response time
+
+11.15 s
+
+Model tokens
+
+21,199
+
+Actual input: 20,308 tokens · output: 891 tokens. Cumulative across model calls; full-document size estimates are separate.
+
+(collapsed) Performance breakdown, Secondary Actions: Expand
+
+Performance breakdown
+
+(collapsed) Tool called: search_library_rainfall_chart → single-chart-library · 461 ms · 7.9 RU, Secondary Actions: Expand
+
+Tool called: search_library_rainfall_chart → single-chart-library · 461 ms · 7.9 RU
+
+I remember a diagram in the Future of Work report with circles about what humans can do and what machines could or should automate. Find and show that specific diagram with its associated caption if one was identified. Explain what the diagram means using the surrounding discussion, and cite the page. Distinguish the source caption from section headings or your own interpretation.
+
+Fullscreen: Nearby caption (inferred): Opportunities for augmenting humans are far greater than opportunities to automate existing tasks (Adapted from Brynjolfsson, 2022). — New-Future-Of-Work-Report-2025.pdf (page 23)
+
+Nearby caption (inferred): Opportunities for augmenting humans are far greater than opportunities to automate existing tasks (Adapted from Brynjolfsson, 2022). — New-Future-Of-Work-Report-2025.pdf (page 23)
+
+Source caption (identified on the page): "Opportunities for augmenting humans are far greater than opportunities to automate existing tasks (Adapted from Brynjolfsson, 2022)." — New-Future-Of-Work-Report-2025.pdf, p. 23. Nearby slide/section heading (page text): "Impact on Work and Labor Markets" and "Automation tends to cap upside - augmentation and innovation expand opportunity." — New-Future-Of-Work-Report-2025.pdf, p. 23. What the diagram shows (description drawn from the page): concentric circles on the left (outer → inner → centre) with dashed arrows labelled:
+
+"Tasks that humans can do" pointing to the outer area,
+
+"Human tasks that machines could automate" pointing to the middle circle,
+
+"Human tasks that machines should automate" pointing to the small centre circle, and a fourth arrow labelled "New tasks that humans can do with the help of machines" pointing to an empty area on the right. — New-Future-Of-Work-Report-2025.pdf, p. 23.
+
+Interpretation (my summary, not the slide caption): the figure argues that the set of tasks machines can or should automate is smaller (nested circles) than the broader set of human tasks, while the biggest opportunity lies in augmentation — new hybrid tasks humans can do with machine assistance. The adjacent slide text frames this as: automation alone limits upside, whereas augmentation and innovation expand opportunity. — Interpretation based on New-Future-Of-Work-Report-2025.pdf, p. 23.
+
+Cosmos RU · retrieval
+
+26.88
+
+Retrieval time
+
+0.61 s
+
+Total response time
+
+14.89 s
+
+Model tokens
+
+21,659
+
+Actual input: 20,139 tokens · output: 1,520 tokens. Cumulative across model calls; full-document size estimates are separate.
+
+(collapsed) Performance breakdown, Secondary Actions: Expand
+
+Performance breakdown
+
+(collapsed) Tool called: search_library_future_of_work → single-report-library · 614 ms · 26.88 RU, Secondary Actions: Expand
+
+Tool called: search_library_future_of_work → single-report-library · 614 ms · 26.88 RU
+
+Read the entire allotment planting guide, including all its sections. Summarize its recommendations for early spring, summer succession and winter cover. Show its site plan alongside the explanation where it is useful. Cite the file and locations, and disclose if you could not read any part in full.
+
+Fullscreen: 01-allotment-seasonal-planting-guide.docx (paragraph 4)
+
+01-allotment-seasonal-planting-guide.docx (paragraph 4)
+
+Summary (from 01-allotment-seasonal-planting-guide.docx):
+
+Early spring
+
+Sow broad beans under cloche from late February. (Early spring — paragraph 3)
+
+Plant first‑early potatoes (var. Swift) on 20 March; space plants 30 cm apart in rows 60 cm apart; earth up when shoots reach 20 cm. (Early spring — paragraph 3)
+
+Summer succession
+
+Sow carrots every three weeks between April and July to avoid a glut. (Summer succession — paragraph 6)
+
+Sow beetroot after 15 June to reduce bolting. (Summer succession — paragraph 6)
+
+Net brassicas against cabbage white from the day of planting. (Summer succession — paragraph 6)
+
+Winter cover
+
+Sow a green‑manure crop of field beans in October. (Winter cover — paragraph 8)
+
+After the first frost, mulch rhubarb crowns with 10 cm of well‑rotted manure. (Winter cover — paragraph 8)
+
+Site plan notes (useful with the summary)
+
+The site plan schematic (shown above) is titled "Greywell Community Allotments" and marks 12 plots (4×3 grid). It shows water standpipes labelled "W" and notes that Plot 5 and Plot 8 are amber (waiting list). The image appears as the site‑plan figure under Early spring (paragraph 4). (01-allotment-seasonal-planting-guide.docx — site‑plan image/paragraph 4)
+
+No formal image.caption field was identified; the document’s nearby/bottom note reads: "Amber plots 5 and 8: waiting list. Shed and compost bins at the south gate." (01-allotment-seasonal-planting-guide.docx — site‑plan image/paragraph 4)
+
+Reading disclosure
+
+I read the guide in full from the provided file; the document extraction was complete. (01-allotment-seasonal-planting-guide.docx — full file read)
+
+Cosmos RU · retrieval
+
+10.18
+
+Retrieval time
+
+0.50 s
+
+Total response time
+
+18.64 s
+
+Model tokens
+
+35,043
+
+Actual input: 33,447 tokens · output: 1,596 tokens. Cumulative across model calls; full-document size estimates are separate.
+
+(collapsed) Performance breakdown, Secondary Actions: Expand
+
+Performance breakdown
+
+(collapsed) Tool called: find_documents_library_word_planting_guide → single-word-library · 180 ms · 5.62 RU, Secondary Actions: Expand
+
+Tool called: find_documents_library_word_planting_guide → single-word-library · 180 ms · 5.62 RU
+
+(collapsed) Tool called: read_documents_library_word_planting_guide → single-word-library · 320 ms · 4.56 RU, Secondary Actions: Expand
+
+Tool called: read_documents_library_word_planting_guide → single-word-library · 320 ms · 4.56 RU
+
+Read the entire wetland restoration presentation, including its speaker notes, and summarize its history, restoration plan and results. Then retrieve only the relevant evidence from the other files to tell me the recommended potato planting date and spacing, and the wettest month in the single-chart-library. Show the presentation's trail-sign picture. Keep the findings attributed to their separate sources and cite each one.
+
+I read the wetland presentation in full (12-wetland-restoration-project.pptx — complete; slides 1–5, speaker notes included). Summary with slide citations:
+
+History
+
+Drained for farming in 1840; peat loss of 1.9 m since drainage; last bittern recorded in 1953. (12-wetland-restoration-project.pptx — slide 2, “History”; speaker notes)
+
+Restoration plan
+
+Block 14 km of ditches, rewet 220 hectares, and reintroduce water voles (work by volunteers and a digger per speaker notes). (12-wetland-restoration-project.pptx — slide 3, “Plan”; speaker notes)
+
+Results so far
+
+Bittern returned in spring 2026; water table up 38 cm. Monitoring continues to 2030. (12-wetland-restoration-project.pptx — slide 4, “Results so far”; speaker notes)
+
+Trail-sign picture (from the presentation; image shown as in the file):
+
+Fullscreen: 12-wetland-restoration-project.pptx (slide 5)
+
+12-wetland-restoration-project.pptx (slide 5)
+
+Source note for the image: 12-wetland-restoration-project.pptx — slide 5, “Visiting the fen” (the slide image itself contains route distances such as “Full circuit ...... 6.4 km”; this text is read from the sign pictured on the slide).
+
+Relevant evidence retrieved (only the lines needed), attributed and cited:
+
+Potato planting date and spacing (from the allotment guide):
+
+“Plant first early potatoes (variety Swift) on 20 March, 30 cm apart in rows 60 cm apart, and earth up when shoots reach 20 cm.” (01-allotment-seasonal-planting-guide.docx — Early spring, paragraph 3)
+
+Wettest month in the single-chart-library (from the chart file):
+
+November — 204 mm. (01-rainfall-bar-chart.png — image)
+
+If you want, I can also show the single-chart-library image or the allotment site plan inline.
+
+(collapsed) Other image candidates (2; not selected in this answer), Secondary Actions: Expand
+
+Other image candidates (2; not selected in this answer)
+
+Cosmos RU · retrieval
+
+29.54
+
+Retrieval time
+
+1.41 s
+
+Total response time
+
+70.05 s
+
+Model tokens
+
+106,346
+
+Actual input: 103,232 tokens · output: 3,114 tokens. Cumulative across model calls; full-document size estimates are separate.
+
+Quota retry waits: 30.0 s across 1 retries, included in total response time.
+
+(collapsed) Performance breakdown, Secondary Actions: Expand
+
+Performance breakdown
+
+(collapsed) Tool called: find_documents_library_wetland_project → single-presentation-library · 138 ms · 5.3 RU, Secondary Actions: Expand
+
+Tool called: find_documents_library_wetland_project → single-presentation-library · 138 ms · 5.3 RU
+
+(collapsed) Tool called: read_documents_library_wetland_project → single-presentation-library · 313 ms · 4.38 RU, Secondary Actions: Expand
+
+Tool called: read_documents_library_wetland_project → single-presentation-library · 313 ms · 4.38 RU
+
+(collapsed) Tool called: find_documents_library_word_planting_guide → single-word-library · 150 ms · 5.62 RU, Secondary Actions: Expand
+
+Tool called: find_documents_library_word_planting_guide → single-word-library · 150 ms · 5.62 RU
+
+(collapsed) Tool called: read_documents_library_word_planting_guide → single-word-library · 225 ms · 4.56 RU, Secondary Actions: Expand
+
+Tool called: read_documents_library_word_planting_guide → single-word-library · 225 ms · 4.56 RU
+
+(collapsed) Tool called: find_documents_library_rainfall_chart → single-chart-library · 175 ms · 5.3 RU, Secondary Actions: Expand
+
+Tool called: find_documents_library_rainfall_chart → single-chart-library · 175 ms · 5.3 RU
+
+(collapsed) Tool called: read_documents_library_rainfall_chart → single-chart-library · 408 ms · 4.38 RU, Secondary Actions: Expand
+
+Tool called: read_documents_library_rainfall_chart → single-chart-library · 408 ms · 4.38 RU
+
+First search for passages about seasonal planting so you can identify the relevant guide. Then read that guide in full and turn it into a spring-to-winter checklist, including its site plan. Finally, retrieve supporting passages from the wetland presentation stating how much land is to be rewetted and how much the water table has risen. Cite each source and disclose any limits on the complete read.
+
+Search step
+
+I first searched for passages about seasonal planting and identified the relevant guide: the search hit showing the Early spring passage in 01-allotment-seasonal-planting-guide.docx (Early spring — paragraph 3). (search result: 01-allotment-seasonal-planting-guide.docx — Early spring, paragraph 3)
+
+I read the guide in full
+
+I read 01-allotment-seasonal-planting-guide.docx in full (extracted sections complete). Source: 01-allotment-seasonal-planting-guide.docx — full file read (sections shown below).
+
+Spring-to-winter checklist (from the guide)
+
+Early spring
+
+Sow broad beans under cloche from late February. (01-allotment-seasonal-planting-guide.docx — Early spring, paragraph 3)
+
+Plant first‑early potatoes (variety Swift) on 20 March; plant 30 cm apart in rows 60 cm apart; earth up when shoots reach 20 cm. (01-allotment-seasonal-planting-guide.docx — Early spring, paragraph 3)
+
+Summer succession
+
+Sow carrots every three weeks between April and July to avoid a glut. (01-allotment-seasonal-planting-guide.docx — Summer succession, paragraph 6)
+
+Sow beetroot after 15 June to reduce bolting. (01-allotment-seasonal-planting-guide.docx — Summer succession, paragraph 6)
+
+Net brassicas against cabbage white from the day of planting. (01-allotment-seasonal-planting-guide.docx — Summer succession, paragraph 6)
+
+Autumn / preparing for winter
+
+Finish summer successions (last staggered carrot sowings by July). (01-allotment-seasonal-planting-guide.docx — Summer succession, paragraph 6)
+
+Prepare ground for green manure sowing. (inferred from Winter cover timing — see next item)
+
+Winter cover
+
+Sow a green‑manure crop of field beans in October. (01-allotment-seasonal-planting-guide.docx — Winter cover, paragraph 8)
+
+After the first frost, mulch rhubarb crowns with 10 cm of well‑rotted manure. (01-allotment-seasonal-planting-guide.docx — Winter cover, paragraph 8)
+
+Site plan (shown here from the guide)
+
+Fullscreen: 01-allotment-seasonal-planting-guide.docx (paragraph 4)
+
+01-allotment-seasonal-planting-guide.docx (paragraph 4)
+
+Source / description: 01-allotment-seasonal-planting-guide.docx — site‑plan image (paragraph 4). The schematic is titled "Greywell Community Allotments — Site plan: 12 plots, water standpipes marked with W." It shows 12 plots in a 4×3 grid; Plot 5 and Plot 8 are coloured amber (note: nearby text: "Amber plots 5 and 8: waiting list. Shed and compost bins at the south gate."). (01-allotment-seasonal-planting-guide.docx — site‑plan image/paragraph 4)
+
+Note: no formal image.caption field was identified for the site plan; the quoted note above is nearby document text (paragraph 4).
+
+Supporting passages from the wetland presentation
+
+Planned area to be rewetted: "Rewet 220 hectares." (12-wetland-restoration-project.pptx — Plan, slide 3)
+
+Reported water-table rise: "Water table up 38 cm." (12-wetland-restoration-project.pptx — Results so far, slide 4)
+
+Reading/coverage disclosure and limits
+
+01-allotment-seasonal-planting-guide.docx: I read the extracted text and visuals in full (document marked complete and readable; sections cited above are from paragraphs 3, 4, 6 and 8). Source: 01-allotment-seasonal-planting-guide.docx — full file read (sections Early spring, site‑plan image, Summer succession, Winter cover).
+
+12-wetland-restoration-project.pptx: I retrieved the presentation sections containing the Plan and Results slides; the presentation extraction is complete and includes the cited slide text and the visiting‑fen image. Source: 12-wetland-restoration-project.pptx — Plan (slide 3) and Results so far (slide 4).
+
+Limits/notes: visual content (site plan and trail-sign image) was retained as embedded images with nearby text; no formal image.caption was extracted for the site plan. OCR/visual extraction can introduce minor transcription errors — I quoted the nearby/extracted text exactly as returned by the source where available and cited each location.
+
+If you’d like, I can:
+
+Produce a printable checklist (one‑page) formatted from the above items.
+
+Show the trail‑sign image from the wetland presentation inline as well.
+
+(collapsed) Other image candidates (1; not selected in this answer), Secondary Actions: Expand
+
+Other image candidates (1; not selected in this answer)
+
+Cosmos RU · retrieval
+
+27.29
+
+Retrieval time
+
+2.26 s
+
+Total response time
+
+70.58 s
+
+Model tokens
+
+70,275
+
+Actual input: 66,867 tokens · output: 3,408 tokens. Cumulative across model calls; full-document size estimates are separate.
+
+Quota retry waits: 30.0 s across 1 retries, included in total response time.
+
+(collapsed) Performance breakdown, Secondary Actions: Expand
+
+Performance breakdown
+
+(collapsed) Tool called: search_library_word_planting_guide → single-word-library · 509 ms · 9.16 RU, Secondary Actions: Expand
+
+Tool called: search_library_word_planting_guide → single-word-library · 509 ms · 9.16 RU
+
+(collapsed) Tool called: read_documents_library_word_planting_guide → single-word-library · 293 ms · 4.56 RU, Secondary Actions: Expand
+
+Tool called: read_documents_library_word_planting_guide → single-word-library · 293 ms · 4.56 RU
+
+(collapsed) Tool called: search_library_wetland_project → single-presentation-library · 1226 ms · 9.19 RU, Secondary Actions: Expand
+
+Tool called: search_library_wetland_project → single-presentation-library · 1226 ms · 9.19 RU
+
+(collapsed) Tool called: read_documents_library_wetland_project → single-presentation-library · 232 ms · 4.38 RU, Secondary Actions: Expand
+
+Tool called: read_documents_library_wetland_project → single-presentation-library · 232 ms · 4.38 RU
+
+entry area (settable) Ask a question
+
+(disabled) Send message

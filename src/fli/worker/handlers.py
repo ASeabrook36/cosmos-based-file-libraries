@@ -80,6 +80,33 @@ log = logging.getLogger("fli.worker")
 MUTATE_ATTEMPTS = 5
 
 
+class ImageWorkStopped(Exception):
+    """Stop sibling descriptions when the generation expires or a description is oversized."""
+
+
+def interleave_sections(text_sections, image_sections, file_type):
+    """Reading order is independent of immutable chunk indexes; preserve source order on ties."""
+    key = {"pdf": "page", "pptx": "slide", "docx": "paragraph"}.get(file_type)
+    if key is None:
+        return text_sections + image_sections
+    positions = [(section.get("location") or {}).get(key) for section in text_sections]
+    after = {}
+    for image in image_sections:
+        position = (image.get("location") or {}).get(key)
+        slot = len(text_sections) - 1
+        if position is not None and any(p is not None for p in positions):
+            slot = -1
+            for i, text_position in enumerate(positions):
+                if text_position is not None and text_position <= position:
+                    slot = i
+        after.setdefault(slot, []).append(image)
+    merged = list(after.get(-1, []))
+    for i, section in enumerate(text_sections):
+        merged.append(section)
+        merged.extend(after.get(i, []))
+    return merged
+
+
 class BadMessage(ValueError):
     """A message the worker can never process: the runtime dead-letters it at once."""
 
@@ -144,6 +171,7 @@ class Worker:
     image_min_bytes: int = 0
     image_max_per_document: int = 50
     image_asset_max_per_document: int = 1000
+    vision_concurrency: int = 2
 
     async def handle(self, message: Message) -> None:
         kind = message.get("type")
@@ -674,32 +702,52 @@ class Worker:
             return
         image_records = {}
         image_sections = []
-        prompt_tokens, completion_tokens, cache_hits = 0, 0, 0
         vision_started = time.perf_counter()
-        for stored in visuals:
-            current = await self.documents.get(library_id, document_id)
-            if not current or current.get("status") == "deleting" or current.get("pendingGeneration") != generation:
-                await self._purge_later(library_id, document_id)
-                return
-            # Preparation already persisted immutable crops. Load only the current
-            # image, and reuse its Blob reference instead of uploading it again.
-            visual = Visual(await self.blobs.download(stored["blob_path"]), **stored)
-            text = await describe_cached(
-                self.vision,
-                visual,
-                source["fileName"],
-                self.blobs,
-                f"{text_prefix(library_id, document_id)}{generation}/",
-            )
-            tokens = self.chunker.count(text)
-            if tokens > 8_000:
+        slots = asyncio.Semaphore(self.vision_concurrency)
+
+        async def describe_one(stored):
+            # Bound downloads as well as HTTP calls. The model retains its shared
+            # worker-wide governor, so multiple libraries cannot multiply HTTP quota.
+            async with slots:
+                current = await self.documents.get(library_id, document_id)
+                if not current or current.get("status") == "deleting" or current.get("pendingGeneration") != generation:
+                    raise ImageWorkStopped("superseded")
+                visual = Visual(await self.blobs.download(stored["blob_path"]), **stored)
+                try:
+                    text = await describe_cached(
+                        self.vision,
+                        visual,
+                        source["fileName"],
+                        self.blobs,
+                        f"{text_prefix(library_id, document_id)}{generation}/",
+                    )
+                    tokens = self.chunker.count(text)
+                    if tokens > 8_000:
+                        raise ImageWorkStopped("image_description_too_long")
+                    return visual, text, tokens
+                finally:
+                    visual.data = b""
+
+        try:
+            async with asyncio.TaskGroup() as group:
+                tasks = [group.create_task(describe_one(stored)) for stored in visuals]
+        except ExceptionGroup as errors:
+            stopped = [e for e in errors.exceptions if isinstance(e, ImageWorkStopped)]
+            other = [e for e in errors.exceptions if not isinstance(e, ImageWorkStopped)]
+            if other:
+                if len(other) == 1:
+                    raise other[0] from None
+                raise
+            if any(str(e) == "image_description_too_long" for e in stopped):
                 await self._fail(library_id, document_id, generation, "image_description_too_long")
-                return
-            prompt_tokens += visual.prompt_tokens
-            completion_tokens += visual.completion_tokens
-            cache_hits += visual.cache_hit
-            visual.data = b""
-            index = len(pieces)
+            else:
+                await self._purge_later(library_id, document_id)
+            return
+
+        described = [task.result() for task in tasks]
+        for i, (visual, text, tokens) in enumerate(described):
+            index = len(preparation["pieces"]) + i
+            stored = visuals[i]
             image_records[index] = {"imageRef": stored["blob_path"], "imageMeta": visual.meta}
             pieces.append(Chunk(index, text, tokens, visual.heading, visual.location))
             image_sections.append(
@@ -715,15 +763,15 @@ class Worker:
 
         stages.update(
             visionMs=(time.perf_counter() - vision_started) * 1000,
-            visionPromptTokens=prompt_tokens,
-            visionCompletionTokens=completion_tokens,
-            visionCacheHits=cache_hits,
+            visionPromptTokens=sum(v.prompt_tokens for v, _, _ in described),
+            visionCompletionTokens=sum(v.completion_tokens for v, _, _ in described),
+            visionCacheHits=sum(v.cache_hit for v, _, _ in described),
         )
         plan = {
             **preparation,
             "pieces": [asdict(p) for p in pieces],
             "imageRecords": image_records,
-            "sections": preparation["sections"] + image_sections,
+            "sections": interleave_sections(preparation["sections"], image_sections, source.get("fileType")),
             "imageCount": len(visuals),
         }
         if not preparation["textChunkCount"] and visuals:

@@ -1,0 +1,37 @@
+[
+  {
+    "case": "spot-01",
+    "question": "there was a cool blue chart about human work vs machine work. can you remember whether human work that should be automated was bigger than the thing for machine work?",
+    "reviewFindings": {
+      "retrieval": "Correct report figure on PDF page 23 identified from casual colour/topic clues; selected image shown inline.",
+      "factual": "The should-automate area is the smallest and is nested within the larger could-automate area; consistent with original/rendered diagram.",
+      "ambiguity": "User phrase thing for machine work is ambiguous; answer implicitly maps it to the could-automate area. This is plausible, not confirmation of the user intended referent.",
+      "clarity": "Opening Yes acknowledges finding the chart; final So no answers the size question. A direct opening No would be clearer.",
+      "caption": "Renderer correctly preserves nearby-caption/inferred association. Prose calls it captioned without repeating that uncertainty.",
+      "numericLimit": "Qualitative relative areas only; diagram does not establish precise numerical ratios.",
+      "scope": "A successful spot check, not a broad recall or intent-resolution score."
+    }
+  },
+  {
+    "case": "spot-02",
+    "question": "i can't remember, in the garden is there a stand pipe in plot for? can't remember which ones had them. i thought that one was on the waiting list too and someone was asking about whether there's a pipe",
+    "reviewFindings": {
+      "figure": "Correct Greywell site plan rendered inline from Word paragraph 4.",
+      "factualAccuracy": "Correct: W inside Plot 1 and another outside the right of the bottom row near Plot 12; waiting-list plots are 5 and 8; neither 5 nor 8 contains a W.",
+      "intentCoverage": "Partial/ambiguous: plot for may mean Plot 4. Plot 4 is green, not on waiting list, and contains no W, but the answer never names Plot 4 explicitly. The user intended plot is not confirmed.",
+      "claimBoundary": "Answer largely says markers shown on the map, rather than asserting actual water connections or rights. The schematic alone cannot establish real-world service availability.",
+      "routing": "Two initial searches explicitly restricted contentKinds to text and returned the same three body-text locations. The model then discovered the guide and completed a full read to obtain its image. This recovered the evidence, with potentially avoidable text-only search rounds.",
+      "history": "Prior casual work-diagram question/answer remained in this conversation.",
+      "scope": "A spot-check of retrieval and source facts; not proof of general vague-intent handling."
+    }
+  },
+  {
+    "case": "final-three-turn-sequence",
+    "questions": [
+      "I need to know a good quick summary of the Microsoft document or the research whatever it said about how the more context and continuity you give to an agent the better it's gonna help the human, I'm trying to make this case in a meeting next week and I need to be able to pull easily from the relevant statistics or research and whatever Microsoft has got that's like visually interesting and helpful for this",
+      "any images from the research i can re-use?",
+      "can't you just show me the images that might be helpful? i remember there being some"
+    ],
+    "reviewRecord": "../../consults/2026-10-27-agent-retrieval-test-review.md"
+  }
+]

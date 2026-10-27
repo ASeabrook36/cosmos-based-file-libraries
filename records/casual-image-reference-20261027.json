@@ -1,0 +1,70 @@
+{
+  "check": "casual-image-references",
+  "date": "2026-10-27",
+  "contextBudget": 48000,
+  "imageInputsEnabled": true,
+  "cases": [
+    {
+      "case": 1,
+      "scenario": "vague-diagram-comparison",
+      "priorConversationTurns": 0,
+      "modelCalls": 2,
+      "toolCalls": 1,
+      "operations": [
+        "search"
+      ],
+      "retrievalRU": 21.5,
+      "modelInputTokens": 9881,
+      "modelOutputTokens": 1225,
+      "queryEmbeddingTokens": 26,
+      "responseSeconds": 14.64158270903863,
+      "retrievalSeconds": 0.879799458081834,
+      "quotaWaitSeconds": 0.0,
+      "findings": {
+        "correctSourceImageRendered": true,
+        "sourceFactCheck": "Correct diagram relationship under a plausible interpretation",
+        "intentAmbiguityRemained": true,
+        "captionOrProvenanceQualificationNeedsReview": true,
+        "textOnlySearchesBeforeVisualRead": 0,
+        "completeReadReturned": null
+      }
+    },
+    {
+      "case": 2,
+      "scenario": "ambiguous-map-reference",
+      "priorConversationTurns": 1,
+      "modelCalls": 5,
+      "toolCalls": 4,
+      "operations": [
+        "search",
+        "search",
+        "discover",
+        "read"
+      ],
+      "retrievalRU": 29.37,
+      "modelInputTokens": 28488,
+      "modelOutputTokens": 2139,
+      "queryEmbeddingTokens": 50,
+      "responseSeconds": 29.31179258308839,
+      "retrievalSeconds": 1.8294443329796195,
+      "quotaWaitSeconds": 0.0,
+      "findings": {
+        "correctSourceImageRendered": true,
+        "sourceFactCheck": "Correct displayed standpipe locations and waiting-list plots",
+        "intentAmbiguityRemained": true,
+        "captionOrProvenanceQualificationNeedsReview": false,
+        "textOnlySearchesBeforeVisualRead": 2,
+        "completeReadReturned": true
+      }
+    }
+  ],
+  "thirdCaseRecord": "casual-retrieval-friction-20261027.json",
+  "thirdCaseTurns": 3,
+  "limitations": [
+    "Natural language and ambiguity were intentional; intended referents are not independently confirmed.",
+    "The second case followed the first in one conversation.",
+    "Source checks are reviewer findings, not a universal semantic-recall measurement.",
+    "Actual native image inputs were not preserved in the metrics journal; UI rendering alone does not prove model pixel inspection.",
+    "User prompts, answers, queries, source images and runtime IDs remain in private captures."
+  ]
+}

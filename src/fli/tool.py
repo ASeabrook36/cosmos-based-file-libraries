@@ -52,6 +52,11 @@ def tool_definition(library: Mapping[str, Any]) -> dict[str, Any]:
     values: Mapping[str, Any] = library.get("filterValues") or {}
     total = (library.get("stats") or {}).get("documentCount", 0)
     properties: dict[str, Any] = {"query": {"type": "string", "description": "What to look for, in natural language."}}
+    properties["distinctDocuments"] = {
+        "type": "boolean",
+        "description": "One best passage per file within 40 candidates; use when choosing which files to read in full. "
+        "Not exhaustive. documentTokens estimates parent-file text size, excluding native visual input tokens.",
+    }
     offered: list[str] = []
 
     tags = {f"{key}={value}": n for key, counted in vocabulary.items() for value, n in counted.items()}
@@ -126,7 +131,9 @@ def tool_definitions(library: Mapping[str, Any]) -> list[dict[str, Any]]:
     )
     slug = tool_name(library.get("name", "")).removeprefix(PREFIX)
     filters = {
-        k: v for k, v in search["function"]["parameters"]["properties"].items() if k not in ("query", "contentKinds")
+        k: v
+        for k, v in search["function"]["parameters"]["properties"].items()
+        if k not in ("query", "contentKinds", "distinctDocuments")
     }
     for key, description in (
         ("authors", "Any listed author matches exactly."),

@@ -382,7 +382,7 @@ def test_passages_can_be_reduced_to_fit_remaining_context_without_discarding_all
     index.search = many_passages
     traces = []
     tokenizer = ApproxTokenizer()
-    content = _run_search(
+    content, _ = _run_search(
         ToolCall("s", "search_library_finance", '{"query":"supporting facts"}'),
         index,
         AGENT,

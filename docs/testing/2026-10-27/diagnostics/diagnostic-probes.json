@@ -1,0 +1,166 @@
+{
+  "purpose": "Read-only diagnostics after saving the original user run; no settings/index/model changes",
+  "searches": [
+    {
+      "case": "original-query-grouped",
+      "distinctDocuments": true,
+      "count": 1,
+      "pages": [
+        1
+      ],
+      "parentReportMatches": [
+        true
+      ],
+      "notes": [
+        "1 visual candidates were skipped by configured size, format or per-document limits; search does not cover those visuals.",
+        "One best passage per document from at most 40 ranked passages; not an exhaustive file set."
+      ],
+      "usage": {
+        "requestCharge": 29.09,
+        "totalMs": 1162.7,
+        "embeddingMs": 714.7,
+        "embeddingTokens": 39
+      },
+      "clientMs": 1170.4865420470014
+    },
+    {
+      "case": "original-query-passages",
+      "distinctDocuments": false,
+      "count": 8,
+      "pages": [
+        1,
+        4,
+        4,
+        1,
+        2,
+        3,
+        3,
+        5
+      ],
+      "parentReportMatches": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "notes": [
+        "1 visual candidates were skipped by configured size, format or per-document limits; search does not cover those visuals."
+      ],
+      "usage": {
+        "requestCharge": 21.9,
+        "totalMs": 591.9,
+        "embeddingMs": 132.2,
+        "embeddingTokens": 39
+      },
+      "clientMs": 595.1275000115857
+    },
+    {
+      "case": "focused-memory-passages",
+      "distinctDocuments": false,
+      "count": 8,
+      "pages": [
+        25,
+        44,
+        38,
+        43,
+        24,
+        59,
+        58,
+        25
+      ],
+      "parentReportMatches": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "notes": [
+        "1 visual candidates were skipped by configured size, format or per-document limits; search does not cover those visuals."
+      ],
+      "usage": {
+        "requestCharge": 19.15,
+        "totalMs": 849.1,
+        "embeddingMs": 559.4,
+        "embeddingTokens": 15
+      },
+      "clientMs": 853.7529589375481
+    },
+    {
+      "case": "focused-context-learning",
+      "distinctDocuments": false,
+      "count": 8,
+      "pages": [
+        59,
+        43,
+        26,
+        38,
+        52,
+        53,
+        55,
+        44
+      ],
+      "parentReportMatches": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "notes": [
+        "1 visual candidates were skipped by configured size, format or per-document limits; search does not cover those visuals."
+      ],
+      "usage": {
+        "requestCharge": 19.29,
+        "totalMs": 801.7,
+        "embeddingMs": 533.2,
+        "embeddingTokens": 11
+      },
+      "clientMs": 805.0820840289816
+    }
+  ],
+  "serviceFullRead": {
+    "complete": true,
+    "estimatedTokens": 119726,
+    "usage": {
+      "requestCharge": 4.56,
+      "totalMs": 464.1
+    },
+    "relevantPageCoverage": [
+      {
+        "page": 26,
+        "textSections": 2,
+        "imageSections": 1,
+        "hasContext": true,
+        "hasMemory": false
+      },
+      {
+        "page": 46,
+        "textSections": 2,
+        "imageSections": 1,
+        "hasContext": true,
+        "hasMemory": true
+      },
+      {
+        "page": 55,
+        "textSections": 2,
+        "imageSections": 1,
+        "hasContext": true,
+        "hasMemory": true
+      }
+    ],
+    "imageCount": 48,
+    "sourceImageCount": 48,
+    "imagesSkipped": 1
+  }
+}

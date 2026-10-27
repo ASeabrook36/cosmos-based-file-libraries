@@ -281,7 +281,9 @@ async def read_documents(
                 )
             )
         # Count the serialized document, including identifiers, locations and headings.
-        item["estimatedTokens"] = len(tokenizer.encode(json.dumps(item, ensure_ascii=False)))
+        item["estimatedTokens"] = await asyncio.to_thread(
+            lambda item=item: len(tokenizer.encode(json.dumps(item, ensure_ascii=False)))
+        )
         item["tokenizer"] = tokenizer.name
         if doc.get("imageCount"):
             notes.append(

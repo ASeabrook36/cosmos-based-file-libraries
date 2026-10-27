@@ -51,7 +51,13 @@ class Index(Protocol):
     def read_documents(self, library_id: str, agent_id: str, **selection: Any) -> dict[str, Any]: ...
     def tool(self, library_id: str) -> dict[str, Any]: ...
     def search(
-        self, library_id: str, agent_id: str, query: str, top: int = 8, filters: Mapping[str, Any] | None = None
+        self,
+        library_id: str,
+        agent_id: str,
+        query: str,
+        top: int = 8,
+        filters: Mapping[str, Any] | None = None,
+        distinct_documents: bool = False,
     ) -> dict[str, Any]: ...
 
 
@@ -139,39 +145,87 @@ def _image_section_context(row):
     return heading if heading and heading in nearby else None
 
 
+def model_view(value):
+    """Project tool evidence without credentials/geometry; never clip complete-read text.
+
+    Attachments stay in SearchTrace and native image inputs, independently of this view.
+    Token estimates remain the API's conservative estimate of its larger response.
+    """
+    if isinstance(value, list):
+        return [model_view(item) for item in value]
+    if not isinstance(value, dict):
+        return value
+    projected = {}
+    for key, item in value.items():
+        if key in {
+            "url",
+            "expiresAt",
+            "regions",
+            "captionLocation",
+            "mime",
+            "width",
+            "height",
+            "usage",
+            "tokenizer",
+            "estimateScope",
+            "telemetryId",
+        }:
+            continue
+        if key == "image" and isinstance(item, dict):
+            projected[key] = {k: item.get(k) for k in ("kind", "caption", "captionStatus", "captionAssociation")}
+        elif key == "location" and isinstance(item, dict):
+            projected[key] = {k: v for k, v in item.items() if k != "figure"}
+        else:
+            projected[key] = model_view(item)
+    return projected
+
+
 def compact(results: Mapping[str, Any]) -> dict[str, Any]:
     """Passages identify their parent file for subsequent full reads. Clipped text is labelled."""
     coverage = results["coverage"]
-    return {
-        "disposition": coverage["disposition"],
-        "filtersApplied": coverage.get("filtersApplied") or {},
-        "notes": coverage.get("notes") or [],
-        "results": [
-            {
-                "imageId": (r.get("imageId") or r.get("chunkId")) if r.get("image") else None,
-                "contentKind": r.get("contentKind", "text"),
-                "image": r.get("image"),
-                "documentId": r.get("documentId"),
-                "generation": r.get("generation"),
-                "file": r["fileName"],
-                "location": {k: v for k, v in r["location"].items() if k != "figure"}
-                if r.get("image")
-                else r["location"],
-                "heading": r.get("heading") if not r.get("image") else None,
-                "sectionContext": _image_section_context(r) if r.get("image") else None,
-                "text": _passage_text(r)[:TOOL_RESULT_CHARS],
-                "truncated": len(_passage_text(r)) > TOOL_RESULT_CHARS,
-            }
-            for r in results["results"]
-        ],
-    }
+    return model_view(
+        {
+            "disposition": coverage["disposition"],
+            "filtersApplied": coverage.get("filtersApplied") or {},
+            "notes": coverage.get("notes") or [],
+            "results": [
+                {
+                    "imageId": (r.get("imageId") or r.get("chunkId")) if r.get("image") else None,
+                    "contentKind": r.get("contentKind", "text"),
+                    "image": r.get("image"),
+                    "documentId": r.get("documentId"),
+                    "generation": r.get("generation"),
+                    "documentTokens": r.get("documentTokens"),
+                    "representation": r.get("representation"),
+                    **({"passagesInWindow": r["passagesInWindow"]} if "passagesInWindow" in r else {}),
+                    "file": r["fileName"],
+                    "location": {k: v for k, v in r["location"].items() if k != "figure"}
+                    if r.get("image")
+                    else r["location"],
+                    "heading": r.get("heading") if not r.get("image") else None,
+                    "sectionContext": _image_section_context(r) if r.get("image") else None,
+                    "text": _passage_text(r)[:TOOL_RESULT_CHARS],
+                    "truncated": len(_passage_text(r)) > TOOL_RESULT_CHARS,
+                }
+                for r in results["results"]
+            ],
+        }
+    )
 
 
 def images_from_payload(payload):
     images = []
     rows = list(payload.get("results") or [])
     for document in payload.get("documents") or []:
-        rows.extend({**section, "fileName": document.get("fileName")} for section in document.get("sections") or [])
+        rows.extend(
+            {
+                **section,
+                "fileName": document.get("fileName"),
+                "documentId": document.get("documentId"),
+                "generation": document.get("generation"),
+            }
+            for section in document.get("sections") or []
+        )
     for row in rows:
         if row.get("image") and row.get("imageId"):
             images.append(
@@ -204,6 +258,7 @@ def run_turn(
     context_token_budget: int = 64_000,
     max_rounds: int = MAX_ROUNDS,
     image_inputs: bool = True,
+    image_tokens: int = 8192,
 ) -> Turn:
     turn_started = time.perf_counter()
     model_calls: list[dict[str, Any]] = []
@@ -288,12 +343,11 @@ def run_turn(
     names = library_names or {}
 
     tokenizer = default_tokenizer()
-    if context_token_budget < 12_000 or max_rounds < 1:
-        raise ValueError("context_token_budget must be at least 12000 and max_rounds at least 1")
+    if context_token_budget < 12_000 or max_rounds < 1 or type(image_tokens) is not int or image_tokens < 1:
+        raise ValueError("context_token_budget must be at least 12000; max_rounds and image_tokens must be positive")
 
-    def context_size():
-        # Allow up to 8192 tokens per visual beyond serialized text. Model image
-        # accounting varies, so platforms must configure a suitable total budget.
+    def local_size():
+        # Reserve for new visuals until the provider reports their actual prompt use.
         images = sum(
             1
             for m in messages
@@ -301,7 +355,13 @@ def run_turn(
             for part in m["content"]
             if part.get("type") == "image_url"
         )
-        return len(tokenizer.encode(json.dumps({"messages": messages, "tools": tools}))) + images * 8192
+        return len(tokenizer.encode(json.dumps({"messages": messages, "tools": tools}))) + images * image_tokens
+
+    accounted_local = accounted_prompt = None
+
+    def context_size():
+        current = local_size()
+        return current if accounted_prompt is None else accounted_prompt + max(0, current - accounted_local)
 
     supplied_images = set()
     for _ in range(max_rounds):
@@ -312,7 +372,11 @@ def run_turn(
                 "I cannot claim complete document coverage for this turn."
             )
             return finish(answer, searches, messages + [{"role": "assistant", "content": answer}])
+        sent_local = local_size()
         reply = chat(messages, tools)
+        prompt_tokens = reply.usage.get("prompt_tokens")
+        if type(prompt_tokens) is int and prompt_tokens > 0:
+            accounted_local, accounted_prompt = sent_local, prompt_tokens
         model_calls.append(
             {"usage": reply.usage, "timing": reply.timing, "purpose": "tool_request" if reply.tool_calls else "answer"}
         )
@@ -333,10 +397,11 @@ def run_turn(
             used = context_size()
             remaining = max(0, context_token_budget - used - 10_000)  # answer + tool envelope margin
             if call.name.startswith(("find_documents_library_", "read_documents_library_", "get_images_library_")):
-                content = _run_documents(call, index, agent, owners, names, searches, clock, remaining)
+                content, images = _run_documents(call, index, agent, owners, names, searches, clock, remaining)
             else:
-                content = _run_search(call, index, agent, owners, names, searches, clock, remaining, tokenizer)
+                content, images = _run_search(call, index, agent, owners, names, searches, clock, remaining, tokenizer)
             if len(tokenizer.encode(content)) > remaining:
+                images = []
                 content = json.dumps(
                     {
                         "error": "remaining_context_budget_exceeded",
@@ -350,13 +415,10 @@ def run_turn(
                         "Tool content withheld because the remaining model context budget was exceeded."
                     )
             if image_inputs:
-                payload = json.loads(content)
                 # Preview only an image that leads the overall ranking. Promoting a
                 # lower-ranked picture over a text hit can anchor the model to the
-                # wrong source page. All candidate links remain in tool evidence.
-                if call.name.startswith("search_library_"):
-                    payload = {"results": (payload.get("results") or [])[:1]}
-                pending_images.extend(images_from_payload(payload))
+                # wrong source page. Other candidates remain in text/trace evidence.
+                pending_images.extend(images)
             messages.append(
                 {
                     "role": "tool",
@@ -370,10 +432,7 @@ def run_turn(
             key = visual["imageId"]
             if key in supplied_images:
                 continue
-            if context_size() + len(parts) // 2 * 8192 + 18000 > context_token_budget:
-                continue  # descriptions/links remain usable in text-only context
-            supplied_images.add(key)
-            parts.extend(
+            candidate_parts = parts + (
                 [
                     {
                         "type": "text",
@@ -388,6 +447,12 @@ def run_turn(
                     {"type": "image_url", "image_url": {"url": visual["url"], "detail": "high"}},
                 ]
             )
+            messages.append({"role": "user", "content": candidate_parts})
+            fits = context_size() + 10_000 <= context_token_budget
+            messages.pop()
+            if fits:
+                supplied_images.add(key)
+                parts = candidate_parts
         if parts:
             messages.append({"role": "user", "content": parts})
     # out of rounds: ask for an answer without tools
@@ -404,27 +469,30 @@ def run_turn(
     return finish(final.content or "", searches, messages + [{"role": "assistant", "content": final.content}])
 
 
-def _run_search(call, index, agent, owners, names, searches, clock, remaining=None, tokenizer=None) -> str:
+def _run_search(call, index, agent, owners, names, searches, clock, remaining=None, tokenizer=None):
     library_id = owners.get(call.name)
     if library_id is None:
-        return json.dumps({"error": f"unknown tool {call.name}"})
+        return json.dumps({"error": f"unknown tool {call.name}"}), []
     try:
         arguments = json.loads(call.arguments or "{}")
         query = arguments["query"]
         if not isinstance(query, str) or not query.strip():
             raise ValueError("query must be a nonblank string")
+        if type(arguments.get("distinctDocuments", False)) is not bool:
+            raise ValueError("distinctDocuments must be a boolean")
     except (ValueError, KeyError, TypeError):
-        return json.dumps({"error": "the tool needs a JSON object with a string 'query'"})
+        return json.dumps({"error": "the tool needs a string 'query' and optional boolean 'distinctDocuments'"}), []
     filters = {k: arguments[k] for k in FILTER_ARGUMENTS if arguments.get(k) not in (None, [], {})}
     started = clock()
     try:
-        response = index.search(library_id, agent["id"], query, filters=filters or None)
+        options = {"distinct_documents": True} if arguments.get("distinctDocuments") else {}
+        response = index.search(library_id, agent["id"], query, filters=filters or None, **options)
     except Exception as exc:  # the index's refusals (403, 404, 400) go back to the model and to the trace
         searches.append(
             SearchTrace(call.name, library_id, names.get(library_id, library_id), query, (clock() - started) * 1000,
                         None, 0, None, [], error=str(exc), filters=filters)
         )  # fmt: skip
-        return json.dumps({"error": str(exc)})
+        return json.dumps({"error": str(exc)}), []
     latency = (clock() - started) * 1000
     payload = compact(response)
     matched = len(payload["results"])
@@ -457,13 +525,15 @@ def _run_search(call, index, agent, owners, names, searches, clock, remaining=No
             notes=payload["notes"], images=images,
         )
     )  # fmt: skip
-    return json.dumps(payload, ensure_ascii=False)
+    # Preserve overall rank for automatic previews: never promote a later image over text.
+    previews = images_from_payload({"results": shown[:1]})
+    return json.dumps(payload, ensure_ascii=False), previews
 
 
-def _run_documents(call, index, agent, owners, names, searches, clock, remaining) -> str:
+def _run_documents(call, index, agent, owners, names, searches, clock, remaining):
     library_id = owners.get(call.name)
     if library_id is None:
-        return json.dumps({"error": f"unknown tool {call.name}"})
+        return json.dumps({"error": f"unknown tool {call.name}"}), []
     operation = (
         "images"
         if call.name.startswith("get_images_library_")
@@ -513,14 +583,9 @@ def _run_documents(call, index, agent, owners, names, searches, clock, remaining
                 complete=False,
             )
         )
-        return json.dumps({"error": str(exc), "complete": False})
+        return json.dumps({"error": str(exc), "complete": False}), []
     documents = response.get("documents") or []
     results = response.get("results") or []
-    if operation == "images":
-        # Raw API locators remain available to platforms. The answering model
-        # needs page citations, not opaque extraction numbers to mistake for labels.
-        for result in results:
-            result["location"] = {k: v for k, v in result.get("location", {}).items() if k != "figure"}
     searches.append(
         SearchTrace(
             call.name,
@@ -549,8 +614,7 @@ def _run_documents(call, index, agent, owners, names, searches, clock, remaining
             complete=response.get("complete"),
         )
     )
-    # Full reads bypass compact(): the model receives EVERY section, with no character clipping.
-    return json.dumps(response, ensure_ascii=False)
+    return json.dumps(model_view(response), ensure_ascii=False), images_from_payload(response)
 
 
 def azure_chat(

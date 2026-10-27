@@ -1,0 +1,403 @@
+[
+  {
+    "timestamp": "2026-10-27T14:34:57.795011+00:00",
+    "totalMs": 105963.1579159759,
+    "modelCalls": [
+      {
+        "purpose": "tool_request",
+        "promptTokens": 4159,
+        "completionTokens": 102,
+        "totalTokens": 4261,
+        "cachedPromptTokens": 3712,
+        "reasoningTokens": 0,
+        "totalMs": 3322.1,
+        "providerMs": 3321.9,
+        "rateLimitWaitMs": 0.0,
+        "rateLimitRetries": 0,
+        "finishReason": "tool_calls"
+      },
+      {
+        "purpose": "tool_request",
+        "promptTokens": 4902,
+        "completionTokens": 244,
+        "totalTokens": 5146,
+        "cachedPromptTokens": 3840,
+        "reasoningTokens": 128,
+        "totalMs": 4587.1,
+        "providerMs": 4587.0,
+        "rateLimitWaitMs": 0.0,
+        "rateLimitRetries": 0,
+        "finishReason": "tool_calls"
+      },
+      {
+        "purpose": "tool_request",
+        "promptTokens": 5510,
+        "completionTokens": 227,
+        "totalTokens": 5737,
+        "cachedPromptTokens": 4864,
+        "reasoningTokens": 128,
+        "totalMs": 3022.2,
+        "providerMs": 3022.2,
+        "rateLimitWaitMs": 0.0,
+        "rateLimitRetries": 0,
+        "finishReason": "tool_calls"
+      },
+      {
+        "purpose": "tool_request",
+        "promptTokens": 6181,
+        "completionTokens": 289,
+        "totalTokens": 6470,
+        "cachedPromptTokens": 5376,
+        "reasoningTokens": 192,
+        "totalMs": 4352.5,
+        "providerMs": 4352.4,
+        "rateLimitWaitMs": 0.0,
+        "rateLimitRetries": 0,
+        "finishReason": "tool_calls"
+      },
+      {
+        "purpose": "tool_request",
+        "promptTokens": 6858,
+        "completionTokens": 298,
+        "totalTokens": 7156,
+        "cachedPromptTokens": 6144,
+        "reasoningTokens": 192,
+        "totalMs": 4117.9,
+        "providerMs": 4117.9,
+        "rateLimitWaitMs": 0.0,
+        "rateLimitRetries": 0,
+        "finishReason": "tool_calls"
+      },
+      {
+        "purpose": "tool_request",
+        "promptTokens": 7237,
+        "completionTokens": 224,
+        "totalTokens": 7461,
+        "cachedPromptTokens": 6784,
+        "reasoningTokens": 128,
+        "totalMs": 3724.8,
+        "providerMs": 3724.8,
+        "rateLimitWaitMs": 0.0,
+        "rateLimitRetries": 0,
+        "finishReason": "tool_calls"
+      },
+      {
+        "purpose": "tool_request",
+        "promptTokens": 7905,
+        "completionTokens": 301,
+        "totalTokens": 8206,
+        "cachedPromptTokens": 7168,
+        "reasoningTokens": 192,
+        "totalMs": 3911.3,
+        "providerMs": 3911.2,
+        "rateLimitWaitMs": 0.0,
+        "rateLimitRetries": 0,
+        "finishReason": "tool_calls"
+      },
+      {
+        "purpose": "tool_request",
+        "promptTokens": 8611,
+        "completionTokens": 445,
+        "totalTokens": 9056,
+        "cachedPromptTokens": 7808,
+        "reasoningTokens": 384,
+        "totalMs": 5724.9,
+        "providerMs": 5724.9,
+        "rateLimitWaitMs": 0.0,
+        "rateLimitRetries": 0,
+        "finishReason": "tool_calls"
+      },
+      {
+        "purpose": "tool_request",
+        "promptTokens": 9319,
+        "completionTokens": 357,
+        "totalTokens": 9676,
+        "cachedPromptTokens": 8576,
+        "reasoningTokens": 256,
+        "totalMs": 4290.3,
+        "providerMs": 4290.2,
+        "rateLimitWaitMs": 0.0,
+        "rateLimitRetries": 0,
+        "finishReason": "tool_calls"
+      },
+      {
+        "purpose": "tool_request",
+        "promptTokens": 9992,
+        "completionTokens": 289,
+        "totalTokens": 10281,
+        "cachedPromptTokens": 9216,
+        "reasoningTokens": 192,
+        "totalMs": 3911.1,
+        "providerMs": 3911.1,
+        "rateLimitWaitMs": 0.0,
+        "rateLimitRetries": 0,
+        "finishReason": "tool_calls"
+      },
+      {
+        "purpose": "tool_request",
+        "promptTokens": 10661,
+        "completionTokens": 293,
+        "totalTokens": 10954,
+        "cachedPromptTokens": 9856,
+        "reasoningTokens": 192,
+        "totalMs": 4032.4,
+        "providerMs": 4032.3,
+        "rateLimitWaitMs": 0.0,
+        "rateLimitRetries": 0,
+        "finishReason": "tool_calls"
+      },
+      {
+        "purpose": "tool_request",
+        "promptTokens": 11254,
+        "completionTokens": 231,
+        "totalTokens": 11485,
+        "cachedPromptTokens": 10624,
+        "reasoningTokens": 128,
+        "totalMs": 3164.9,
+        "providerMs": 3164.9,
+        "rateLimitWaitMs": 0.0,
+        "rateLimitRetries": 0,
+        "finishReason": "tool_calls"
+      },
+      {
+        "purpose": "answer",
+        "promptTokens": 9126,
+        "completionTokens": 1948,
+        "totalTokens": 11074,
+        "cachedPromptTokens": 0,
+        "reasoningTokens": 1024,
+        "totalMs": 47612.1,
+        "providerMs": 17607.4,
+        "rateLimitWaitMs": 30004.0,
+        "rateLimitRetries": 1,
+        "finishReason": "stop"
+      }
+    ],
+    "promptTokens": 101715,
+    "completionTokens": 5248,
+    "totalTokens": 106963,
+    "tools": [
+      {
+        "operation": "search",
+        "latencyMs": 1132.168458076194,
+        "requestCharge": 29.09,
+        "resultCount": 1,
+        "estimatedTokens": null,
+        "complete": null,
+        "error": false
+      },
+      {
+        "operation": "search",
+        "latencyMs": 512.2389590833336,
+        "requestCharge": 28.74,
+        "resultCount": 1,
+        "estimatedTokens": null,
+        "complete": null,
+        "error": false
+      },
+      {
+        "operation": "search",
+        "latencyMs": 561.3022500183433,
+        "requestCharge": 28.5,
+        "resultCount": 1,
+        "estimatedTokens": null,
+        "complete": null,
+        "error": false
+      },
+      {
+        "operation": "search",
+        "latencyMs": 387.10695796180516,
+        "requestCharge": 30.28,
+        "resultCount": 1,
+        "estimatedTokens": null,
+        "complete": null,
+        "error": false
+      },
+      {
+        "operation": "search",
+        "latencyMs": 422.01399989426136,
+        "requestCharge": 28.75,
+        "resultCount": 1,
+        "estimatedTokens": null,
+        "complete": null,
+        "error": false
+      },
+      {
+        "operation": "search",
+        "latencyMs": 726.7382909776643,
+        "requestCharge": 28.65,
+        "resultCount": 1,
+        "estimatedTokens": null,
+        "complete": null,
+        "error": false
+      },
+      {
+        "operation": "search",
+        "latencyMs": 880.3600000683218,
+        "requestCharge": 29.53,
+        "resultCount": 1,
+        "estimatedTokens": null,
+        "complete": null,
+        "error": false
+      },
+      {
+        "operation": "read",
+        "latencyMs": 219.09995807800442,
+        "requestCharge": 3.42,
+        "resultCount": 1,
+        "estimatedTokens": 103480,
+        "complete": false,
+        "error": false
+      },
+      {
+        "operation": "search",
+        "latencyMs": 999.8630410991609,
+        "requestCharge": 28.67,
+        "resultCount": 1,
+        "estimatedTokens": null,
+        "complete": null,
+        "error": false
+      },
+      {
+        "operation": "search",
+        "latencyMs": 930.9938750229776,
+        "requestCharge": 28.78,
+        "resultCount": 1,
+        "estimatedTokens": null,
+        "complete": null,
+        "error": false
+      },
+      {
+        "operation": "search",
+        "latencyMs": 1254.8872079933062,
+        "requestCharge": 28.66,
+        "resultCount": 1,
+        "estimatedTokens": null,
+        "complete": null,
+        "error": false
+      },
+      {
+        "operation": "search",
+        "latencyMs": 1790.6826669350266,
+        "requestCharge": 28.81,
+        "resultCount": 1,
+        "estimatedTokens": null,
+        "complete": null,
+        "error": false
+      }
+    ],
+    "retrievalRequestCharge": 321.88,
+    "retrievalMs": 9817.4556652084,
+    "providerMs": 65768.2,
+    "rateLimitWaitMs": 30004.0,
+    "rateLimitRetries": 1,
+    "retrievalChargeComplete": true,
+    "testId": "final-1"
+  },
+  {
+    "timestamp": "2026-10-27T14:35:39.523637+00:00",
+    "totalMs": 16272.700750036165,
+    "modelCalls": [
+      {
+        "purpose": "tool_request",
+        "promptTokens": 5094,
+        "completionTokens": 133,
+        "totalTokens": 5227,
+        "cachedPromptTokens": 3968,
+        "reasoningTokens": 64,
+        "totalMs": 2507.9,
+        "providerMs": 2507.8,
+        "rateLimitWaitMs": 0.0,
+        "rateLimitRetries": 0,
+        "finishReason": "tool_calls"
+      },
+      {
+        "purpose": "answer",
+        "promptTokens": 9770,
+        "completionTokens": 1704,
+        "totalTokens": 11474,
+        "cachedPromptTokens": 4096,
+        "reasoningTokens": 960,
+        "totalMs": 12621.3,
+        "providerMs": 12621.2,
+        "rateLimitWaitMs": 0.0,
+        "rateLimitRetries": 0,
+        "finishReason": "stop"
+      }
+    ],
+    "promptTokens": 14864,
+    "completionTokens": 1837,
+    "totalTokens": 16701,
+    "tools": [
+      {
+        "operation": "search",
+        "latencyMs": 1044.132374925539,
+        "requestCharge": 13.73,
+        "resultCount": 8,
+        "estimatedTokens": null,
+        "complete": null,
+        "error": false
+      }
+    ],
+    "retrievalRequestCharge": 13.73,
+    "retrievalMs": 1044.132374925539,
+    "providerMs": 15129.0,
+    "rateLimitWaitMs": 0.0,
+    "rateLimitRetries": 0,
+    "retrievalChargeComplete": true,
+    "testId": "final-2"
+  },
+  {
+    "timestamp": "2026-10-27T14:36:29.695607+00:00",
+    "totalMs": 20297.120666014962,
+    "modelCalls": [
+      {
+        "purpose": "tool_request",
+        "promptTokens": 5856,
+        "completionTokens": 279,
+        "totalTokens": 6135,
+        "cachedPromptTokens": 3456,
+        "reasoningTokens": 192,
+        "totalMs": 4320.1,
+        "providerMs": 4320.0,
+        "rateLimitWaitMs": 0.0,
+        "rateLimitRetries": 0,
+        "finishReason": "tool_calls"
+      },
+      {
+        "purpose": "answer",
+        "promptTokens": 10588,
+        "completionTokens": 1706,
+        "totalTokens": 12294,
+        "cachedPromptTokens": 4992,
+        "reasoningTokens": 1152,
+        "totalMs": 14886.5,
+        "providerMs": 14886.5,
+        "rateLimitWaitMs": 0.0,
+        "rateLimitRetries": 0,
+        "finishReason": "stop"
+      }
+    ],
+    "promptTokens": 16444,
+    "completionTokens": 1985,
+    "totalTokens": 18429,
+    "tools": [
+      {
+        "operation": "search",
+        "latencyMs": 994.6656250394881,
+        "requestCharge": 13.92,
+        "resultCount": 8,
+        "estimatedTokens": null,
+        "complete": null,
+        "error": false
+      }
+    ],
+    "retrievalRequestCharge": 13.92,
+    "retrievalMs": 994.6656250394881,
+    "providerMs": 19206.5,
+    "rateLimitWaitMs": 0.0,
+    "rateLimitRetries": 0,
+    "retrievalChargeComplete": true,
+    "testId": "final-3"
+  }
+]

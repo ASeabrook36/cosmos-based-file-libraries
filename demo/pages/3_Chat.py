@@ -183,6 +183,7 @@ if question := st.chat_input("Ask a question"):
             question,
             names,
             context_token_budget=int(context_budget),
+            image_tokens=int(os.environ.get("DEMO_IMAGE_TOKENS", "8192")),
             image_inputs=image_inputs,
         )
         if turn:

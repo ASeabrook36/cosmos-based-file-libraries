@@ -162,6 +162,8 @@ Images were moved out of Phase 3 on 2026-10-23 so that metadata and lifecycle co
 
 **Exit check:** demo script step 4 works.
 
+**Issue #2 follow-up:** compact model evidence, parent-file size hints, optional bounded document grouping, interleaved enriched sections, off-loop read tokenization, bounded per-document vision concurrency and provider-usage context accounting are implemented. See [the decision record](consults/2026-10-27-retrieval-followups.md). Earlier E44 serial loading is superseded by a configured memory bound, while the shared HTTP quota and text-first publication remain. Broad recall evaluation stays in Phases 4/5; API response-view changes are deferred.
+
 ## Phase 4: Scale proof and routing telemetry
 
 **Build**
@@ -177,6 +179,7 @@ Images were moved out of Phase 3 on 2026-10-23 so that metadata and lifecycle co
     - embedding as the real bottleneck: over 4 hours at the default 150,000 tokens per minute. Raise `embeddingCapacity` in `infra/main.bicep`, within the subscription's quota, before loading. At 1,000,000 tokens per minute it takes about 40 minutes.
   - Record the vector index type Cosmos reports (`x-ms-cosmos-index-utilization`) for each library size. Phase 0 saw `QuantizedFlat` at 1,500 chunks. The large libraries should show whether, and from what size, Cosmos walks the DiskANN graph (N11).
   - Measure how long a newly created library takes to stop scanning in a container that is already populated (N12).
+  - On a realistic large library with about 2–5% image rows, measure `contentKinds: ["image"]` recall@k against vector-only exact search (`VectorDistance(..., true, ...)`), plus RU, latency, result-slot duplication and the observed index type (N11, N16). Keep `filterPriority` at its default unless those measurements justify a change.
   - Wait for the index before measuring search cost (E25).
   - Measure the cross-partition library list at 1,000+ libraries, and `refresh_library` (which reads every document record after each ingest) during a bulk load into one library (review finding 4).
   - Measure hybrid search cost (`SEARCH_MODE=hybrid`) on the same libraries before and after loading the 1,000: its full-text statistics span the container, so it may grow with the number of libraries (E27).
@@ -200,7 +203,9 @@ These come after the demo, in roughly this order:
    - Replace the Streamlit stand-in with calls from the real platform: library lifecycle, uploads, tool attachment, search, usage reports.
    - Run the personal-agent lifecycle end to end: create a personal agent, create its library, then delete both.
 3. **Quality:**
-   - An evaluation set of 50–100 real questions with known answers over a realistic corpus.
+   - An evaluation set of 50–100 real questions with known answers over a realistic corpus, including localized, whole-file, all-by-metadata, vague-reference and mixed routing tasks, plus vague, caption-only and topic-only figure questions. Measure image and text recall separately and citation/answer quality, tool rounds, actual input tokens, RU and latency.
+   - Gate document-summary vectors on a demonstrated document-selection recall gap after bounded document grouping. Account for ingestion summary cost, text-first publication, the published-count fence, retagging, legacy reads and reprocessing before adding a row type.
+   - Evaluate current image embedding text against description/caption/heading plus the nearest paragraph (about 300 characters), with a source-section anchor for explanation recovery. Keep full source context in the vision prompt. Do not change the default or reprocess until image recall improves without losing topic-only figure recall or ordinary text recall. Use vector-only exact references and report slot duplication; record wins and losses.
    - Tune `top`, the over-fetch factor and the RRF weights against it.
    - Measure hybrid against vector-only (`evidence.md` N3). Hybrid's full-text terms include common words; add a stop list before evaluating it (E27).
 4. **Open measurements:**
@@ -263,3 +268,9 @@ Use material you are allowed to use, such as public company reports, public stat
 | float16 turns out to be unsupported (N10) | float32 in a new container, rebuilt from stored text (E16). Phase 0 measured float16 working |
 | Azure OpenAI quota (embedding tokens per minute) slows bulk loads | Batch, back off on 429, request more quota |
 | Image description cost | The skip rules and per-document cap in `spec.md` §7.5 |
+
+## Proposed follow-up after natural agent tests (2026-10-27)
+
+The [agent retrieval strategy](consults/2026-10-27-agent-retrieval-strategy.md) is proposed for user review, not implemented. It separates semantic file finding from evidence search, adds known-document/bounded-source/selected-image capabilities, and improves reference-adapter progress, follow-up evidence and answer-grounding behavior. It preserves whole-file completeness, library isolation and existing Cosmos/vector settings. Phases 4/5 retain their scale/recall obligations.
+
+The [day's test review](consults/2026-10-27-agent-retrieval-test-review.md) links the implementation smoke checks, both eight-question manual suites, all three casual cases and the limits on conclusions. E46–E48 show why passing mechanism tests did not finish natural tool-use integration. Future implementation should meet the proposed answer-quality gates before optimizing latency or token/RU cost.

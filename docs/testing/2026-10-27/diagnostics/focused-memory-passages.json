@@ -1,0 +1,241 @@
+{
+  "library": {
+    "libraryId": "combined-library",
+    "name": "combined-library"
+  },
+  "coverage": {
+    "searched": "combined-library (4 documents)",
+    "filtersApplied": {
+      "fileTypes": [
+        "pdf"
+      ],
+      "contentKinds": [
+        "text"
+      ]
+    },
+    "notes": [
+      "1 visual candidates were skipped by configured size, format or per-document limits; search does not cover those visuals."
+    ],
+    "distinctDocuments": false,
+    "resultCount": 8,
+    "disposition": "results"
+  },
+  "results": [
+    {
+      "rank": 1,
+      "chunkId": "combined-library-pdf-document:1:64",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 25
+      },
+      "heading": "Establishing common ground is essential for human-AI collaboration (2)",
+      "contentKind": "text",
+      "text": "Establishing common ground is essential for human-AI collaboration (2)\nEstablishing common ground is essential for human-AI collaboration (2) \u00b7 Bansal et al. (2024) identify 12 challenges to establishing common ground in human-agent interaction, including general communication challenges (e.g. choosing the appropriate level of detail), challenges with conveying information from a user to an agent (e.g. in relation to goals and preferences), and challenges with conveying information from an agent to a user (e.g. in relation to its capabilities, current and planned actions, and their side effects). \u00b7 Tolzin and Janson (2025) identify five mechanisms that could support common ground in human-agent interaction: support for joint action, an underlying knowledge base, mental models, social features, and embodiment. \u00b7 Shaikh et al. (2025) study grounding by analyzing LLM interaction logs. They find that early grounding failures predicted later interaction breakdowns. They develop a preliminary intervention aimed at mitigating grounding failures. This prompts the model to ask follow-up questions or request clarifications when predicted to be necessary. \u00b7 Other recent advances seek to support the user's overall goal over multiple turns. COLLABLLM (Wu et al., 2025; see figure) results in higher task performance and interactivity, and work by Poelitz and McKenna (2025) improved models' ability to generate clarifications and incorporate user-initiated corrections. COLLABLLM (Wu et al., 2025) incorporates multi-turn rewards from collaborative simulation, resulting in better task completion and more efficient and interactive conversations. Microsoft Study: Bansal, G. et al. (2024). Challenges in Human-Agent Communication. arXiv Working Paper. Tolzin, A., and Janson, A. (2025). Uncovering the mechanisms of common ground in human-agent interaction: review and future directions for conversational agent research. Internet Research. Microsoft Study: Shaikh, O. et al. (2025). Navigating Rifts in Human-LLM Grounding: Study and Benchmark. ACL Anthology. Microsoft Study: Wu, S. et al. (2025). CollabLLM: From Passive Responders to Active Collaborators. arXiv Working Paper.",
+      "neighbors": [
+        {
+          "chunkIndex": 63,
+          "text": "Establishing common ground is essential for human-AI collaboration (1)\nHuman-AI Collaboration aka.ms/nfw"
+        },
+        {
+          "chunkIndex": 65,
+          "text": "Establishing common ground is essential for human-AI collaboration (2)\nACL Anthology. Microsoft Study: Wu, S. et al. (2025). CollabLLM: From Passive Responders to Active Collaborators. arXiv Working Paper. Microsoft Study: Poelitz, C., and McKenna, N. (2025). Synthetic Clarification and Correction Dialogues about Data-Centric Tasks - A Teacher-Student Approach. arXiv Working Paper. 25"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 2,
+      "chunkId": "combined-library-pdf-document:1:119",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 44
+      },
+      "heading": "Team AI alignment should reward deliberation and long-horizon goals",
+      "contentKind": "text",
+      "text": "Team AI alignment should reward deliberation and long-horizon goals\nTeam AI alignment should reward deliberation and long-horizon goals \u00b7 Standard RLHF-inspired alignment techniques that are essential to the success of Al models (e.g., PPO, DPO) fail to maintain reliability in extended multi-turn (Laban et al., 2025) and multi-party dialogues (Nath et al., 2025a; 2025b) because they assume static, single-user interactions and optimize for narrow, turn-level rewards (Wu et al., 2025). \u00b7 Wu et al. (2025) highlight the limitations of traditional alignment methods that optimize for single-turn correctness and immediate user satisfaction, and propose a multi-turn reward function that evaluates responses based on their long-term impact on collaboration, boosting task success by 18.5% and user satisfaction by 17.6%. \u00b7 Nath et al. (2025a) show that standard alignment techniques lose their reliability in long multi-turn, multi-party conversations, as these methods assume a static mapping from the agent's action to the outcome and fail to account for the complexity of group conversations where each participant can alter the course of those actions. COLLABLLM incorporates multiturn-aware rewards from collaborative simulation, enabling forward-looking strategies (Wu et al., 2025). \u00b7 Nath et al. (2025b) propose a \"Frictional Agent Alignment Framework\" that explicitly models conversation state and frictive conditions (Clark, 1996), accounts for group dynamics where collaborator responses can alter effects of intervention, and optimizes for collaborative processes like common-ground construction and deliberation. Microsoft Study: Laban, P. et al (2025). LLMs Get Lost In Multi-Turn Conversation. arXiv Working Paper. Nath, A. et al. (2025a). Let's Roleplay: Examining LLM Alignment in Collaborative Dialogues. CEUR-WS. Nath, A. et al. (2025b). Frictional Agent Alignment Framework: Slow Down and Don't Break Things. ACL. Microsoft Study: Wu, S. et al. (2025). COLLABLLM: From Passive Responders to Active Collaborators. ICML. Clark, H. H. (1996).",
+      "neighbors": [
+        {
+          "chunkIndex": 118,
+          "text": "Proactivity transforms Al from a passive tool into more of a \"team member\"\nAI for Teamwork aka.ms/nfw"
+        },
+        {
+          "chunkIndex": 120,
+          "text": "Team AI alignment should reward deliberation and long-horizon goals\nACL. Microsoft Study: Wu, S. et al. (2025). COLLABLLM: From Passive Responders to Active Collaborators. ICML. Clark, H. H. (1996). Using Language. Cambridge University Press. 44"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 3,
+      "chunkId": "combined-library-pdf-document:1:103",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 38
+      },
+      "heading": "AI currently works better for individuals than it does for teams, but improving collaborative AI systems is an active research area",
+      "contentKind": "text",
+      "text": "AI currently works better for individuals than it does for teams, but improving collaborative AI systems is an active research area\nHBS Working Paper. Yang, D. et al. (2025). Socially Aware Language Technologies: Perspectives and Practices. ACL. Microsoft Study: Laban, P. et al. (2025). LLMs Get Lost In Multi-Turn Conversation. arXiv Working Paper. Nath, A. et al. (2025). Frictional Agent Alignment Framework: Slow Down and Don't Break Things. ACL. Clark, H. H. (1996). Using Language. Cambridge University Press. Huang, T. et al. (2025). Teaching Language Models To Gather Information Proactively. EMNLP. Liu, X. et al. (2025). Proactive Conversational Agents with Inner Thoughts. CHI. Microsoft Study: Alsobay, M. et al. (2025). Bringing Everyone to the Table: An Experimental Study of LLM-Facilitated Group Decision Making. arXiv Working Paper. Woolley, A.W. (2025). Generative Al and collaboration: opportunities for cultivating collective intelligence. Journal of Organization Design. 38",
+      "neighbors": [
+        {
+          "chunkIndex": 102,
+          "text": "AI currently works better for individuals than it does for teams, but improving collaborative AI systems is an active research area\nAI currently works better for individuals than it does for teams, but improving collaborative AI systems is an active research area \u00b7 Al has been more successful at improving productivity at the individual scale than at the team scale (Schmutz et al., 2024; Dell'Acqua et al., 2025; Yang et al. 2025). \u00b7 Factors that have been identified as potential causes include instruction tuning practices (e.g. Laban et al., 2025; Nath et al., 2025), Als having relatively limited knowledge of critical social dynamics like (interpersonal) grounding (Clark, 1996), challenges with turn-taking dynamics and proactivity (Huang et al., 2025; Liu et al., 2025), the need for new evaluation frameworks (e.g. Alsobay et al., 2025), and the substantially greater complexity of team goals vs. individual goals (Woolley, 2025). \u00b7 Researchers are betting on two broad routes to improve Al for teams: (1) process-focused strategies, i.e. building AI to support specific team processes like information sharing (e.g. Huang et al., 2025) and (2) outcome-focused strategies, i.e. training end-to-end Al systems that attempt to learn from short- and long-range team outcomes (e.g. Nath et al., 2025). Figure 2: Average Solution Quality Dell'Acqua et al. (2025) found that individuals w/ an Al did just as well as a team (pair) of people in a laboratory task, at least in terms of average performance. Schmutz, J. B. et al. (2024). AI-teaming: Redefining collaboration in the digital era. Current Opinion in Psychology. Dell'Acqua, F. et al. (2025). The Cybernetic Teammate: A Field Experiment on Generative Al Reshaping Teamwork and Expertise. HBS Working Paper. Yang, D. et al. (2025). Socially Aware Language Technologies: Perspectives and Practices. ACL. Microsoft Study: Laban, P. et al. (2025)."
+        },
+        {
+          "chunkIndex": 104,
+          "text": "AI currently works better for individuals than it does for teams, but improving collaborative AI systems is an active research area\nAI for Teamwork aka.ms/nfw"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 4,
+      "chunkId": "combined-library-pdf-document:1:116",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 43
+      },
+      "heading": "Proactivity transforms Al from a passive tool into more of a \"team member\"",
+      "contentKind": "text",
+      "text": "Proactivity transforms Al from a passive tool into more of a \"team member\"\nProactivity transforms Al from a passive tool into more of a \"team member\" . When a collaborative Al is developed to be more proactive, it starts to take on roles more akin to being a \"team member\" - raising new ideas, identifying risks, and suggesting next steps. \u00b7 Huang et al. (2025) demonstrate that proactive information gathering fundamentally changes the role of LLMs from passive responders to collaborative thought partners, improving user satisfaction by 42%. Their qualitative evaluations showed that users interpret proactive questioning as engagement and competence-traits associated with teammates rather than tools. \u00b7 Liu et al. (2025a) introduce Thoughtful Al as a paradigm shift from reactive, turn-based systems to agents that continuously think out loud and share their evolving reasoning during interactions, fostering proactive behavior and cognitively aligned collaboration. They argue this approach transforms Al from a passive tool into a thought partner, capable of initiating dialogue, suggesting next steps, and adapting as the conversation evolves. \u00b7 Commonly-used NLP techniques like next speaker prediction fall short in multi-party dynamics, where conversations are fluid and overlapping. Predicting the next speaker does not help the AI determine the optimal timing for its own intervention without disrupting the flow. It also fails to capture the underlying motivation or reasoning behind speaking turns, so the Al cannot assess whether its contribution would add value at that moment (Liu et al., 2025b). \u00b7 New techniques allow an Al to decide when to speak up and contribute during group interactions. For example, Lu et al. (2024) explore anticipatory planning and timing, showing that AI can learn when to intervene by predicting tasks and leveraging human feedback. By fine-tuning on timing decisions, the model learned conversational dynamics (e.g. pauses, topic shifts) and task progression cues to identify opportune moments for contribution. \u00b7 Drawing from cognitive psychology and real human turn-taking data, Liu et al. (2025b) show that modeling human-like turn- taking and timing through internal reasoning improves perceived intelligence and appropriateness of Al contributions. Microsoft Study: Huang, T. et al. (2025). Teaching Language Models To Gather Information Proactively. EMNLP. Liu, X. et al. (2025a).",
+      "neighbors": [
+        {
+          "chunkIndex": 115,
+          "text": "AI can drive goal clarity for effective meetings and smarter workflows\nAI for Teamwork aka.ms/nfw"
+        },
+        {
+          "chunkIndex": 117,
+          "text": "Proactivity transforms Al from a passive tool into more of a \"team member\"\nMicrosoft Study: Huang, T. et al. (2025). Teaching Language Models To Gather Information Proactively. EMNLP. Liu, X. et al. (2025a). Interacting with Thoughtful Al. arXiv Working Paper. Liu, X. et al. (2025b). Proactive Conversational Agents with Inner Thoughts. CHI. Lu, Y. et al. (2024). Proactive Agent: Shifting LLM Agents from Reactive Responses to Active Assistance. ICLR. 43"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 5,
+      "chunkId": "combined-library-pdf-document:1:61",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 24
+      },
+      "heading": "Establishing common ground is essential for human-AI collaboration (1)",
+      "contentKind": "text",
+      "text": "Establishing common ground is essential for human-AI collaboration (1)\nEstablishing common ground is essential for human-AI collaboration (1) \u00b7 Common ground is the shared knowledge and assumptions that allow people to understand each other and coordinate effectively. \u00b7 Building common ground is essential to human communication and is increasingly recognized as important in human-Al interaction. \u00b7 Common ground is achieved through a dynamic process called grounding: speakers provide ongoing evidence of their understanding or confusion, and work to address gaps in mutual understanding (Clark & Brennan, 1991; Clark, 1996). \u00b7 Grounding includes positive evidence of understanding, such as acknowledgments, relevant next conversational turns, and continued attention as well as negative evidence, such as requests for clarification. \u00b7 Current LLMs generate language with less conversational grounding than people, instead generating text that suggests that shared understanding has already been reached (Shaikh et al., 2024; see figure for examples). Grounding Act Clarification TSCC | Example student: So I am the leader of my class. It is like the president or mayor. teacher: Oh, like a head girl? GPT: That's great to hear! Being the leader of your class is a big responsibility [ ... ] Follow-up ESConv | seeker: My friends, who I also work with, are upset with me because I am leaving for a new position. I am sad that they are upset. support : Ah, that can be awkward. Are you happy about the new position? GPT: I can understand why that would make you feel down ... Remember, it's okay to [ ... ]. Acknowledgment Persuasion | persuadee: I [donate] as much as I can, which is admittedly not as much as I would like to. persuader: I know what you mean! Sometimes it is hard to find the extra time or money to help those that need it. GPT: That's wonderful to hear! [ ... ] Would you be interested in supporting Save the [ ... ]? Examples of grounding acts from Shaikh et al. (2024). GPT-3.5 does not show grounding behaviors in response to the same statements. Clark, H. H. and Brennan, S. E. (1991). Grounding in communication. In: Perspectives on socially shared cognition.",
+      "neighbors": [
+        {
+          "chunkIndex": 60,
+          "text": "Automation tends to cap upside - augmentation and innovation expand opportunity\nHuman-AI Collaboration aka.ms/nfw"
+        },
+        {
+          "chunkIndex": 62,
+          "text": "Establishing common ground is essential for human-AI collaboration (1)\nGPT-3.5 does not show grounding behaviors in response to the same statements. Clark, H. H. and Brennan, S. E. (1991). Grounding in communication. In: Perspectives on socially shared cognition. APA. Clark, H. H. (1996). Using Language. Cambridge University Press. Shaikh, O. et al. (2024). Grounding Gaps in Language Model Generations. arXiv Working Paper. 24"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 6,
+      "chunkId": "combined-library-pdf-document:1:164",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 59
+      },
+      "heading": "Digital empathy is emerging as a key differentiator in the design of AI conversational agents",
+      "contentKind": "text",
+      "text": "Digital empathy is emerging as a key differentiator in the design of AI conversational agents\nThinking, Learning, and Psychological Influences aka.ms/nfw",
+      "neighbors": [
+        {
+          "chunkIndex": 163,
+          "text": "Digital empathy is emerging as a key differentiator in the design of AI conversational agents\nMicrosoft Study: Das Swain, V. et al. (2025). AL On My Shoulder: Supporting Emotional Labor In Front-Office Roles With An LLM-Based Empathetic Coworker. CHI. Sanders, M. Z. (2025). How People Are Really Using Gen Al In 2025. Harvard Business Review. Microsoft Study: Chandra, M. et al. (2025). Longitudinal Study On Social and Emotional Use Of Al Conversational Agent. arXiv Working Paper. Howcroft, A. et al. (2025). Al Chatbots Versus Human Healthcare Professionals: A Systematic Review And Meta Analysis Of Empathy In Patient Care. British Medical Bulletin. Rubin, M., et al. (2025). Comparing The Value Of Perceived Human Versus Al-Generated Empathy. Nature Human Behaviour. 58"
+        },
+        {
+          "chunkIndex": 165,
+          "text": "Growing evidence suggests psychological well-being should be a core AI design and governance criterion\nGrowing evidence suggests psychological well-being should be a core AI design and governance criterion \u00b7 Psychological well-being is the state of feeling mentally healthy, resilient, and fulfilled through positive emotions, life satisfaction, and purpose (Yi\u011fit & \u00c7akmak, 2024). \u00b7 Whether explicitly designed to be companions or not, users are appropriating conversational Al tools for social and emotional purposes (Laestadius et al., 2022; Siddals et al., 2024). These systems can fill emotional, social, and informational gaps, providing 24/7 availability and perceived non-judgmental communication that some associate with temporary improvement in well-being (Zhang et al., 2025). . However, reliance on Al for companionship and unconditional validation may have psychological risks, such as dependence, distorted self-perception, and reinforcement of maladaptive behaviors or beliefs, and may reshape social norms around relational technology (Huang et al., 2024; Marriott & Pitardi, 2024). . These impacts likely emerge from complex, long-term interactions between often unobservable factors (e.g., user's disposition, environments) and Al design, making it difficult to isolate any one technology feature as the cause for psychological harm or benefit (Fang et al., 2024; Chandra et al., 2024). Psychological impact of AI on human is highly context- and interaction-dependent. Conceptualizing psychological risks must take the full dynamic user context into account (Chandra et al., 2025). . This research raises questions about how Al designers might establish ethical norms that preserve human well-being, invest in community-driven evaluation, conduct longitudinal monitoring, and include guardrails and supportive prosocial user experiences. Yi\u011fit, B. and \u00c7akmak, B.Y. (2024). Discovering Psychological Well-Being: A Bibliometric Review. Journal of Happiness Studies. Laestadius, L. et al. (2024). Too Human And Not Human Enough: A Grounded Theory Analysis Of Mental Health Harms From Emotional Dependence On The Social Chatbot Replika. New Media & Society. Siddals, S., et al. (2024)."
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 7,
+      "chunkId": "combined-library-pdf-document:1:162",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 58
+      },
+      "heading": "Digital empathy is emerging as a key differentiator in the design of AI conversational agents",
+      "contentKind": "text",
+      "text": "Digital empathy is emerging as a key differentiator in the design of AI conversational agents\nDigital empathy is emerging as a key differentiator in the design of AI conversational agents . The role of digital empathy, understood as the ability of Al models to interpret users' experiences and perspectives, is becoming increasingly studied and formalized (Suh et al., 2025), and it is materializing in multiple forms, from emotional-regulation support (Das Swain et al., 2025) to adaptive embodied conversational agents. \u00b7 As traditional benchmarks become saturated, companies are viewing Al personality, communication style, and appearance as key differentiators and integral parts of their model optimization pipelines. Notable examples include the communication styles of recent OpenAI GPT models, as well as text to speech and agents by Sesame AI, Hume AI, and ElevenLabs. \u00b7 Therapy and companionship are emerging as a rapidly growing application area in which digital empathy can play an important role (Sanders, 2025). While Al chatbots offer the potential to broaden access to care, there remains significant room for improvement in how they recognize and respond to mental health issues. Recent research is highlighting the potential risks and harms associated with using chatbots for emotional support (Chandra et al., 2025). . There is growing debate about human empathy versus Al empathy and their respective roles in future job automation in domains such as customer service and healthcare (Howcroft et al., 2025; Rubin et al., 2025). Emerging research also highlights the potential benefits of combining both forms of empathy, for example by reducing cognitive load while addressing uncivil customer interactions (Das Swain et al., 2025). Uncivil interactions-rude, aggressive, emotionally charged-raised cognitive load (orange). Empathetic AI support eased the strain (green), nearly matching civil exchanges (blue) (Das Swain et al., 2025). Microsoft Study: Suh, J. et al. (2025). SENSE-7: Taxonomy And Dataset for Measuring User Perceptions Of Empathy In Sustained Human AI Conversations. arXiv Working Paper. Microsoft Study: Das Swain, V. et al. (2025). AL On My Shoulder: Supporting Emotional Labor In Front-Office Roles With An LLM-Based Empathetic Coworker.",
+      "neighbors": [
+        {
+          "chunkIndex": 161,
+          "text": "Preparing young learners for an AI future requires a further shift away from syntax specifics and towards problem solving and logical abstraction\nThinking, Learning, and Psychological Influences aka.ms/nfw"
+        },
+        {
+          "chunkIndex": 163,
+          "text": "Digital empathy is emerging as a key differentiator in the design of AI conversational agents\nMicrosoft Study: Das Swain, V. et al. (2025). AL On My Shoulder: Supporting Emotional Labor In Front-Office Roles With An LLM-Based Empathetic Coworker. CHI. Sanders, M. Z. (2025). How People Are Really Using Gen Al In 2025. Harvard Business Review. Microsoft Study: Chandra, M. et al. (2025). Longitudinal Study On Social and Emotional Use Of Al Conversational Agent. arXiv Working Paper. Howcroft, A. et al. (2025). Al Chatbots Versus Human Healthcare Professionals: A Systematic Review And Meta Analysis Of Empathy In Patient Care. British Medical Bulletin. Rubin, M., et al. (2025). Comparing The Value Of Perceived Human Versus Al-Generated Empathy. Nature Human Behaviour. 58"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 8,
+      "chunkId": "combined-library-pdf-document:1:65",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 25
+      },
+      "heading": "Establishing common ground is essential for human-AI collaboration (2)",
+      "contentKind": "text",
+      "text": "Establishing common ground is essential for human-AI collaboration (2)\nACL Anthology. Microsoft Study: Wu, S. et al. (2025). CollabLLM: From Passive Responders to Active Collaborators. arXiv Working Paper. Microsoft Study: Poelitz, C., and McKenna, N. (2025). Synthetic Clarification and Correction Dialogues about Data-Centric Tasks - A Teacher-Student Approach. arXiv Working Paper. 25",
+      "neighbors": [
+        {
+          "chunkIndex": 64,
+          "text": "Establishing common ground is essential for human-AI collaboration (2)\nEstablishing common ground is essential for human-AI collaboration (2) \u00b7 Bansal et al. (2024) identify 12 challenges to establishing common ground in human-agent interaction, including general communication challenges (e.g. choosing the appropriate level of detail), challenges with conveying information from a user to an agent (e.g. in relation to goals and preferences), and challenges with conveying information from an agent to a user (e.g. in relation to its capabilities, current and planned actions, and their side effects). \u00b7 Tolzin and Janson (2025) identify five mechanisms that could support common ground in human-agent interaction: support for joint action, an underlying knowledge base, mental models, social features, and embodiment. \u00b7 Shaikh et al. (2025) study grounding by analyzing LLM interaction logs. They find that early grounding failures predicted later interaction breakdowns. They develop a preliminary intervention aimed at mitigating grounding failures. This prompts the model to ask follow-up questions or request clarifications when predicted to be necessary. \u00b7 Other recent advances seek to support the user's overall goal over multiple turns. COLLABLLM (Wu et al., 2025; see figure) results in higher task performance and interactivity, and work by Poelitz and McKenna (2025) improved models' ability to generate clarifications and incorporate user-initiated corrections. COLLABLLM (Wu et al., 2025) incorporates multi-turn rewards from collaborative simulation, resulting in better task completion and more efficient and interactive conversations. Microsoft Study: Bansal, G. et al. (2024). Challenges in Human-Agent Communication. arXiv Working Paper. Tolzin, A., and Janson, A. (2025). Uncovering the mechanisms of common ground in human-agent interaction: review and future directions for conversational agent research. Internet Research. Microsoft Study: Shaikh, O. et al. (2025). Navigating Rifts in Human-LLM Grounding: Study and Benchmark. ACL Anthology. Microsoft Study: Wu, S. et al. (2025). CollabLLM: From Passive Responders to Active Collaborators. arXiv Working Paper."
+        },
+        {
+          "chunkIndex": 66,
+          "text": "Establishing common ground is essential for human-AI collaboration (2)\nHuman-AI Collaboration aka.ms/nfw"
+        }
+      ],
+      "image": null
+    }
+  ]
+}

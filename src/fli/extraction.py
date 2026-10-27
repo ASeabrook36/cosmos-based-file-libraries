@@ -149,6 +149,7 @@ def _ext(name: str) -> str:
 
 def _docx(data: bytes) -> tuple[list[Section], tuple[str | None, datetime | None]]:
     import docx
+    from docx.oxml.ns import qn
     from docx.table import Table
     from docx.text.paragraph import Paragraph
 
@@ -158,6 +159,8 @@ def _docx(data: bytes) -> tuple[list[Section], tuple[str | None, datetime | None
     sections: list[Section] = []
     heading: str | None = None
     buffer: list[str] = []
+    first_paragraph = None
+    paragraphs = {element: i for i, element in enumerate(document.element.body.iter(qn("w:p")), 1)}
     # Walk the body in document order so a table stays under the heading it appears beneath.
     for child in document.element.body.iterchildren():
         if child.tag.endswith("}p"):
@@ -168,10 +171,13 @@ def _docx(data: bytes) -> tuple[list[Section], tuple[str | None, datetime | None
                 continue
             if style.startswith("Heading") or style == "Title":
                 if buffer:
-                    sections.append(Section(heading, "\n".join(buffer)))
+                    sections.append(Section(heading, "\n".join(buffer), {"paragraph": first_paragraph}))
                     buffer = []
+                    first_paragraph = None
                 heading = text
             else:
+                if not buffer:
+                    first_paragraph = paragraphs[child]
                 buffer.append(text)
         elif child.tag.endswith("}tbl"):
             rows = []
@@ -188,9 +194,11 @@ def _docx(data: bytes) -> tuple[list[Section], tuple[str | None, datetime | None
                 if cells:
                     rows.append(" | ".join(cells))
             if rows:
+                if not buffer:
+                    first_paragraph = next((paragraphs[p] for p in child.iter(qn("w:p"))), None)
                 buffer.extend(rows)
     if buffer:
-        sections.append(Section(heading, "\n".join(buffer)))
+        sections.append(Section(heading, "\n".join(buffer), {"paragraph": first_paragraph}))
     return sections, meta
 
 

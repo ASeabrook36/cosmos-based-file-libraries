@@ -1,0 +1,192 @@
+[
+  {
+    "file": "README.md",
+    "bytes": 5428,
+    "sha256": "b5818c05d2478bc7300a9720323f914c65983a3873604fcd131072d85ec0fd9a"
+  },
+  {
+    "file": "assets/augmentation-diagram.png",
+    "bytes": 23760,
+    "sha256": "2ade251a4ba25c4d8da67fa4105232487be5e38702f9cf5d6e90f01c543ae9c8"
+  },
+  {
+    "file": "assets/effect-size-panels.png",
+    "bytes": 40636,
+    "sha256": "dba9c4415c6b78838d841bdb5eb02e0058c5b3a0aa1e96ddc15c04be805e9531"
+  },
+  {
+    "file": "assets/headcount-panels.png",
+    "bytes": 44677,
+    "sha256": "1208a0812e4422adb59155cb16dcc10b2dd36eb916157262362465c25803127b"
+  },
+  {
+    "file": "assets/map.png",
+    "bytes": 29614,
+    "sha256": "e0f2a92595c20ce239a80195e106e4d715baa67ff8c9baee838b9bd66d7359cd"
+  },
+  {
+    "file": "assets/occupation-scatter.png",
+    "bytes": 47463,
+    "sha256": "32c967e36e09cd57dff8a725cd53d4d1285abc3e06239d62c4bdaecb5d360fa4"
+  },
+  {
+    "file": "assets/rainfall.png",
+    "bytes": 25173,
+    "sha256": "26f85bd1ae3741d12d7d780f59224cc458452db9f91e1e2fa291dc5347d6395a"
+  },
+  {
+    "file": "assets/sign.png",
+    "bytes": 27125,
+    "sha256": "4afbca3266c120d47e7eadd7f30c5353409787ebbc9ebef2c97e4f5ef20670b6"
+  },
+  {
+    "file": "assets/source-page-26.png",
+    "bytes": 366290,
+    "sha256": "28dce792d9e50300bcfd0c600f31e173d9b11a34a200bdbbb7debd547d69c3c3"
+  },
+  {
+    "file": "assets/source-page-46.png",
+    "bytes": 403241,
+    "sha256": "ba20740c09eac0fcf3048a5fde2068327e048d0eaaaf2fd8df946f7c220c543d"
+  },
+  {
+    "file": "assets/source-page-55.png",
+    "bytes": 373066,
+    "sha256": "158e3ed5108957d8c8a758a23adaacea00cafe7637213c5032bb93a4045c6ce8"
+  },
+  {
+    "file": "captures/casual-01/question.txt",
+    "bytes": 167,
+    "sha256": "3b0944ff65e58ace0c80f29cf53a47db2754477ad50f7b7d79585096953598f0"
+  },
+  {
+    "file": "captures/casual-01/visible-chat.txt",
+    "bytes": 1798,
+    "sha256": "b8daf3005871a35043ddf56bc0b9b1c5530e5ea9a0aba6d8af1a2c7687582826"
+  },
+  {
+    "file": "captures/casual-02/expanded-traces.txt",
+    "bytes": 11624,
+    "sha256": "a861a40f7b680a399b3aa5301d2765705d8a5d70ec7711cb8ff3a3c0e425704a"
+  },
+  {
+    "file": "captures/casual-02/question.txt",
+    "bytes": 202,
+    "sha256": "941972bebe76e3cf13c3944a8775dd64eabd67944b2aab10dbfa5e427863b7f4"
+  },
+  {
+    "file": "captures/casual-02/visible-chat.txt",
+    "bytes": 3322,
+    "sha256": "cdb3620b208de735c33460e5edf90bbc5570f551f5dec07a834ce8fe28edc47c"
+  },
+  {
+    "file": "captures/casual-final/expanded-traces.txt",
+    "bytes": 46509,
+    "sha256": "5a39c55b1cebb01d31532dd7634b55b2dfd58cda4d03ac4542a10f17aa742f84"
+  },
+  {
+    "file": "captures/casual-final/final-questions.json",
+    "bytes": 557,
+    "sha256": "3188ed14251ababc1811c23cd143fc2c5a0239af75c57484d5ecc5354a911277"
+  },
+  {
+    "file": "captures/casual-final/turns.json",
+    "bytes": 10794,
+    "sha256": "0670eb27bb84d12bab5f819b004643f3b50161a4149e1b757401eca528daf334"
+  },
+  {
+    "file": "captures/casual-final/visible-chat.txt",
+    "bytes": 15342,
+    "sha256": "cb77ca293e6954e0e6b85d526673a986544bcd10b419b16e9001007dd3a51d26"
+  },
+  {
+    "file": "captures/combined/turns.json",
+    "bytes": 14155,
+    "sha256": "05bec23cfece68a53a9cf5c03f09514bd44819209913cd690e3cbb3e0c007ee6"
+  },
+  {
+    "file": "captures/combined/visible-chat.txt",
+    "bytes": 19505,
+    "sha256": "602848d306772be51d7ca7ac9464258ccc9e698fa35f1b3342adaada4af0b589"
+  },
+  {
+    "file": "captures/initial-smoke/answer-1.json",
+    "bytes": 16033,
+    "sha256": "2e90fd9af3592b021ff39e8923e17b9e4a14892bfa437a7d40d21ac453a4faaa"
+  },
+  {
+    "file": "captures/initial-smoke/answer-2.json",
+    "bytes": 29688,
+    "sha256": "1634431e5e0bffd3c4dab67bb18cdc4bd7d70bb7ab95d8b1e492a26dac219321"
+  },
+  {
+    "file": "captures/separate/turns.json",
+    "bytes": 17170,
+    "sha256": "37704abcdbdb92281d80535e828d409a63eef7f208be77a5c0b9639ee36cf837"
+  },
+  {
+    "file": "captures/separate/visible-chat.txt",
+    "bytes": 21507,
+    "sha256": "72d311b672d5da52a36182aefc3134de29a72f99bf5ca773d3c2bf0b6f38f9ac"
+  },
+  {
+    "file": "casual-cases.json",
+    "bytes": 3395,
+    "sha256": "d9256a288ab9f69aa0461815c0d57ca5d9ca7156bfde6875ed46d6a9f1f4eb59"
+  },
+  {
+    "file": "diagnostics/diagnostic-probes.json",
+    "bytes": 3603,
+    "sha256": "1f9a1583d7f2ce6fba37a2eebf043309a36d8d8f67b3f16507a776cc801ce9c7"
+  },
+  {
+    "file": "diagnostics/focused-context-learning.json",
+    "bytes": 29854,
+    "sha256": "08e4b8de8132e8c718b75e3e923a84888a535e6c477e0ba4156f738cd9124faa"
+  },
+  {
+    "file": "diagnostics/focused-memory-passages.json",
+    "bytes": 29327,
+    "sha256": "b03b628e74f2fa513e7067c71aed99bbaf4a22de3bcf645a1a7514b9d5976740"
+  },
+  {
+    "file": "diagnostics/full-report-diagnostic-read.json",
+    "bytes": 437644,
+    "sha256": "8d638cf07fea490204c04395e60c152d383a28a4c839fddf20318c6623977ca3"
+  },
+  {
+    "file": "diagnostics/original-query-grouped.json",
+    "bytes": 2077,
+    "sha256": "18a4f47713057e88ad47c0678384377e8afa3c2a8b66de1f12391cb752527b77"
+  },
+  {
+    "file": "diagnostics/original-query-passages.json",
+    "bytes": 24640,
+    "sha256": "eefc147a58de0f69b8228e84bb7d7a982b218773cf0040e340c1661d19fc07f5"
+  },
+  {
+    "file": "diagnostics/source-token-counts.json",
+    "bytes": 104,
+    "sha256": "598479a2ba7332151bdb6165eec5d6e8539c7dc345736aaed8449172b5c3bbd2"
+  },
+  {
+    "file": "diagnostics/targeted-memory-index-check.json",
+    "bytes": 74211,
+    "sha256": "5b500525cf1782b1a77ce9ff1a8868414974e44233cca42f26963e2d8ef1a744"
+  },
+  {
+    "file": "matched-questions.md",
+    "bytes": 9212,
+    "sha256": "eef2cd89e3bd51ff0edc5bab38e431fdda378fb33393a065b8ddcf071e8adb73"
+  },
+  {
+    "file": "results-template.md",
+    "bytes": 1935,
+    "sha256": "f2d5cbeb886bbd3d9b3f30d6e8747bccf2938049355a7294f5a23edc481659bd"
+  },
+  {
+    "file": "reviewer-checklist.md",
+    "bytes": 3710,
+    "sha256": "1dc7730d4cf45cb81c83e0703f67770394527e54bb416c416b1365f24ebe98d4"
+  }
+]

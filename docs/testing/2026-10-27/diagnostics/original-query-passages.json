@@ -1,0 +1,229 @@
+{
+  "library": {
+    "libraryId": "combined-library",
+    "name": "combined-library"
+  },
+  "coverage": {
+    "searched": "combined-library (4 documents)",
+    "filtersApplied": {
+      "tags": [
+        "initiative=New Future of Work",
+        "organization=Microsoft",
+        "topic=AI and work",
+        "year=2025"
+      ],
+      "contentKinds": [
+        "text",
+        "image"
+      ]
+    },
+    "notes": [
+      "1 visual candidates were skipped by configured size, format or per-document limits; search does not cover those visuals."
+    ],
+    "distinctDocuments": false,
+    "resultCount": 8,
+    "disposition": "results"
+  },
+  "results": [
+    {
+      "rank": 1,
+      "chunkId": "combined-library-pdf-document:1:210",
+      "imageId": "combined-library-pdf-document:1:210",
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 1
+      },
+      "heading": "Microsoft New Future of Work Report 2025",
+      "contentKind": "image",
+      "text": "Image from New-Future-Of-Work-Report-2025.pdf, figure 1.1, page 1, under 'Microsoft New Future of Work Report 2025': Microsoft logo on a black rectangular background: a 2x2 grid of colored squares at left (top-left red, top-right green, bottom-left blue, bottom-right yellow) and the word \"Microsoft\" in white sans-serif type to the right. No additional labels, numbers, axes or legends are present.\nNearby source text: Microsoft New Future of Work Report 2025\n\nA summary of recent research from Microsoft and around the world that can help us create a new and better single-report-library with AI.",
+      "neighbors": [],
+      "image": {
+        "kind": "pdf_figure",
+        "caption": null,
+        "captionStatus": "not_identified",
+        "captionAssociation": null
+      }
+    },
+    {
+      "rank": 2,
+      "chunkId": "combined-library-pdf-document:1:212",
+      "imageId": "combined-library-pdf-document:1:212",
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 4
+      },
+      "heading": "Welcome to the 2025 Microsoft New Future of Work Report!",
+      "contentKind": "image",
+      "text": "Image from New-Future-Of-Work-Report-2025.pdf, figure 4.2, page 4, under 'Welcome to the 2025 Microsoft New Future of Work Report!': Cover-style image with a left black panel and a colorful abstract scene on the right. Top-left shows a small Microsoft logo (four colored squares) followed by large white title text: \"Microsoft New Future of Work Report 2025\". Below the title is smaller white text reading: \"A summary of recent research from Microsoft and around the world that can help us create a new and better single-report-library with AI.\" The right two-thirds of the image is a vivid, futuristic graphic: a digital corridor of glowing parallel lines and geometric shapes in blue, cyan, magenta, yellow and green suggesting motion and data streams. No charts, axes, legends, numeric labels or additional readable text are visible. Source caption/context provided: \"Microsoft New Future of Work Report.\"\nNearby source text: Microsoft New Future of Work Report\n\naka.ms/nfw\n\nThis report is a product of Microsoft's New Future of Work Initiative\n\nMicrosoft has shaped information work for over 50 years and the New Future of Work (NFW) initiative has helped it navigate the past five years of profound transformation. While the initiative was born out of the COVID-19 pandemic and subsequent shifts to remote and hybrid work, since 2023 it has focused on the incorporation and growing role of tools powered by large AI models.\n\nThroughout this transformative period, the NFW initiative has brought together researchers from across Microsoft to conduct primary research and synthesize existing findings from the literature. The goal is not merely to predict what changes are coming, but to actively create a new single-report-library that is equitable, inclusive, meaningful, and productive.\n\nThe fifth edition of the annual NFW report represents another year of research and analysis, adding to the growing body of knowledge on Al and work. The evidence and insights presented here are not monolithic and represent contributing researchers' perspectives rather than Microsoft's corporate views. Additional research papers, practical guides, and white papers are available at: aka.ms/nfw.\n\nOverview\n\nWorkstreams Publications Videos News & features\n\nThe New Future of Work is a cross-company research initiative dedicated to creating solutions for a single-report-library that is meaningful, productive, and equitable. It began during the pandemic in response to an urgent need to understand remote work practices. When many people returned to the office, the focus shifted to supporting the hybrid work transition. Then in 2023, another generational shift in work occurred when language models made the leap from the lab into the real world, a shift that could make the changes to remote and hybrid work look small by comparison.\n\nThe single-report-library with Al is not a forgone conclusion, and this initiative exists to not just study work with ",
+      "neighbors": [],
+      "image": {
+        "kind": "pdf_figure",
+        "caption": null,
+        "captionStatus": "not_identified",
+        "captionAssociation": null
+      }
+    },
+    {
+      "rank": 3,
+      "chunkId": "combined-library-pdf-document:1:211",
+      "imageId": "combined-library-pdf-document:1:211",
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 4
+      },
+      "heading": "Welcome to the 2025 Microsoft New Future of Work Report!",
+      "contentKind": "image",
+      "text": "Image from New-Future-Of-Work-Report-2025.pdf, figure 4.1, page 4, under 'Welcome to the 2025 Microsoft New Future of Work Report!': Figure 4.1 (page 4) \u2014 wide horizontal banner image composed of a series of vertical panels with different visual motifs spanning left to right. Left panel: layered, cut-paper topographic shapes in teal/green tones with a white rectangular overlay containing the readable black text \u201cThe New Future of Work.\u201d Center-left panel: a photographic crop showing a person\u2019s hands using a laptop or tablet (one hand pointing at the screen) in an office-like setting. Center and center-right panels: abstract colorful 3D and paper-like shapes (examples include a blue sphere on a thin stand, an orange cone, folded/yellow paper sculpture, and a blue panel with an 'X' shape). Rightmost panels: an architectural/glass-window texture and a panel with multicolored radial lines; a coffee cup is faintly visible near the right side. Overall color palette includes teal, blue, purple, yellow and orange. Readable text transcribed from the image: \u201cThe New Future of Work.\u201d No numerical labels, axes, legends, charts, or data visualizations are present.\nNearby source text: Microsoft New Future of Work Report\n\naka.ms/nfw\n\nThis report is a product of Microsoft's New Future of Work Initiative\n\nMicrosoft has shaped information work for over 50 years and the New Future of Work (NFW) initiative has helped it navigate the past five years of profound transformation. While the initiative was born out of the COVID-19 pandemic and subsequent shifts to remote and hybrid work, since 2023 it has focused on the incorporation and growing role of tools powered by large AI models.\n\nThroughout this transformative period, the NFW initiative has brought together researchers from across Microsoft to conduct primary research and synthesize existing findings from the literature. The goal is not merely to predict what changes are coming, but to actively create a new single-report-library that is equitable, inclusive, meaningful, and productive.\n\nThe fifth edition of the annual NFW report represents another year of research and analysis, adding to the growing body of knowledge on Al and work. The evidence and insights presented here are not monolithic and represent contributing researchers' perspectives rather than Microsoft's corporate views. Additional research papers, practical guides, and white papers are available at: aka.ms/nfw.\n\nOverview\n\nWorkstreams Publications Videos News & features\n\nThe New Future of Work is a cross-company research initiative dedicated to creating solutions for a single-report-library that is meaningful, productive, and equitable. It began during the pandemic in response to an urgent need to understand remote work practices. When many people returned to the office, the focus shifted to supporting the hybrid work transition. Then in 2023, another generational shift in work occurred when language models made the leap from the lab into the real world, a shift that could make the changes to remote and hybrid work look small by comparison.\n\nThe single-report-library with Al is not a forgone conclusion, and this initiative exists to not just study work with ",
+      "neighbors": [],
+      "image": {
+        "kind": "pdf_figure",
+        "caption": null,
+        "captionStatus": "not_identified",
+        "captionAssociation": null
+      }
+    },
+    {
+      "rank": 4,
+      "chunkId": "combined-library-pdf-document:1:0",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 1
+      },
+      "heading": "Microsoft New Future of Work Report 2025",
+      "contentKind": "text",
+      "text": "Microsoft New Future of Work Report 2025\nMicrosoft New Future of Work Report 2025 A summary of recent research from Microsoft and around the world that can help us create a new and better single-report-library with AI.",
+      "neighbors": [
+        {
+          "chunkIndex": 1,
+          "text": "Microsoft New Future of Work Report\nMicrosoft New Future of Work Report aka.ms/nfw"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 5,
+      "chunkId": "combined-library-pdf-document:1:1",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 2
+      },
+      "heading": "Microsoft New Future of Work Report",
+      "contentKind": "text",
+      "text": "Microsoft New Future of Work Report\nMicrosoft New Future of Work Report aka.ms/nfw",
+      "neighbors": [
+        {
+          "chunkIndex": 0,
+          "text": "Microsoft New Future of Work Report 2025\nMicrosoft New Future of Work Report 2025 A summary of recent research from Microsoft and around the world that can help us create a new and better single-report-library with AI."
+        },
+        {
+          "chunkIndex": 2,
+          "text": "Editors and Authors\nEditors and Authors Editors: Jenna Butler (Principal Applied Research Scientist), Sonia Jaffe (Principal Researcher), Rebecca Jan\u00dfen (Senior Applied Scientist), Nancy Baym (Partner Research Manager), Brent Hecht (Partner Director of Applied Research), Jake Hofman (Senior Principal Researcher), Sean Rintel (Principal Research Sciences Manager), Bahar Sarrafzadeh (Principal Applied Research Scientist), Abigail Sellen (Distinguished Scientist), Mihaela Vorvoreanu (Principal Applied Scientist), Jaime Teevan (Chief Scientist and Technical Fellow). Authors: Mohammed Alsobay, Liz Ankrah, Nancy Baym, Stephanie Beers, Megan Benzing, Mia Bruch, Zana Bu\u00e7inca, Jenna Butler, Mar Carpanelli, Amelia Cole, Scott Counts, Madeleine Daepp, Justin Edwards, Alex Farach, Dan Goldstein, Mary L. Gray, Brent Hecht, Javier Hernandez, Jake Hofman, Eric Horvitz, Nicole Immorlica, Kori Inkpen, Shamsi Iqbal, Sonia Jaffe, Manasa Jagadeesh, Rebecca Jan\u00dfen, Sian Lindley, Brendan Lucier, Nic Marquardt, Mercy Muchai, Ambrita Nand, Alexandra Olteanu, Jacki O'Neill, Max Peterschmidt, Christian Poelitz, Rabeeza, Nathalie Riche, Sean Rintel, Advait Sarkar, Bahar Sarrafzadeh, Sunayana Sitaram, Amanda Snellinger, Jina Suh, John Tang, Lev Tankelevitch, Jaime Teevan, Kiran Tomlinson, Anne Trapasso, Adam Troy, Gaurav Verma, Mihaela Vorvoreanu, Jack Williams, Jordana Young, Ben Zorn."
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 6,
+      "chunkId": "combined-library-pdf-document:1:5",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 3
+      },
+      "heading": "Welcome to the 2025 Microsoft New Future of Work Report!",
+      "contentKind": "text",
+      "text": "Welcome to the 2025 Microsoft New Future of Work Report!\nWelcome to the 2025 Microsoft New Future of Work Report! As you sit down to read the 2025 New Future of Work report, it's worth pausing to consider the thread that ties the past five years of reports together. The inaugural New Future of Work report, published in 2021, focused on new ways people could work without relying on colocation as a key productivity tool. The second, in 2022, centered on the reintroduction of physical offices and the emergence of hybrid work. In 2023, we explored how large language models could reshape everyday work, and, in 2024, how those advances moved from promise to real-world impact. Each year, as I've written this introduction, I've found myself saying that the previous year marked a once-in-a- lifetime generational shift. But after five years, it's clear that the reports aren't capturing a series of separate revolutions. Rather, they are chapters in a single story of the digital evolution of collaboration, each representing a phase that builds on, and is enabled by, what came before. Last year's report highlighted research showing that Al delivers substantial gains in individual productivity. The next frontier, covered in this year's report, is collective productivity: how teams, organizations, and communities can get better together. Al can bridge gaps of time, distance, and scale, but only if built correctly. We must design Al to support shared goals, group context, and the norms of collaboration, and this requires not just new tools but new ways of working. Microsoft's mission to empower every person and every organization on the planet to achieve more remains a stable north star as the terrain shifts. If the past five years taught us anything, it's that the single-report-library is not something that happens to us, it's something we create together, as a research community, as an industry, and as a public. As always, we invite you to join that effort, approaching it with curiosity, intentionality, and guided by evidence, so the next chapter of work is better for everyone. - Jaime Teevan, Chief Scientist and Technical Fellow",
+      "neighbors": [
+        {
+          "chunkIndex": 4,
+          "text": "Referencing this report:\nMicrosoft New Future of Work Report aka.ms/nfw"
+        },
+        {
+          "chunkIndex": 6,
+          "text": "Welcome to the 2025 Microsoft New Future of Work Report!\nMicrosoft New Future of Work Report aka.ms/nfw"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 7,
+      "chunkId": "combined-library-pdf-document:1:4",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 3
+      },
+      "heading": "Referencing this report:",
+      "contentKind": "text",
+      "text": "Referencing this report:\nMicrosoft New Future of Work Report aka.ms/nfw",
+      "neighbors": [
+        {
+          "chunkIndex": 3,
+          "text": "Referencing this report:\nReferencing this report: \u00b7 On social media, please include the report URL (https://aka.ms/nfw2025). \u00b7 In academic publications, please cite as: Butler, J., Jaffe, S., Jan\u00dfen, R., Baym, N., Hecht, B., Hofman, J., Rintel, S., Sarrafzadeh, B., Sellen, A., M., Vorvoreanu, Teevan., J. (Eds.). Microsoft New Future of Work Report 2025. Microsoft Research Tech Report MSR- TR-2025-58 (https://aka.ms/nfw2025), 2025. Some of the information in this document relates to pre-released content which may be subsequently modified. Microsoft makes no warranties, express or implied, with respect to the information provided here. This document is provided \"as-is\". Information and views expressed in this document, including URL and other Internet Web site references, may change without notice. Some examples depicted herein are provided for illustration only and are fictitious. No real association or connection is intended or should be inferred. This document does not provide you with any legal rights to any intellectual property in any Microsoft product. @ 2025 Microsoft. All rights reserved. 2"
+        },
+        {
+          "chunkIndex": 5,
+          "text": "Welcome to the 2025 Microsoft New Future of Work Report!\nWelcome to the 2025 Microsoft New Future of Work Report! As you sit down to read the 2025 New Future of Work report, it's worth pausing to consider the thread that ties the past five years of reports together. The inaugural New Future of Work report, published in 2021, focused on new ways people could work without relying on colocation as a key productivity tool. The second, in 2022, centered on the reintroduction of physical offices and the emergence of hybrid work. In 2023, we explored how large language models could reshape everyday work, and, in 2024, how those advances moved from promise to real-world impact. Each year, as I've written this introduction, I've found myself saying that the previous year marked a once-in-a- lifetime generational shift. But after five years, it's clear that the reports aren't capturing a series of separate revolutions. Rather, they are chapters in a single story of the digital evolution of collaboration, each representing a phase that builds on, and is enabled by, what came before. Last year's report highlighted research showing that Al delivers substantial gains in individual productivity. The next frontier, covered in this year's report, is collective productivity: how teams, organizations, and communities can get better together. Al can bridge gaps of time, distance, and scale, but only if built correctly. We must design Al to support shared goals, group context, and the norms of collaboration, and this requires not just new tools but new ways of working. Microsoft's mission to empower every person and every organization on the planet to achieve more remains a stable north star as the terrain shifts. If the past five years taught us anything, it's that the single-report-library is not something that happens to us, it's something we create together, as a research community, as an industry, and as a public. As always, we invite you to join that effort, approaching it with curiosity, intentionality, and guided by evidence, so the next chapter of work is better for everyone. - Jaime Teevan, Chief Scientist and Technical Fellow"
+        }
+      ],
+      "image": null
+    },
+    {
+      "rank": 8,
+      "chunkId": "combined-library-pdf-document:1:8",
+      "imageId": null,
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 5
+      },
+      "heading": "This report is a product of Microsoft's New Future of Work Initiative",
+      "contentKind": "text",
+      "text": "This report is a product of Microsoft's New Future of Work Initiative\nMicrosoft New Future of Work Report aka.ms/nfw",
+      "neighbors": [
+        {
+          "chunkIndex": 7,
+          "text": "This report is a product of Microsoft's New Future of Work Initiative\nThis report is a product of Microsoft's New Future of Work Initiative Microsoft has shaped information work for over 50 years and the New Future of Work (NFW) initiative has helped it navigate the past five years of profound transformation. While the initiative was born out of the COVID-19 pandemic and subsequent shifts to remote and hybrid work, since 2023 it has focused on the incorporation and growing role of tools powered by large AI models. Throughout this transformative period, the NFW initiative has brought together researchers from across Microsoft to conduct primary research and synthesize existing findings from the literature. The goal is not merely to predict what changes are coming, but to actively create a new single-report-library that is equitable, inclusive, meaningful, and productive. The fifth edition of the annual NFW report represents another year of research and analysis, adding to the growing body of knowledge on Al and work. The evidence and insights presented here are not monolithic and represent contributing researchers' perspectives rather than Microsoft's corporate views. Additional research papers, practical guides, and white papers are available at: aka.ms/nfw. Overview Workstreams Publications Videos News & features The New Future of Work is a cross-company research initiative dedicated to creating solutions for a single-report-library that is meaningful, productive, and equitable. It began during the pandemic in response to an urgent need to understand remote work practices. When many people returned to the office, the focus shifted to supporting the hybrid work transition. Then in 2023, another generational shift in work occurred when language models made the leap from the lab into the real world, a shift that could make the changes to remote and hybrid work look small by comparison. The single-report-library with Al is not a forgone conclusion, and this initiative exists to not just study work with Al, but to help Microsoft build a new single-report-library with Al that empowers every person on the planet. This site features research from the initiative that has been published in peer-reviewed scientific venues, as well as resources to help you navigate a rapidly changing work environment and thrive in the age of Al. We recently published our 2024 Report that summarizes some of the exciting work in this space. Read the report > aka.ms/nfw 4"
+        },
+        {
+          "chunkIndex": 9,
+          "text": "Report overview\nReport overview This report provides research-backed insights into how AI is (or sometimes, should be) shaping work. Some of the questions it addresses include: \u00b7 Adoption and Usage: What changes are occurring in adoption and usage? What are the drivers and challenges? What are the gaps? \u00b7 Impact on Work and Labor Markets: How is Al impacting work and productivity? How are jobs evolving? Is generative Al affecting employment and wages? Where might agents reshape markets? What roles do automation and augmentation play? \u00b7 Human-Al Collaboration: How are the ways people interact with Al changing? How can human-Al collaboration be improved? How does Al use differ across modalities and time frames? . Al for Teamwork: How can Al support teams as well as individuals? What role can Al play in team settings? What is needed to effectively integrate Al into group workflows? \u00b7 Thinking, Learning, and Psychological Influences: What are the effects of Al on cognition and thinking? Can Al be designed not just to create useful output, but to make the people who work with it smarter? How can AI serve as an effective classroom tool? Is it possible to measure psychological or well-being impacts from Al? \u00b7 Specific Roles and Industries: How is Al changing work for software engineers, program managers, researchers, and other professions? \u00b7 External Voices: What do leading scholars outside of Microsoft think are the most critical topics in this space? 5"
+        }
+      ],
+      "image": null
+    }
+  ]
+}

@@ -24,6 +24,7 @@ import logging
 import re
 import time
 import uuid
+from collections import Counter
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any, Protocol
@@ -131,6 +132,7 @@ class SearchRequest:
     include_neighbors: bool = False
     filters: SearchFilters = field(default_factory=SearchFilters)
     filters_applied: Mapping[str, Any] = field(default_factory=dict)  # coverage.filtersApplied
+    distinct_documents: bool = False
 
 
 def fetch_size(top: int) -> int:
@@ -238,7 +240,7 @@ class Searcher:
             [vector] = await self.embedder.embed([request.query])
         embedding_ms = (time.perf_counter() - embedding_started) * 1000
         terms = lexical_terms(request.query) if self.mode == "hybrid" else []
-        fetch = fetch_size(request.top)
+        fetch = MAX_FETCH if request.distinct_documents else fetch_size(request.top)
         rendered = render_search(library_id, to_float16_query(vector), terms, request.filters, fetch)
         cosmos_started = time.perf_counter()
         candidates = await self.chunks.search(library_id, rendered, cost)
@@ -249,7 +251,15 @@ class Searcher:
             *(self.documents.get(library_id, d, raw_response_hook=cost) for d in document_ids)
         )
         documents = {d: r for d, r in zip(document_ids, records, strict=True) if r is not None}
-        kept = filter_visible(candidates, documents, request.top)
+        visible = filter_visible(candidates, documents, fetch)
+        passage_counts = Counter(c["documentId"] for c in visible)
+        if request.distinct_documents:
+            best = {}
+            for candidate in visible:
+                best.setdefault(candidate["documentId"], candidate)
+            kept = list(best.values())[: request.top]
+        else:
+            kept = visible[: request.top]
         hidden = sum(1 for c in candidates if not is_visible(c, documents.get(c["documentId"])))
         # Only a full window can be hiding more visible matches; a short one returned them all.
         underfilled = len(kept) < request.top and hidden > 0 and len(candidates) == fetch
@@ -265,6 +275,11 @@ class Searcher:
                 "imageId": c["id"] if c.get("contentKind") == "image" else None,
                 "documentId": c["documentId"],
                 "generation": c["generation"],
+                "documentTokens": (documents[c["documentId"]].get("fullText") or {}).get("tokenCount"),
+                "representation": "extracted_sections"
+                if (documents[c["documentId"]].get("fullText") or {}).get("generation") == c["generation"]
+                else "indexed_chunks",
+                **({"passagesInWindow": passage_counts[c["documentId"]]} if request.distinct_documents else {}),
                 "fileName": c.get("fileName"),
                 "location": c.get("location") or {},
                 "heading": c.get("heading"),
@@ -296,7 +311,14 @@ class Searcher:
             "coverage": {
                 "searched": f"{library.get('name')} ({document_count} documents)",
                 "filtersApplied": dict(request.filters_applied),
-                "notes": filter_notes(request.filters, library) + ([underfill_note(hidden)] if underfilled else []),
+                "notes": filter_notes(request.filters, library)
+                + ([underfill_note(hidden)] if underfilled else [])
+                + (
+                    ["One best passage per document from at most 40 ranked passages; not an exhaustive file set."]
+                    if request.distinct_documents
+                    else []
+                ),
+                "distinctDocuments": request.distinct_documents,
                 "resultCount": len(results),
                 "disposition": disposition(len(results)),
             },

@@ -1,5 +1,6 @@
 """Text-first publication, resumable enrichment and same-generation snapshot safety."""
 
+import asyncio
 import io
 
 import pytest
@@ -74,10 +75,14 @@ async def test_other_uploads_in_same_library_publish_text_before_queued_images(c
     assert doc(client, lib, first)["imageStatus"] == doc(client, lib, second)["imageStatus"] == "ready"
 
 
-async def test_enrichment_loads_one_stored_crop_at_a_time_without_uploading_it_again(ctx, monkeypatch):
+@pytest.mark.parametrize("concurrency", [1, 2, 3])
+async def test_enrichment_bounds_loaded_crops_preserves_order_and_never_reuploads(ctx, monkeypatch, concurrency):
     from docx import Document
 
+    from fli.worker import handlers
+
     client, services, lib, worker = ctx
+    worker.vision_concurrency = concurrency
     source = Document()
     source.add_heading("Regional charts", 1)
     source.add_paragraph("Compare regional growth and productivity using these charts.")
@@ -90,14 +95,30 @@ async def test_enrichment_loads_one_stored_crop_at_a_time_without_uploading_it_a
     await worker.handle(services.queue.sent.pop(0)[1])
     prefix = f"{lib}/{document}/images/1/"
     downloaded = []
+    in_flight = peak = 0
+    completed = []
     original_download, original_create = services.blobs.download, services.blobs.create
+    original_describe = handlers.describe_cached
 
     async def download(path):
+        nonlocal in_flight, peak
         if path.startswith(prefix):
-            # The previous crop must already have been described before another is loaded.
-            assert len(worker.vision.calls) == len(downloaded)
+            in_flight += 1
+            peak = max(peak, in_flight)
+            assert in_flight <= concurrency
             downloaded.append(path)
         return await original_download(path)
+
+    async def describe(model, visual, *args):
+        nonlocal in_flight
+        try:
+            # Finish later source images first to expose accidental completion-order IDs.
+            await asyncio.sleep((6 - visual.location["paragraph"]) * 0.01)
+            result = await original_describe(model, visual, *args)
+            completed.append(visual.location["paragraph"])
+            return result
+        finally:
+            in_flight -= 1
 
     async def create(path, data, content_type):
         assert not path.startswith(prefix), "prepared crops must not be uploaded again during enrichment"
@@ -105,8 +126,17 @@ async def test_enrichment_loads_one_stored_crop_at_a_time_without_uploading_it_a
 
     monkeypatch.setattr(services.blobs, "download", download)
     monkeypatch.setattr(services.blobs, "create", create)
+    monkeypatch.setattr(handlers, "describe_cached", describe)
     await drain(services, worker)
     assert len(downloaded) == len(worker.vision.calls) == doc(client, lib, document)["imageCount"] == 3
+    assert peak == concurrency and in_flight == 0
+    images = [s for s in read(client, lib, document).json()["documents"][0]["sections"] if s.get("image")]
+    assert [s["location"]["paragraph"] for s in images] == [3, 4, 5]
+    assert [int(s["imageId"].rsplit(":", 1)[1]) for s in images] == sorted(
+        int(s["imageId"].rsplit(":", 1)[1]) for s in images
+    )
+    if concurrency > 1:
+        assert completed != sorted(completed)
 
 
 async def test_final_image_failure_keeps_text_and_reports_incomplete_visual_coverage(ctx):

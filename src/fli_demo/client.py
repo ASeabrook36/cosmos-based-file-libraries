@@ -124,10 +124,18 @@ class IndexClient:
         return self.update_document(library_id, document_id, **body)
 
     def search(
-        self, library_id: str, agent_id: str, query: str, top: int = 8, filters: dict[str, Any] | None = None
+        self,
+        library_id: str,
+        agent_id: str,
+        query: str,
+        top: int = 8,
+        filters: dict[str, Any] | None = None,
+        distinct_documents: bool = False,
     ) -> dict[str, Any]:
         """The library id is the path's, the agent id the header's: never a model-supplied argument."""
         body: dict[str, Any] = {"query": query, "top": top, "includeNeighbors": True}
         if filters:
             body["filters"] = filters
+        if distinct_documents:
+            body["distinctDocuments"] = True
         return self._call("POST", f"/v1/libraries/{library_id}/search", json=body, headers={"X-Agent-Id": agent_id})

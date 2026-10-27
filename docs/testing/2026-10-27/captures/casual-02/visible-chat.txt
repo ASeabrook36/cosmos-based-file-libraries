@@ -1,0 +1,87 @@
+Send retrieved images to the model
+
+Chat
+
+there was a cool blue chart about human work vs machine work. can you remember whether human work that should be automated was bigger than the thing for machine work?
+
+Yes — that’s the concentric-blue diagram in the Microsoft New Future of Work Report (2025). Here’s the figure from the report:
+
+Nearby caption (inferred): Opportunities for augmenting humans are far greater than opportunities to automate existing tasks (Adapted from Brynjolfsson, 2022). — New-Future-Of-Work-Report-2025.pdf (page 23)
+
+What it shows (New-Future-Of-Work-Report-2025.pdf, page 23):
+
+The smallest central circle is labeled "Human tasks that machines should automate."
+
+A larger inner ring is labeled "Human tasks that machines could automate."
+
+The largest outer circle is "Tasks that humans can do."
+
+A pointer to the right labels "New tasks that humans can do with the help of machines."
+
+So no — the "human tasks that machines should automate" area is smaller than the other human-task areas (it’s the smallest circle). The figure’s point (captioned “Opportunities for augmenting humans are far greater than opportunities to automate existing tasks”) is that augmentation/new tasks with machines is a much bigger opportunity than simply automating existing human tasks (New-Future-Of-Work-Report-2025.pdf, p.23).
+
+Other image candidates (3; not selected in this answer)
+
+Cosmos RU · retrieval
+
+21.50
+
+Retrieval time
+
+0.88 s
+
+Total response time
+
+14.64 s
+
+Model tokens
+
+11,106
+
+Actual input: 9,881 tokens · output: 1,225 tokens. Cumulative across model calls; full-document size estimates are separate.
+
+Performance breakdown
+
+Tool called: search_library_combined_library → combined-library · 880 ms · 21.5 RU
+
+i can't remember, in the garden is there a stand pipe in plot for? can't remember which ones had them. i thought that one was on the waiting list too and someone was asking about whether there's a pipe
+
+01-allotment-seasonal-planting-guide.docx (paragraph 4)
+
+Short answer, from the site plan in 01-allotment-seasonal-planting-guide.docx (image in the Early spring section / paragraph 4):
+
+Standpipes (blue "W") are shown inside Plot 1 and a second "W" just outside the right-hand edge of the lower row — i.e., not inside Plots 5 or 8.
+
+Amber plots 5 and 8 are the ones on the waiting list (note under the image: "Amber plots 5 and 8: waiting list.").
+
+So the plot(s) on the waiting list (5 and 8) do not show a standpipe on that map; the nearest marked taps are at Plot 1 and the external marker at the right-hand side of the lower row (01-allotment-seasonal-planting-guide.docx, paragraph 4).
+
+Cosmos RU · retrieval
+
+29.37
+
+Retrieval time
+
+1.83 s
+
+Total response time
+
+29.31 s
+
+Model tokens
+
+30,627
+
+Actual input: 28,488 tokens · output: 2,139 tokens. Cumulative across model calls; full-document size estimates are separate.
+
+Performance breakdown
+
+Tool called: search_library_combined_library → combined-library · 615 ms · 9.56 RU
+
+Tool called: search_library_combined_library → combined-library · 664 ms · 9.56 RU
+
+Tool called: find_documents_library_combined_library → combined-library · 178 ms · 5.69 RU
+
+Tool called: read_documents_library_combined_library → combined-library · 372 ms · 4.56 RU
+
+entry area (settable) Ask a question

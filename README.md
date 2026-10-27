@@ -6,6 +6,8 @@
 
 A search service that stores agent file libraries in Azure Cosmos DB instead of Azure AI Search.
 
+For cloud-only continuation, start with [HANDOFF.md](HANDOFF.md). The [portable test/evidence pack](docs/testing/2026-10-27/README.md) includes the exact corpus, questions, sanitized observed answers/traces and review figures.
+
 - Admins and users upload files into libraries.
 - Cosmos stores searchable text passages and image descriptions, vectors and metadata. Blob holds originals, complete extracted text and image/caption assets; selected figures can appear inline with an answer.
 - Agents combine passage search, complete-document reads and stored PDF figure reads through tools the platform attaches to them.
@@ -286,3 +288,7 @@ These invented fixtures are not the real-document demo corpus and must not be us
 With the API and worker running and deployment settings loaded, follow the [image smoke-check instructions](docs/image-retrieval.md#processing-isolation-and-verification). Keep the `--state` file outside the repository; repository records contain only sanitized counts, hashes, metrics and outcomes. The user-supplied dinosaur exchange remains in the [image guide header](docs/image-retrieval.md).
 
 Before committing, run the local suite, lint/format checks above and `python scripts/check_reference_privacy.py`. An optional private `--deny-file` strengthens the environment-identifier check. CI runs Python 3.12 and 3.14 without Azure credentials; live records supplement those tests. See the [final image review](docs/consults/2026-10-27-image-readiness-review.md) for the implementation decisions, completed checks and remaining work.
+
+Retrieval efficiency follow-ups add parent-file size hints and optional document grouping in search, interleave figures in new complete-read snapshots, compact demo model evidence, and describe images concurrently within the existing quota. They preserve whole-file completeness, captions, text-first publication and library isolation. See the [review decisions and validation](docs/consults/2026-10-27-retrieval-followups.md). Production API view changes and recall-sensitive embedding changes remain separate decisions/evaluations.
+
+Subsequent human-run paired and casual tests exposed remaining agent-integration gaps, including inappropriate document grouping, ambiguous visual references and unnecessary follow-up requests before showing useful figures. See the [2026-10-27 test review](docs/consults/2026-10-27-agent-retrieval-test-review.md) for recorded evidence and the [proposed retrieval strategy](docs/consults/2026-10-27-agent-retrieval-strategy.md) for the reviewable next steps. The strategy is a proposal; its additional capabilities are not yet implemented.

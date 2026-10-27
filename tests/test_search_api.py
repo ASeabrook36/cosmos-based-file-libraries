@@ -415,3 +415,52 @@ async def test_a_filtered_search_returns_only_matching_documents(ctx):
     body = search(client, lib, top=20, filters={"tags": ["region=EMEA"], "period": {"from": "2025-11-01"}}).json()
     assert body["results"] and {r["fileName"] for r in body["results"]} == {"q4.md"}
     assert {r["fileName"] for r in search(client, lib, top=20).json()["results"]} == {"q4.md", "apac.md", "notes.md"}
+
+
+async def test_document_grouping_keeps_best_visible_rank_reports_size_and_uses_no_extra_reads(ctx, monkeypatch):
+    from fli.query import check_query
+
+    client, s, worker = ctx
+    lib, first = await library_with_document(client, s, worker)
+    uploaded = client.post(f"/v1/libraries/{lib}/documents", files={"file": ("second.md", TEXT.encode())}).json()
+    while s.queue.sent:
+        await worker.handle(s.queue.sent.pop(0)[1])
+    second = uploaded["documentId"]
+    rows = list(s.chunks.items.values())
+    first_rows = [r for r in rows if r["documentId"] == first]
+    second_row = next(r for r in rows if r["documentId"] == second)
+    reads = []
+    original_get = s.documents.get
+
+    async def get(library, document, **kwargs):
+        reads.append(document)
+        return await original_get(library, document, **kwargs)
+
+    async def ranked(library_id, query, cost):
+        check_query(query.sql)
+        assert query.sql.startswith("SELECT TOP 40 ")
+        assert library_id == lib
+        # Superseded generation cannot win a file's representative slot or its count.
+        return [{**first_rows[0], "generation": 2}, *first_rows[:3], second_row]
+
+    monkeypatch.setattr(s.documents, "get", get)
+    monkeypatch.setattr(s.reader, "search", ranked)
+    result = search(client, lib, top=2, distinctDocuments=True).json()
+    assert [r["documentId"] for r in result["results"]] == [first, second]
+    assert result["results"][0]["chunkId"] == first_rows[0]["id"]
+    assert [r["passagesInWindow"] for r in result["results"]] == [3, 1]
+    assert sorted(reads) == sorted([first, second])
+    for row in result["results"]:
+        record = await original_get(lib, row["documentId"])
+        assert row["documentTokens"] == record["fullText"]["tokenCount"]
+        assert row["representation"] == "extracted_sections"
+    assert result["coverage"]["distinctDocuments"]
+    assert any("not an exhaustive" in n for n in result["coverage"]["notes"])
+
+
+async def test_grouped_search_keeps_personal_binding_and_rejects_nonboolean_option(ctx):
+    client, s, worker = ctx
+    lib, _ = await library_with_document(client, s, worker, kind="personal")
+    assert search(client, lib, headers={"X-Agent-Id": "other"}, distinctDocuments=True).status_code == 403
+    assert search(client, lib, distinctDocuments="true").status_code == 400
+    assert search(client, lib).json()["results"][0]["documentTokens"] is not None

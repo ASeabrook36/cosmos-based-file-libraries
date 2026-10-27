@@ -1,0 +1,92 @@
+{
+  "check": "casual-retrieval-friction",
+  "date": "2026-10-27",
+  "caseCount": 3,
+  "contextBudget": 48000,
+  "priorConversationTurns": 2,
+  "runs": [
+    {
+      "case": 1,
+      "modelCalls": 13,
+      "toolCalls": 12,
+      "operations": [
+        "search",
+        "search",
+        "search",
+        "search",
+        "search",
+        "search",
+        "search",
+        "read",
+        "search",
+        "search",
+        "search",
+        "search"
+      ],
+      "inputTokens": 101715,
+      "outputTokens": 5248,
+      "retrievalRU": 321.88,
+      "responseMs": 105963.1579159759,
+      "retrievalMs": 9817.4556652084,
+      "quotaWaitMs": 30004.0
+    },
+    {
+      "case": 2,
+      "modelCalls": 2,
+      "toolCalls": 1,
+      "operations": [
+        "search"
+      ],
+      "inputTokens": 14864,
+      "outputTokens": 1837,
+      "retrievalRU": 13.73,
+      "responseMs": 16272.700750036165,
+      "retrievalMs": 1044.132374925539,
+      "quotaWaitMs": 0.0
+    },
+    {
+      "case": 3,
+      "modelCalls": 2,
+      "toolCalls": 1,
+      "operations": [
+        "search"
+      ],
+      "inputTokens": 16444,
+      "outputTokens": 1985,
+      "retrievalRU": 13.92,
+      "responseMs": 20297.120666014962,
+      "retrievalMs": 994.6656250394881,
+      "quotaWaitMs": 0.0
+    }
+  ],
+  "findings": {
+    "groupedSearchesInFirstTurn": 11,
+    "resultsPerGroupedSearch": 1,
+    "roundLimitReached": true,
+    "fullReadRefused": true,
+    "storedRelevantTextAndImagesVerified": true,
+    "followUpImageCandidatesPerSearch": 8,
+    "finalSelectedFigures": 4,
+    "proactiveFigureSelectionRequiredUserFollowUps": true,
+    "groundingAndRelevanceIssuesObserved": true
+  },
+  "diagnosticProbe": {
+    "originalQueryGroupedCount": 1,
+    "originalQueryPassageCount": 8,
+    "ungroupingAloneSolvedQuestion": false,
+    "focusedSearchRetrievedLaterRelevantContent": true,
+    "targetedMemoryPassageIndexedAndRetrieved": true,
+    "serviceFullReadSucceededWithLargerBudget": true,
+    "projectedReadTokens": 97683,
+    "textSectionTokens": 43868,
+    "imageDescriptionTokens": 39639,
+    "separateFromOriginalRun": true
+  },
+  "limitations": [
+    "One natural multi-turn sequence, not broad recall or a controlled model comparison.",
+    "Independently generated descriptions and model choices can affect ranking and answers.",
+    "Original raw model/tool exchanges are not retained in the metrics journal; visible answers/traces were captured privately.",
+    "Diagnostic requests were read-only and are excluded from original-run metrics."
+  ],
+  "changesDuringReview": false
+}

@@ -1,0 +1,54 @@
+{
+  "library": {
+    "libraryId": "combined-library",
+    "name": "combined-library"
+  },
+  "coverage": {
+    "searched": "combined-library (4 documents)",
+    "filtersApplied": {
+      "tags": [
+        "initiative=New Future of Work",
+        "organization=Microsoft",
+        "topic=AI and work",
+        "year=2025"
+      ],
+      "contentKinds": [
+        "text",
+        "image"
+      ]
+    },
+    "notes": [
+      "1 visual candidates were skipped by configured size, format or per-document limits; search does not cover those visuals.",
+      "One best passage per document from at most 40 ranked passages; not an exhaustive file set."
+    ],
+    "distinctDocuments": true,
+    "resultCount": 1,
+    "disposition": "thin"
+  },
+  "results": [
+    {
+      "rank": 1,
+      "chunkId": "combined-library-pdf-document:1:210",
+      "imageId": "combined-library-pdf-document:1:210",
+      "documentId": "combined-library-pdf-document",
+      "generation": 1,
+      "documentTokens": 103544,
+      "representation": "extracted_sections",
+      "passagesInWindow": 40,
+      "fileName": "New-Future-Of-Work-Report-2025.pdf",
+      "location": {
+        "page": 1
+      },
+      "heading": "Microsoft New Future of Work Report 2025",
+      "contentKind": "image",
+      "text": "Image from New-Future-Of-Work-Report-2025.pdf, figure 1.1, page 1, under 'Microsoft New Future of Work Report 2025': Microsoft logo on a black rectangular background: a 2x2 grid of colored squares at left (top-left red, top-right green, bottom-left blue, bottom-right yellow) and the word \"Microsoft\" in white sans-serif type to the right. No additional labels, numbers, axes or legends are present.\nNearby source text: Microsoft New Future of Work Report 2025\n\nA summary of recent research from Microsoft and around the world that can help us create a new and better single-report-library with AI.",
+      "neighbors": [],
+      "image": {
+        "kind": "pdf_figure",
+        "caption": null,
+        "captionStatus": "not_identified",
+        "captionAssociation": null
+      }
+    }
+  ]
+}
