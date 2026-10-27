@@ -37,3 +37,5 @@ Runtime library/agent/document identifiers and user-chosen test-agent/library la
 The compact/full-response artifacts preserve the distinctions between generated descriptions, source captions, source body text and model interpretation. Do not turn a generated description or an observed model answer into a verified source fact. Read the report's actual pages before making statistical claims. Source assets retain their original attribution; no new reuse permission is asserted.
 
 [manifest.json](manifest.json) provides byte sizes/hashes for exported artifacts. Summary records are in [records](../../../records/README.md); the day review links their measured scope and caveats. Exact cloud runtime credentials/IDs are intentionally unnecessary: obtain fresh authorized settings and resolve fresh IDs when replaying against a deployment.
+
+Subsequent user-authorized implementation and [four iterative frozen-corpus replays](agent-fixes/README.md) preserve the new capabilities, actual answers, measured costs, regressions and remaining model-quality gaps. See the [current contract](../../agent-retrieval.md) and E49.

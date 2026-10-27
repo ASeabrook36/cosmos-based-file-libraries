@@ -32,6 +32,7 @@ from typing import Any, Protocol
 from fli.blobs import BlobStore
 from fli.embedding import Embedder, measure_embeddings
 from fli.errors import ApiError
+from fli.evidence import reference
 from fli.generation import filter_visible, is_visible
 from fli.ids import image_prefix
 from fli.metrics import record as record_metric
@@ -65,6 +66,9 @@ class QueryCost:
 
 
 class ChunkReader(Protocol):
+    async def locations(
+        self, library_id: str, document_id: str, generation: int, indexes: Sequence[int], cost: QueryCost
+    ) -> list[Record]: ...
     async def document(
         self, library_id: str, document_id: str, generation: int, limit: int, cost: QueryCost
     ) -> list[Record]: ...
@@ -77,6 +81,26 @@ class ChunkReader(Protocol):
 class CosmosChunkReader:
     def __init__(self, container: Any) -> None:  # azure.cosmos.aio.ContainerProxy for "chunks"
         self._c = container
+
+    async def locations(self, library_id, document_id, generation, indexes, cost):
+        if not 1 <= len(indexes) <= 20 or any(type(i) is not int or not 0 <= i < 100_000 for i in indexes):
+            raise ValueError("invalid passage source selection")
+        names = [f"@i{i}" for i in range(len(indexes))]
+        sql = (
+            f"SELECT TOP {len(indexes)} c.chunkIndex, c.location FROM c WHERE c.libraryId = @libraryId "
+            "AND c.documentId = @documentId AND c.generation = @generation "
+            f"AND c.chunkIndex IN ({', '.join(names)})"
+        )
+        params = [
+            {"name": "@libraryId", "value": library_id},
+            {"name": "@documentId", "value": document_id},
+            {"name": "@generation", "value": generation},
+            *({"name": n, "value": i} for n, i in zip(names, indexes, strict=True)),
+        ]
+        items = self._c.query_items(
+            sql, parameters=params, partition_key=[library_id, document_id], raw_response_hook=cost
+        )
+        return [item async for item in items]
 
     async def document(
         self, library_id: str, document_id: str, generation: int, limit: int, cost: QueryCost
@@ -133,6 +157,7 @@ class SearchRequest:
     filters: SearchFilters = field(default_factory=SearchFilters)
     filters_applied: Mapping[str, Any] = field(default_factory=dict)  # coverage.filtersApplied
     distinct_documents: bool = False
+    document: Mapping[str, Any] | None = None
 
 
 def fetch_size(top: int) -> int:
@@ -235,13 +260,33 @@ class Searcher:
         check_search_allowed(library_id, library, agent_id)
         assert library is not None
 
+        scope = None
+        if request.document:
+            scope = await self.documents.get(library_id, request.document["documentId"], raw_response_hook=cost)
+            if scope is None or scope.get("status") == "deleting":
+                raise ApiError(404, "document_not_found", "document is not in this library")
+            if scope.get("activeGeneration") is None:
+                raise ApiError(409, "document_not_ready", "document has no active text")
+            if any(
+                request.document.get(k) is not None and request.document[k] != scope.get(v, 0)
+                for k, v in (("generation", "activeGeneration"), ("contentRevision", "contentRevision"))
+            ):
+                raise ApiError(409, "document_changed", "selected document changed; retrieve again")
         embedding_started = time.perf_counter()
         with measure_embeddings() as embedding_usage:
             [vector] = await self.embedder.embed([request.query])
         embedding_ms = (time.perf_counter() - embedding_started) * 1000
         terms = lexical_terms(request.query) if self.mode == "hybrid" else []
         fetch = MAX_FETCH if request.distinct_documents else fetch_size(request.top)
-        rendered = render_search(library_id, to_float16_query(vector), terms, request.filters, fetch)
+        rendered = render_search(
+            library_id,
+            to_float16_query(vector),
+            terms,
+            request.filters,
+            fetch,
+            scope["id"] if scope else None,
+            scope["activeGeneration"] if scope else None,
+        )
         cosmos_started = time.perf_counter()
         candidates = await self.chunks.search(library_id, rendered, cost)
         cosmos_ms = (time.perf_counter() - cosmos_started) * 1000
@@ -275,6 +320,9 @@ class Searcher:
                 "imageId": c["id"] if c.get("contentKind") == "image" else None,
                 "documentId": c["documentId"],
                 "generation": c["generation"],
+                "contentRevision": documents[c["documentId"]].get("contentRevision", 0),
+                "evidenceId": reference(documents[c["documentId"]], "chunk", c["chunkIndex"]),
+                "sourceScope": c.get("location") or {},
                 "documentTokens": (documents[c["documentId"]].get("fullText") or {}).get("tokenCount"),
                 "representation": "extracted_sections"
                 if (documents[c["documentId"]].get("fullText") or {}).get("generation") == c["generation"]
@@ -295,23 +343,43 @@ class Searcher:
         # Links can require a network round trip. Recheck after fetching evidence so
         # a deletion/replacement during that work cannot publish stale image results.
         image_documents = {c["documentId"] for c in kept if c.get("contentKind") == "image"}
+        if scope:
+            image_documents.add(scope["id"])
         latest_records = await asyncio.gather(
             *(self.documents.get(library_id, document_id, raw_response_hook=cost) for document_id in image_documents)
         )
         for document_id, current in zip(image_documents, latest_records, strict=True):
-            if any(not is_visible(c, current) for c in kept if c["documentId"] == document_id):
+            original = scope if scope and document_id == scope["id"] else documents[document_id]
+            if (
+                current is None
+                or current.get("status") == "deleting"
+                or current.get("activeGeneration") != original.get("activeGeneration")
+                or current.get("contentRevision", 0) != original.get("contentRevision", 0)
+            ):
                 raise ApiError(409, "document_changed", "a document changed during search; retry")
-        if any(c.get("contentKind") == "image" for c in kept):
+        if image_documents:
             check_search_allowed(library_id, await self.libraries.get(library_id, raw_response_hook=cost), agent_id)
         telemetry_id = str(uuid.uuid4())
         total_ms = round((time.perf_counter() - started) * 1000, 1)
         document_count = (library.get("stats") or {}).get("documentCount", 0)
         response = {
             "library": {"libraryId": library_id, "name": library.get("name")},
+            "mode": "semantic_candidates" if request.distinct_documents else "evidence_search",
+            "resultUnit": "documents" if request.distinct_documents else "passages",
+            "documentScope": dict(request.document) if request.document else None,
+            "selectionStatus": ("candidates_found" if results else "no_candidates")
+            if request.distinct_documents
+            else None,
+            "candidateWindow": fetch if request.distinct_documents else None,
             "coverage": {
                 "searched": f"{library.get('name')} ({document_count} documents)",
                 "filtersApplied": dict(request.filters_applied),
-                "notes": filter_notes(request.filters, library)
+                "notes": (
+                    ["Text-only filtering excludes visual descriptions and figures."]
+                    if request.filters.content_kinds == ("text",)
+                    else []
+                )
+                + filter_notes(request.filters, library)
                 + ([underfill_note(hidden)] if underfilled else [])
                 + (
                     ["One best passage per document from at most 40 ranked passages; not an exhaustive file set."]
@@ -354,6 +422,9 @@ class Searcher:
         record_metric(
             "search",
             library_id,
+            mode=response["mode"],
+            resultUnit=response["resultUnit"],
+            documentScoped=bool(request.document),
             agentId=agent_id,
             requestCharge=round(cost.request_charge, 2),
             totalMs=total_ms,

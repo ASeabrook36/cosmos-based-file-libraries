@@ -46,6 +46,11 @@ def matches_filters(chunk: dict, params: dict) -> bool:
     for lo, hi, column in (("@aFrom", "@aTo", "authoredAt"), ("@uFrom", "@uTo", "uploadedAt")):
         if lo in params and not (chunk.get(column) and params[lo] <= chunk[column] < params[hi]):
             return False
+    if any(
+        k in params and chunk.get(col) != params[k]
+        for k, col in (("@documentId", "documentId"), ("@generation", "generation"))
+    ):
+        return False
     tags = [v for k, v in params.items() if re.fullmatch(r"@tag\d+", k)]
     return (
         all(t in chunk.get("facets", []) for t in tags)
@@ -83,6 +88,13 @@ class FakeChunkReader:
             rows = sorted((c for c in rows if c["id"] in rank), key=lambda c: rank[c["id"]])
         top = int(query.sql.split()[2])
         return [{k: c.get(k) for k in FIELDS} for c in rows[:top]]
+
+    async def locations(self, library_id, document_id, generation, indexes, cost):
+        return [
+            {"chunkIndex": c["chunkIndex"], "location": c.get("location") or {}}
+            for (lib, doc, _), c in self.chunks.items.items()
+            if (lib, doc) == (library_id, document_id) and c["generation"] == generation and c["chunkIndex"] in indexes
+        ]
 
     async def document(self, library_id, document_id, generation, limit, cost):
         return [

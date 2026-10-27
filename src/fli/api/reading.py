@@ -3,18 +3,19 @@
 from __future__ import annotations
 
 import time
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Depends, Header, Request
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, StringConstraints, model_validator
 
-from fli.api.search import Filters, Value
+from fli.api.search import DocumentScope, Filters, Value
 from fli.auth import require_caller
+from fli.errors import ApiError
 from fli.metrics import record as record_metric
 from fli.page_images import read_page_images
 from fli.permissions import check_search_allowed
 from fli.reading import DEFAULT_READ_TOKENS, MAX_READ_TOKENS, manifest, read_documents, render_catalog
-from fli.search import QueryCost
+from fli.search import QueryCost, SearchRequest
 from fli.tool import tool_definitions
 
 router = APIRouter(prefix="/v1/libraries/{library_id}", dependencies=[Depends(require_caller)])
@@ -30,6 +31,8 @@ class DocumentFilters(Filters):
 
 class DiscoverBody(BaseModel):
     model_config = ConfigDict(extra="forbid")
+    mode: Literal["catalogue", "semantic_candidates"] = "catalogue"
+    query: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=4000)] | None = None
     filters: DocumentFilters = Field(default_factory=DocumentFilters)
     fileNames: list[Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=255)]] = Field(
         default_factory=list, max_length=20
@@ -39,14 +42,19 @@ class DiscoverBody(BaseModel):
     limit: Annotated[StrictInt, Field(ge=1, le=100)] = 50
 
 
-class Selection(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-    documentId: Value
-    generation: Annotated[StrictInt, Field(ge=1)] | None = None
+class Selection(DocumentScope):
+    sectionIds: list[Value] = Field(default_factory=list, max_length=100)
+    evidenceIds: list[Value] = Field(default_factory=list, max_length=20)
+    pages: list[Annotated[StrictInt, Field(ge=1, le=2000)]] = Field(default_factory=list, max_length=20)
+    slides: list[Annotated[StrictInt, Field(ge=1, le=10000)]] = Field(default_factory=list, max_length=20)
+    paragraphs: list[Annotated[StrictInt, Field(ge=1, le=100000)]] = Field(default_factory=list, max_length=20)
 
 
 class ReadBody(BaseModel):
     model_config = ConfigDict(extra="forbid")
+    mode: Literal["full", "outline", "selected"] = "full"
+    afterSection: Annotated[StrictInt, Field(ge=0, le=100000)] = 0
+    sectionLimit: Annotated[StrictInt, Field(ge=1, le=200)] = 100
     documents: list[Selection] = Field(min_length=1, max_length=20)
     maxTokens: Annotated[StrictInt, Field(ge=1, le=MAX_READ_TOKENS)] = DEFAULT_READ_TOKENS
     includeText: StrictBool = True
@@ -55,16 +63,25 @@ class ReadBody(BaseModel):
     def unique_documents(self) -> ReadBody:
         if len({s.documentId for s in self.documents}) != len(self.documents):
             raise ValueError("documents must have distinct documentIds")
+        for selection in self.documents:
+            has_scope = any(
+                getattr(selection, k) for k in ("sectionIds", "evidenceIds", "pages", "slides", "paragraphs")
+            )
+            if has_scope != (self.mode == "selected"):
+                raise ValueError("source selectors are required only in selected mode")
         return self
 
 
-class ImagesBody(Selection):
-    pages: list[Annotated[StrictInt, Field(ge=1, le=2000)]] = Field(min_length=1, max_length=3)
+class ImagesBody(DocumentScope):
+    pages: list[Annotated[StrictInt, Field(ge=1, le=2000)]] = Field(default_factory=list, max_length=3)
+    imageIds: list[Value] = Field(default_factory=list, max_length=10)
 
     @model_validator(mode="after")
-    def distinct_pages(self):
-        if len(set(self.pages)) != len(self.pages):
-            raise ValueError("pages must be distinct")
+    def distinct_selectors(self):
+        if bool(self.pages) == bool(self.imageIds):
+            raise ValueError("choose pages or imageIds")
+        if len(set(self.pages)) != len(self.pages) or len(set(self.imageIds)) != len(self.imageIds):
+            raise ValueError("selectors must be distinct")
         return self
 
 
@@ -80,6 +97,8 @@ async def images(
         body.documentId,
         body.generation,
         body.pages,
+        image_ids=body.imageIds,
+        content_revision=body.contentRevision,
     )
 
 
@@ -101,6 +120,50 @@ async def discover(
     request: Request,
     x_agent_id: Annotated[str | None, Header()] = None,
 ) -> dict[str, Any]:
+    if body.mode == "semantic_candidates":
+        if not body.query or body.fileNames or body.fileNameContains or body.after:
+            raise ApiError(
+                400, "invalid_request", "semantic candidates need query, without catalogue name/paging selectors"
+            )
+        response = await request.app.state.searcher.search(
+            library_id,
+            x_agent_id,
+            SearchRequest(
+                body.query,
+                min(body.limit, 20),
+                filters=body.filters.to_search(),
+                filters_applied=body.filters.applied(),
+                distinct_documents=True,
+            ),
+        )
+        rows = []
+        for hit in response["results"]:
+            rows.append(
+                {
+                    k: hit[k]
+                    for k in (
+                        "documentId",
+                        "generation",
+                        "contentRevision",
+                        "fileName",
+                        "documentTokens",
+                        "representation",
+                    )
+                }
+            )
+        return {
+            **response,
+            "documents": rows,
+            "disposition": response["selectionStatus"],
+            "coverage": {**response["coverage"], "disposition": response["selectionStatus"]},
+            "results": [],
+            "hasMore": False,
+            "nextAfter": None,
+            "exhaustive": False,
+            "nextAction": "Search evidence within a selected document using document selector.",
+        }
+    if body.query is not None:
+        raise ApiError(400, "invalid_request", "query requires mode=semantic_candidates")
     started = time.perf_counter()
     searcher = request.app.state.searcher
     cost = QueryCost()
@@ -123,6 +186,8 @@ async def discover(
     )
     return {
         "library": {"libraryId": library_id, "name": library.get("name")},
+        "mode": "catalogue",
+        "resultUnit": "documents",
         "documents": [manifest(d) for d in rows],
         "hasMore": more,
         "nextAfter": rows[-1]["id"] if more else None,
@@ -163,4 +228,8 @@ async def read(
         [(s.documentId, s.generation) for s in body.documents],
         body.maxTokens,
         body.includeText,
+        mode=body.mode,
+        scopes={s.documentId: s.model_dump(exclude_none=True, exclude_defaults=True) for s in body.documents},
+        after_section=body.afterSection,
+        section_limit=body.sectionLimit,
     )

@@ -34,7 +34,7 @@ if not agent["libraryIds"]:
     st.warning("This agent has no libraries attached.")
 
 if "chat" not in st.session_state or st.session_state.get("chat_agent") != agent["id"]:
-    st.session_state.update(chat=[], chat_agent=agent["id"], history=[], image_bytes={})
+    st.session_state.update(chat=[], chat_agent=agent["id"], history=[], image_bytes={}, evidence_ledger=[])
 
 
 @st.cache_resource
@@ -185,6 +185,7 @@ if question := st.chat_input("Ask a question"):
             context_token_budget=int(context_budget),
             image_tokens=int(os.environ.get("DEMO_IMAGE_TOKENS", "8192")),
             image_inputs=image_inputs,
+            evidence_ledger=st.session_state.setdefault("evidence_ledger", []),
         )
         if turn:
             performance = metrics(turn)

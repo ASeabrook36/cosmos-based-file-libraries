@@ -17,7 +17,9 @@ def metrics(turn: Turn) -> dict[str, Any]:
         usage, timing = call.get("usage") or {}, call.get("timing") or {}
         calls.append(
             {
-                "purpose": call.get("purpose") if call.get("purpose") in {"answer", "tool_request"} else None,
+                "purpose": call.get("purpose")
+                if call.get("purpose") in {"answer", "tool_request", "answer_repair"}
+                else None,
                 "promptTokens": usage.get("prompt_tokens"),
                 "completionTokens": usage.get("completion_tokens"),
                 "totalTokens": usage.get("total_tokens"),
@@ -47,6 +49,13 @@ def metrics(turn: Turn) -> dict[str, Any]:
         "tools": [
             {
                 "operation": t.operation,
+                "mode": t.mode,
+                "resultUnit": t.result_unit,
+                "overlapCount": t.overlap_count,
+                "noProgress": t.no_progress,
+                "imagesSelected": t.images_selected,
+                "imagesSupplied": t.images_supplied,
+                "imagesWithheld": t.images_withheld,
                 "latencyMs": t.latency_ms,
                 "requestCharge": t.request_charge,
                 "resultCount": t.result_count,

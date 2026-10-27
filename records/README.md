@@ -30,3 +30,5 @@ Adaptive retrieval records (`document-retrieval-<UTC timestamp>.json`) include s
 The [2026-10-27 test review](../docs/consults/2026-10-27-agent-retrieval-test-review.md) indexes all of the day's implementation, live smoke, paired and casual test evidence. The [proposed strategy](../docs/consults/2026-10-27-agent-retrieval-strategy.md) links changes to those findings and remains pending review.
 
 The user-requested [portable evidence pack](../docs/testing/2026-10-27/README.md) adds sanitized observed transcripts/traces, exact replay questions, source fixtures and selected review figures for cloud-only continuation. Summary metrics remain separate from raw runtime state; credentials, live IDs and signed links are not committed. Start with [HANDOFF.md](../HANDOFF.md).
+
+`agent-capabilities-20261027.json` summarizes the subsequent implemented capability package and four iterative frozen-corpus replays. [Sanitized answers/traces and live probes](../docs/testing/2026-10-27/agent-fixes/README.md) retain successes, regressions, repair costs and remaining model-quality gaps. The iterations are not controlled replicas or a general performance benchmark (E49).

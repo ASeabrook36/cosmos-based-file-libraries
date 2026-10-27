@@ -89,7 +89,7 @@ async def test_manifest_digest_and_generation_are_validated_before_source_images
     assert response.status_code == 409 and "results" not in response.json()
 
 
-async def test_office_coverage_does_not_offer_pdf_page_lookup_for_unindexed_pictures(ctx):
+async def test_office_coverage_offers_selected_source_images_without_pdf_conversion(ctx):
     client, services, lib, worker = ctx
     worker.image_max_per_document = 0
     document = upload(client, lib, "source.docx", office("docx"))
@@ -101,5 +101,5 @@ async def test_office_coverage_does_not_offer_pdf_page_lookup_for_unindexed_pict
     ).json()
     assert full["complete"] and not full["documents"][0]["visualsComplete"]
     assert full["documents"][0]["sourceImageCount"] == 1
-    assert any("Direct reads of unindexed Office pictures are not supported" in n for n in full["notes"])
+    assert any("images can be inspected by returned image IDs" in n for n in full["notes"])
     assert not any("available through selected-page image reads" in n for n in full["notes"])

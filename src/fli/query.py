@@ -167,7 +167,13 @@ def metadata_clauses(filters: SearchFilters, params: list[dict[str, Any]]) -> li
 
 
 def render_search(
-    library_id: str, query_vector_f16: Sequence[float], terms: Sequence[str], filters: SearchFilters, fetch: int
+    library_id: str,
+    query_vector_f16: Sequence[float],
+    terms: Sequence[str],
+    filters: SearchFilters,
+    fetch: int,
+    document_id: str | None = None,
+    generation: int | None = None,
 ) -> RenderedQuery:
     """The spec §8 query. ``query_vector_f16`` must already be ``to_float16_query`` output."""
     if not library_id:
@@ -183,6 +189,12 @@ def render_search(
     ]
     where = ["c.libraryId = @libraryId"]
     where.extend(metadata_clauses(filters, params))
+    if document_id is not None:
+        where.append("c.documentId = @documentId")
+        params.append({"name": "@documentId", "value": document_id})
+    if generation is not None:
+        where.append("c.generation = @generation")
+        params.append({"name": "@generation", "value": generation})
     if filters.content_kinds:
         where.append(_any_of("c.contentKind", "ck", filters.content_kinds, params))
 

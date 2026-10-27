@@ -269,8 +269,8 @@ Use material you are allowed to use, such as public company reports, public stat
 | Azure OpenAI quota (embedding tokens per minute) slows bulk loads | Batch, back off on 429, request more quota |
 | Image description cost | The skip rules and per-document cap in `spec.md` §7.5 |
 
-## Proposed follow-up after natural agent tests (2026-10-27)
+## Follow-up after natural agent tests (2026-10-27)
 
-The [agent retrieval strategy](consults/2026-10-27-agent-retrieval-strategy.md) is proposed for user review, not implemented. It separates semantic file finding from evidence search, adds known-document/bounded-source/selected-image capabilities, and improves reference-adapter progress, follow-up evidence and answer-grounding behavior. It preserves whole-file completeness, library isolation and existing Cosmos/vector settings. Phases 4/5 retain their scale/recall obligations.
+The [agent retrieval strategy](consults/2026-10-27-agent-retrieval-strategy.md) was subsequently authorized and its capability package is implemented ([current contract](agent-retrieval.md), E49). It separates semantic file finding from evidence search, adds known-document/bounded-source/selected-image capabilities, and improves reference-adapter progress, follow-up evidence and answer-grounding behavior. It preserves whole-file completeness, library isolation and existing Cosmos/vector settings. Phases 4/5 retain their scale/recall obligations.
 
-The [day's test review](consults/2026-10-27-agent-retrieval-test-review.md) links the implementation smoke checks, both eight-question manual suites, all three casual cases and the limits on conclusions. E46–E48 show why passing mechanism tests did not finish natural tool-use integration. Future implementation should meet the proposed answer-quality gates before optimizing latency or token/RU cost.
+The [day's test review](consults/2026-10-27-agent-retrieval-test-review.md) links the implementation smoke checks, both eight-question manual suites, all three casual cases and the limits on conclusions. E46–E48 show why passing mechanism tests did not finish natural tool-use integration. Broader rollout should meet the answer-quality gates before claiming latency or token/RU improvements.

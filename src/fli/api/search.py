@@ -92,6 +92,13 @@ class Filters(BaseModel):
         return out
 
 
+class DocumentScope(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    documentId: Value
+    generation: Annotated[StrictInt, Field(ge=1)] | None = None
+    contentRevision: Annotated[StrictInt, Field(ge=0)] | None = None
+
+
 class SearchBody(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -100,6 +107,7 @@ class SearchBody(BaseModel):
     top: StrictInt | None = None
     includeNeighbors: StrictBool = False
     distinctDocuments: StrictBool = False
+    document: DocumentScope | None = None
 
 
 @router.post("/search")
@@ -121,6 +129,12 @@ async def search(
         library_id,
         x_agent_id,
         SearchRequest(
-            body.query, top, body.includeNeighbors, filters.to_search(), filters.applied(), body.distinctDocuments
+            body.query,
+            top,
+            body.includeNeighbors,
+            filters.to_search(),
+            filters.applied(),
+            body.distinctDocuments,
+            body.document.model_dump(exclude_none=True) if body.document else None,
         ),
     )

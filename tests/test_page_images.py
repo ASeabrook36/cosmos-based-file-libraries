@@ -168,7 +168,7 @@ async def test_agent_routes_identified_page_to_bound_library_and_supplies_inline
     def chat(messages, tools):
         seen.append(messages)
         if len(seen) == 1:
-            name = next(t["function"]["name"] for t in tools if t["function"]["name"].startswith("get_images_"))
+            name = next(t["function"]["name"] for t in tools if t["function"]["name"].startswith("inspect_images_"))
             return Reply(
                 None,
                 [

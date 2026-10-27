@@ -203,7 +203,7 @@ def test_demo_delivers_image_to_model_and_preserves_inline_reference():
     assert turn.searches[0].images[0]["imageId"] == "image-1"
     messages = chat.seen[1][0]
     assert messages[-1]["role"] == "user"
-    assert messages[-1]["content"][1]["type"] == "image_url"
+    assert any(p["type"] == "image_url" for p in messages[-1]["content"])
     assert messages[-2]["role"] == "tool" and '"imageId": "image-1"' in messages[-2]["content"]
     assert "fli-image:image-1" in turn.answer
 
@@ -316,7 +316,10 @@ def test_demo_text_only_model_still_receives_description_and_image_link():
         return response
 
     index.search = search
-    chat = scripted(Reply(None, [ToolCall("c", "search_library_finance", '{"query":"chart"}')]), Reply("Found it"))
+    chat = scripted(
+        Reply(None, [ToolCall("c", "search_library_finance", '{"query":"chart"}')]),
+        Reply("![Chart](fli-image:image-1)"),
+    )
     turn = run_turn(chat, index, AGENT, [], "Find the chart", image_inputs=False)
     assert not any(isinstance(m.get("content"), list) for m in turn.messages)
     assert '"imageId": "image-1"' in chat.seen[1][0][-1]["content"]

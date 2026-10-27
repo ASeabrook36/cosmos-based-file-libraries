@@ -95,9 +95,9 @@ class EvidenceIndex:
 @pytest.mark.parametrize(
     "operation,arguments",
     [
-        ("search_library_", {"query": "growth", "distinctDocuments": True, "libraryId": "injected"}),
+        ("search_library_", {"query": "growth", "libraryId": "injected"}),
         ("read_documents_library_", {"documents": [{"documentId": "d"}]}),
-        ("get_images_library_", {"documentId": "d", "pages": [1]}),
+        ("inspect_images_library_", {"documentId": "d", "pages": [1]}),
     ],
 )
 def test_projected_tools_preserve_evidence_and_native_attachments(operation, arguments):
@@ -116,7 +116,10 @@ def test_projected_tools_preserve_evidence_and_native_attachments(operation, arg
         for p in m["content"]
         if p.get("type") == "image_url"
     ]
-    assert len(visuals) == 1 and "sig=private" in visuals[0]["image_url"]["url"]
+    if operation == "read_documents_library_":
+        assert not visuals  # candidate attachments do not imply model inspection
+    else:
+        assert len(visuals) == 1 and "sig=private" in visuals[0]["image_url"]["url"]
     assert turn.searches[0].images[0]["documentId"] == "d"
     if operation == "read_documents_library_":
         projected = json.loads(content)
@@ -124,7 +127,7 @@ def test_projected_tools_preserve_evidence_and_native_attachments(operation, arg
             s["text"] for s in index.full["documents"][0]["sections"]
         ]
     if operation == "search_library_":
-        assert index.options == [{"filters": None, "distinct_documents": True}]
+        assert index.options == [{"filters": None}]
         assert json.loads(content)["results"][0]["documentTokens"] == 20000
 
 
@@ -150,7 +153,9 @@ def test_provider_prompt_usage_replaces_consumed_image_reservation(reported_usag
         if calls == 2:
             assert any(isinstance(m.get("content"), list) for m in messages)
             return Reply(
-                None, [ToolCall("r", "read_documents_library_evidence", '{"documents":[{"documentId":"d"}]}')], usage
+                None,
+                [ToolCall("r", "read_documents_library_evidence", '{"documents":[{"documentId":"d"}]}')],
+                usage,
             )
         return Reply("Done")
 
@@ -267,11 +272,19 @@ def test_reported_usage_allows_new_images_without_charging_old_images_twice():
     index = EvidenceIndex()
     index.full["documents"][0]["sections"][0]["text"] = "Brief explanation"
     index.full["documents"][0]["sections"][1]["imageId"] = "image-2"
+    original_read = index.read_images
+
+    def second_image(*args, **kwargs):
+        response = original_read(*args, **kwargs)
+        response["results"] = [{**response["results"][0], "imageId": "image-2"}]
+        return response
+
+    index.read_images = second_image
     chat = scripted(
         Reply(None, [ToolCall("s", "search_library_evidence", '{"query":"chart"}')]),
         Reply(
             None,
-            [ToolCall("r", "read_documents_library_evidence", '{"documents":[{"documentId":"d"}]}')],
+            [ToolCall("r", "inspect_images_library_evidence", '{"documentId":"d","imageIds":["image-2"]}')],
             {"prompt_tokens": 1200},
         ),
         Reply("Both figures received"),

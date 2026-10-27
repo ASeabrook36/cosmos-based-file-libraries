@@ -406,7 +406,7 @@ def test_routing_guidance_distinguishes_coverage_from_attention_and_specialized_
     chat = scripted(Reply("Answer"))
     run_turn(chat, FakeIndex(), AGENT, [], "question")
     guidance = chat.seen[0][0][0]["content"]
-    assert "original file is not, by itself, a reason to load the whole file" in guidance
-    assert "more context can impair attention" in guidance
-    assert "Separate findings actually supported by citations" in guidance
-    assert "Self-assessment alone does not prove completeness" in guidance
+    assert "position does not require a full read" in guidance
+    assert "More context can impair attention" in guidance
+    assert "Do not turn a desired" in guidance
+    assert "never claim exhaustive coverage" in guidance

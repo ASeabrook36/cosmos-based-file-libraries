@@ -1,5 +1,7 @@
 # Choosing passages, complete documents, or both
 
+The current [agent evidence tool contract](agent-retrieval.md) adds document-scoped search, explicit file-finding modes, outline/selected source reads, cross-format selected-image inspection and bounded follow-up references. Full-read guarantees below remain.
+
 Implemented and smoke-tested on live Azure on 2026-10-26. Both requested retrieval directions passed with a real model; broad routing and answer-quality evaluation remain outstanding. This extends passage retrieval; the platform still owns permissions and library attachments.
 
 ## Agent behavior
@@ -142,7 +144,7 @@ Run `python scripts/check_reference_privacy.py` before publishing changes. For a
 Image enrichment may follow text publication. Manifests expose `imageStatus`, `imagePendingCount`, `visualsComplete` and `contentRevision`. `complete: true` means all published extracted text was returned within the budget; it does not imply pending images were read. Notes explicitly disclose pending/failed visual coverage. A content-revision change during a read returns `409 document_changed`, including enrichment within the same generation.
 
 
-For a localized PDF picture/page request, use `get_images_library_<name>` (`POST …/documents:images`) after search identifies the source page. This avoids loading a whole file merely to obtain one figure and can retrieve figures omitted by the semantic-ingestion cap. Results cover only the selected pages and return stored images with their captions. See [image retrieval](image-retrieval.md#selecting-a-figure-and-returning-its-stored-caption).
+For a localized PDF picture/page request, use `inspect_images_library_<name>` (`POST …/documents:images`) after search identifies the source page. This avoids loading a whole file merely to obtain one figure and can retrieve figures omitted by the semantic-ingestion cap. Results cover only the selected pages and return stored images with their captions. See [image retrieval](image-retrieval.md#selecting-a-figure-and-returning-its-stored-caption).
 
 The page/image request limits and demo rendering conventions are prototype implementation choices, not Cosmos limits or mandatory production UX. The [image guide](image-retrieval.md#prototype-boundaries-and-production-integration) separates configurable defaults, current scope gaps and evidence/isolation properties to preserve.
 

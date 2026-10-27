@@ -99,7 +99,8 @@ def test_search_previews_respect_overall_ranking_and_leave_room_for_target_page_
 
     index.search = candidates
     chat = scripted(
-        Reply(None, [ToolCall("search", "search_library_finance", '{"query":"picture"}')]), Reply("Found candidates.")
+        Reply(None, [ToolCall("search", "search_library_finance", '{"query":"picture"}')]),
+        Reply("A candidate: ![Candidate](fli-image:candidate-0)"),
     )
     turn = run_turn(chat, index, AGENT, [], "Find a remembered picture", context_token_budget=48000)
     assert len(turn.searches[0].images) == 8

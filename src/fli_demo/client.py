@@ -131,9 +131,12 @@ class IndexClient:
         top: int = 8,
         filters: dict[str, Any] | None = None,
         distinct_documents: bool = False,
+        document: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         """The library id is the path's, the agent id the header's: never a model-supplied argument."""
         body: dict[str, Any] = {"query": query, "top": top, "includeNeighbors": True}
+        if document:
+            body["document"] = document
         if filters:
             body["filters"] = filters
         if distinct_documents:

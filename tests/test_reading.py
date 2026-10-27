@@ -518,7 +518,7 @@ async def test_one_question_can_mix_multiple_full_files_with_passages_from_anoth
         assert results[1]["results"][0]["documentId"] == supporting_id
         assert "incorrectly calibrated" in results[1]["results"][0]["text"]
         assert "combine complete reads" in messages[0]["content"]
-        assert "routine tool choices need no user confirmation" in messages[0]["content"]
+        assert "without routine user confirmation" in messages[0]["content"]
         return Reply("The two complete standards require logging; incident-notes.md supplies the calibration example.")
 
     turn = run_turn(

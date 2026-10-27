@@ -1,6 +1,6 @@
 # Proposed agent retrieval strategy after natural-language testing
 
-**Status: proposed for user review; not implemented.** This document records the recommended next work. It does not change the current API contract or authorize a deployment. Priority is (1) the best supported answer to the user's actual request, (2) retrieval/response time, and (3) cost in model/embedding tokens and Cosmos RU. A cheaper incomplete answer does not pass.
+**Status: authorized for implementation after review; capability package implemented.** See the [current contract](../agent-retrieval.md) and E49 for validation and remaining model-quality limitations. The proposal below preserves the original rationale. This document records the recommended next work. It does not change the current API contract or authorize a deployment. Priority is (1) the best supported answer to the user's actual request, (2) retrieval/response time, and (3) cost in model/embedding tokens and Cosmos RU. A cheaper incomplete answer does not pass.
 
 The user is correct that practical improvements are available in both tool presentation and capabilities. The evidence does not justify replacing the Cosmos/Blob architecture. It does show that passing deterministic API tests is insufficient: the new document-grouping option can be used counterproductively by a real agent. We should own that interface weakness rather than attribute every failure to model variability or prototype quotas.
 
@@ -114,6 +114,6 @@ Roll out in small validated steps: mode separation and scoped search first; boun
 
 No Cosmos container, partition/vector policy, embedding model, summary-vector row, default image embedding-text change, bulk reprocessing, cross-library ranked query, automatic all-images gallery, or blind context/round/quota increase is proposed. These tests do not justify those changes. Caption pairing at ingestion, text-first publication, all-or-nothing full reads, query invariants and platform-bound libraries remain requirements.
 
-## Decisions requested for strategy review
+## Package subsequently authorized for implementation
 
 The recommended package is **task-specific tool semantics with four conceptual actions, document-scoped passage search, explicitly bounded source reads, selected-image inspection across supported formats, and source-aware progress/follow-up handling in the reference adapter**. This is a coherent capability/contract change, not just a longer system prompt. Exact limits, wire schema aliases and compatibility rollout should be finalized before implementation, with evidence from the test families above as the acceptance gate.

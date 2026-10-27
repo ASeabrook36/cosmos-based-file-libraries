@@ -39,9 +39,9 @@ DOCUMENTS = [
 ]
 
 
-def test_a_new_library_offers_query_and_optional_document_grouping():
+def test_a_new_library_offers_query_and_document_scope():
     fn = tool_definition(library([]))["function"]
-    assert list(fn["parameters"]["properties"]) == ["query", "distinctDocuments"]
+    assert list(fn["parameters"]["properties"]) == ["query", "document"]
     assert fn["parameters"]["required"] == ["query"]
     assert fn["description"] == "Quarterly finance reports."
 
@@ -49,7 +49,7 @@ def test_a_new_library_offers_query_and_optional_document_grouping():
 def test_filters_with_values_are_offered_with_the_real_values():
     fn = tool_definition(library(DOCUMENTS))["function"]
     props = fn["parameters"]["properties"]
-    assert list(props) == ["query", "distinctDocuments", "tags", "authors", "period", "authoredBetween", "fileTypes"]
+    assert list(props) == ["query", "document", "tags", "authors", "period", "authoredBetween", "fileTypes"]
     assert props["tags"]["items"]["enum"] == ["region=APAC", "region=EMEA", "region=NA", "topic=margin"]
     assert props["authors"]["items"]["enum"] == ["Jane Doe", "Sam Lee"]
     assert props["fileTypes"]["items"]["enum"] == ["pdf", "pptx", "xlsx"]
@@ -67,7 +67,7 @@ def test_a_filter_that_cannot_narrow_is_not_offered():
     single = [document(), document()]  # one file type, one content kind, no tags, authors or dates
     assert list(tool_definition(library(single))["function"]["parameters"]["properties"]) == [
         "query",
-        "distinctDocuments",
+        "document",
     ]
 
 

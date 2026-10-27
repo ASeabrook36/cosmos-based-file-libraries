@@ -17,6 +17,10 @@ from typing import Any
 log = logging.getLogger("fli.metrics")
 OPERATIONS = {"search", "read", "discover", "images", "ingest", "error"}
 FIELDS = {
+    "mode",
+    "resultUnit",
+    "documentScoped",
+    "selectionComplete",
     "agentId",
     "documentId",
     "generation",

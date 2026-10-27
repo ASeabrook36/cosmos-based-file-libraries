@@ -2,22 +2,24 @@
 
 from __future__ import annotations
 
-import asyncio
-import hashlib
-import json
 import time
 
 from fli.errors import ApiError
+from fli.evidence import reference
 from fli.image_assets import load_assets
 from fli.metrics import record as record_metric
 from fli.permissions import check_search_allowed
+from fli.reading import load_sections, region_matches
 from fli.search import QueryCost
 
 MAX_PAGES = 3
 MAX_FIGURES = 10
 
 
-async def read_page_images(searcher, blobs, library_id, agent_id, document_id, generation, pages):
+async def read_page_images(
+    searcher, blobs, library_id, agent_id, document_id, generation, pages, *, image_ids=None, content_revision=None
+):
+    image_ids = image_ids or []
     started, cost = time.perf_counter(), QueryCost()
     library = await searcher.libraries.get(library_id, raw_response_hook=cost)
     check_search_allowed(library_id, library, agent_id)
@@ -29,15 +31,19 @@ async def read_page_images(searcher, blobs, library_id, agent_id, document_id, g
         raise ApiError(409, "document_not_ready", "the requested file has no active generation")
     if generation is not None and generation != active:
         raise ApiError(409, "document_changed", "the requested generation is no longer active")
-    if (
+    if content_revision is not None and content_revision != doc.get("contentRevision", 0):
+        raise ApiError(409, "document_changed", "selected content revision changed")
+    if image_ids and (pages or not 1 <= len(image_ids) <= MAX_FIGURES or len(set(image_ids)) != len(image_ids)):
+        raise ApiError(400, "invalid_request", "select distinct image IDs or PDF pages")
+    if not image_ids and (
         not 1 <= len(pages) <= MAX_PAGES
         or len(set(pages)) != len(pages)
         or any(type(p) is not int or p < 1 for p in pages)
     ):
         raise ApiError(400, "invalid_request", "select 1–3 distinct positive page numbers")
-    if doc.get("fileType") != "pdf":
+    if not image_ids and doc.get("fileType") != "pdf":
         raise ApiError(400, "page_images_unsupported", "page-image lookup currently supports PDF files")
-    if max(pages) > ((doc.get("extraction") or {}).get("pageCount") or 0):
+    if pages and max(pages) > ((doc.get("extraction") or {}).get("pageCount") or 0):
         raise ApiError(400, "invalid_page", "a requested page is outside the PDF")
     try:
         manifest = await load_assets(blobs, library_id, doc)
@@ -45,26 +51,29 @@ async def read_page_images(searcher, blobs, library_id, agent_id, document_id, g
         raise ApiError(
             409, "document_images_unavailable", "stored image/caption assets are unavailable; reprocess this document"
         ) from exc
-    full = doc.get("fullText") or {}
-    try:
-        raw = await blobs.download(full["blobPath"])
-        if hashlib.sha256(raw).hexdigest() != full["sha256"]:
-            raise ValueError("invalid extracted text digest")
-        sections = await asyncio.to_thread(json.loads, raw)
-        if not isinstance(sections, list) or len(sections) != full["sectionCount"]:
-            raise ValueError("incomplete extracted text")
-        page_sections = [
-            s
-            for s in sections
-            if (s.get("location") or {}).get("page") in pages and s.get("contentKind", "text") != "image"
-        ]
-    except Exception as exc:
-        raise ApiError(409, "document_text_unavailable", "stored page text is unavailable; reprocess") from exc
-    selected = [a for a in manifest["assets"] if a.get("location", {}).get("page") in pages]
-    omitted = sum(
-        count for page, count in manifest.get("skippedPages", {}).items() if int(page) in pages or int(page) == 0
-    )
-    omitted += max(0, len(selected) - MAX_FIGURES)
+    sections, representation = await load_sections(searcher, blobs, library_id, doc, cost)
+    if image_ids:
+        by_id = {a["imageId"]: a for a in manifest["assets"]}
+        if any(i not in by_id for i in image_ids):
+            raise ApiError(409, "image_unavailable", "selected image is stale or not in this document")
+        selected = [by_id[i] for i in image_ids]
+        omitted = 0
+    else:
+        selected = [a for a in manifest["assets"] if a.get("location", {}).get("page") in pages]
+        omitted = sum(
+            count for page, count in manifest.get("skippedPages", {}).items() if int(page) in pages or int(page) == 0
+        )
+        omitted += max(0, len(selected) - MAX_FIGURES)
+    locations = [a.get("location") or {} for a in selected]
+    page_sections = [
+        {**s, "sectionId": reference(doc, "section", i)}
+        for i, s in enumerate(sections)
+        if s.get("contentKind", "text") != "image"
+        and (
+            any(region_matches(s, loc, sections) for loc in locations) or (s.get("location") or {}).get("page") in pages
+        )
+    ]
+    described = {s.get("imageId"): s["text"] for s in sections if s.get("contentKind") == "image"}
     results = []
     for asset in selected[:MAX_FIGURES]:
         results.append(
@@ -72,11 +81,14 @@ async def read_page_images(searcher, blobs, library_id, agent_id, document_id, g
                 "imageId": asset["imageId"],
                 "documentId": document_id,
                 "generation": active,
+                "contentRevision": doc.get("contentRevision", 0),
                 "fileName": doc["fileName"],
                 "contentKind": "image",
                 "location": asset["location"],
                 "heading": asset.get("heading"),
-                "text": "Stored source figure and source-caption metadata from ingestion.",
+                "text": described.get(asset["imageId"], "Stored source figure; no generated description available."),
+                "descriptionSource": "generated" if asset["imageId"] in described else "not_available",
+                "contextAssociation": "source_region_proximity",
                 "image": await searcher.image(library_id, document_id, active, asset),
             }
         )
@@ -86,6 +98,7 @@ async def read_page_images(searcher, blobs, library_id, agent_id, document_id, g
         or current.get("status") == "deleting"
         or current.get("activeGeneration") != active
         or current.get("metadataVersion", 0) != doc.get("metadataVersion", 0)
+        or current.get("contentRevision", 0) != doc.get("contentRevision", 0)
         or current.get("imageAssets") != doc.get("imageAssets")
     ):
         raise ApiError(409, "document_changed", "the file changed during figure retrieval; retrieve again")
@@ -101,6 +114,11 @@ async def read_page_images(searcher, blobs, library_id, agent_id, document_id, g
         "These are page candidates, not automatically selected answers. Headings are section context, not captions.",
         "A null caption means none was identified during ingestion. Adjacent-inferred associations are labelled.",
     ]
+    if not page_sections:
+        notes.append(
+            "No original body region is available at retained source precision. "
+            "Standalone images have no separate body text; use outline for other legacy files."
+        )
     if omitted:
         notes.append(f"{omitted} source figures on the selected pages were omitted by ingestion or request limits.")
     return {
@@ -109,9 +127,17 @@ async def read_page_images(searcher, blobs, library_id, agent_id, document_id, g
         "generation": active,
         "fileName": doc["fileName"],
         "pages": sorted(pages),
-        "scope": "stored_pdf_page_images",
+        "scope": "selected_stored_images" if image_ids else "stored_pdf_page_images",
+        "mode": "image_inspection",
+        "resultUnit": "images",
+        "contentRevision": doc.get("contentRevision", 0),
+        "representation": representation,
+        "requestedImageIds": image_ids,
+        "documentComplete": False,
+        "selectionComplete": not omitted,
         "complete": not omitted,
         "pageSections": page_sections,
+        "sourceContextAvailable": bool(page_sections),
         "results": results,
         "imagesSkipped": omitted,
         "notes": notes,

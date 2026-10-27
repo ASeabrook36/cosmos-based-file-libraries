@@ -15,7 +15,9 @@ import time
 from fli.blobs import BlobStore
 from fli.chunking import default_tokenizer
 from fli.errors import ApiError
+from fli.evidence import reference, resolve_reference
 from fli.ids import chunk_id
+from fli.image_assets import load_assets
 from fli.metrics import record as record_metric
 from fli.permissions import check_search_allowed
 from fli.query import RenderedQuery, SearchFilters, metadata_clauses
@@ -117,6 +119,117 @@ def manifest(doc: Record) -> Record:
     }
 
 
+def region_matches(section, location, sections):
+    """DOCX extraction stores section starts, not exact paragraph spans."""
+    here = section.get("location") or {}
+    for key in ("page", "slide", "paragraph"):
+        if key not in location or key not in here:
+            continue
+        if key == "paragraph" and section.get("contentKind", "text") == "text":
+            end = min(
+                (
+                    s.get("location", {}).get(key)
+                    for s in sections
+                    if s.get("contentKind", "text") == "text" and s.get("location", {}).get(key, 0) > here[key]
+                ),
+                default=float("inf"),
+            )
+            return here[key] <= location[key] < end
+        return here[key] == location[key]
+    return False
+
+
+async def select_sections(searcher, library_id, doc, sections, scope, cost, assets=None):
+    selected = set()
+    for value in scope.get("sectionIds", []):
+        i = resolve_reference(doc, value, "section")
+        if i >= len(sections):
+            raise ApiError(409, "evidence_changed", "section no longer exists")
+        selected.add(i)
+    locations = [
+        {key: n}
+        for key, field in (("page", "pages"), ("slide", "slides"), ("paragraph", "paragraphs"))
+        for n in scope.get(field, [])
+    ]
+    if scope.get("evidenceIds"):
+        indexes = [resolve_reference(doc, value, "chunk") for value in scope["evidenceIds"]]
+        if (doc.get("fullText") or {}).get("generation") != doc["activeGeneration"]:
+            if any(i >= len(sections) for i in indexes):
+                raise ApiError(409, "evidence_changed", "source passage no longer exists")
+            selected.update(indexes)
+        else:
+            chunks = await searcher.chunks.locations(
+                library_id, doc["id"], doc["activeGeneration"], sorted(set(indexes)), cost
+            )
+            by_index = {c["chunkIndex"]: c for c in chunks}
+            for index in indexes:
+                if index not in by_index:
+                    raise ApiError(409, "evidence_changed", "source passage no longer exists")
+                locations.append(by_index[index].get("location") or {})
+    known_paragraphs = [
+        s.get("location", {}).get("paragraph", 0) for s in sections + ((assets or {}).get("assets") or [])
+    ]
+    for location in locations:
+        if location.get("paragraph", 0) > max(known_paragraphs, default=0):
+            raise ApiError(409, "source_scope_unavailable", "paragraph extent is unknown; use outline sectionIds")
+        matches = {i for i, s in enumerate(sections) if region_matches(s, location, sections)}
+        if not matches:
+            raise ApiError(409, "source_scope_unavailable", "source location unavailable; use outline sectionIds")
+        selected.update(matches)
+    if not selected:
+        raise ApiError(400, "invalid_request", "selected mode needs sectionIds, evidenceIds or source locations")
+    return [s for i, s in enumerate(sections) if i in selected]
+
+
+async def load_sections(searcher, blobs, library_id, doc, cost):
+    document_id, generation = doc["id"], doc["activeGeneration"]
+    full = doc.get("fullText") or {}
+    if full.get("generation") == generation:
+        try:
+            data = await blobs.download(full["blobPath"])
+            sections = await asyncio.to_thread(json.loads, data)
+        except Exception as exc:
+            # Never fall back to a different representation after an artifact read fails.
+            raise ApiError(
+                409, "document_text_unavailable", "complete text is unavailable; retry or reprocess"
+            ) from exc
+        if (
+            hashlib.sha256(data).hexdigest() != full.get("sha256")
+            or not isinstance(sections, list)
+            or len(sections) != full.get("sectionCount")
+            or not all(isinstance(s, dict) and isinstance(s.get("text"), str) for s in sections)
+        ):
+            raise ApiError(409, "document_text_incomplete", "the extracted text artifact is incomplete; reprocess")
+        representation = "extracted_sections"
+    else:
+        # Pre-enhancement documents remain usable. Preserve every indexed passage in
+        # order; never claim that stripping overlaps reconstructed the original file.
+        count = doc.get("chunkCount") or 0
+        if not 1 <= count <= 100_000:
+            raise ApiError(409, "document_text_unavailable", "reprocess this document for a complete text artifact")
+        chunks = await searcher.chunks.document(library_id, document_id, generation, count + 1, cost)
+        chunks.sort(key=lambda c: c["chunkIndex"])
+        if len(chunks) != count or [c["chunkIndex"] for c in chunks] != list(range(count)):
+            raise ApiError(409, "document_text_incomplete", "not all active passages are available; retry or reprocess")
+        sections = [
+            {
+                "text": c["text"],
+                "heading": c.get("heading"),
+                "location": c.get("location") or {},
+                "contentKind": c.get("contentKind", "text"),
+                "imageId": chunk_id(document_id, generation, c["chunkIndex"])
+                if c.get("contentKind") == "image"
+                else None,
+                "imageRef": c.get("imageRef"),
+                "imageMeta": c.get("imageMeta"),
+            }
+            for c in chunks
+        ]
+        representation = "indexed_chunks"
+
+    return sections, representation
+
+
 async def read_documents(
     searcher: Searcher,
     blobs: BlobStore,
@@ -125,6 +238,10 @@ async def read_documents(
     selections: list[tuple[str, int | None]],
     max_tokens: int,
     include_text: bool,
+    mode: str = "full",
+    scopes: dict | None = None,
+    after_section: int = 0,
+    section_limit: int = 100,
 ) -> Record:
     started = time.perf_counter()
     cost = QueryCost()
@@ -134,6 +251,9 @@ async def read_documents(
     records: list[Record] = []
     items: list[Record] = []
     notes = [
+        "Selected source regions use stored extraction precision. DOCX paragraph selectors expand the containing "
+        "extraction section; legacy sections retain indexed overlap. Same-region figures "
+        "are candidates, not claim matches.",
         "Complete extracted text and kept visual descriptions; visual inputs require consuming-platform support. "
         "Extraction can omit figures, attachments and other unsupported content; OCR may contain errors.",
         "Token counts use the named tokenizer, not necessarily the answering model's. "
@@ -149,6 +269,9 @@ async def read_documents(
             raise ApiError(409, "document_not_ready", "a requested document has no active text; inspect its status")
         if expected is not None and expected != generation:
             raise ApiError(409, "document_changed", "a requested generation is no longer active; discover again")
+        revision = ((scopes or {}).get(document_id) or {}).get("contentRevision")
+        if revision is not None and revision != doc.get("contentRevision", 0):
+            raise ApiError(409, "document_changed", "selected content revision changed; retrieve again")
         records.append(doc)
 
     known_tokens = sum(
@@ -157,7 +280,7 @@ async def read_documents(
         if (d.get("fullText") or {}).get("generation") == d["activeGeneration"]
         and (d.get("fullText") or {}).get("tokenizer") == tokenizer.name
     )
-    if include_text and known_tokens > max_tokens:
+    if mode == "full" and include_text and known_tokens > max_tokens:
         # The stored sections alone already exceed the budget. Avoid downloading and
         # tokenizing a large artifact just to refuse it. Unknown legacy sizes contribute
         # zero here, as do counts made with another tokenizer. The per-document margin
@@ -168,6 +291,10 @@ async def read_documents(
             "library": {"libraryId": library_id, "name": library.get("name")},
             "documents": [{**manifest(d), "complete": False} for d in records],
             "complete": False,
+            "mode": "full",
+            "resultUnit": "sections",
+            "selectionComplete": False,
+            "documentComplete": False,
             "disposition": "budget_exceeded",
             "estimatedTokens": known_tokens,
             "estimateScope": "stored_sections_lower_bound",
@@ -182,7 +309,9 @@ async def read_documents(
                 "requestCharge": round(cost.request_charge, 2),
                 "totalMs": round((time.perf_counter() - started) * 1000, 1),
             },
-            "nextAction": "Inspect or split the selected files, or raise the budget within model capacity. "
+            "availableActions": ["outline", "selected", "search_library"],
+            "nextAction": "Use mode=outline or mode=selected (pages/slides/sectionIds/evidenceIds), or "
+            "search within the document. "
             "No file content was returned.",
         }
         log.info(
@@ -210,61 +339,76 @@ async def read_documents(
 
     for doc in records:
         document_id, generation = doc["id"], doc["activeGeneration"]
-        full = doc.get("fullText") or {}
-        if full.get("generation") == generation:
+        sections, representation = await load_sections(searcher, blobs, library_id, doc, cost)
+        all_sections = sections
+        selected_scope = (scopes or {}).get(document_id, {})
+        assets = None
+        if mode == "selected" and doc.get("imageAssets"):
             try:
-                data = await blobs.download(full["blobPath"])
-                sections = json.loads(data)
+                assets = await load_assets(blobs, library_id, doc)
             except Exception as exc:
-                # Never fall back to a different representation after an artifact read fails.
                 raise ApiError(
-                    409, "document_text_unavailable", "complete text is unavailable; retry or reprocess"
+                    409, "document_images_unavailable", "stored image assets unavailable; reprocess"
                 ) from exc
-            if (
-                hashlib.sha256(data).hexdigest() != full.get("sha256")
-                or not isinstance(sections, list)
-                or len(sections) != full.get("sectionCount")
-                or not all(isinstance(s, dict) and isinstance(s.get("text"), str) for s in sections)
-            ):
-                raise ApiError(409, "document_text_incomplete", "the extracted text artifact is incomplete; reprocess")
-            representation = "extracted_sections"
-        else:
-            # Pre-enhancement documents remain usable. Preserve every indexed passage in
-            # order; never claim that stripping overlaps reconstructed the original file.
-            count = doc.get("chunkCount") or 0
-            if not 1 <= count <= 100_000:
-                raise ApiError(409, "document_text_unavailable", "reprocess this document for a complete text artifact")
-            chunks = await searcher.chunks.document(library_id, document_id, generation, count + 1, cost)
-            chunks.sort(key=lambda c: c["chunkIndex"])
-            if len(chunks) != count or [c["chunkIndex"] for c in chunks] != list(range(count)):
-                raise ApiError(
-                    409, "document_text_incomplete", "not all active passages are available; retry or reprocess"
-                )
-            sections = [
-                {
-                    "text": c["text"],
-                    "heading": c.get("heading"),
-                    "location": c.get("location") or {},
-                    "contentKind": c.get("contentKind", "text"),
-                    "imageId": chunk_id(document_id, generation, c["chunkIndex"])
-                    if c.get("contentKind") == "image"
-                    else None,
-                    "imageRef": c.get("imageRef"),
-                    "imageMeta": c.get("imageMeta"),
-                }
-                for c in chunks
-            ]
-            representation = "indexed_chunks"
-            notes.append(
-                f"{document_id}: legacy indexed text includes repeated headings and overlapping passages. "
-                "Reprocess the original to preserve the pre-chunking extraction."
-            )
+        if mode == "selected":
+            sections = await select_sections(searcher, library_id, doc, sections, selected_scope, cost, assets)
+        elif mode == "outline":
+            sections = sections[after_section : after_section + section_limit]
+        if representation == "indexed_chunks":
+            notes.append("Legacy sections retain overlapping indexed passages and available source precision only.")
+        selected_objects = {id(s) for s in sections}
         public_sections = []
-        for section in sections:
+        for index, section in enumerate(all_sections):
+            if id(section) not in selected_objects:
+                continue
+            if mode == "outline":
+                public_sections.append(
+                    {
+                        "sectionId": reference(doc, "section", index),
+                        "heading": section.get("heading"),
+                        "location": section.get("location") or {},
+                        "contentKind": section.get("contentKind", "text"),
+                        "imageId": section.get("imageId"),
+                        "estimatedTokens": await asyncio.to_thread(lambda s=section: len(tokenizer.encode(s["text"]))),
+                    }
+                )
+                continue
             public = {k: v for k, v in section.items() if k not in ("imageRef", "imageMeta")}
+            public["sectionId"] = reference(doc, "section", index)
             public["image"] = await searcher.image(library_id, document_id, generation, section)
             public_sections.append(public)
         item = {**manifest(doc), "representation": representation, "sections": public_sections}
+        if assets is not None:
+            candidates = [
+                a
+                for a in assets["assets"]
+                if any(region_matches(s, a.get("location") or {}, all_sections) for s in sections)
+            ]
+            item["candidateImages"] = [
+                {
+                    "imageId": a["imageId"],
+                    "documentId": document_id,
+                    "generation": generation,
+                    "contentRevision": doc.get("contentRevision", 0),
+                    "location": a.get("location") or {},
+                    "association": "source_region_proximity",
+                    "image": await searcher.image(library_id, document_id, generation, a),
+                }
+                for a in candidates[:10]
+            ]
+            item["candidateImagesOmitted"] = max(0, len(candidates) - 10)
+        if mode != "full":
+            item.update(
+                documentComplete=False,
+                selectionComplete=True,
+                scope=selected_scope,
+                omittedSections=len(all_sections) - len(sections),
+                availableActions=["selected", "full"],
+            )
+            if mode == "outline":
+                item["outline"] = item.pop("sections")
+                item["hasMore"] = after_section + section_limit < len(all_sections)
+                item["nextAfterSection"] = after_section + section_limit if item["hasMore"] else None
         if doc.get("imageStatus") in ("queued", "processing", "failed"):
             notes.append(
                 f"{document_id}: complete extracted text is available, but image enrichment is "
@@ -276,8 +420,7 @@ async def read_documents(
                 + (
                     "images and captions are available through selected-page image reads."
                     if doc.get("fileType") == "pdf"
-                    else "images are outside this read. Direct reads of unindexed Office pictures are not supported; "
-                    "reprocess with a higher image-description cap or export to PDF for page-image reads."
+                    else "images can be inspected by returned image IDs from selected source regions."
                 )
             )
         # Count the serialized document, including identifiers, locations and headings.
@@ -309,13 +452,17 @@ async def read_documents(
     latest = await searcher.libraries.get(library_id, raw_response_hook=cost)
     check_search_allowed(library_id, latest, agent_id)
     for item in items:
-        item["complete"] = True
+        item["complete"] = mode == "full"
     elapsed = round((time.perf_counter() - started) * 1000, 1)
     response = {
         "library": {"libraryId": library_id, "name": library.get("name")},
         "documents": items,
-        "complete": True,
-        "disposition": "complete",
+        "complete": mode == "full",
+        "mode": mode,
+        "resultUnit": "sections" if mode != "outline" else "outline_entries",
+        "documentComplete": mode == "full",
+        "selectionComplete": True,
+        "disposition": "complete" if mode == "full" else "selected" if mode == "selected" else "outline",
         "estimateScope": "full_response",
         "estimatedTokens": 0,
         "tokenizer": tokenizer.name,
@@ -334,13 +481,18 @@ async def read_documents(
     if not include_text or not fits:
         response.update(
             complete=False,
+            selectionComplete=False,
+            documentComplete=False,
             disposition="inspected" if not include_text else "budget_exceeded",
-            nextAction="Split the set or increase maxTokens within the model's remaining capacity. "
+            nextAction="Use an outline or select fewer source sections/pages/slides within the remaining capacity. "
             "If a document cannot fit, explain the limitation; do not claim a full read.",
         )
         for item in items:
             item["complete"] = False
-            del item["sections"]
+            item.pop("sections", None)
+            item.pop("outline", None)
+            item.pop("candidateImages", None)
+            item.update(selectionComplete=False, documentComplete=False)
     elapsed = round((time.perf_counter() - started) * 1000, 1)
     response["usage"]["totalMs"] = elapsed
     log.info(
@@ -358,6 +510,9 @@ async def read_documents(
     record_metric(
         "read",
         library_id,
+        mode=mode,
+        resultUnit=response["resultUnit"],
+        selectionComplete=response["selectionComplete"],
         agentId=agent_id,
         disposition=response["disposition"],
         resultCount=len(items),

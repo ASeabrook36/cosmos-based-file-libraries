@@ -1,6 +1,6 @@
 # Retrieval tests and evidence review — 2026-10-27
 
-This index preserves all test families from the issue #2 implementation and the subsequent human-run comparisons and casual references. It separates completed mechanisms, observed user-facing failures, inference and proposed work. The [proposed agent strategy](2026-10-27-agent-retrieval-strategy.md) is for review and is not implemented.
+This index preserves all test families from the issue #2 implementation and the subsequent human-run comparisons and casual references. It separates completed mechanisms, observed user-facing failures, inference and proposed work. The [agent strategy](2026-10-27-agent-retrieval-strategy.md) was subsequently authorized and implemented as a capability package; [E49 and the iterative replays](../testing/2026-10-27/agent-fixes/README.md) record the new validation and remaining model-quality errors. The original observations below remain unchanged.
 
 ## Evidence map
 
