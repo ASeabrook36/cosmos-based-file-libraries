@@ -13,6 +13,7 @@ class ExtractionMethod(StrEnum):
     """How a document's text was obtained; recorded on the document for diagnosis."""
 
     NATIVE_TEXT = "native_text"
+    VISION_DESCRIPTION = "vision_description"
     DOCUMENT_INTELLIGENCE_LAYOUT = "document_intelligence_layout"
     DOCUMENT_INTELLIGENCE_READ = "document_intelligence_read"
     UNSUPPORTED = "unsupported"

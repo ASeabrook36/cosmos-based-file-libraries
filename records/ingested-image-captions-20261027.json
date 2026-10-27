@@ -1,0 +1,71 @@
+{
+  "check": "ingestion-time-image-caption-pairs",
+  "complete": true,
+  "localTestsPassed": 577,
+  "documents": [
+    {
+      "sourceRole": "illustrated-book",
+      "sourceImagesStored": 138,
+      "sourceImagesSkipped": 5,
+      "semanticImages": 50,
+      "descriptionCacheHits": 49,
+      "requestedPage": 94,
+      "captionReturned": false,
+      "storedReadMs": 655.1,
+      "readRU": 4.38,
+      "originalSourceUnchanged": true
+    },
+    {
+      "sourceRole": "work-report",
+      "sourceImagesStored": 48,
+      "sourceImagesSkipped": 1,
+      "semanticImages": 48,
+      "descriptionCacheHits": 44,
+      "requestedPage": 23,
+      "captionReturned": true,
+      "storedReadMs": 327.0,
+      "readRU": 4.56,
+      "originalSourceUnchanged": true
+    }
+  ],
+  "models": [
+    {
+      "sourceRole": "illustrated-book",
+      "modelCalls": 3,
+      "captionRevisionCalls": 0,
+      "operations": [
+        "search",
+        "images"
+      ],
+      "selectedImageCount": 1,
+      "sourcePages": [
+        94
+      ],
+      "totalMs": 19887.445584055968,
+      "retrievalMs": 996.3854580419138
+    },
+    {
+      "sourceRole": "work-report",
+      "modelCalls": 2,
+      "captionRevisionCalls": 0,
+      "operations": [
+        "search"
+      ],
+      "selectedImageCount": 1,
+      "sourcePages": [
+        23
+      ],
+      "totalMs": 10713.931999984197,
+      "retrievalMs": 832.28837500792
+    }
+  ],
+  "captionInSemanticSearch": true,
+  "chatDisplay": {
+    "verified": true,
+    "selectedImageCount": 1,
+    "sourceCaptionDisplayed": true,
+    "originalChatPreserved": true,
+    "retrievalSeconds": 1.11,
+    "totalSeconds": 11.87
+  }
+}

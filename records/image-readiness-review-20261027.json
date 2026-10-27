@@ -1,0 +1,131 @@
+{
+  "check": "image-feature-readiness-review",
+  "complete": true,
+  "localTestsPassed": 581,
+  "localPython": "3.14",
+  "cosmosContainerChanges": false,
+  "newRegressionChecks": [
+    "incremental-crop-enrichment-no-duplicate-upload",
+    "legacy-visual-omissions-disclosed",
+    "office-direct-read-limit-disclosed",
+    "native-search-preview-respects-overall-ranking"
+  ],
+  "localWarnings": 14,
+  "lintPassed": true,
+  "formatPassed": true,
+  "documentationLinksPassed": true,
+  "localDocumentationLinksChecked": 59,
+  "wheelBuilt": true,
+  "wheelModulesVerified": true,
+  "obsoletePdfRendererDependencyRemoved": true,
+  "wheelSha256": "9e92262e5418ff6b613df111e967f2f1fd4b77e03416fdd9450fea279baac21d",
+  "sourcePairReads": [
+    {
+      "sourceRole": "illustrated-book",
+      "sourceImagesStored": 138,
+      "sourceImagesSkipped": 5,
+      "semanticImages": 50,
+      "descriptionCacheHits": 49,
+      "requestedPage": 94,
+      "captionReturned": false,
+      "storedReadMs": 454.3,
+      "readRU": 4.38,
+      "originalSourceUnchanged": true
+    },
+    {
+      "sourceRole": "work-report",
+      "sourceImagesStored": 48,
+      "sourceImagesSkipped": 1,
+      "semanticImages": 48,
+      "descriptionCacheHits": 44,
+      "requestedPage": 23,
+      "captionReturned": true,
+      "storedReadMs": 327.5,
+      "readRU": 4.56,
+      "originalSourceUnchanged": true
+    }
+  ],
+  "modelChecks": [
+    {
+      "sourceRole": "illustrated-book",
+      "modelCalls": 3,
+      "captionRevisionCalls": 0,
+      "operations": [
+        "search",
+        "images"
+      ],
+      "selectedImageCount": 1,
+      "sourcePages": [
+        94
+      ],
+      "totalMs": 18207.909291028045,
+      "retrievalMs": 1378.8967079017311
+    },
+    {
+      "sourceRole": "work-report",
+      "modelCalls": 2,
+      "captionRevisionCalls": 0,
+      "operations": [
+        "search"
+      ],
+      "selectedImageCount": 1,
+      "sourcePages": [
+        23
+      ],
+      "totalMs": 9482.855250011198,
+      "retrievalMs": 772.0411249902099
+    }
+  ],
+  "additionalModelChecks": [
+    {
+      "case": "illustrate-explanation",
+      "modelCalls": 5,
+      "operations": [
+        "discover",
+        "search",
+        "read",
+        "search"
+      ],
+      "selectedImageCount": 0,
+      "captionOmitted": false,
+      "captionRevisionCalls": 0,
+      "totalMs": 24064.985791104846
+    },
+    {
+      "case": "omit-caption",
+      "modelCalls": 2,
+      "operations": [
+        "search"
+      ],
+      "selectedImageCount": 1,
+      "captionOmitted": true,
+      "captionRevisionCalls": 0,
+      "totalMs": 7166.69433307834
+    }
+  ],
+  "reviewedPrototypeBoundaries": true,
+  "proactiveIllustrationChoiceStillRequiresEvaluation": true,
+  "preFixModelReplays": [
+    {
+      "sameSubjectWrongPageSelected": true,
+      "count": 2
+    }
+  ],
+  "chatDisplay": {
+    "verified": true,
+    "correctSourcePage": 94,
+    "selectedImageCount": 1,
+    "operations": [
+      "search",
+      "images"
+    ],
+    "totalSeconds": 18.87,
+    "retrievalSeconds": 2.0
+  },
+  "noCaptionRecoveryOrRevisionCalls": true,
+  "referencePrivacyPassed": true,
+  "temporaryRuntimeCodeRemoved": true,
+  "originalChatPreserved": true,
+  "commitCreated": false,
+  "pushed": false
+}

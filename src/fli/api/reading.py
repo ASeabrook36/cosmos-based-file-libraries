@@ -11,6 +11,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, String
 from fli.api.search import Filters, Value
 from fli.auth import require_caller
 from fli.metrics import record as record_metric
+from fli.page_images import read_page_images
 from fli.permissions import check_search_allowed
 from fli.reading import DEFAULT_READ_TOKENS, MAX_READ_TOKENS, manifest, read_documents, render_catalog
 from fli.search import QueryCost
@@ -55,6 +56,31 @@ class ReadBody(BaseModel):
         if len({s.documentId for s in self.documents}) != len(self.documents):
             raise ValueError("documents must have distinct documentIds")
         return self
+
+
+class ImagesBody(Selection):
+    pages: list[Annotated[StrictInt, Field(ge=1, le=2000)]] = Field(min_length=1, max_length=3)
+
+    @model_validator(mode="after")
+    def distinct_pages(self):
+        if len(set(self.pages)) != len(self.pages):
+            raise ValueError("pages must be distinct")
+        return self
+
+
+@router.post("/documents:images")
+async def images(
+    library_id: str, body: ImagesBody, request: Request, x_agent_id: Annotated[str | None, Header()] = None
+):
+    return await read_page_images(
+        request.app.state.searcher,
+        request.app.state.blobs,
+        library_id,
+        x_agent_id,
+        body.documentId,
+        body.generation,
+        body.pages,
+    )
 
 
 @router.get("/tools")

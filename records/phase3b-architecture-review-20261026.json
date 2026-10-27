@@ -1,0 +1,50 @@
+{
+  "check": "phase3b-architecture-review",
+  "date": "2026-10-26",
+  "scope": "Code inspection, current vendor documentation, existing live smoke metrics and controlled in-memory reproductions. No live deployment or source implementation changes.",
+  "reproductions": {
+    "overlappingDelivery": {
+      "publishedGeneration": 1,
+      "artifactMatchesBeforeLateWriter": true,
+      "artifactMatchesAfterLateWriter": false,
+      "fullReadStatus": 409,
+      "fullReadError": "document_text_incomplete",
+      "notes": "Two overlapping attempts for one generation returned different synthetic vision descriptions; the late attempt overwrote the published extraction before its commit was rejected."
+    },
+    "visionReplay": {
+      "queueAttempts": 2,
+      "visionCallsForSameImage": 2,
+      "notes": "A simulated embedding failure after successful vision caused every redelivery to describe the same image again."
+    },
+    "decorativePagesConsumeCap": {
+      "configuredCap": 2,
+      "retainedPages": [1, 2],
+      "chartOnPage": 3,
+      "chartRetained": false,
+      "skippedPages": 1,
+      "notes": "The first two PDF pages contained only border drawing paths. The third contained the actual chart."
+    },
+    "compressedChartThreshold": {
+      "width": 640,
+      "height": 400,
+      "bytes": 4392,
+      "configuredMinimumBytes": 10240,
+      "retainedImages": 0,
+      "skippedImages": 1
+    },
+    "configuredOCRWithoutText": {
+      "status": "failed",
+      "statusDetail": "ocr_returned_no_text",
+      "visionCalls": 0,
+      "notes": "An image-only PDF with usable vector graphics was refused before visual extraction when the configured OCR test double returned no text."
+    }
+  },
+  "existingLiveEvidenceLimits": {
+    "sourceRecord": "phase3b-images-20261026.json",
+    "files": 4,
+    "chunks": 7,
+    "imageRecallBenchmark": false,
+    "largeLibraryPerformanceBenchmark": false,
+    "indexTraversalModeEstablishedByThisRun": false
+  }
+}

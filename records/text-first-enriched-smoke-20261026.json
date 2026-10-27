@@ -1,0 +1,174 @@
+{
+  "check": "phase3b-images",
+  "startedAt": "2026-10-26T21:26:55.962868+00:00",
+  "complete": true,
+  "services": {
+    "imageCounts": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "ingestionMetrics": [
+      {
+        "extractionMs": 5918.1,
+        "chunkingMs": 0.5,
+        "visualExtractionMs": 0,
+        "visionMs": 18845.3,
+        "visionPromptTokens": 1128,
+        "visionCompletionTokens": 942,
+        "visionCacheHits": 0,
+        "layoutBatchesAnalyzed": 1,
+        "layoutBatchesReused": 0,
+        "layoutPages": 1,
+        "planCacheHit": false,
+        "imageCount": 1,
+        "imagesSkipped": 0,
+        "embeddingMs": 1541.3,
+        "chunkWriteMs": 159.2,
+        "chunkCount": 2,
+        "chunkTokens": 511,
+        "chunkTokensMin": 68,
+        "chunkTokensMax": 443,
+        "chunkTokensMean": 255.5,
+        "embeddingTokens": 511,
+        "embeddingRequests": 2,
+        "embeddingRetries": 0,
+        "embeddingThrottles": 0,
+        "embeddingModel": "text-embedding-3-large",
+        "embeddingDimensions": 3072,
+        "chunkWriteCharge": 231.88,
+        "chunkingVersion": "chunking-v1.1",
+        "tokenizer": "cl100k_base",
+        "totalMs": 73342.1
+      },
+      {
+        "extractionMs": 49.2,
+        "chunkingMs": 0.2,
+        "visualExtractionMs": 29.8,
+        "visionMs": 17355.6,
+        "visionPromptTokens": 1216,
+        "visionCompletionTokens": 688,
+        "visionCacheHits": 0,
+        "planCacheHit": false,
+        "imageCount": 1,
+        "imagesSkipped": 0,
+        "embeddingMs": 1346,
+        "chunkWriteMs": 166.9,
+        "chunkCount": 2,
+        "chunkTokens": 268,
+        "chunkTokensMin": 36,
+        "chunkTokensMax": 232,
+        "chunkTokensMean": 134,
+        "embeddingTokens": 268,
+        "embeddingRequests": 2,
+        "embeddingRetries": 0,
+        "embeddingThrottles": 0,
+        "embeddingModel": "text-embedding-3-large",
+        "embeddingDimensions": 3072,
+        "chunkWriteCharge": 191.37,
+        "chunkingVersion": "chunking-v1.1",
+        "tokenizer": "cl100k_base",
+        "totalMs": 76760.8
+      },
+      {
+        "extractionMs": 50.5,
+        "chunkingMs": 0.2,
+        "visualExtractionMs": 22.1,
+        "visionMs": 16565.3,
+        "visionPromptTokens": 1194,
+        "visionCompletionTokens": 908,
+        "visionCacheHits": 0,
+        "planCacheHit": false,
+        "imageCount": 1,
+        "imagesSkipped": 0,
+        "embeddingMs": 855,
+        "chunkWriteMs": 167,
+        "chunkCount": 2,
+        "chunkTokens": 195,
+        "chunkTokensMin": 26,
+        "chunkTokensMax": 169,
+        "chunkTokensMean": 97.5,
+        "embeddingTokens": 195,
+        "embeddingRequests": 2,
+        "embeddingRetries": 0,
+        "embeddingThrottles": 0,
+        "embeddingModel": "text-embedding-3-large",
+        "embeddingDimensions": 3072,
+        "chunkWriteCharge": 181.09,
+        "chunkingVersion": "chunking-v1.1",
+        "tokenizer": "cl100k_base",
+        "totalMs": 88224.9
+      },
+      {
+        "extractionMs": 0.1,
+        "chunkingMs": 0.3,
+        "visualExtractionMs": 44.4,
+        "visionMs": 8641.6,
+        "visionPromptTokens": 1163,
+        "visionCompletionTokens": 697,
+        "visionCacheHits": 0,
+        "planCacheHit": false,
+        "imageCount": 1,
+        "imagesSkipped": 0,
+        "embeddingMs": 321,
+        "chunkWriteMs": 81.7,
+        "chunkCount": 1,
+        "chunkTokens": 244,
+        "chunkTokensMin": 244,
+        "chunkTokensMax": 244,
+        "chunkTokensMean": 244,
+        "embeddingTokens": 244,
+        "embeddingRequests": 1,
+        "embeddingRetries": 0,
+        "embeddingThrottles": 0,
+        "embeddingModel": "text-embedding-3-large",
+        "embeddingDimensions": 3072,
+        "chunkWriteCharge": 119.83,
+        "chunkingVersion": "chunking-v1.1",
+        "tokenizer": "cl100k_base",
+        "totalMs": 16499.7
+      }
+    ],
+    "vagueSearch": {
+      "imageResults": 4,
+      "expectedVisualFound": true,
+      "delegationReadLinksFetched": true,
+      "usage": {
+        "requestCharge": 24.55,
+        "totalMs": 1266.9,
+        "embeddingMs": 569.8,
+        "embeddingTokens": 9
+      }
+    },
+    "completeRead": {
+      "imageIncluded": true,
+      "sourceExplanationIncluded": true,
+      "estimatedTokens": 1636,
+      "usage": {
+        "requestCharge": 4.38,
+        "totalMs": 269.5
+      }
+    },
+    "deckChartFound": true
+  },
+  "models": [],
+  "corpus": [
+    {
+      "type": "pdf",
+      "sha256": "f86582c9b086c2fa5976f1c871762f914ea2fc2c57ae9c52291afb6745419d3e"
+    },
+    {
+      "type": "docx",
+      "sha256": "2c2b7f312be5158d5de68a0c9d4257e6cc3c41ad94c3a7b50bc6bb1b7db7b079"
+    },
+    {
+      "type": "pptx",
+      "sha256": "e009bb163754e4370c5b68d9088158e6b4cfd1bdf715ba3550a50dc4d713161d"
+    },
+    {
+      "type": "png",
+      "sha256": "e476efb3a14c6110d7f5dd87b92dc0a80252b22df846e033d3c4575014b7d27a"
+    }
+  ]
+}

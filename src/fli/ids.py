@@ -1,7 +1,8 @@
 """Identifiers and blob paths (spec §4.2, §4.3).
 
 A chunk's id is ``{documentId}:{generation}:{chunkIndex}``. It is a pure function of its
-inputs, so a retried ingest upserts the same items instead of adding duplicates.
+inputs, so retries address the same items. New worker generations use create-only chunks
+backed by a frozen plan, preserving published evidence and later metadata patches.
 
 Each generation's original has its own path, ``{libraryId}/{documentId}/original/{generation}/{fileName}``,
 so a replacement never overwrites the original of the generation search still returns

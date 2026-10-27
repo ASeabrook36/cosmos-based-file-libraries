@@ -1,5 +1,7 @@
 import os
+import re
 
+import httpx
 import streamlit as st
 from common import client, guard, registry
 
@@ -16,6 +18,11 @@ context_budget = st.sidebar.number_input(
     help="Set this within the deployed model's context window. Includes history, tools and an answer reserve. "
     "Full-file reading can increase input-token cost and response time.",
 )
+image_inputs = st.sidebar.checkbox(
+    "Send retrieved images to the model",
+    value=True,
+    help="Turn off for text-only models. Descriptions and image display still work.",
+)
 api, reg = client(), registry()
 agents = reg.agents()
 if not agents:
@@ -27,7 +34,7 @@ if not agent["libraryIds"]:
     st.warning("This agent has no libraries attached.")
 
 if "chat" not in st.session_state or st.session_state.get("chat_agent") != agent["id"]:
-    st.session_state.update(chat=[], chat_agent=agent["id"], history=[])
+    st.session_state.update(chat=[], chat_agent=agent["id"], history=[], image_bytes={})
 
 
 @st.cache_resource
@@ -58,8 +65,59 @@ def show(searches):
                     st.caption(note)
                 for c in s.citations:
                     st.write("- " + c.label())
-        for image in s.images:  # image results (Phase 3B); short-lived read links from the index
-            st.image(image["url"], caption=image["caption"])
+
+
+def show_answer(answer, searches):
+    # Resolve only IDs returned by the library; model-authored URLs cannot cause
+    # server-side requests. Bytes are held in this chat session so SAS expiration
+    # does not break an answer already displayed.
+    cache = st.session_state.setdefault("image_bytes", {})
+    images = {image["imageId"]: image for trace in searches for image in trace.images if image.get("imageId")}
+    used = set()
+
+    def display(key, include_caption=True):
+        visual = images[key]
+        if key not in cache:
+            try:
+                with httpx.stream("GET", visual["url"], timeout=30, follow_redirects=False) as response:
+                    response.raise_for_status()
+                    data = bytearray()
+                    for part in response.iter_bytes():
+                        data.extend(part)
+                        if len(data) > 25_000_000:
+                            raise ValueError("image too large")
+                    while cache and sum(len(value) for value in cache.values()) + len(data) > 100_000_000:
+                        del cache[next(iter(cache))]
+                    cache[key] = bytes(data)
+            except (httpx.HTTPError, ValueError):
+                st.caption("This image link is unavailable or expired. Ask the agent to retrieve it again.")
+                return
+        caption = visual["caption"]
+        if include_caption and visual.get("sourceCaption"):
+            prefix = "Nearby caption (inferred): " if visual.get("captionAssociation") == "adjacent_inferred" else ""
+            caption = prefix + visual["sourceCaption"] + " — " + caption
+        st.image(cache[key], caption=caption)
+        used.add(key)
+
+    position = 0
+    for match in re.finditer(r"!\[([^\]]*)\]\(fli-image:([^\s)?]+)(\?caption=omit)?\)", answer):
+        st.write(plain_dollars(answer[position : match.start()]))
+        if match[2] in images:
+            display(match[2], include_caption=not match[3])
+        else:
+            st.caption("Image reference was not returned by this retrieval.")
+        position = match.end()
+    if answer[position:]:
+        st.write(plain_dollars(answer[position:]))
+    # Unselected search candidates are diagnostics, not pictures asserted by the answer.
+    remaining = [key for key in images if key not in used]
+    if remaining:
+        with st.expander(f"Other image candidates ({len(remaining)}; not selected in this answer)"):
+            st.caption(
+                "Retrieval candidates may be unrelated. Only images explicitly chosen in the answer appear above."
+            )
+            for key in remaining:
+                st.write("- " + images[key]["caption"])
 
 
 def show_performance(data):
@@ -107,7 +165,7 @@ def show_performance(data):
 
 for m in st.session_state.chat:
     with st.chat_message(m["role"]):
-        st.write(plain_dollars(m["content"]))
+        show_answer(m["content"], m.get("searches", []))
         show_performance(m.get("performance"))
         show(m.get("searches", []))
 
@@ -125,6 +183,7 @@ if question := st.chat_input("Ask a question"):
             question,
             names,
             context_token_budget=int(context_budget),
+            image_inputs=image_inputs,
         )
         if turn:
             performance = metrics(turn)
@@ -137,7 +196,7 @@ if question := st.chat_input("Ask a question"):
                 {"role": "user", "content": question},
                 {"role": "assistant", "content": turn.answer},
             ]
-            st.write(plain_dollars(turn.answer))
+            show_answer(turn.answer, turn.searches)
             show_performance(performance)
             show(turn.searches)
             st.session_state.chat.append(

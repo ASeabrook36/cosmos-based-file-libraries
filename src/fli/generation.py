@@ -7,7 +7,8 @@ purge runs.
 
 ``status`` is otherwise ignored (evidence.md E26). While a replacement is queued, processing or
 has failed, the previous generation is still active and stays searchable. ``activeGeneration``
-is ``None`` until the first generation commits, so a first upload is never half-visible.
+is ``None`` until a complete text or enriched snapshot commits. ``publishedChunkCount``
+fences off image chunks until the enriched snapshot is published.
 
 ``generation`` on the record is the newest generation ever assigned. It only increases, so a
 generation number is never reused, and a generation below it that is neither active nor
@@ -43,6 +44,9 @@ def is_visible(chunk: Mapping[str, Any], document: Mapping[str, Any] | None) -> 
         and document.get("status") != "deleting"
         and document.get("activeGeneration") is not None
         and chunk.get("generation") == document.get("activeGeneration")
+        and (
+            document.get("publishedChunkCount") is None or chunk.get("chunkIndex", -1) < document["publishedChunkCount"]
+        )
     )
 
 

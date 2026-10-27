@@ -37,7 +37,7 @@ The inventory describes current active generations: documents, chunks, image cou
 
 Embedding accounting uses a per-call context, not subtraction of a shared client's cumulative counters. Concurrent libraries and queries therefore do not inherit one another's token usage. The provider's actual `usage.prompt_tokens` is used; token-count estimates are not presented as billed embedding usage.
 
-Chunk-write RU meters responses from the chunk upserts, including responses observed during their retries. It excludes document/library metadata, Blob, queue and proposal operations, and earlier failed processing attempts. Worker processing time excludes queue wait and post-commit refresh/purge work. These are explicit boundaries, not a whole-ingestion bill.
+Chunk-write RU meters responses from chunk creates (legacy/import upserts) and collision verification reads, including responses observed during their retries. It excludes document/library metadata, Blob, queue and proposal operations, and earlier failed processing attempts. Worker processing time excludes queue wait and post-commit refresh/purge work. These are explicit boundaries, not a whole-ingestion bill.
 
 ### Retrieval history
 
@@ -102,3 +102,6 @@ The mixed workflow reduced input to the final answer call by **37.3%**. It demon
 It did **not** reduce cumulative tokens, RU or retrieval time in this pair. The extra model/tool round processed retained context again, and semantic search performed embedding/query work while the comparison complete-read path fetched an already stored extraction. Smaller final context is a context-budget observation, not a measurement of improved attention or accuracy. Different prompts, answer lengths and cache behavior, with one run per condition, prevent a controlled cost or latency claim. Human inspection found the mixed answer useful and cited, but independent citation/accuracy scoring was not performed.
 
 This supports the tool contract and explicit mixed composition. It does not make the retrieval service responsible for perfect agent scope selection; see the [responsibility boundary](document-retrieval.md#responsibility-boundary).
+
+
+The `images` retrieval operation meters reads of ingested source image/caption assets. It performs no layout analysis or answering-time caption recovery. The E42 caption-revision timings describe the superseded prototype path; new turns do not generate an extra answer to incorporate a caption. `sourceImageCount`/`sourceImagesSkipped` describe stored source coverage; `imageCount`/`imagesSkipped` describe semantic image indexing.

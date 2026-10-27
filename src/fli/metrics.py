@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 log = logging.getLogger("fli.metrics")
-OPERATIONS = {"search", "read", "discover", "ingest", "error"}
+OPERATIONS = {"search", "read", "discover", "images", "ingest", "error"}
 FIELDS = {
     "agentId",
     "documentId",
@@ -28,6 +28,17 @@ FIELDS = {
     "estimatedTokens",
     "contentReturned",
     "chunkCount",
+    "imageCount",
+    "imagesSkipped",
+    "visionMs",
+    "visionCacheHits",
+    "planCacheHit",
+    "layoutPages",
+    "layoutBatchesAnalyzed",
+    "layoutBatchesReused",
+    "visualExtractionMs",
+    "visionPromptTokens",
+    "visionCompletionTokens",
     "chunkTokens",
     "embeddingTokens",
     "embeddingMs",

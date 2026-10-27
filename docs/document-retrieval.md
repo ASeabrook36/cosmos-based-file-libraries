@@ -22,7 +22,7 @@ Ask the user when ambiguity materially affects which files to read, or when the 
 
 ## Library-bound tools
 
-`GET /v1/libraries/{libraryId}/tools`, with the platform credential and `X-Agent-Id`, returns `{"tools": [...]}` with three standard function-calling definitions. Names are derived from the library's name; the platform makes collisions unique and preserves each name's binding.
+`GET /v1/libraries/{libraryId}/tools`, with the platform credential and `X-Agent-Id`, returns `{"tools": [...]}` with standard function-calling definitions for passage search, discovery, complete reads and selected-page image lookup. Names are derived from the library's name; the platform makes collisions unique and preserves each name's binding.
 
 | Function prefix | REST call | Agent arguments |
 |---|---|---|
@@ -99,7 +99,7 @@ Replacement publishes the extraction descriptor with the new active file fields.
 
 Existing documents without a descriptor remain readable by fetching **all** active chunks in document partition order, checking their count and contiguous indexes against the document record, and returning them as `representation: indexed_chunks`. Their repeated headings/overlaps are preserved and disclosed, not heuristically deleted. This is complete indexed text, not a reconstruction of the pre-chunking file. Replacing/reprocessing an original with the new worker creates an `extracted_sections` artifact and generated discovery description when proposals are enabled.
 
-“Complete” refers to the chosen text representation. It does not mean the original binary file's visual content has been perceived: the existing extractor can omit figures, unsupported attachments and layout, and OCR may be imperfect. For visual tasks, the platform still needs its image/original-file handling. Full reading does not change those existing extraction capabilities.
+“Complete” refers to the chosen text representation. It does not mean the original binary file's visual content has been perceived: the existing extractor can omit figures, unsupported attachments and layout, and OCR may be imperfect. Kept visuals now have generated descriptions and expiring image links in complete reads (Phase 3B; see `image-retrieval.md`). The platform decides whether to supply visual inputs to its model. Text token estimates exclude model-specific image tokens; skipped visuals and unsupported attachments still limit coverage.
 
 ## Validation and rollout
 
@@ -135,3 +135,13 @@ The manual comparison in [observability.md](observability.md#whole-files-versus-
 This is a reference architecture. Keep actual tenant/subscription identifiers, resource names, endpoints, runtime library/agent/document identifiers, credentials, user-home paths and machine-specific startup settings outside the repository. Evidence records use metrics, public source hashes and role labels. Do not log document text or prompts.
 
 Run `python scripts/check_reference_privacy.py` before publishing changes. For a stronger operator-specific check, point `--deny-file` to a private JSON object **outside** the repository whose string values contain the environment details to reject. The checker examines tracked and untracked Git candidates, reports only file/line/category, and never echoes matched private values. Never commit the private deny file. This check complements review; it is not a complete secret scanner.
+
+
+## Progressive visual coverage
+
+Image enrichment may follow text publication. Manifests expose `imageStatus`, `imagePendingCount`, `visualsComplete` and `contentRevision`. `complete: true` means all published extracted text was returned within the budget; it does not imply pending images were read. Notes explicitly disclose pending/failed visual coverage. A content-revision change during a read returns `409 document_changed`, including enrichment within the same generation.
+
+
+For a localized PDF picture/page request, use `get_images_library_<name>` (`POST …/documents:images`) after search identifies the source page. This avoids loading a whole file merely to obtain one figure and can retrieve figures omitted by the semantic-ingestion cap. Results cover only the selected pages and return stored images with their captions. See [image retrieval](image-retrieval.md#selecting-a-figure-and-returning-its-stored-caption).
+
+The page/image request limits and demo rendering conventions are prototype implementation choices, not Cosmos limits or mandatory production UX. The [image guide](image-retrieval.md#prototype-boundaries-and-production-integration) separates configurable defaults, current scope gaps and evidence/isolation properties to preserve.

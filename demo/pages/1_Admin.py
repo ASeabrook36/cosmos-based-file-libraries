@@ -77,6 +77,11 @@ for lib in libraries:
                 {
                     "file": d.get("fileName"),
                     "status": d["status"],
+                    "text available": d.get("activeGeneration") is not None,
+                    "images": d.get("imageStatus", "ready" if d.get("imageCount") else "—"),
+                    "images pending": d.get("imagePendingCount", 0),
+                    "stored images": d.get("sourceImageCount"),
+                    "searchable images": d.get("imageCount", 0),
                     "generation": d.get("activeGeneration"),
                     "replacing with": (d.get("pendingFile") or {}).get("fileName"),
                     "chunks": d.get("chunkCount"),

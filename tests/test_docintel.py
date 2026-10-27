@@ -195,3 +195,113 @@ async def test_a_permanent_ocr_failure_records_the_item_failed_with_its_code():
     result = await extract(blank_pdf(), filename="scan.pdf", ocr=Broken())
     assert result.outcome == "failed" and result.failure_reason == "ocr:ocr_failed:InvalidContent"
     assert result.ocr_applied and result.method == ExtractionMethod.DOCUMENT_INTELLIGENCE_READ
+
+
+# Layout figure extraction uses the service's figure segmentation, not PDF objects.
+LAYOUT_RESULT = RESULT.replace("prebuilt-read", "prebuilt-layout")
+
+
+def layout_reader(handler):
+    from fli.docintel import DocumentIntelligenceLayout
+
+    async def token():
+        return "di-token"
+
+    async def no_sleep(seconds):
+        pass
+
+    return DocumentIntelligenceLayout(
+        endpoint=ENDPOINT,
+        token_provider=token,
+        http=httpx.AsyncClient(transport=httpx.MockTransport(handler)),
+        max_pages=2000,
+        max_bytes=1_000_000,
+        sleep=no_sleep,
+    )
+
+
+async def test_layout_requests_crops_and_unicode_offsets_for_exact_requested_pages():
+    from tests.layout_fakes import png
+
+    requests = []
+
+    def handler(request):
+        requests.append(request)
+        if request.method == "POST":
+            return httpx.Response(202, headers={"Operation-Location": LAYOUT_RESULT})
+        if "/figures/" in request.url.path:
+            return httpx.Response(200, content=png(), headers={"Content-Type": "image/png"})
+        return httpx.Response(
+            200,
+            json={
+                "status": "succeeded",
+                "analyzeResult": {
+                    "pages": [{"pageNumber": 21}, {"pageNumber": 22}],
+                    "figures": [{"id": "opaque-id"}],
+                },
+            },
+        )
+
+    reader = layout_reader(handler)
+    result, operation = await reader.analyze_pages(b"%PDF", 21, 22)
+    assert requests[0].url.params["pages"] == "21-22"
+    assert requests[0].url.params["output"] == "figures"
+    assert requests[0].url.params["stringIndexType"] == "unicodeCodePoint"
+    assert result["figures"][0]["id"] == "opaque-id"
+    assert await reader.figure(operation, "opaque-id") == png()
+    assert requests[-1].url.path.endswith("/analyzeResults/r1/figures/opaque-id")
+    assert requests[-1].headers["Authorization"] == "Bearer di-token"
+    assert reader.governor.spent == 2 and reader.governor.requests == 2
+
+
+async def test_layout_rejects_incomplete_page_result_instead_of_publishing_partial_text():
+    def handler(request):
+        if request.method == "POST":
+            return httpx.Response(202, headers={"Operation-Location": LAYOUT_RESULT})
+        return succeeded("only one page", 1)
+
+    with pytest.raises(OcrError, match="layout_incomplete_pages") as raised:
+        await layout_reader(handler).analyze_pages(b"source", 1, 2)
+    assert raised.value.transient
+
+
+@pytest.mark.parametrize(
+    "operation",
+    [
+        "https://elsewhere.example.invalid/steal",
+        ENDPOINT + "/documentintelligence/documentModels/prebuilt-read/analyzeResults/r1",
+    ],
+)
+async def test_figure_download_never_sends_credentials_off_the_layout_result_path(operation):
+    requests = []
+    reader = layout_reader(lambda request: requests.append(request))
+    with pytest.raises(OcrError, match="layout_bad_operation_location"):
+        await reader.figure(operation, "1.1")
+    assert requests == []
+
+
+async def test_layout_throttle_updates_shared_governor_and_preserves_retry_after():
+    reader = layout_reader(lambda request: httpx.Response(429, headers={"Retry-After": "7"}))
+    with pytest.raises(OcrError) as raised:
+        await reader.analyze_pages(b"source", 1, 1)
+    assert raised.value.retry_after == 7
+    assert reader.governor.throttled == 1 and reader.governor.in_cooldown
+
+
+async def test_layout_binds_analysis_concurrency_across_worker_lanes():
+    import asyncio
+
+    reader = layout_reader(lambda request: None)
+    active = peak = 0
+
+    async def analysis(data, model, params):
+        nonlocal active, peak
+        active += 1
+        peak = max(peak, active)
+        await asyncio.sleep(0.01)
+        active -= 1
+        return {"pages": [{"pageNumber": 1}]}, LAYOUT_RESULT
+
+    reader.analyze_operation = analysis
+    await asyncio.gather(*(reader.analyze_pages(b"source", 1, 1) for _ in range(6)))
+    assert peak == 2

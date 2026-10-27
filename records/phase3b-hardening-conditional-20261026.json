@@ -1,0 +1,22 @@
+{
+  "check": "phase3b-hardening-conditional-writes",
+  "date": "2026-10-26",
+  "realCosmosAndBlob": true,
+  "realEmbeddings": true,
+  "visionOutputControlledForFaultInjection": true,
+  "complete": true,
+  "overlap": {
+    "publishedArtifactUnchanged": true,
+    "publishedChunksUnchanged": true,
+    "retaggedMetadataUnchanged": true,
+    "completeReadSucceeded": true
+  },
+  "replay": {
+    "visionCalledBeforeFailure": 1,
+    "visionCalledOnResume": 0,
+    "frozenPlanReused": true,
+    "generationPublished": true
+  },
+  "blobCreateOnlyVerified": true,
+  "temporaryLibraryPurged": true
+}

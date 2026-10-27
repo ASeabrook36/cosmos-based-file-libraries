@@ -34,6 +34,7 @@ from typing import Any, Protocol
 
 import httpx
 
+from .governor import Governor
 from .http import backoff_seconds, parse_retry_after
 
 TokenProvider = Callable[[], Awaitable[str]]
@@ -75,7 +76,7 @@ class ChatReply:
 
 
 class ChatModel(Protocol):
-    async def complete_json(self, messages: list[dict[str, str]]) -> ChatReply: ...
+    async def complete_json(self, messages: list[dict[str, Any]]) -> ChatReply: ...
 
 
 @dataclass
@@ -91,9 +92,15 @@ class AzureOpenAIChat:
     max_attempts: int = 5
     max_wait_seconds: float = 60.0
     timeout: float = 120.0
+    governor: Governor | None = None
     sleep: Callable[[float], Awaitable[None]] = asyncio.sleep
 
-    async def complete_json(self, messages: list[dict[str, str]]) -> ChatReply:
+    @property
+    def cache_identity(self) -> str:
+        # Stored cache names contain a hash, never endpoint/configuration text.
+        return json.dumps([self.endpoint, self.deployment, self.api_version, self.max_completion_tokens])
+
+    async def complete_json(self, messages: list[dict[str, Any]]) -> ChatReply:
         url = f"{self.endpoint.rstrip('/')}/openai/deployments/{self.deployment}/chat/completions"
         body = {
             "messages": messages,
@@ -103,19 +110,25 @@ class AzureOpenAIChat:
         for attempt in range(self.max_attempts):
             token = await self.token_provider()
             try:
-                response = await self.http.post(
-                    url,
-                    params={"api-version": self.api_version},
-                    headers={"Authorization": f"Bearer {token}"},
-                    json=body,
-                    timeout=self.timeout,
-                )
+
+                async def request(token=token):
+                    return await self.http.post(
+                        url,
+                        params={"api-version": self.api_version},
+                        headers={"Authorization": f"Bearer {token}"},
+                        json=body,
+                        timeout=self.timeout,
+                    )
+
+                response = await self.governor.run(1, request) if self.governor else await request()
             except httpx.TransportError as exc:
                 if attempt + 1 == self.max_attempts:
                     raise ChatError(f"chat transport failure: {type(exc).__name__}") from exc
                 await self.sleep(backoff_seconds(attempt))
                 continue
             if response.status_code == 200:
+                if self.governor:
+                    self.governor.record_success()
                 return _reply(response.json())
             if response.status_code == 429 or response.status_code >= 500:
                 if attempt + 1 == self.max_attempts:
@@ -123,6 +136,8 @@ class AzureOpenAIChat:
                         f"chat failed after {self.max_attempts} attempts", throttled=response.status_code == 429
                     )
                 wait = parse_retry_after(response.headers.get("Retry-After"))
+                if self.governor and response.status_code in (429, 503):
+                    wait = self.governor.record_throttle(wait)
                 await self.sleep(min(self.max_wait_seconds, wait if wait is not None else backoff_seconds(attempt)))
                 continue
             # The body may quote the prompt back: report the status only.

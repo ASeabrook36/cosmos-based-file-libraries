@@ -7,11 +7,11 @@
 A search service that stores agent file libraries in Azure Cosmos DB instead of Azure AI Search.
 
 - Admins and users upload files into libraries.
-- Cosmos stores searchable passage text, vectors and metadata. Blob holds original files and versioned complete-text extractions; image processing remains Phase 3B.
-- Agents choose passage search, complete-document reads, or both through tools the platform attaches to them.
+- Cosmos stores searchable text passages and image descriptions, vectors and metadata. Blob holds originals, complete extracted text and image/caption assets; selected figures can appear inline with an answer.
+- Agents combine passage search, complete-document reads and stored PDF figure reads through tools the platform attaches to them.
 - Personal agents each get their own library, which no other agent can search.
 
-It removes the limit that prompted it. Azure AI Search allows 200 indexes per service on the S2 and S3 tiers, and the current design uses one index per library. Here a library is a value stored on each record, not an object the service counts, so the number of libraries has no design limit.
+It removes the limit that prompted it. Azure AI Search allows 200 indexes per service on the S2 and S3 tiers, and the current design uses one index per library. Here a library is a value stored on each record, not an object the service counts, so creating a library does not consume an index slot. Throughput, storage and practical scale still need capacity planning and measurement.
 
 ## Why one Cosmos container
 
@@ -53,7 +53,7 @@ What this arrangement buys, with the measurements behind it (`docs/evidence.md`)
 | **Accurate semantic search** | Each library has its own vector index, so a search compares the question's meaning against that library's passages only. Filters run inside the same query, and a replaced document's old version is never returned. | Per-owner vector indexes kept recall@10 at 0.991 against exact search (E2). Half-precision vectors lost no accuracy: 0.980 against 0.980 (E7). |
 | **Fast** | The library ID leads the container's partition key and is its vector shard key, so a search goes to one library's data and one index, in one round trip. | 97–127 ms server latency at the 95th percentile, against 143–295 ms without per-owner indexes (E2). |
 | **Cheap** | A search's cost follows the size of the library searched, not of the container. Half-precision vectors and serverless billing keep the rest small. | 54–69 RU per search at the 95th percentile, against 407–1,063 (E2). 8–16 RU per search on a 5,535-passage library here, 4–7 RU filtered: about $4 per million searches at serverless prices (E10). |
-| **No limit on libraries** | A library is a value on each record. Cosmos counts containers (500 per account), never values, so adding a library creates nothing it counts. | Azure AI Search allows 50 indexes on S1 and 200 on S2 and S3 (E1). Phase 4 puts 1,000 libraries in one container and checks search cost is unchanged. |
+| **No index-per-library ceiling** | A library is a value on each record. Cosmos counts containers (500 per account), never values, so adding a library creates nothing it counts. | Azure AI Search allows 50 indexes on S1 and 200 on S2 and S3 (E1). Phase 4 puts 1,000 libraries in one container and checks search cost is unchanged. |
 
 The arrangement pays off only when every search names exactly one library. Searching without the library ID cost about 220 times more, and one query across several libraries about 300 times more (E4, E5). So the service always takes the library ID from the URL the platform called, and searches several libraries as several queries.
 
@@ -68,15 +68,41 @@ Phases 0–3 of `docs/build-plan.md` have passed on live Azure.
 - Phase 2: a demo platform (Streamlit) runs official and personal agents that search their libraries through tools.
 - Phase 3: metadata filters (period, dates, authors, tags, file types), AI proposals of tags, periods, authors and library descriptions for an admin to accept, and document replacement and deletion.
 
-Next are Phase 3B (images) and Phase 4 (a thousand libraries in one container, measured). The design rests on earlier measurements of these Cosmos features on live Azure (2026). `docs/evidence.md` traces each decision to them and lists what is not yet proven.
+Phase 3B image support is implemented and smoke-tested for standalone uploads, Word/PowerPoint pictures and individual PDF figure crops with linked captions (including vector charts and scanned illustrations). The current local suite passes 581 tests; live checks cover ingestion, stored-caption retrieval, inline display and lifecycle protection. These are prototype checks, with broader retrieval and figure/caption accuracy evaluation still pending; see [image retrieval](docs/image-retrieval.md) for the platform contract and limits. Phase 4 (a thousand libraries in one container, measured) remains. The design rests on earlier measurements of these Cosmos features on live Azure (2026). `docs/evidence.md` traces each decision to them and lists what is not yet proven.
+
+## Prototype choices and production boundaries
+
+This repository is a working reference implementation. Its demo limits describe this implementation, rather than ceilings imposed by Cosmos or requirements for every consuming platform.
+
+| Area | Current prototype | Production interpretation |
+|---|---|---|
+| Image work | Defaults: 50 described/indexed images and 1,000 stored source assets per document | Configurable cost/coverage bounds (`IMAGE_MAX_PER_DOCUMENT`, `IMAGE_ASSET_MAX_PER_DOCUMENT`), not Cosmos image limits. The current asset safety maximum is 10,000; changing it requires code and capacity review. |
+| File and page bounds | 100 MiB default upload limit; PDF layout up to 2,000 pages, in batches of 20 | Upload/batch limits are deployment settings; 2,000 is the implementation's current PDF maximum. Production must size memory, provider limits, timeouts and quotas together. |
+| Targeted figure reads | PDF only; 1–3 pages and up to 10 figures per call | Current API bounds and supported scope. Production can extend direct reads to Office locations and adjust batching; unindexed Office pictures are not currently returned. |
+| Image delivery | 15-minute read-only user-delegation SAS links | Current delivery policy. A production platform can choose another appropriate lifetime or authorized proxy/cache; preserve scoped access and keep bearer links out of logs/public content. |
+| Chat and rendering | Streamlit, `fli-image` markers, a preview when an image leads the search ranking, conservative image-token estimates and a session cache | Demo adapter conventions. A consuming platform owns answer composition, visual inputs, rendering, context budgets and authorized conversation storage. |
+| Context budgets | Demo context defaults to 64,000 tokens; complete reads default to 32,000 with a 200,000-token API maximum | Model/platform budgets and current API bounds, not Cosmos limits. Production chooses its own usable context and visual-token accounting while preserving explicit completeness. |
+| Models and indexing | Image meaning is represented by generated text, embedded in the same vector space as passages | This is description-based retrieval. Model deployments and budgets can change; embedding-model/vector-policy changes need a validated index rebuild. No native image embeddings are claimed. |
+| Runtime and capacity | Local API/worker, process-local governors, serverless Cosmos and an optional local metrics journal | Production needs hosted workers, aggregate capacity control, production authentication, monitoring and measured throughput. Laptop sleep can interrupt the local demo; durable checkpoints let processing resume. |
+| Quality and latency | Small real-model/source checks plus local regressions | No guarantee that every figure/caption is detected, every model picks the right image, or answers finish in a fixed time. Figure/page correspondence, semantic recall and end-to-end model behavior need representative evaluation. |
+
+The intended production contract is accurate source provenance, paired image/caption evidence, explicit omissions/completeness, authorized library scope and safe publication across retries/replacements/deletions. Production may replace or tune the prototype's orchestration and presentation while preserving those properties. A text result need not automatically attach nearby pictures, and the agent remains responsible for choosing a relevant illustration.
+
+Phases 4–5 cover scale proof, production deployment/authentication, operational recovery and broader quality evaluation. Known cross-client Session-consistency limits still apply; current lifecycle rereads are not proof of immediate visibility across independent API instances. See the [readiness review](docs/consults/2026-10-27-image-readiness-review.md) and [scale limits](docs/capacity/untested-at-scale.md).
 
 ## Complete documents and supporting passages
 
 Agents can find files by name or metadata, read one or several complete extracted documents, and combine them with relevant passages from other files in the same question. They can alternate between complete reads and passage searches in either order, without routine user confirmation. The library service presents both options with size, completeness, provenance, budget and retrieval-cost information; agent builders and library owners supply the guidance that shapes scope decisions.
 
-The `/tools` bundle exposes discovery, full reads and passage search. Full reads report size and completeness and return no text when a complete selection cannot fit; they never silently clip a file. Existing files remain readable as complete indexed passages, with overlaps disclosed; new ingestion preserves the extraction before chunking. Text extraction retains its existing visual and attachment limitations.
+The `/tools` bundle exposes discovery, full reads, passage search and stored PDF page-image reads. Full reads report size and completeness and return no text when a complete selection cannot fit; they never silently clip a file. Existing files remain readable as complete indexed passages, with overlaps disclosed; new ingestion preserves the extraction before chunking. Text extraction retains its existing visual and attachment limitations.
 
 Both explicit mixed-retrieval sequences passed against live Azure and a real model. In a later manual pair, mixed retrieval reduced input to the final answer call by 37.3%, while cumulative tokens, retrieval RU and retrieval time increased; the runs used different wording, so this is composition evidence rather than a controlled cost, speed, attention or accuracy result. Human answer-quality review and broader agent-routing evaluation remain pending. See [the API, integration and rollout notes](docs/document-retrieval.md) and the [comparison record](records/full-vs-mixed-retrieval-20261026.json).
+
+## Images alongside text
+
+Semantic retrieval searches text passages and generated image descriptions together. Images carry their source captions, document/page or slide location, and expiring read links. Agents can place a relevant chart, illustration or map inline with an explanation, with its caption by default; the platform controls rendering. A text passage does not automatically attach every nearby image. For a relevant PDF figure absent from search, the agent can read stored figures and page text directly.
+
+Ingestion separates page text from figure crops and associates captions before publication. Mixed documents publish complete extracted text and embeddings first; deferred image descriptions then extend the same generation without re-embedding text. Image/caption reads perform no layout analysis, image descriptions or answer-rewriting pass. Separate source-storage and description caps bound work and disclose omissions. See [image retrieval](docs/image-retrieval.md) for integration, configuration, upgrade steps and limits.
 
 ## Prototype performance views
 
@@ -88,6 +114,7 @@ Chat shows retrieval RU/time, total response time and actual cumulative model to
 |---|---|---|
 | `docs/brief.md` | The case for the change, in two pages | Anyone deciding whether to adopt it |
 | `docs/observability.md` | Prototype performance views, metric definitions, exclusions and telemetry setup | Azure architects and AI developers |
+| `docs/image-retrieval.md` | Figure/caption ingestion, semantic retrieval, inline rendering, processing bounds and rollout | Platform integrators and reviewers |
 | `docs/document-retrieval.md` | Passage/full-file selection, mixed retrieval, API contracts, agent guidance and rollout | Platform integrators and reviewers |
 | `docs/spec.md` | What to build: components, data model, permissions, API, ingestion, search | Whoever builds it |
 | `docs/build-plan.md` | Build order, demo-first, with an exit check per phase and the demo script | Whoever builds it |
@@ -103,7 +130,7 @@ Chat shows retrieval RU/time, total response time and actual cumulative model to
 | `scripts/load_demo_corpus.py` | Loads a folder of documents into shared libraries through the API | Anyone running the demo |
 | `scripts/sample_docs/` | Generates invented, multi-format upload fixtures for functional hand-testing | Anyone checking file handling; not a search-quality corpus |
 | `scripts/deployment_env.py` | Prints a deployment's outputs as `export` lines, for the demo commands below | Anyone running the demo |
-| `scripts/phase1_exit.py`, `scripts/phase3_exit.py` | Exit checks driven through the running API; each writes a record to `records/` | Whoever runs an exit check |
+| `scripts/phase1_exit.py`, `scripts/phase3_exit.py`, `scripts/phase3b_exit.py` | Exit checks driven through the running API; each writes a record to `records/` | Whoever runs an exit check |
 | `records/` | Canary and exit-check records, committed | Reviewers |
 | `CLAUDE.md` | Rules for coding agents working in this repo | Coding agents |
 
@@ -155,29 +182,31 @@ flowchart LR
     api -- query --> cosmos
     api -- embed --> openai
     worker -- "read file" --> blob
-    worker -- "embed, propose" --> openai
-    worker -- OCR --> ocr
+    worker -- "embed, describe images, propose" --> openai
+    worker -- "PDF layout, OCR, figure crops" --> ocr
     worker -- write --> cosmos
 ```
 
 | Box | What it is | Its job |
 |---|---|---|
-| Admin, Agent | The platform's pages and agent loop; in the demo, Streamlit (`demo/`) | Create libraries, upload, review proposals; answer questions with search, discovery and full-read tools per attached library |
+| Admin, Agent | The platform's pages and agent loop; in the demo, Streamlit (`demo/`) | Create libraries, upload, review proposals; answer questions with search, discovery, full-read and stored PDF image tools per attached library |
 | API | `fli-api` (FastAPI); local today, Container Apps in Phase 5 | Libraries, documents, search, tool definitions; checks a personal library belongs to the agent searching |
 | Queue | Service Bus queue `ingest`, one session per library | Work for the worker; one library at a time per lane, up to 8 libraries at once |
-| Worker | `fli-worker` | Extract, chunk, propose tags, embed, write, retag, purge |
+| Worker | `fli-worker` | Extract text/figures/captions, publish text, describe/index images, propose metadata, retag and purge |
 | Cosmos DB | NoSQL, serverless, vector search, continuous backup | Libraries, documents and passages ([detail below](#the-cosmos-containers-in-detail)) |
-| Blob Storage | Container `files` | Original files and complete extracted text, one per version, to rebuild from and hand back |
+| Blob Storage | Container `files` | Original files, extracted text, cropped images, paired caption manifests and ingestion checkpoints per generation |
 | Azure OpenAI | `text-embedding-3-large` (3,072 dimensions) and a chat deployment | Vectors for passages and questions; proposed tags, periods, authors and descriptions; the demo agent |
-| Document Intelligence | `prebuilt-read` | OCR for PDFs with no text layer |
+| Document Intelligence | `prebuilt-layout` with figure output | PDF text, tables, captions and individual figure crops |
 
 Application Insights is deployed too; search events start arriving in Phase 4.
 
 **Upload.** The API stores the original in Blob Storage under its own generation's path, writes the document record as `queued`, and puts an `ingest` message on the queue with the library as its session. One library's messages run one at a time, so a user dropping 5,000 files occupies one lane, while up to 8 libraries ingest in parallel.
 
-**Ingest.** The worker reads the original and extracts its text (OCR only when a PDF has no text layer), chunks it into about 500 tokens per section, and asks the chat model for tags, a period and an author. It embeds the chunks, writes them under a new generation, and commits: from that moment search returns the new generation and ignores older ones, which a `purgeDocument` message then deletes. The library's tag vocabulary and filter values are recomputed, and a library description is proposed when enough has changed.
+**Ingest.** The worker reads the original and extracts its text (layout analysis with OCR, figure crops and captions for PDFs), chunks it into about 500 tokens per section, and asks the chat model for tags, a period and an author. For mixed documents it embeds and publishes text plus stored source image/caption assets first, then queues slower image descriptions and embeddings. Final enrichment appends image chunks without rewriting published text. Publication switches search to the new generation; a `purgeDocument` message removes obsolete generations. The library's tag vocabulary and filter values are recomputed, and a library description is proposed when enough has changed.
 
-**Search.** An agent's tool call carries only a question and filters. The platform maps the tool to the library it attached and calls `POST /v1/libraries/{id}/search` with the agent's id. The API point-reads the library and refuses a personal library to any other agent, embeds the question, and runs one Cosmos query scoped to that library. It drops chunks of replaced or deleted documents and returns passages with file, page or slide, and a coverage note saying what the filters left out.
+**Images.** Source crops and caption metadata are stored once. The worker describes/indexes up to 50 qualifying images per document by default and retains up to 1,000 source assets. PDF page reads can return stored figures beyond the description cap, without another model or layout call. Images and text share the existing Cosmos vector space and library filter. No new Cosmos container or index is required.
+
+**Search.** An agent's tool call carries only a question and filters. The platform maps the tool to the library it attached and calls `POST /v1/libraries/{id}/search` with the agent's id. The API point-reads the library and refuses a personal library to any other agent, embeds the question, and runs one Cosmos query scoped to that library. It drops chunks of replaced or deleted documents and returns text and image passages with file, page or slide, and a coverage note saying what the filters left out.
 
 **Discover and read.** The platform attaches the library-bound tools from `GET /v1/libraries/{id}/tools`. An agent can enumerate documents by name or metadata, use passage search to identify likely files, inspect full-text size, and read one or more complete extractions. It can then search other files for supporting passages or read more files as needed in the same question. The library service supplies the operations, completeness and budget limits; the consuming agent's builder and library owner guide how it chooses among them.
 
@@ -208,9 +237,9 @@ flowchart TB
 |---|---|---|---|
 | `libraries` | `/libraryId` | library | Shared or personal, the bound agent, description and its proposal, tag vocabulary, stats |
 | `documents` | `/libraryId` | document | Status, versions, file details, author, period, tags, proposals |
-| `chunks` | `/libraryId`, then `/documentId`; vector index sharded by `/libraryId` | passage | Text and its page or slide; a 3,072-dimension float16 vector; copies of the document's author, period, tags and file type, for filtering |
+| `chunks` | `/libraryId`, then `/documentId`; vector index sharded by `/libraryId` | text or image passage | Text/image description and its page or slide; a 3,072-dimension float16 vector; copies of the document's author, period, tags and file type, for filtering |
 
-A search is one query, sent with the library as its partition key: `SELECT TOP n … WHERE c.libraryId = @libraryId AND filters ORDER BY VectorDistance(…)`. Before it, the API reads the library record to check access. After it, it reads the documents of the hits and drops passages from replaced versions.
+The default vector search is one ranked query, sent with the library as its partition-key prefix: `SELECT TOP n … WHERE c.libraryId = @libraryId AND filters ORDER BY VectorDistance(…)`. Before it, the API reads the library record to check access. After it, it reads the documents of the hits and drops passages from replaced versions or unpublished enrichment. Image results receive fresh read links and an additional lifecycle check. Hybrid mode retains its separately measured routing/cost behavior (E27).
 
 | What libraries need | How the containers provide it |
 |---|---|
@@ -226,7 +255,7 @@ Vector settings (dimensions, data type, quantizer, shard key) cannot change afte
 
 ## Run the demo
 
-The demo runs locally against a deployed environment, signed in with `az login`. Pick any string as the local API key; it only protects the API on your machine. Run each command in its own terminal, from the repo root, after setting `RG` (the deployment's resource group) and `DEV_API_KEY` in that terminal.
+The demo runs locally against a deployed environment, signed in with `az login`. Choose a random local API key; it only protects the API on your machine. Run each command in its own terminal, from the repo root, after setting `RG` (the deployment's resource group) and `DEV_API_KEY` in that terminal.
 
 ```bash
 eval "$(.venv/bin/python scripts/deployment_env.py -g "$RG")" && ENVIRONMENT=local AUTH_MODE=dev .venv/bin/fli-api
@@ -244,10 +273,16 @@ eval "$(.venv/bin/python scripts/deployment_env.py -g "$RG")" && ENVIRONMENT=loc
 eval "$(.venv/bin/python scripts/deployment_env.py -g "$RG")" && .venv/bin/streamlit run demo/app.py
 ```
 
-The corpus folder holds `groups/<library name>/` subfolders, one shared library each. Agents and their attachments are stored in `~/.fli-demo/state.json` (`DEMO_STATE_FILE` to change it), never in the index. Load documents a few minutes before searching: the vector index engages minutes after writes (`docs/evidence.md` E25).
+The corpus folder holds `groups/<library name>/` subfolders, one shared library each. Agents and their attachments are stored in `~/.fli-demo/state.json` (`DEMO_STATE_FILE` to change it), never in the index. Newly published content is searchable immediately; load documents a few minutes before measuring steady-state search cost because the vector index engages minutes after writes (`docs/evidence.md` E25).
 
 ## Synthetic upload fixtures
 
 The existing sample-document generator is included for functional hand-testing of uploads, formats, metadata and failure handling. Install with `python -m pip install -e '.[samples]'`, then run `python -m scripts.sample_docs.build`. It writes an ignored `sample-docs/` directory with a manifest and answer key. An optional output-directory argument is supported; **the generator replaces that directory if it already exists**. Use a dedicated disposable directory.
 
 These invented fixtures are not the real-document demo corpus and must not be used to claim semantic-search quality, recall or production performance. The evidence above uses real documents.
+
+## Validate image support and prepare a change
+
+With the API and worker running and deployment settings loaded, follow the [image smoke-check instructions](docs/image-retrieval.md#processing-isolation-and-verification). Keep the `--state` file outside the repository; repository records contain only sanitized counts, hashes, metrics and outcomes. The user-supplied dinosaur exchange remains in the [image guide header](docs/image-retrieval.md).
+
+Before committing, run the local suite, lint/format checks above and `python scripts/check_reference_privacy.py`. An optional private `--deny-file` strengthens the environment-identifier check. CI runs Python 3.12 and 3.14 without Azure credentials; live records supplement those tests. See the [final image review](docs/consults/2026-10-27-image-readiness-review.md) for the implementation decisions, completed checks and remaining work.

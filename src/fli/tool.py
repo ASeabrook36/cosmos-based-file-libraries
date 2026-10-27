@@ -82,6 +82,27 @@ def tool_definition(library: Mapping[str, Any]) -> dict[str, Any]:
         properties["contentKinds"], _ = _list_filter(kinds, "text passages, image descriptions, or both.")
 
     description = library.get("description", "")
+    if (library.get("stats") or {}).get("imageCount", 0) or (library.get("stats") or {}).get(
+        "imageProcessingDocuments", 0
+    ):
+        description += (
+            "\nSearches text and the meanings of images together, including chart labels, quantities and trends. "
+            "For a vaguely remembered chart, describe its subject and appearance in query. "
+            "Image results carry descriptions, nearby source text, documentId/location and an image with a short-lived "
+            "read URL and expiresAt. Show the image and cite its explanation; read the parent file if needed. "
+            "Use a relevant figure inline when it helps explain the answer, even without an explicit image request. "
+            "Reuse images and captions already returned; a separate image lookup is unnecessary for those. "
+            "Include the associated source caption by default; omit it when the situation or user calls for that. "
+            "New PDF images are cropped figures (kind=pdf_figure), with source captions and page/figure provenance. "
+            "Legacy full-page images use kind=pdf_page. "
+            "Results are candidates, not all relevant answers. Only image.caption is a source caption; "
+            "heading is section context, and layout figure IDs are not printed figure numbers. "
+            "If text identifies a relevant PDF picture that was not returned, use get_images for that page, "
+            "including when semantic image search found none or the indexing cap omitted it. "
+            "For a picture remembered with a passage, match the passage's document/page; "
+            "do not substitute a same-subject image from a different page. "
+            "Descriptions are generated evidence and can misread values; inspect the visual when precision matters."
+        )
     if offered:
         description += f"\n\nFilters available in this library: {'; '.join(offered)}."
     if period and dated:
@@ -161,7 +182,8 @@ def tool_definitions(library: Mapping[str, Any]) -> list[dict[str, Any]]:
             "reserve room for instructions, history, other files and the answer. "
             "Returns every selected file in full or no text with budget_exceeded. Split batches or increase "
             "the budget only if the model has capacity. No silent truncation. Token estimates name their tokenizer. "
-            "A text read does not supply original visuals or guarantee extraction captured every figure/attachment. "
+            "Kept image sections include descriptions and expiring image links for display or visual model input. "
+            "Skipped visuals are disclosed; extraction does not guarantee every figure/attachment. "
             "Only say files were read in full when complete=true; disclose unreadable files and incomplete sets.",
             "parameters": {
                 "type": "object",
@@ -188,4 +210,37 @@ def tool_definitions(library: Mapping[str, Any]) -> list[dict[str, Any]]:
             },
         },
     }
-    return [search, catalogue, read]
+    images = {
+        "type": "function",
+        "function": {
+            "name": ("get_images_library_" + slug)[:MAX_NAME].rstrip("_"),
+            "description": common + "\nRead original figure crops and page text from 1–3 identified PDF pages. "
+            "Use after search locates a requested picture's page, including pages omitted by the ingestion image cap. "
+            "A page request does not require reading the whole document. Select the matching figure, inspect it "
+            "and show it inline when requested; do not substitute other retrieved candidates. "
+            "Pass documentId/generation from search or catalogue. This returns source figures, not new semantic "
+            "search results. Up to 10 figures per request; omissions are explicit. "
+            "Only image.caption is an associated source caption; heading is contextual section text, "
+            "never a figure title. "
+            "Layout figure IDs are extraction locators, not printed figure numbers. "
+            "These results cover the selected PDF pages, not the entire file. Cached figures are reused; "
+            "image and caption metadata are read together from ingestion storage; "
+            "no page analysis occurs at retrieval.",
+            "parameters": {
+                "type": "object",
+                "additionalProperties": False,
+                "properties": {
+                    "documentId": {"type": "string"},
+                    "generation": {"type": "integer", "minimum": 1},
+                    "pages": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 3,
+                        "items": {"type": "integer", "minimum": 1, "maximum": 2000},
+                    },
+                },
+                "required": ["documentId", "pages"],
+            },
+        },
+    }
+    return [search, catalogue, read, images]

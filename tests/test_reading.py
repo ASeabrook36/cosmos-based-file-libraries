@@ -9,7 +9,7 @@ import pytest
 
 from fli.chunking import ApproxTokenizer, Chunker
 from fli.query import DateRange, SearchFilters
-from fli.reading import render_catalog
+from fli.reading import manifest, render_catalog
 from fli.search import CosmosChunkReader, QueryCost
 from fli.worker.handlers import Worker
 from tests.fakes import FakeEmbedder, api
@@ -62,6 +62,11 @@ def read(client, lib, *ids, **options):
 
 def discover(client, lib, **selectors):
     return client.post(f"/v1/libraries/{lib}/documents:discover", json=selectors)
+
+
+def test_legacy_visual_omissions_are_not_reported_as_complete():
+    document = {"id": "legacy", "activeGeneration": 1, "imageCount": 1, "imagesSkipped": 2}
+    assert not manifest(document)["visualsComplete"]
 
 
 async def test_complete_extraction_is_preserved_before_overlap_and_survives_full_response(ctx):
@@ -328,7 +333,7 @@ async def test_demo_agent_can_find_a_vaguely_described_file_then_receive_the_ent
     def chat(messages, tools):
         calls.append(messages)
         offered = [t["function"]["name"] for t in tools]
-        assert len(offered) == 3
+        assert len(offered) == 4
         if len(calls) == 1:
             return Reply(None, [ToolCall("search", offered[0], json.dumps({"query": "process standard"}))])
         if len(calls) == 2:

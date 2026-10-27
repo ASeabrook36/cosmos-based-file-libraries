@@ -1,6 +1,6 @@
 # Specification: File Library Index
 
-*Version 0.11, 2026-10-26. Working name. Phases 0–3 passed on live Azure (`build-plan.md`). Adaptive document retrieval (§6.6) is implemented and its live smoke check passed; human answer-quality and broader routing evaluation remain pending. Images (Phase 3B) and Phases 4–5 remain to build. Every measured design choice is traced in `evidence.md`.*
+*Version 0.18, 2026-10-27. Working name. Phases 0–3 passed on live Azure (`build-plan.md`). Adaptive document retrieval (§6.6) is implemented and its live smoke check passed; human answer-quality and broader routing evaluation remain pending. Images (Phase 3B, including PDF vector charts) are implemented; see `image-retrieval.md` for validation and limitations. Phases 4–5 remain to build. Every measured design choice is traced in `evidence.md`.*
 
 ## 1. Scope
 
@@ -39,7 +39,7 @@ flowchart LR
     C[("Cosmos DB<br/>libraries · documents · chunks")]
     B[("Blob Storage<br/>originals · images · extracted text")]
     AI["Azure OpenAI<br/>embeddings · vision · proposals"]
-    DI["Document Intelligence<br/>OCR for scans"]
+    DI["Document Intelligence<br/>PDF layout, text and figures"]
     T["Application Insights"]
 
     P -- "REST, platform identity only" --> API
@@ -72,7 +72,7 @@ The division of storage is deliberate. **Cosmos holds the searchable representat
 | Storage account | One blob container, `files`. Public blob access off. Blob soft delete for 7 days, matching Cosmos's continuous backup (`evidence.md` E16). |
 | Service Bus | Standard tier (sessions need it). Queue `ingest`, sessions enabled, max delivery count 5, dead-lettering on. |
 | Azure OpenAI | Embedding deployment of `text-embedding-3-large` at 3,072 dimensions. A vision-capable chat deployment for image descriptions and proposals. |
-| Document Intelligence | `prebuilt-read` for OCR of scanned PDFs and images. |
+| Document Intelligence | `prebuilt-layout` with figure output for PDF text, tables, captions and figure crops; bounded `prebuilt-read` client retained for legacy extraction callers. |
 | Application Insights | Telemetry and the routing report (§9.3). |
 | Container Apps | Two apps from one image: `api` and `worker`. Local runs are fine for the demo. |
 
@@ -110,7 +110,7 @@ Partition key `/libraryId`. `id` equals `libraryId` (a GUID).
 | `autoAcceptTagProposals` | bool | Default `true` for personal, `false` for shared. When set, proposals fill empty fields and add tags at ingestion (§9.1) |
 | `tagVocabulary` | object | `{key: {value: documentCount}}`, recomputed after ingestion |
 | `filterValues` | object | `{authors, fileTypes, contentKinds: {value: documentCount}, period: {from, to} \| null, missing: {period, author, authoredAt}}`, counted over searchable documents and recomputed with `tagVocabulary`. The tool definition (§6.4) and coverage notes (§9.2) read it, so neither reads documents per search |
-| `stats` | object | `{documentCount, chunkCount, imageCount, lastIngestedAt}` |
+| `stats` | object | `{documentCount, chunkCount, imageCount, imagesSkipped, imageProcessingDocuments, imageFailedDocuments, lastIngestedAt}` |
 | `embeddingModel`, `embeddingDimensions` | string, int | Recorded for rebuilds |
 | `status` | `active` \| `deleting` | |
 | `createdAt`, `createdBy`, `updatedAt` | | `createdBy` is the platform-supplied principal, for audit only |
@@ -140,7 +140,11 @@ Partition key `/libraryId`. `id` equals `documentId` (a GUID).
 | `facets` | string[] | `key=value` for every entry in `tags`; this is what filters match |
 | `metadataVersion` | int | Raised by each `PATCH`; the `retag` message carries it (§7.1). 0 at upload |
 | `extraction` | object | `{method, ocrApplied, pageCount, extractionVersion, chunkingVersion}` |
-| `chunkCount`, `imageCount`, `imagesSkipped` | int | |
+| `chunkCount`, `imageCount`, `imagesSkipped` | int | Published chunks and indexed images; visual candidates omitted from semantic indexing |
+| `publishedChunkCount`, `contentRevision` | int | Visibility bound within an active generation; revision 1 is text-first publication, 2 is final enrichment |
+| `imageStatus`, `imagePendingCount`, `textReadyAt` | string, int, datetime | `none`, `queued`, `processing`, `ready`, or `failed`; pending count is images awaiting publication, not outstanding model calls |
+| `imageAssets` | object or null | `{blobPath, generation, sourceSha256, sha256, assetCount, skipped}` for the immutable source image/caption manifest (§6.7, §7.5) |
+| `sourceImageCount`, `sourceImagesSkipped` | int | Qualifying stored images and source-storage omissions, separate from semantic-index coverage |
 | `processingMetrics` | object or absent | Current-generation worker stage times, chunk distribution, actual embedding usage and chunk-write RU (§6.4a). Older documents remain unmeasured |
 | `fullText` | object | `{blobPath, generation, sectionCount, tokenCount, tokenizer, sha256}` for the active generation’s pre-chunking extracted sections (§6.6). Absent on older documents |
 | `description` | string or null | Generated discovery hint from opening text, at most 800 characters; not a full-document summary (§6.6) |
@@ -154,18 +158,19 @@ Why this key: every search names one library, so `/libraryId` first sends a sear
 
 | Field | Type | Notes |
 |---|---|---|
-| `id` | string | `{documentId}:{generation}:{chunkIndex}`. Deterministic, so retries overwrite rather than duplicate |
+| `id` | string | `{documentId}:{generation}:{chunkIndex}`. Deterministic; retries address the same immutable content rather than adding duplicates |
 | `libraryId`, `documentId`, `generation`, `chunkIndex` | | Text chunks are numbered 0…n−1 in reading order; image chunks follow, n…n+m−1 |
 | `contentKind` | `text` \| `image` | |
 | `text` | string | Chunk text; for images, the description (§7.5). Full-text indexed; returned to agents |
 | `heading` | string \| null | Section heading carried into each chunk of its section |
-| `location` | object | `{page}` \| `{slide}` \| `{sheet, rowStart, rowEnd}` \| `{}` |
+| `location` | object | `{page}` \| `{paragraph}` \| `{slide}` \| `{sheet, rowStart, rowEnd}` \| `{}` |
 | `imageRef` | string \| null | Blob path of the image, for `image` chunks |
-| `imageMeta` | object \| null | `{width, height, mime}` |
+| `imageMeta` | object \| null | `{width, height, mime, kind, caption, captionStatus, captionAssociation, captionLocation, regions}`; source captions remain distinct from generated descriptions |
 | `fileName`, `fileType`, `uploadedAt`, `authoredAt`, `author`, `periodStart`, `periodEnd`, `facets` | | Copied from the document so filters run inside the vector search. Updated by patch when the document's metadata changes |
 | `tokenCount` | int | |
 | `embedding` | float[3072] | Stored as float16. Never returned by any query |
 | `embeddingModel`, `chunkingVersion`, `createdAt` | | |
+| `contentHash` | string | New worker writes: immutable content fingerprint checked on duplicate create. Retag fields remain patchable; no scalar index needed |
 
 ## 5. Permissions and the personal-library guarantee
 
@@ -177,7 +182,7 @@ A fact that never changes cannot go stale, so the index holds exactly one: a per
 
 1. **Only the platform can call the index.** Agents and users never hold credentials to the index, so the `X-Agent-Id` header on a request can be trusted. **Production:** every request carries an Entra bearer token for the index's API app registration with the app role `Platform.Caller`, held only by the platform's service principal (Phase 5). **Prototype:** the platform is trusted by deployment. The API listens on the local machine and requires a static key (`AUTH_MODE=dev`, refused unless `ENVIRONMENT=local`). The platform authenticates its own users and decides who may see and add to which libraries, including exposing a personal library only to the agent it was created for; the index does none of that.
 2. **Creating a library fixes its kind.** `kind: personal` requires `boundAgentId`; `kind: shared` forbids it. Neither field can change afterwards: `PATCH` with either returns `400 immutable_field`. Making a personal library shared means copying it into a new shared library (not in v1), never flipping the field.
-3. **Every agent retrieval capability checks the binding.** Search, document discovery, complete reads and the `/tools` bundle require `X-Agent-Id` and apply this rule. Even though the platform exposes a personal library only to its own agent, the index re-checks as a backstop. Before searching, the index reads the library record (a point read, about 1 RU). It refuses when:
+3. **Every agent retrieval capability checks the binding.** Search, document discovery, complete reads, selected-page image reads and the `/tools` bundle require `X-Agent-Id` and apply this rule. Even though the platform exposes a personal library only to its own agent, the index re-checks as a backstop. Before searching, the index reads the library record (a point read, about 1 RU). It refuses when:
    - the library does not exist or is `deleting` → `404 library_not_found`;
    - the library is `personal` and `X-Agent-Id` ≠ `boundAgentId` → `403 library_not_bound_to_agent`, logged as a security event.
 4. **The platform's attach screen for official agents lists only shared libraries** (`GET /v1/libraries?kind=shared`). Rule 3 is the backstop: a wrong attachment created by a platform bug returns nothing.
@@ -339,7 +344,7 @@ The demo exposes **Library Performance** and per-answer model/retrieval breakdow
 
 ### 6.6 Adaptive document retrieval
 
-`GET …/tools` returns three ready-to-attach function definitions: passage search, file discovery, and complete-document reading. The singular `/tool` remains search-only for compatibility. The platform binds every definition to one attached library and supplies `X-Agent-Id`; the model supplies neither library ID nor agent ID. A REST or MCP host can present these definitions; this implementation uses REST and adds no MCP server.
+`GET …/tools` returns four ready-to-attach function definitions: passage search, file discovery, complete-document reading, and selected-page PDF image reading (§6.7). The singular `/tool` remains search-only for compatibility. The platform binds every definition to one attached library and supplies `X-Agent-Id`; the model supplies neither library ID nor agent ID. A REST or MCP host can present these definitions; this implementation uses REST and adds no MCP server.
 
 | Method and path | Body | Result |
 |---|---|---|
@@ -355,48 +360,65 @@ Read takes 1–20 distinct IDs, optionally pinned to active generations. It retu
 
 The worker stores pre-chunking sections at `{libraryId}/{documentId}/text/{generation}/sections.json` in Blob and commits their descriptor with the generation. It validates their digest and section count on reading. Artifacts follow generation replacement/deletion/purge rules. Old documents can return all active indexed chunks, count/index checked and labelled `indexed_chunks`, with overlap/repeated-heading disclosure. This fallback is complete indexed text, not reconstructed original layout. A complete text read does not imply visual figures, attachments or unsupported content were extracted.
 
-The reader rechecks every document's active generation, metadata version and deletion state, and library availability after fetching. A detected change refuses the batch (`409 document_changed`). A missing/deleting file is `404 document_not_found`; no active generation is `409 document_not_ready`; unavailable/incomplete text is `409 document_text_unavailable` / `document_text_incomplete`. No error returns another selected file's contents. Existing cross-client Session-consistency limits (N13) still apply.
+The reader rechecks every document's active generation, content revision, metadata version and deletion state, and library availability after fetching. A detected change refuses the batch (`409 document_changed`). A missing/deleting file is `404 document_not_found`; no active generation is `409 document_not_ready`; unavailable/incomplete text is `409 document_text_unavailable` / `document_text_incomplete`. No error returns another selected file's contents. Existing cross-client Session-consistency limits (N13) still apply.
 
 The demo adopts `/tools`, passes full reads without its passage character cap, keeps all tool evidence during a turn, and applies a configurable total context budget (default 64,000, with an answer reserve). It shows operation, completeness and estimated tokens alongside RU and latency. Generated per-document descriptions (when proposals run) identify subject/purpose from opening text and are labelled as discovery hints. They are never substitutes for reading the file.
 
 The complete contract, examples, integration mapping, compatibility, tests and rollout limits are in [document-retrieval.md](document-retrieval.md). The implementation and a live four-paper smoke check passed; broad answer-quality evaluation remains outstanding (E34, E35).
 
+### 6.7 Stored image/caption retrieval
+
+Source image bytes and associated caption metadata are ingested together before publication. An immutable generation-local `image-assets.json` manifest and its descriptor bind source SHA, generation, image IDs/Blob references, caption text or explicit absence, association/location and omissions by page. The descriptor publishes with the document's text/source snapshot. Captions are also part of searchable image text before embedding. `IMAGE_MAX_PER_DOCUMENT` (50) limits model descriptions/semantic image chunks; `IMAGE_ASSET_MAX_PER_DOCUMENT` (1,000, hard maximum 10,000) separately bounds stored source figures. Metadata-only PDF handles and serial native-picture uploads bound PNG memory use. Description enrichment also loads one stored crop at a time and reuses its immutable Blob reference (E44).
+
+`POST …/documents:images` accepts `{documentId, generation?, pages}` with 1–3 distinct PDF page numbers. The bound tool is `get_images_library_<name>`. It reads the stored manifest, source figures and extracted text, returning up to 10 image/caption pairs plus page text with `scope: stored_pdf_page_images`. A missing/invalid legacy manifest explicitly requires reprocessing. It makes no layout/model calls and performs no storage writes. Permission, integrity and lifecycle checks apply equally to source assets beyond the semantic-description cap. `sourceImageCount` and `sourceImagesSkipped` disclose stored coverage separately from indexed image counts.
+
+The agent receives captions together with images and includes them by default. It may omit display when appropriate; the demo rendering convention is `fli-image:IMAGE_ID?caption=omit`. Contextual headings and internal figure locators must not be represented as source titles/captions. Caption associations inferred during ingestion remain qualified. There is no automatic post-answer caption lookup or caption-driven answer revision. This supersedes the earlier E42 prototype recovery workflow without changing Cosmos partition/index policies.
+
+Text passages and image descriptions share semantic ranking by default; text passages do not automatically attach every nearby image. Agents may place a relevant figure inline with a text-based explanation without an explicit request for a picture. Reuse returned image/caption evidence before requesting additional source pages. Direct reads beyond the semantic-description cap currently support PDF pages; stored unindexed Office pictures require a higher description cap and reprocessing, or PDF export.
+
 ## 7. Ingestion
 
 ### 7.1 Queue
 
-One Service Bus queue, `ingest`, with sessions enabled and `SessionId = libraryId`. Messages for one library are processed one at a time, in order; different libraries proceed in parallel up to `INGEST_MAX_CONCURRENT_SESSIONS` (default 8). This is the pacing mechanism: one user dropping 5,000 files into one library occupies one lane and cannot starve everyone else's uploads or searches.
+One Service Bus queue, `ingest`, with text publication and deferred image enrichment messages, with sessions enabled and `SessionId = libraryId`. Messages for one library are processed one at a time, in order; different libraries proceed in parallel up to `INGEST_MAX_CONCURRENT_SESSIONS` (default 8). This is the pacing mechanism: one user dropping 5,000 files into one library occupies one lane and cannot starve everyone else's uploads or searches.
 
 | Message `type` | Fields | Effect |
 |---|---|---|
 | `ingest` | `libraryId, documentId, generation` | Process a document (§7.2). If the document's `generation` reads lower than the message's, the read is stale (`evidence.md` E28): the worker pauses a second and the message is redelivered |
+| `enrichImages` | `libraryId, documentId, generation` | Resume image descriptions from immutable preparation/checkpoints, append image chunks and atomically publish the enriched snapshot. Text remains searchable during this work |
 | `retag` | `libraryId, documentId, metadataVersion` | Copy the document's `facets`, `author`, `periodStart` and `periodEnd` to the chunks of its active and pending generations, by patch, under the worker-wide write cap (§7.7). If the record's `metadataVersion` reads lower than the message's, the read is stale (`evidence.md` E28) and the message is redelivered; if higher, a later `retag` is queued and this one completes without work. A `retag` that fails on its last delivery is logged as `retag dead-lettered`; repeating the `PATCH` queues it again |
 | `purgeDocument` | `libraryId, documentId, deleted?` | Delete every chunk and original of an obsolete generation: one that is neither `activeGeneration` nor `pendingGeneration`, and not above the document's `generation` (a stale read may miss a newer generation, so what lies above is left for a later purge; E30). If the document is `deleting` or gone, delete all its chunks, then its blobs, then its record. Safe because one library's messages never run concurrently (session order). `deleted: true` marks a purge queued by a deletion: if the document does not read as `deleting` yet, the read is stale (`evidence.md` E28), so the worker pauses a second and the message is redelivered instead of completing |
 | `purgeLibrary` | `libraryId` | Delete every document, chunk and blob, then the library. If the library does not read as `deleting` yet, the read is stale (E28): retried as for `purgeDocument` |
 | `proposeDescription` | `libraryId, requested?` | Propose a library description (§9.1). `requested: true` marks `POST …/description:propose` and always regenerates. Without it (queued by step 11), the worker checks again that a proposal is due and otherwise completes without a call, so a burst of uploads costs one call. One that fails on its last delivery is logged as `proposeDescription dead-lettered`; the previous proposal stays |
 
-An `ingest` whose generation is no longer pending is completed without processing. Unless the document is `deleting` or gone, it first queues `purgeDocument` again, and if its generation is the active one it also refreshes the library's `stats` (step 11). Messages arrive at least once, and such a delivery may be the retry of one that committed and then failed to queue its purge; the purge is idempotent. After the last delivery attempt fails, the worker marks the document `failed` with the reason before the message dead-letters. `activeGeneration` is left as it was: a failed replacement keeps the previous version searchable, and a failed first upload has nothing searchable. A purge that fails on its last delivery is logged as `purge dead-lettered`. Its library or document stays hidden as `deleting` until the `DELETE` is repeated (§5 rule 5); alerting on that log is Phase 5.
+An `ingest` whose generation is no longer pending is completed without processing. It first queues `purgeDocument` again, including when the record is deleting or gone (late writers can leave cleanup work), and if its generation is the active one it also refreshes the library's `stats` (step 11). Messages arrive at least once, and such a delivery may be the retry of one that committed and then failed to queue its purge; the purge is idempotent. After the last delivery attempt fails, the worker marks the document `failed` with the reason before the message dead-letters. `activeGeneration` is left as it was: a failed replacement keeps the previous version searchable, and a failed first upload has nothing searchable. A purge that fails on its last delivery is logged as `purge dead-lettered`. Its library or document stays hidden as `deleting` until the `DELETE` is repeated (§5 rule 5); alerting on that log is Phase 5.
 
 ### 7.2 Processing a document
 
 1. Load the document; set `status: processing`. Proceed only while `pendingGeneration` is G.
 2. Download the original from Blob: `pendingFile.blobPath` for a replacement, `blobPath` for a first upload.
-3. Extract (§7.3). Encrypted, password-protected, unsupported and failed files end here with `status: failed` and a `statusDetail`.
+3. Extract (§7.3). Encrypted, password-protected, unsupported and failed files end here with `status: failed` and a `statusDetail`, PDFs without body text can still publish usable figures from layout analysis. Layout page bounds and parser/protection failures are enforced.
 4. Chunk the text (§7.4). A document with more than `INGEST_MAX_CHUNKS_PER_DOCUMENT` chunks ends here with `status: failed`, `too_many_chunks`, before anything is embedded (`evidence.md` E29).
-5. Extract and describe images (§7.5).
+5. Extract and store qualifying source images with captions (§7.5). Defer model descriptions until after text publication for mixed documents.
 6. Propose tags, period, author and a bounded discovery description from opening text (§9.1, §6.6). If the library has `autoAcceptTagProposals`, the accepted values go into the chunks written in step 8. A failed proposal call does not fail the document: it is logged, and the document proceeds without proposals.
-7. Embed every chunk's `text` with the embedding deployment, in batches of 16, honouring `Retry-After` on 429.
-8. Upsert all chunks of generation G. Writes share one cap across the whole worker, `COSMOS_WRITE_CONCURRENCY` (default 2), not a cap per document. On a 429 that outlasts the SDK's own retries, wait `x-ms-retry-after-ms` and retry. Eight concurrent writers exhausted the SDK's retries on serverless within about 100 writes (`evidence.md` E10). Deterministic ids make retries safe.
-   Before commit, save the pre-chunking sections in the generation’s text Blob and record its descriptor (§6.6).
+7. Freeze source/text preparation using a create-only Blob at `text/{generation}/preparation.json`. For mixed text/image files, embed/write/publish the complete text now and queue image enrichment (details below). Enrichment freezes the final canonical plan at `text/{generation}/plan.json`. It contains the source SHA, sections/chunks/image references and metadata proposals. Concurrent attempts read the winning plan. A redelivery with a saved plan skips extraction, descriptions and proposals. Embed only unpublished chunks with the embedding deployment, in batches of 16, honouring `Retry-After` on 429; enrichment does not re-embed ready text.
+8. Create all chunks of generation G with a content fingerprint; a duplicate ID must have the same fingerprint and is left untouched. Legacy/import callers without that marker retain upsert behavior. Writes share one cap across the whole worker, `COSMOS_WRITE_CONCURRENCY` (default 2), not a cap per document. On a 429 that outlasts the SDK's own retries, wait `x-ms-retry-after-ms` and retry. Eight concurrent writers exhausted the SDK's retries on serverless within about 100 writes (`evidence.md` E10). The frozen plan plus create-only writes make retries safe without reverting published evidence or retagged metadata.
+   Before commit, create the canonical pre-chunking-section Blob conditionally and verify its hash on conflict; record its descriptor (§6.6). Image paths include normalized-pixel hashes.
 9. Commit: set `activeGeneration: G`, `pendingGeneration: null`, `status: ready`, counts; copy `pendingFile` over the record's file fields and clear it. `authoredAt` is taken from the file of generation G, since it only ever comes from the file; `author` keeps any value already set. Until this moment search keeps returning the previous generation, if any; from it, search returns generation G and ignores older ones (§8 step 6). The step 6 proposals are settled on the record as it reads now, so a `PATCH` made meanwhile is kept, and its `retag` follows in session order.
 10. If G > 1, enqueue `purgeDocument`. It also runs after a generation is abandoned (the document was deleted or replaced while G was written) and after a final failure, so half-written chunks never linger.
 11. Recompute the library's `tagVocabulary`, `filterValues` and `stats` from the `documents` container (a single-partition query). Enqueue `proposeDescription` when the library has no proposal yet, when its document count has moved by 10 or more since the last proposal, or when 24 hours have passed and the count has changed.
+
+**Text-first publication (E41).** The worker freezes `preparation.json` containing complete source sections, canonical text chunks, proposals and stored figure references before describing images. For mixed text/image files, it embeds and publishes the entire extracted text first, at `text-sections.json`. `activeGeneration` and file metadata switch to the new upload together; `pendingGeneration` remains that generation while images are pending. `status: processing`, `imageStatus: queued|processing`, `imagePendingCount`, `textReadyAt` and `contentRevision: 1` describe this state. Complete reads are complete extracted text with explicit `visualsComplete: false` and an image-coverage note.
+
+It then queues `enrichImages` on the same library session, behind already queued uploads. Image-only files have no earlier text to publish and use the ordinary image path. Enrichment reuses stored figures/descriptions, embeds only appended image chunks, freezes the final plan and `sections.json`, then atomically updates the document to `contentRevision: 2`, the full count and `imageStatus: ready`. Text chunks/embeddings keep their IDs and are not rewritten. Queries retain the existing generation check plus the optional `publishedChunkCount` bound; newly written image chunks remain hidden until final publication. Complete reads recheck content revision as well as generation/metadata, refusing mixed snapshots.
+
+Image failure after text publication leaves `status: ready`, `imageStatus: failed` and the reason; text remains usable. Library coverage and manifests disclose pending/failed image enrichment. Unpublished same-generation artifacts remain inaccessible and follow that generation's eventual purge. Failed extraction/text publication retains the earlier failure behavior. Replacement/deletion/supersession guards apply to both stages, and retries repair a failed enqueue without republishing or re-embedding ready text. Existing all-at-once plans remain compatible. No Cosmos container/index change is required.
 
 ### 7.3 Extraction
 
 | File type | Method |
 |---|---|
-| PDF | Text layer via `pypdf`, page by page. No text layer → Document Intelligence `prebuilt-read`, bounded by `OCR_MAX_PAGES` (default 200) |
+| PDF | Protection/metadata inspection via `pypdf`, then Document Intelligence `prebuilt-layout` text, tables, figures and captions, including scanned pages; `PDF_LAYOUT_MAX_PAGES` (default 2,000), checkpointed page batches (default 20) |
 | DOCX | `python-docx`: paragraphs with heading styles as section headings; tables as rows. Embedded images from `word/media/` |
 | PPTX | `python-pptx`: one section per slide (title as heading), body text and speaker notes. Picture shapes as images, with slide number |
 | XLSX, CSV | `openpyxl` / `csv`: one section per sheet; rows rendered as `Header: value` lines; header row repeated in every chunk |
@@ -418,15 +440,22 @@ The heading carried into each chunk is at most 64 tokens. A longer heading is al
 
 ### 7.5 Images
 
-1. Collect standalone image uploads and images embedded in DOCX and PPTX. (PDF figures are Phase 5: Document Intelligence layout with figure output.)
-2. Skip images with fewer than `IMAGE_MIN_PIXELS` total pixels (default 16,384, i.e. 128×128) or smaller than `IMAGE_MIN_BYTES` (default 10 KB): logos, icons, bullets. Cap at `IMAGE_MAX_PER_DOCUMENT` (default 50). Record `imagesSkipped`.
-3. Store each kept image at `{libraryId}/{documentId}/images/{generation}/{imageId}.{ext}`. Image ids and extensions are generated, never taken from the file. Like originals, each generation's images have their own path, and the purge removes those of obsolete generations by the same rule (§7.1).
-4. Describe it with the vision deployment. Prompt: describe what the image shows for someone searching for it; transcribe any visible text, numbers, labels, axis titles and legends; for charts, state the chart type, what is compared and the main trend; do not speculate beyond what is visible. Give it the document name and the nearest heading or slide title as context.
-5. The chunk `text` is `"Image from <fileName>, <location>, under '<heading>': <description>"`, `contentKind: image`, with `imageRef` and `imageMeta`. It is embedded with the same model as text, so one search covers both.
+1. Collect standalone images and pictures embedded in DOCX/PPTX, including tables/groups. For PDFs, use Document Intelligence `prebuilt-layout` with `output=figures` and download its individual figure crops (`kind: pdf_figure`). Neither a page-sized scan nor a PDF path/image object independently becomes a figure. Body paragraphs and table text remain ordinary text; graphic-internal labels stay with the figure. Retain source captions both as body text and as separately attributed figure metadata/context. Record page/figure identity and source/caption bounding regions. No whole-page fallback. Legacy `pdf_page` generations remain readable. Native Office chart objects/unsupported media remain outside picture extraction; PDF export enables layout-based extraction (E40).
+2. Skip images with fewer than `IMAGE_MIN_PIXELS` pixels (default 16,384) or smaller than `IMAGE_MIN_BYTES` (default 0, disabled). An explicitly enabled byte threshold trades recall for cost (E39). Keep at most `IMAGE_MAX_PER_DOCUMENT` (50), counting other candidates in `imagesSkipped`; store qualifying source figures/captions up to `IMAGE_ASSET_MAX_PER_DOCUMENT`, but describe/index only the first description-cap images. All pages still receive text extraction. Normalize kept images to PNG with EXIF orientation and first-frame selection; skip inputs above 40 million pixels and bound display dimensions to 4,096 pixels.
+3. Store each qualifying source image and its caption metadata together, and freeze their generation-bound manifest before publication (§6.7). Store image bytes at `{libraryId}/{documentId}/images/{generation}/{imageId}.{ext}`. Image ids and extensions are generated, never taken from the file. Like originals, each generation's images have their own path, and the purge removes those of obsolete generations by the same rule (§7.1).
+4. Load one stored image at a time and describe it with the vision deployment; reuse its Blob reference without uploading it again. Run PDF normalization off the event loop so concurrent library lanes can progress. Prompt: describe what the image shows for someone searching for it; transcribe any visible text, numbers, labels, axis titles and legends; for charts, state the chart type, what is compared and the main trend; do not speculate beyond what is visible. Give it the document name, nearest heading or slide title, source location, any separately attributed source caption and up to 2,000 characters of nearby text as untrusted context. Keep that source context with its searchable description. Persist each successful description using a create-only, generation-local checkpoint keyed by pixel hash, context/location/name, prompt version and model configuration. Retried work reuses it.
+5. Include the retained images as description-bearing sections in the complete extraction artifact, with their image IDs, source locations and internal Blob references. Full reads turn those references into fresh links without exposing internal paths. Text sections precede visual sections; both preserve provenance and the all-or-nothing budget.
+6. The chunk `text` is `"Image from <fileName>, <location>, under '<heading>': <description>"`, `contentKind: image`, with `imageRef` and `imageMeta`. It is embedded with the same model as text, so one search covers both.
+
+Search and complete reads return `imageId` and `image: {url, expiresAt, width, height, mime, kind, caption, captionStatus, captionAssociation, captionLocation, regions}`. The platform supplies actual visual content parts to image-capable models and displays selected images inline; descriptions remain useful to text-only agents. See `image-retrieval.md` for the complete platform contract, skip limits, generation behavior and verification.
 
 Describing and then embedding keeps one vector space, lets keyword search work on images, and gives a text-only agent something useful to read. A vision call per image is the largest per-file cost in the pipeline, which is why the skip rules and cap exist.
 
 ### 7.6 Concurrency and throttling
+
+PDF layout uses page-range batches with create-only checkpoints of text, caption metadata and copied figure bytes. Verify exact page coverage before saving a batch. A shared governor permits two active layout operations per worker process and honors throttling. Layout is billed per analyzed page separately from the image cap; selected-page requests currently resubmit the original bytes. Missing configuration fails as `layout_unavailable`.
+
+Vision calls share a `VISION_CONCURRENCY` governor (default 2) across worker lanes, with provider-directed retries and shared cooldown. Checkpoints avoid re-describing completed images on redelivery; overlapping misses can still call vision concurrently.
 
 Cosmos throttles with HTTP 429 when a partition's throughput is exceeded. The SDK retries; the worker additionally retries 429s that outlast the SDK's retries, and backs off on repeated ones. Ingestion is the expensive side (about 144 RU per chunk written at float16, `evidence.md` E10), so the session lanes (§7.1) decide which library's work runs next, and the worker-wide write cap (§7.2 step 8) keeps ingestion below the container's ceiling, leaving room for searches. On a provisioned account, raise `COSMOS_WRITE_CONCURRENCY` with the configured throughput.
 
@@ -530,15 +559,20 @@ The routing report is a saved Log Analytics query, per library over 30 days: sea
 | `SERVICEBUS_NAMESPACE`, `SERVICEBUS_QUEUE` | —, `ingest` | |
 | `AOAI_ENDPOINT`, `AOAI_EMBEDDING_DEPLOYMENT`, `AOAI_EMBEDDING_DIMENSIONS` | —, —, `3072` | The dimension must equal the container's vector policy; the app checks at startup |
 | `AOAI_VISION_DEPLOYMENT`, `AOAI_CHAT_DEPLOYMENT` | — | Can be the same deployment. Without `AOAI_CHAT_DEPLOYMENT`, proposals are off |
-| `DOCINTEL_ENDPOINT`, `OCR_MAX_PAGES` | —, `200` | |
+| `DOCINTEL_ENDPOINT`, `OCR_MAX_PAGES` | —, `200` | OCR bound for legacy extraction callers |
+| `PDF_LAYOUT_MAX_PAGES`, `PDF_LAYOUT_BATCH_PAGES` | `2000`, `20` | PDF layout bound and checkpoint batch size; requires Document Intelligence |
 | `UPLOAD_MAX_BYTES` | `104857600` | |
-| `IMAGE_MIN_PIXELS`, `IMAGE_MIN_BYTES`, `IMAGE_MAX_PER_DOCUMENT` | `16384`, `10240`, `50` | |
+| `IMAGE_MIN_PIXELS`, `IMAGE_MIN_BYTES`, `IMAGE_MAX_PER_DOCUMENT` | `16384`, `0`, `50` | Description/indexing bounds |
+| `IMAGE_ASSET_MAX_PER_DOCUMENT` | `1000` | Stored source figures/captions; must be at least the description cap, at most 10000 |
+| `VISION_CONCURRENCY` | `2` | Vision HTTP requests in flight across all worker lanes |
 | `INGEST_MAX_CONCURRENT_SESSIONS` | `8` | |
 | `INGEST_MAX_CHUNKS_PER_DOCUMENT` | `5000` | Larger documents fail as `too_many_chunks`. Raise it with the embedding quota and the worker's memory (`evidence.md` E29) |
 | `COSMOS_WRITE_CONCURRENCY` | `2` | Chunk writes in flight across the whole worker (§7.2 step 8). 2 suits serverless (`evidence.md` E10) |
 | `SEARCH_DEFAULT_TOP`, `SEARCH_MAX_TOP` | `8`, `20` | |
 | `SEARCH_MODE` | `vector` | `vector` or `hybrid` (§8 step 5, `evidence.md` E27) |
 | `APPLICATIONINSIGHTS_CONNECTION_STRING` | — | |
+
+The image, page, batch, context and concurrency values are current implementation defaults/safety bounds, not intrinsic Cosmos limits or a required production UX. Production may tune or extend them after provider/capacity validation, while preserving evidence pairing, explicit coverage and isolation. See [prototype boundaries](image-retrieval.md#prototype-boundaries-and-production-integration).
 
 ## 11. Capacity and cost
 
@@ -561,7 +595,7 @@ Azure OpenAI calls (embeddings, image descriptions, proposals) are billed separa
 - Searching several libraries in one request, or ranking results from different libraries against each other. The agent searches each library through its own tool.
 - Organization-wide search across all shared libraries without choosing. It would need a second container with a different shard key.
 - Per-user permissions inside the index.
-- PDF figure extraction; email attachments as child documents; legacy Office formats.
+- Broader figure/caption accuracy evaluation; email attachments as child documents; legacy Office formats.
 - Multimodal (image) embeddings. Possible later as a second vector path, which is a container-creation decision.
 - The Cosmos semantic reranker (preview).
 - Keyword search in languages other than English (Cosmos multi-language full text is preview). Vector search works across languages.

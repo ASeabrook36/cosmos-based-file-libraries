@@ -26,9 +26,10 @@ a passage came from (spec §4.3, ``location``).
 Author and authoring date come from document properties (Office, PDF) or message headers
 (EML) and are returned beside the sections.
 
-Not handled here yet (spec §7.3, §7.5): image extraction from DOCX/PPTX, and MSG. Standalone
-images should go to the image pipeline (spec §7.5), not to the OCR path below, which is kept
-for scanned pages.
+Image extraction and descriptions live in ``fli.images`` and are coordinated by the worker,
+including standalone images and DOCX/PPTX pictures. PDF worker ingestion uses
+``fli.figures`` for layout-separated text, captions and figure crops; the native/OCR path
+below is retained for extraction callers. MSG remains unsupported.
 """
 
 from __future__ import annotations
@@ -287,7 +288,7 @@ def _pdf_date(raw: object) -> datetime | None:
         return None
 
 
-def _pdf(data: bytes) -> tuple[list[Section], int, tuple[str | None, datetime | None]]:
+def _pdf(data: bytes, read_text: bool = True) -> tuple[list[Section], int, tuple[str | None, datetime | None]]:
     from pypdf import PdfReader
 
     reader = PdfReader(io.BytesIO(data))
@@ -298,7 +299,7 @@ def _pdf(data: bytes) -> tuple[list[Section], int, tuple[str | None, datetime | 
         except Exception as exc:  # noqa: BLE001
             raise PermissionError("pdf requires a password") from exc
     sections = []
-    for number, page in enumerate(reader.pages, start=1):
+    for number, page in enumerate(reader.pages if read_text else [], start=1):
         text = (page.extract_text() or "").strip()
         if text:
             sections.append(Section(None, text, {"page": number}))
@@ -309,6 +310,25 @@ def _pdf(data: bytes) -> tuple[list[Section], int, tuple[str | None, datetime | 
 
     meta = _metadata(read_meta)
     return sections, len(reader.pages), meta
+
+
+def inspect_pdf(data: bytes) -> Extracted:
+    """Validate protection/structure and read metadata without duplicating layout OCR."""
+    if b"/MicrosoftIRMServices" in data[:1_000_000]:
+        return Extracted("encrypted", method=ExtractionMethod.UNSUPPORTED)
+    try:
+        _, pages, (author, authored_at) = _pdf(data, read_text=False)
+        return Extracted("ok", page_count=pages, author=author, authored_at=authored_at)
+    except PermissionError:
+        return Extracted("categorical", categorical_reason="password_protected", method=ExtractionMethod.UNSUPPORTED)
+    except Exception as exc:
+        outcome, reason = classify_unreadable(data)
+        return Extracted(
+            outcome,
+            categorical_reason=reason,
+            failure_reason=f"parser:{type(exc).__name__}",
+            method=ExtractionMethod.UNSUPPORTED,
+        )
 
 
 _MD_HEADING = re.compile(r"^#{1,6}\s+(.*)$")

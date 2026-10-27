@@ -108,7 +108,7 @@ async def run(settings: Settings, stopping: asyncio.Event) -> None:
     from fli.chunking import Chunker, default_tokenizer
     from fli.chunks import CosmosChunks
     from fli.docintel import SCOPE as COGNITIVE_SCOPE
-    from fli.docintel import DocumentIntelligenceReader
+    from fli.docintel import DocumentIntelligenceLayout, DocumentIntelligenceReader
     from fli.embedding import AzureOpenAIEmbedder
     from fli.governor import Governor
     from fli.proposals import AzureOpenAIChat
@@ -140,6 +140,7 @@ async def run(settings: Settings, stopping: asyncio.Event) -> None:
         )
 
         writes = Governor("cosmos_writes", max_concurrency=settings.cosmos_write_concurrency, on_event=report)
+        vision_calls = Governor("vision", max_concurrency=settings.vision_concurrency, on_event=report)
         embeddings = Governor("embeddings", max_concurrency=4, on_event=report)
         ocr = (
             DocumentIntelligenceReader(
@@ -180,8 +181,37 @@ async def run(settings: Settings, stopping: asyncio.Event) -> None:
             ),
             chunker=Chunker(default_tokenizer()),
             ocr=ocr,
+            layout=(
+                DocumentIntelligenceLayout(
+                    endpoint=settings.docintel_endpoint,
+                    token_provider=tokens,
+                    http=http,
+                    max_pages=settings.pdf_layout_max_pages,
+                    max_bytes=settings.upload_max_bytes,
+                    timeout_seconds=240,
+                    governor=Governor("layout", max_concurrency=2, on_event=report),
+                )
+                if settings.docintel_endpoint
+                else None
+            ),
+            layout_batch_pages=settings.pdf_layout_batch_pages,
             max_chunks_per_document=settings.ingest_max_chunks_per_document,
             proposer=proposer,
+            vision=(
+                AzureOpenAIChat(
+                    endpoint=settings.aoai_endpoint,
+                    deployment=settings.aoai_vision_deployment,
+                    governor=vision_calls,
+                    token_provider=tokens,
+                    http=http,
+                )
+                if settings.aoai_vision_deployment
+                else None
+            ),
+            image_min_pixels=settings.image_min_pixels,
+            image_min_bytes=settings.image_min_bytes,
+            image_max_per_document=settings.image_max_per_document,
+            image_asset_max_per_document=settings.image_asset_max_per_document,
         )
 
         async def take_session() -> bool:

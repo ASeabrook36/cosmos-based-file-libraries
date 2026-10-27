@@ -1,0 +1,47 @@
+{
+  "check": "phase3b-hardening-regressions",
+  "date": "2026-10-26",
+  "localControlledReproductions": {
+    "publicationAndRetry": {
+      "overlappingDelivery": {
+        "publishedGeneration": 1,
+        "artifactMatchesBeforeLateWriter": true,
+        "artifactMatchesAfterLateWriter": true,
+        "readStatus": 200,
+        "readError": null
+      },
+      "visionReplay": {
+        "queueAttempts": 2,
+        "visionCallsForSameImage": 1
+      }
+    },
+    "coverage": {
+      "decorativePagesConsumeCap": {
+        "retainedPages": [
+          3
+        ],
+        "chartOnPage": 3,
+        "chartRetained": true,
+        "skippedPages": 0
+      },
+      "compressedChartThreshold": {
+        "width": 640,
+        "height": 400,
+        "bytes": 4392,
+        "retainedImages": 1,
+        "skippedImages": 0
+      }
+    },
+    "ocr": {
+      "configuredOCRWithoutText": {
+        "status": "ready",
+        "statusDetail": null,
+        "visionCalls": 1
+      }
+    }
+  },
+  "pytestPassed": 523,
+  "ruffCheckPassed": true,
+  "ruffFormatPassed": true,
+  "referencePrivacyPassed": true
+}

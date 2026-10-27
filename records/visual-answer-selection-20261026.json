@@ -1,0 +1,72 @@
+{
+  "check": "visual-answer-selection",
+  "complete": true,
+  "lookups": [
+    {
+      "sourceRole": "diagram",
+      "page": 23,
+      "figures": 1,
+      "cropFetched": true,
+      "pageTextReturned": true,
+      "cacheStable": true,
+      "firstLookupMs": 989.2,
+      "cachedLookupMs": 582.7,
+      "usage": {
+        "requestCharge": 4.56,
+        "totalMs": 866.1
+      }
+    },
+    {
+      "sourceRole": "trex",
+      "page": 94,
+      "figures": 1,
+      "cropFetched": true,
+      "pageTextReturned": true,
+      "cacheStable": true,
+      "firstLookupMs": 844.4,
+      "cachedLookupMs": 593.1,
+      "usage": {
+        "requestCharge": 4.38,
+        "totalMs": 663.0
+      }
+    }
+  ],
+  "actualModelCases": 2,
+  "captionRecovered": true,
+  "captionAssociation": "adjacent_inferred",
+  "localTestsPassed": 573,
+  "uiFigureAndCaptionVerified": true,
+  "operatorSessionPreservedDuringRuntimeRefresh": true,
+  "diagnosis": {
+    "oldSearchResults": 8,
+    "oldUiDisplayedUnselectedCandidates": true,
+    "cappedSourceLastIndexedImagePage": 44,
+    "requestedImagePage": 94,
+    "indexedImageCapPreserved": 50
+  },
+  "modelSelections": {
+    "diagram": {
+      "inlineImage": true,
+      "selectedImageCount": 1,
+      "sourcePages": [
+        23
+      ],
+      "sourceCaptionReturned": true,
+      "captionRevisionObserved": true
+    },
+    "trex": {
+      "inlineImage": true,
+      "selectedImageCount": 1,
+      "sourcePages": [
+        94
+      ],
+      "sourceCaptionReturned": false,
+      "captionRevisionObserved": false
+    }
+  },
+  "limitations": [
+    "Two original model questions and one caption UI scenario; no broad recall or caption accuracy claim.",
+    "No caption was inferred where the tested picture had no qualifying source caption.",
+    "Future uncached page lookups incur bounded layout work; the semantic description cap is unchanged."
+  ]
+}

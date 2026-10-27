@@ -101,6 +101,11 @@ class IndexClient:
             "POST", f"/v1/libraries/{library_id}/documents:read", json=selection, headers={"X-Agent-Id": agent_id}
         )
 
+    def read_images(self, library_id: str, agent_id: str, **selection: Any) -> dict[str, Any]:
+        return self._call(
+            "POST", f"/v1/libraries/{library_id}/documents:images", json=selection, headers={"X-Agent-Id": agent_id}
+        )
+
     def library_metrics(self, library_id: str, agent_id: str) -> dict[str, Any]:
         return self._call("GET", f"/v1/libraries/{library_id}/metrics", headers={"X-Agent-Id": agent_id})
 

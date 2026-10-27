@@ -24,7 +24,7 @@ The proposal is to move file libraries to Azure Cosmos DB, and make a library a 
 | Creating a library | Creates a search index | Creates one record |
 | Search cost | — | Depends on the size of the library searched, not on how many libraries exist |
 | Filtering | — | By the period a document covers, author, custom tags, file type, or upload date, in the same search |
-| Images | — | Images in documents are described by AI and searchable; matching images come back to the agent and are shown to the user |
+| Images | — | Images in documents are described by AI and searchable; selected images and their stored source captions can appear inline with text explanations |
 | Library descriptions | Written by hand | AI proposes a description and tags from the actual contents; the admin or owner approves them |
 | Search results | — | Each result says what was searched and how much was found, so an agent can tell "nothing here" from "the answer doesn't exist" |
 | Library usage | — | A report shows which libraries agents search, how often they come back empty, and how often their results get used |

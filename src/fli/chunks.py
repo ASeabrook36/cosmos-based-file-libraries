@@ -8,8 +8,10 @@ SDK's own 429 retries within about 100 writes.
 A 429 that outlasts the SDK's retries is retried here, after the ``x-ms-retry-after-ms`` the
 service asked for. Each one is reported to the governor, which pauses every writer and, on
 repeated throttling, halves the cap until writes succeed again. After ``max_attempts`` the
-error is raised, the queue message is retried later, and deterministic chunk ids make the
-repeated writes overwrite rather than duplicate.
+error is raised and the queue message is retried later. New worker writes with a
+contentHash use deterministic IDs and create-only semantics. On a duplicate ID,
+the stored hash must match and the item is left untouched, including any newer retagged
+metadata. Legacy/import records without that marker retain upsert behavior.
 
 Queries here are single-partition (``[libraryId, documentId]``) and never vector queries.
 
@@ -30,6 +32,16 @@ from fli.governor import Governor
 from fli.search import QueryCost
 
 Record = dict[str, Any]
+
+
+class ImmutableChunkConflict(RuntimeError):
+    """An older/incompatible partial write occupies this generation's chunk ID."""
+
+
+def check_immutable(existing: Record, proposed: Record) -> None:
+    if existing.get("contentHash") != proposed["contentHash"]:
+        raise ImmutableChunkConflict("chunk content differs from the frozen generation plan; reprocess")
+
 
 DEFAULT_MAX_ATTEMPTS = 10
 
@@ -87,7 +99,21 @@ class CosmosChunks:
 
     async def upsert(self, chunk: Record) -> float | None:
         cost = QueryCost()
-        await capped(self.governor, lambda: self._c.upsert_item(chunk, raw_response_hook=cost), self.max_attempts)
+
+        async def write():
+            if "contentHash" not in chunk:  # legacy/import callers
+                return await self._c.upsert_item(chunk, raw_response_hook=cost)
+            from azure.cosmos.exceptions import CosmosResourceExistsError
+
+            try:
+                return await self._c.create_item(chunk, raw_response_hook=cost)
+            except CosmosResourceExistsError:
+                existing = await self._c.read_item(
+                    chunk["id"], partition_key=[chunk["libraryId"], chunk["documentId"]], raw_response_hook=cost
+                )
+                check_immutable(existing, chunk)
+
+        await capped(self.governor, write, self.max_attempts)
         return cost.request_charge if cost.responses else None
 
     async def generations(self, library_id: str, document_id: str) -> list[tuple[str, int]]:
@@ -149,7 +175,11 @@ class MemoryChunks:
 
     async def upsert(self, chunk: Record) -> None:
         self.writes += 1
-        self.items[(chunk["libraryId"], chunk["documentId"], chunk["id"])] = dict(chunk)
+        key = (chunk["libraryId"], chunk["documentId"], chunk["id"])
+        if "contentHash" in chunk and key in self.items:
+            check_immutable(self.items[key], chunk)
+            return
+        self.items[key] = dict(chunk)
 
     async def generations(self, library_id: str, document_id: str) -> list[tuple[str, int]]:
         return [

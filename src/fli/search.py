@@ -21,14 +21,18 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import re
 import time
 import uuid
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 
+from fli.blobs import BlobStore
 from fli.embedding import Embedder, measure_embeddings
+from fli.errors import ApiError
 from fli.generation import filter_visible, is_visible
+from fli.ids import image_prefix
 from fli.metrics import record as record_metric
 from fli.permissions import check_search_allowed
 from fli.query import (
@@ -79,7 +83,8 @@ class CosmosChunkReader:
         if not 1 <= limit <= 100_001:
             raise ValueError("invalid complete-document chunk limit")
         sql = (
-            f"SELECT TOP {limit} c.chunkIndex, c.text, c.heading, c.location, c.contentKind FROM c "
+            f"SELECT TOP {limit} c.chunkIndex, c.text, c.heading, c.location, "
+            "c.contentKind, c.imageRef, c.imageMeta FROM c "
             "WHERE c.libraryId = @libraryId AND c.documentId = @documentId AND c.generation = @generation"
         )
         params = [
@@ -105,7 +110,7 @@ class CosmosChunkReader:
         names = [f"@i{n}" for n in range(len(indexes))]
         sql = (
             "SELECT c.chunkIndex, c.text FROM c WHERE c.libraryId = @libraryId AND c.documentId = @documentId"
-            f" AND c.generation = @generation AND c.chunkIndex IN ({', '.join(names)})"
+            f" AND c.generation = @generation AND c.contentKind = 'text' AND c.chunkIndex IN ({', '.join(names)})"
         )
         params = [
             {"name": "@libraryId", "value": library_id},
@@ -152,6 +157,21 @@ def filter_notes(filters: SearchFilters, library: Mapping[str, Any]) -> list[str
     vocabulary = library.get("tagVocabulary") or {}
     total = (library.get("stats") or {}).get("documentCount", 0)
     notes: list[str] = []
+    pending = (library.get("stats") or {}).get("imageProcessingDocuments", 0)
+    failed = (library.get("stats") or {}).get("imageFailedDocuments", 0)
+    if pending:
+        notes.append(
+            f"{pending} documents have searchable text while images are still processing; "
+            "visual search coverage will expand when enrichment finishes."
+        )
+    if failed:
+        notes.append(f"Image enrichment failed for {failed} documents; their published text remains searchable.")
+    skipped = (library.get("stats") or {}).get("imagesSkipped", 0)
+    if skipped:
+        notes.append(
+            f"{skipped} visual candidates were skipped by configured size, format or per-document limits; "
+            "search does not cover those visuals."
+        )
     for attribute, missing_key, lacking, name in MISSING:
         if not getattr(filters, attribute):
             continue
@@ -187,6 +207,24 @@ class Searcher:
     chunks: ChunkReader
     embedder: Embedder
     mode: str = "vector"  # SEARCH_MODE: "vector" or "hybrid"
+    blobs: BlobStore | None = None
+
+    async def image(self, library_id: str, document_id: str, generation: int, chunk: Mapping[str, Any]):
+        if chunk.get("contentKind") != "image":
+            return None
+        path = chunk.get("imageRef") or ""
+        prefix = f"{image_prefix(library_id, document_id)}{generation}/"
+        if (
+            not path.startswith(prefix)
+            or not re.fullmatch(r"[A-Za-z0-9-]+\.[a-z0-9]{1,5}", path[len(prefix) :])
+            or not self.blobs
+        ):
+            raise ApiError(409, "image_unavailable", "image unavailable; reprocess this document")
+        try:
+            link = await self.blobs.read_link(path)
+        except Exception as exc:
+            raise ApiError(503, "image_unavailable", "image read link unavailable; retry later") from exc
+        return {**(chunk.get("imageMeta") or {}), **link}
 
     async def search(self, library_id: str, agent_id: str | None, request: SearchRequest) -> dict[str, Any]:
         started = time.perf_counter()
@@ -224,6 +262,7 @@ class Searcher:
             {
                 "rank": rank,
                 "chunkId": c["id"],
+                "imageId": c["id"] if c.get("contentKind") == "image" else None,
                 "documentId": c["documentId"],
                 "generation": c["generation"],
                 "fileName": c.get("fileName"),
@@ -234,10 +273,21 @@ class Searcher:
                 "neighbors": neighbors.get((c["documentId"], c["chunkIndex"]), [])
                 if request.include_neighbors
                 else None,
-                "image": None,  # image chunks and their read links are Phase 3B
+                "image": await self.image(library_id, c["documentId"], c["generation"], c),
             }
             for rank, c in enumerate(kept, start=1)
         ]
+        # Links can require a network round trip. Recheck after fetching evidence so
+        # a deletion/replacement during that work cannot publish stale image results.
+        image_documents = {c["documentId"] for c in kept if c.get("contentKind") == "image"}
+        latest_records = await asyncio.gather(
+            *(self.documents.get(library_id, document_id, raw_response_hook=cost) for document_id in image_documents)
+        )
+        for document_id, current in zip(image_documents, latest_records, strict=True):
+            if any(not is_visible(c, current) for c in kept if c["documentId"] == document_id):
+                raise ApiError(409, "document_changed", "a document changed during search; retry")
+        if any(c.get("contentKind") == "image" for c in kept):
+            check_search_allowed(library_id, await self.libraries.get(library_id, raw_response_hook=cost), agent_id)
         telemetry_id = str(uuid.uuid4())
         total_ms = round((time.perf_counter() - started) * 1000, 1)
         document_count = (library.get("stats") or {}).get("documentCount", 0)

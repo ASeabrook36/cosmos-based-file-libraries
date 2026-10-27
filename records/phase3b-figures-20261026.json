@@ -1,0 +1,446 @@
+{
+  "check": "phase3b-layout-figures",
+  "checkedAt": "2026-10-26T20:59:51.570201+00:00",
+  "complete": true,
+  "layoutProbes": [
+    {
+      "sourceRole": "short-report",
+      "pages": [
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "figures": 2,
+      "linkedCaptions": 0,
+      "allCaptionsRetainedInText": true,
+      "figureCountsByPage": {
+        "5": 0,
+        "6": 1,
+        "7": 1,
+        "8": 0,
+        "9": 0,
+        "10": 0
+      },
+      "textSections": 12,
+      "textCharacters": 14636
+    },
+    {
+      "sourceRole": "scanned-book",
+      "pages": [
+        4,
+        5,
+        6
+      ],
+      "figures": 5,
+      "linkedCaptions": 2,
+      "allCaptionsRetainedInText": true,
+      "figureCountsByPage": {
+        "4": 2,
+        "5": 1,
+        "6": 2
+      },
+      "textSections": 5,
+      "textCharacters": 8085
+    },
+    {
+      "sourceRole": "illustrated-book",
+      "pages": [
+        5,
+        6,
+        7
+      ],
+      "figures": 4,
+      "linkedCaptions": 0,
+      "allCaptionsRetainedInText": true,
+      "figureCountsByPage": {
+        "5": 0,
+        "6": 3,
+        "7": 1
+      },
+      "textSections": 3,
+      "textCharacters": 2645
+    },
+    {
+      "sourceRole": "long-report",
+      "pages": [
+        40,
+        41,
+        42,
+        43,
+        44,
+        45
+      ],
+      "figures": 1,
+      "linkedCaptions": 1,
+      "allCaptionsRetainedInText": true,
+      "figureCountsByPage": {
+        "40": 0,
+        "41": 0,
+        "42": 0,
+        "43": 1,
+        "44": 0,
+        "45": 0
+      },
+      "textSections": 13,
+      "textCharacters": 13608
+    }
+  ],
+  "localTests": {
+    "passed": 537
+  },
+  "liveSmoke": {
+    "check": "phase3b-images",
+    "startedAt": "2026-10-26T20:56:53.008204+00:00",
+    "complete": true,
+    "services": {
+      "imageCounts": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "ingestionMetrics": [
+        {
+          "extractionMs": 5120.7,
+          "chunkingMs": 0.4,
+          "visualExtractionMs": 0,
+          "visionMs": 14318.1,
+          "visionPromptTokens": 1128,
+          "visionCompletionTokens": 1316,
+          "visionCacheHits": 0,
+          "layoutPages": 1,
+          "layoutBatchesAnalyzed": 1,
+          "layoutBatchesReused": 0,
+          "planCacheHit": false,
+          "imageCount": 1,
+          "imagesSkipped": 0,
+          "embeddingMs": 229.7,
+          "chunkWriteMs": 431.4,
+          "chunkCount": 2,
+          "chunkTokens": 436,
+          "chunkTokensMin": 68,
+          "chunkTokensMax": 368,
+          "chunkTokensMean": 218,
+          "embeddingTokens": 436,
+          "embeddingRequests": 1,
+          "embeddingRetries": 0,
+          "embeddingThrottles": 0,
+          "embeddingModel": "text-embedding-3-large",
+          "embeddingDimensions": 3072,
+          "chunkWriteCharge": 220.45,
+          "chunkingVersion": "chunking-v1.1",
+          "tokenizer": "cl100k_base",
+          "totalMs": 28180.1
+        },
+        {
+          "extractionMs": 66.2,
+          "chunkingMs": 0.1,
+          "visualExtractionMs": 26.7,
+          "visionMs": 14400.4,
+          "visionPromptTokens": 1216,
+          "visionCompletionTokens": 1339,
+          "visionCacheHits": 0,
+          "planCacheHit": false,
+          "imageCount": 1,
+          "imagesSkipped": 0,
+          "embeddingMs": 469.5,
+          "chunkWriteMs": 260.5,
+          "chunkCount": 2,
+          "chunkTokens": 282,
+          "chunkTokensMin": 36,
+          "chunkTokensMax": 246,
+          "chunkTokensMean": 141,
+          "embeddingTokens": 282,
+          "embeddingRequests": 1,
+          "embeddingRetries": 0,
+          "embeddingThrottles": 0,
+          "embeddingModel": "text-embedding-3-large",
+          "embeddingDimensions": 3072,
+          "chunkWriteCharge": 198.73,
+          "chunkingVersion": "chunking-v1.1",
+          "tokenizer": "cl100k_base",
+          "totalMs": 24062.5
+        },
+        {
+          "extractionMs": 59.1,
+          "chunkingMs": 0.1,
+          "visualExtractionMs": 20.9,
+          "visionMs": 11997.2,
+          "visionPromptTokens": 1194,
+          "visionCompletionTokens": 1111,
+          "visionCacheHits": 0,
+          "planCacheHit": false,
+          "imageCount": 1,
+          "imagesSkipped": 0,
+          "embeddingMs": 522,
+          "chunkWriteMs": 243.7,
+          "chunkCount": 2,
+          "chunkTokens": 207,
+          "chunkTokensMin": 26,
+          "chunkTokensMax": 181,
+          "chunkTokensMean": 103.5,
+          "embeddingTokens": 207,
+          "embeddingRequests": 1,
+          "embeddingRetries": 0,
+          "embeddingThrottles": 0,
+          "embeddingModel": "text-embedding-3-large",
+          "embeddingDimensions": 3072,
+          "chunkWriteCharge": 183.38,
+          "chunkingVersion": "chunking-v1.1",
+          "tokenizer": "cl100k_base",
+          "totalMs": 22142.5
+        },
+        {
+          "extractionMs": 0.1,
+          "chunkingMs": 0.3,
+          "visualExtractionMs": 45.4,
+          "visionMs": 12398.6,
+          "visionPromptTokens": 1163,
+          "visionCompletionTokens": 783,
+          "visionCacheHits": 0,
+          "planCacheHit": false,
+          "imageCount": 1,
+          "imagesSkipped": 0,
+          "embeddingMs": 431,
+          "chunkWriteMs": 235,
+          "chunkCount": 1,
+          "chunkTokens": 266,
+          "chunkTokensMin": 266,
+          "chunkTokensMax": 266,
+          "chunkTokensMean": 266,
+          "embeddingTokens": 266,
+          "embeddingRequests": 1,
+          "embeddingRetries": 0,
+          "embeddingThrottles": 0,
+          "embeddingModel": "text-embedding-3-large",
+          "embeddingDimensions": 3072,
+          "chunkWriteCharge": 126.4,
+          "chunkingVersion": "chunking-v1.1",
+          "tokenizer": "cl100k_base",
+          "totalMs": 20264.3
+        }
+      ],
+      "vagueSearch": {
+        "imageResults": 4,
+        "expectedVisualFound": true,
+        "delegationReadLinksFetched": true,
+        "usage": {
+          "requestCharge": 24.27,
+          "totalMs": 1309.2,
+          "embeddingMs": 518.1,
+          "embeddingTokens": 9
+        }
+      },
+      "completeRead": {
+        "imageIncluded": true,
+        "sourceExplanationIncluded": true,
+        "estimatedTokens": 1540,
+        "usage": {
+          "requestCharge": 4.28,
+          "totalMs": 349.4
+        }
+      },
+      "deckChartFound": true
+    },
+    "models": [
+      {
+        "imageReturned": true,
+        "inlineImageReference": true,
+        "visualInputSupplied": true,
+        "operations": [
+          "search",
+          "read"
+        ],
+        "toolCalls": 2,
+        "requestCharge": 28.98,
+        "totalMs": 19659.408875042573,
+        "usage": [
+          {
+            "completion_tokens": 46,
+            "prompt_tokens": 1690,
+            "total_tokens": 1736,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": 0,
+              "audio_tokens": 0,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": 0,
+              "text_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": 0,
+              "cache_write_tokens": null,
+              "cached_tokens": 0,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "latency_checkpoint": {
+              "engine_tbt_ms": 6,
+              "engine_ttft_ms": 51,
+              "engine_ttlt_ms": 599,
+              "pre_inference_ms": 341,
+              "service_tbt_ms": 6,
+              "service_ttft_ms": 878,
+              "service_ttlt_ms": 1417,
+              "user_visible_ttft_ms": 537
+            }
+          },
+          {
+            "completion_tokens": 190,
+            "prompt_tokens": 9532,
+            "total_tokens": 9722,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": 0,
+              "audio_tokens": 0,
+              "reasoning_tokens": 128,
+              "rejected_prediction_tokens": 0,
+              "text_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": 0,
+              "cache_write_tokens": null,
+              "cached_tokens": 0,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "latency_checkpoint": {
+              "engine_tbt_ms": 6,
+              "engine_ttft_ms": 745,
+              "engine_ttlt_ms": 2130,
+              "pre_inference_ms": 459,
+              "service_tbt_ms": 6,
+              "service_ttft_ms": 1504,
+              "service_ttlt_ms": 2874,
+              "user_visible_ttft_ms": 1045
+            }
+          },
+          {
+            "completion_tokens": 1147,
+            "prompt_tokens": 11082,
+            "total_tokens": 12229,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": 0,
+              "audio_tokens": 0,
+              "reasoning_tokens": 704,
+              "rejected_prediction_tokens": 0,
+              "text_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": 0,
+              "cache_write_tokens": null,
+              "cached_tokens": 8832,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "latency_checkpoint": {
+              "engine_tbt_ms": 8,
+              "engine_ttft_ms": 655,
+              "engine_ttlt_ms": 10355,
+              "pre_inference_ms": 631,
+              "service_tbt_ms": 8,
+              "service_ttft_ms": 1582,
+              "service_ttlt_ms": 11280,
+              "user_visible_ttft_ms": 951
+            }
+          }
+        ]
+      },
+      {
+        "imageReturned": true,
+        "inlineImageReference": true,
+        "visualInputSupplied": true,
+        "operations": [
+          "search"
+        ],
+        "toolCalls": 1,
+        "requestCharge": 24.6,
+        "totalMs": 16198.922124924138,
+        "usage": [
+          {
+            "completion_tokens": 47,
+            "prompt_tokens": 1671,
+            "total_tokens": 1718,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": 0,
+              "audio_tokens": 0,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": 0,
+              "text_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": 0,
+              "cache_write_tokens": null,
+              "cached_tokens": 1536,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "latency_checkpoint": {
+              "engine_tbt_ms": 6,
+              "engine_ttft_ms": 27,
+              "engine_ttlt_ms": 552,
+              "pre_inference_ms": 212,
+              "service_tbt_ms": 6,
+              "service_ttft_ms": 750,
+              "service_ttlt_ms": 1263,
+              "user_visible_ttft_ms": 537
+            }
+          },
+          {
+            "completion_tokens": 1229,
+            "prompt_tokens": 9520,
+            "total_tokens": 10749,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": 0,
+              "audio_tokens": 0,
+              "reasoning_tokens": 768,
+              "rejected_prediction_tokens": 0,
+              "text_tokens": null
+            },
+            "prompt_tokens_details": {
+              "audio_tokens": 0,
+              "cache_write_tokens": null,
+              "cached_tokens": 0,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "latency_checkpoint": {
+              "engine_tbt_ms": 9,
+              "engine_ttft_ms": 784,
+              "engine_ttlt_ms": 11649,
+              "pre_inference_ms": 472,
+              "service_tbt_ms": 9,
+              "service_ttft_ms": 1550,
+              "service_ttlt_ms": 12413,
+              "user_visible_ttft_ms": 1078
+            }
+          }
+        ]
+      }
+    ],
+    "corpus": [
+      {
+        "type": "pdf",
+        "sha256": "f86582c9b086c2fa5976f1c871762f914ea2fc2c57ae9c52291afb6745419d3e"
+      },
+      {
+        "type": "docx",
+        "sha256": "0c6d56de455fb134d18450b9fc0847e29ba8165b89f65f58178350606aeef024"
+      },
+      {
+        "type": "pptx",
+        "sha256": "f4517eadae65c7f7525747b45bdac78f5e1f4d41a2e7f3759740220b3ae536c5"
+      },
+      {
+        "type": "png",
+        "sha256": "e476efb3a14c6110d7f5dd87b92dc0a80252b22df846e033d3c4575014b7d27a"
+      }
+    ]
+  },
+  "limitations": [
+    "Small live smoke and selected-page segmentation probes; no broad recall or caption-accuracy claim.",
+    "Page batches resubmit original source bytes; layout billing is separate from image-description cap."
+  ],
+  "completeMeaning": "Selected-page probes, local checks and fresh four-format/model smoke complete; full-source replacement jobs are tracked separately."
+}

@@ -15,6 +15,7 @@ import time
 from fli.blobs import BlobStore
 from fli.chunking import default_tokenizer
 from fli.errors import ApiError
+from fli.ids import chunk_id
 from fli.metrics import record as record_metric
 from fli.permissions import check_search_allowed
 from fli.query import RenderedQuery, SearchFilters, metadata_clauses
@@ -42,8 +43,14 @@ CATALOG_FIELDS = (
     "fullText",
     "chunkCount",
     "imageCount",
+    "imagesSkipped",
+    "sourceImageCount",
+    "sourceImagesSkipped",
     "extraction",
     "metadataVersion",
+    "imageStatus",
+    "imagePendingCount",
+    "contentRevision",
 )
 
 
@@ -94,6 +101,19 @@ def manifest(doc: Record) -> Record:
         "tokenizer": full.get("tokenizer"),
         "representation": "extracted_sections" if full.get("generation") == active and active else "indexed_chunks",
         "chunkCount": doc.get("chunkCount"),
+        "imageCount": doc.get("imageCount", 0),
+        "imagesSkipped": doc.get("imagesSkipped", 0),
+        "sourceImageCount": doc.get("sourceImageCount", 0),
+        "sourceImagesSkipped": doc.get("sourceImagesSkipped", 0),
+        "imageStatus": doc.get("imageStatus", "ready" if doc.get("imageCount") else "none"),
+        "imagePendingCount": doc.get("imagePendingCount", 0),
+        "visualsComplete": (
+            doc.get("imageStatus") not in ("queued", "processing", "failed")
+            and doc.get("sourceImageCount", 0) <= doc.get("imageCount", 0)
+            and not doc.get("sourceImagesSkipped", 0)
+            and not doc.get("imagesSkipped", 0)
+        ),
+        "contentRevision": doc.get("contentRevision", 0),
     }
 
 
@@ -114,7 +134,7 @@ async def read_documents(
     records: list[Record] = []
     items: list[Record] = []
     notes = [
-        "Complete extracted text, not original file layout or visual understanding. "
+        "Complete extracted text and kept visual descriptions; visual inputs require consuming-platform support. "
         "Extraction can omit figures, attachments and other unsupported content; OCR may contain errors.",
         "Token counts use the named tokenizer, not necessarily the answering model's. "
         "More context increases input cost, latency and attention demands; "
@@ -221,19 +241,55 @@ async def read_documents(
                     409, "document_text_incomplete", "not all active passages are available; retry or reprocess"
                 )
             sections = [
-                {"text": c["text"], "heading": c.get("heading"), "location": c.get("location") or {}} for c in chunks
+                {
+                    "text": c["text"],
+                    "heading": c.get("heading"),
+                    "location": c.get("location") or {},
+                    "contentKind": c.get("contentKind", "text"),
+                    "imageId": chunk_id(document_id, generation, c["chunkIndex"])
+                    if c.get("contentKind") == "image"
+                    else None,
+                    "imageRef": c.get("imageRef"),
+                    "imageMeta": c.get("imageMeta"),
+                }
+                for c in chunks
             ]
             representation = "indexed_chunks"
             notes.append(
                 f"{document_id}: legacy indexed text includes repeated headings and overlapping passages. "
                 "Reprocess the original to preserve the pre-chunking extraction."
             )
-        item = {**manifest(doc), "representation": representation, "sections": sections}
+        public_sections = []
+        for section in sections:
+            public = {k: v for k, v in section.items() if k not in ("imageRef", "imageMeta")}
+            public["image"] = await searcher.image(library_id, document_id, generation, section)
+            public_sections.append(public)
+        item = {**manifest(doc), "representation": representation, "sections": public_sections}
+        if doc.get("imageStatus") in ("queued", "processing", "failed"):
+            notes.append(
+                f"{document_id}: complete extracted text is available, but image enrichment is "
+                f"{item['imageStatus']}; this read does not include all retained images."
+            )
+        if doc.get("sourceImageCount", 0) > doc.get("imageCount", 0):
+            notes.append(
+                f"{document_id}: this read includes indexed image sections; additional stored source "
+                + (
+                    "images and captions are available through selected-page image reads."
+                    if doc.get("fileType") == "pdf"
+                    else "images are outside this read. Direct reads of unindexed Office pictures are not supported; "
+                    "reprocess with a higher image-description cap or export to PDF for page-image reads."
+                )
+            )
         # Count the serialized document, including identifiers, locations and headings.
         item["estimatedTokens"] = len(tokenizer.encode(json.dumps(item, ensure_ascii=False)))
         item["tokenizer"] = tokenizer.name
         if doc.get("imageCount"):
-            notes.append(f"{document_id}: images are not supplied as visual inputs by this text reader.")
+            notes.append(
+                f"{document_id}: kept images include searchable descriptions and expiring image links. "
+                "The consuming platform chooses whether to supply visual inputs to its model."
+            )
+        if doc.get("imagesSkipped"):
+            notes.append(f"{document_id}: {doc['imagesSkipped']} visuals were skipped by size, format or cap rules.")
         items.append(item)
 
     # All-or-nothing, including across documents. Do not return an apparently complete
@@ -245,6 +301,7 @@ async def read_documents(
             or current.get("status") == "deleting"
             or current.get("activeGeneration") != original["activeGeneration"]
             or current.get("metadataVersion", 0) != original.get("metadataVersion", 0)
+            or current.get("contentRevision", 0) != original.get("contentRevision", 0)
         ):
             raise ApiError(409, "document_changed", "a document changed during the read; discover and retry")
     latest = await searcher.libraries.get(library_id, raw_response_hook=cost)

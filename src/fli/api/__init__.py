@@ -62,7 +62,7 @@ async def _azure(app: FastAPI) -> AsyncIterator[None]:
         blob_service = await stack.enter_async_context(
             BlobServiceClient(settings.blob_account_url, credential=credential)
         )
-        app.state.blobs = AzureBlobs(blob_service.get_container_client(settings.blob_container))
+        app.state.blobs = AzureBlobs(blob_service.get_container_client(settings.blob_container), blob_service)
         app.state.libraries = CosmosLibraryStore(database.get_container_client("libraries"))
         app.state.documents = CosmosDocumentStore(database.get_container_client("documents"))
         app.state.queue = ServiceBusQueue(sender)
@@ -81,6 +81,7 @@ async def _azure(app: FastAPI) -> AsyncIterator[None]:
             CosmosChunkReader(database.get_container_client("chunks")),
             embedder,
             mode=settings.search_mode,
+            blobs=app.state.blobs,
         )
         yield
 
@@ -112,6 +113,7 @@ def create_app(
     app.state.settings = settings
     if libraries is not None:
         app.state.libraries, app.state.documents, app.state.queue, app.state.blobs, app.state.searcher = injected
+        searcher.blobs = blobs
 
     @app.exception_handler(ApiError)
     async def api_error(_: Request, exc: ApiError) -> JSONResponse:
@@ -130,7 +132,12 @@ def create_app(
         import time
 
         started = time.perf_counter()
-        operations = {"/search": "search", "/documents:read": "read", "/documents:discover": "discover"}
+        operations = {
+            "/search": "search",
+            "/documents:read": "read",
+            "/documents:discover": "discover",
+            "/documents:images": "images",
+        }
         operation = next((v for k, v in operations.items() if request.url.path.endswith(k)), None)
         try:
             response = await call_next(request)

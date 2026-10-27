@@ -62,10 +62,14 @@ class Settings:
     aoai_chat_deployment: str | None = None
     docintel_endpoint: str | None = None
     ocr_max_pages: int = 200
+    pdf_layout_max_pages: int = 2000
+    pdf_layout_batch_pages: int = 20
     upload_max_bytes: int = 104_857_600
     image_min_pixels: int = 16_384
-    image_min_bytes: int = 10_240
+    image_min_bytes: int = 0
     image_max_per_document: int = 50
+    image_asset_max_per_document: int = 1000
+    vision_concurrency: int = 2
     ingest_max_concurrent_sessions: int = 8
     ingest_max_chunks_per_document: int = 5_000  # larger documents fail as too_many_chunks
     cosmos_write_concurrency: int = 2  # worker-wide; 2 suits serverless (evidence.md E10)
@@ -111,10 +115,14 @@ class Settings:
             aoai_chat_deployment=env.get("AOAI_CHAT_DEPLOYMENT") or None,
             docintel_endpoint=env.get("DOCINTEL_ENDPOINT") or None,
             ocr_max_pages=_int(env, "OCR_MAX_PAGES", 200),
+            pdf_layout_max_pages=_int(env, "PDF_LAYOUT_MAX_PAGES", 2000),
+            pdf_layout_batch_pages=_int(env, "PDF_LAYOUT_BATCH_PAGES", 20),
             upload_max_bytes=_int(env, "UPLOAD_MAX_BYTES", 104_857_600),
             image_min_pixels=_int(env, "IMAGE_MIN_PIXELS", 16_384),
-            image_min_bytes=_int(env, "IMAGE_MIN_BYTES", 10_240),
+            image_min_bytes=_int(env, "IMAGE_MIN_BYTES", 0),
             image_max_per_document=_int(env, "IMAGE_MAX_PER_DOCUMENT", 50),
+            image_asset_max_per_document=_int(env, "IMAGE_ASSET_MAX_PER_DOCUMENT", 1000),
+            vision_concurrency=_int(env, "VISION_CONCURRENCY", 2),
             ingest_max_concurrent_sessions=_int(env, "INGEST_MAX_CONCURRENT_SESSIONS", 8),
             ingest_max_chunks_per_document=_int(env, "INGEST_MAX_CHUNKS_PER_DOCUMENT", 5_000),
             cosmos_write_concurrency=_int(env, "COSMOS_WRITE_CONCURRENCY", 2),
@@ -137,8 +145,16 @@ class Settings:
             raise ConfigError("AOAI_EMBEDDING_DIMENSIONS must equal the chunks vector policy (3072)")
         if self.ingest_max_chunks_per_document < 1:
             raise ConfigError("INGEST_MAX_CHUNKS_PER_DOCUMENT must be at least 1")
+        if not 1 <= self.pdf_layout_batch_pages <= self.pdf_layout_max_pages <= 2000:
+            raise ConfigError("need 1 <= PDF_LAYOUT_BATCH_PAGES <= PDF_LAYOUT_MAX_PAGES <= 2000")
+        if self.vision_concurrency < 1:
+            raise ConfigError("VISION_CONCURRENCY must be at least 1")
         if self.cosmos_write_concurrency < 1:
             raise ConfigError("COSMOS_WRITE_CONCURRENCY must be at least 1")
+        if min(self.image_min_pixels, self.image_min_bytes, self.image_max_per_document) < 0:
+            raise ConfigError("IMAGE_MIN_PIXELS, IMAGE_MIN_BYTES and IMAGE_MAX_PER_DOCUMENT must be nonnegative")
+        if not self.image_max_per_document <= self.image_asset_max_per_document <= 10000:
+            raise ConfigError("need IMAGE_MAX_PER_DOCUMENT <= IMAGE_ASSET_MAX_PER_DOCUMENT <= 10000")
         if self.search_mode not in SEARCH_MODES:
             raise ConfigError(f"SEARCH_MODE must be one of {', '.join(SEARCH_MODES)}")
         if not 1 <= self.search_default_top <= self.search_max_top <= 20:

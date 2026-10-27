@@ -1,0 +1,41 @@
+{
+  "check": "text-first-ingestion",
+  "checkedAt": "2026-10-26T21:26:06.939956+00:00",
+  "localTestsPassed": 545,
+  "liveTextBeforeImages": [
+    {
+      "sourceRole": "short-report",
+      "status": "processing",
+      "imageStatus": "queued",
+      "textChunks": 210,
+      "pendingImages": 48,
+      "contentRevision": 1,
+      "textSearchSucceeded": true,
+      "completeTextReadSucceeded": true,
+      "visualCoverageDisclosed": true,
+      "readEstimatedTokens": 51988,
+      "searchRU": 18.46,
+      "readRU": 4.28
+    },
+    {
+      "sourceRole": "illustrated-book",
+      "status": "processing",
+      "imageStatus": "processing",
+      "textChunks": 141,
+      "pendingImages": 50,
+      "contentRevision": 1,
+      "textSearchSucceeded": true,
+      "completeTextReadSucceeded": true,
+      "visualCoverageDisclosed": true,
+      "readEstimatedTokens": 17264,
+      "searchRU": 17.54,
+      "readRU": 4.38
+    }
+  ],
+  "complete": true,
+  "limitations": [
+    "Image append, interrupted enqueue, failure, deletion/replacement and snapshot-race behavior tested locally.",
+    "Fresh four-format live check also verified final image publication and retrieval; broad recall/scale remain unmeasured."
+  ],
+  "liveEnrichedSmoke": "text-first-enriched-smoke-20261026.json"
+}
