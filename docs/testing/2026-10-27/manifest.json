@@ -170,6 +170,11 @@
     "sha256": "1634431e5e0bffd3c4dab67bb18cdc4bd7d70bb7ab95d8b1e492a26dac219321"
   },
   {
+    "file": "captures/latest-browser-spots.txt",
+    "bytes": 16626,
+    "sha256": "eb3aa5d895b6e16b47145738813c21e94e695253b343400ebb792e604052e301"
+  },
+  {
     "file": "captures/separate/turns.json",
     "bytes": 17170,
     "sha256": "37704abcdbdb92281d80535e828d409a63eef7f208be77a5c0b9639ee36cf837"
