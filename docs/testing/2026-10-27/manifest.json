@@ -180,6 +180,11 @@
     "sha256": "72d311b672d5da52a36182aefc3134de29a72f99bf5ca773d3c2bf0b6f38f9ac"
   },
   {
+    "file": "captures/ui-restart-success.txt",
+    "bytes": 12508,
+    "sha256": "bb6e102264abe3b98c680100f53bafc63d1fae556fe11a9ddb55c1450c3013f1"
+  },
+  {
     "file": "casual-cases.json",
     "bytes": 3395,
     "sha256": "d9256a288ab9f69aa0461815c0d57ca5d9ca7156bfde6875ed46d6a9f1f4eb59"

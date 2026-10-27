@@ -53,3 +53,7 @@ Do not rebuild containers, change embedding inputs, raise caps/quotas, bulk repr
 ## Scope clarification after E49
 
 Read [the library/agent boundary decision](docs/consults/2026-10-27-library-agent-scope.md), E50. The user rejected expanding typo handling into a large task and questioned the scope of agent-side subject/claim judgments. Experimental interpretation/critic passes and special homophone handling were removed. They are not shipped capabilities or approved next work. Keep library/tool improvements separate from developing the consuming agent; the retained follow-up is a small study-scope instruction correction with no extra model calls.
+
+## Refresh running processes after deployment
+
+Restart the API and Streamlit processes after changing their Python tool/adapter contracts. Browser reload/**Rerun** does not reliably invalidate imported modules or cached clients. A stale `run_turn` lacking the newer `evidence_ledger` argument caused an immediate `TypeError` before retrieval in the browser (E51). Fresh-process checks can pass while a long-running UI still uses older code. Persistent agents and source libraries do not need rebuilding; only in-memory chat is reset by restarting Streamlit.

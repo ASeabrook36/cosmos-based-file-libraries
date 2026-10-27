@@ -1,0 +1,202 @@
+Browser tab: 1, Title: "Chat", URL: "http://127.0.0.1:8501/Chat".
+1 AXWebArea Chat, URL: 127.0.0.1:8501/Chat
+	2 container
+		3 container
+			4 link Description: Skip to main content, Value: 127.0.0.1:8501/Chat#stMain
+			5 container Description: Sidebar, ID: stSidebar
+				6 container
+					7 container App pages
+						8 content list
+							9 link Description: app, Value: 127.0.0.1:8501/
+							10 link Description: Admin, Value: 127.0.0.1:8501/Admin
+							11 link Description: Agents, Value: 127.0.0.1:8501/Agents
+							12 link Description: Chat, Value: 127.0.0.1:8501/Chat
+							13 link Description: Library Performance, Value: 127.0.0.1:8501/Library_Performance
+					14 button Help for Model context budget (tokens)
+					15 stepper (settable, integer) Description: Model context budget (tokens), Value: 48000, ID: :r2:
+					16 button Decrement
+					17 button Increment
+					18 container
+						19 checkbox (settable, integer) Description: Send retrieved images to the model, Value: 1
+						20 text Send retrieved images to the model
+						21 button Help for Send retrieved images to the model
+			22 container
+				23 button Deploy
+				24 pop up button (collapsed) Description: Main menu, Secondary Actions: Expand
+			25 container stMain
+				26 heading Chat, Value: 1, ID: chat
+					27 text Chat
+					28 link Description: Link to heading, Value: 127.0.0.1:8501/Chat#chat
+				29 container
+					30 combo box (collapsed, settable) Description: Agent, Value: combined-test-agent (official), ID: react-aria7316226232-:r12:, Secondary Actions: Expand
+					31 pop up button (collapsed) Description: Open, ID: react-aria7316226232-:ru:, Secondary Actions: Expand
+				37 container Chat message from user
+					38 text hey there was some stuff in the ms report about how context and continuity enhance the agent/human worker dynamic. can you find it?
+				39 container Chat message from assistant
+					40 container
+						41 text Yes — I found the sections you mean in the Microsoft New Future of Work Report (file: New-Future-Of-Work-Report-2025.pdf). Below are the relevant passages, short summaries of what they say about context and continuity in human–agent work, exact source locations, and a few supporting figures from the report. Key findings (with citations)
+						42 content list
+							43 container
+								44 AXListMarker 1.
+								45 text Human-AI co‑creation is moving from one‑shot outputs to multi‑turn, context‑aware partnerships
+						46 content list
+							47 container
+								48 AXListMarker •
+								49 text What the report says (page 26–27, section heading: "Human-AI co-creation is shifting from one-shot outputs to context-aware, interaction-driven partnerships"):
+								50 content list
+									51 container
+										52 AXListMarker ◦
+										53 text Modern LLMs have shifted content workflows away from expecting a perfect single output toward iterative, multi‑turn collaborative refinement.
+									54 container
+										55 AXListMarker ◦
+										56 text Large‑scale analyses show users rarely accept initial model outputs passively; instead they iterate (revising intents, asking clarifying questions, exploring alternatives). The report names these prototypical behaviors (PATHs).
+							57 container
+								58 AXListMarker •
+								59 text Why it matters for context & continuity:
+								60 content list
+									61 container
+										62 AXListMarker ◦
+										63 text Continuity (keeping context across turns and sessions) lets the AI participate in a back-and‑forth that aligns outputs to evolving human intent, so agents act more like ongoing collaborators than one‑off tools.
+							64 container
+								65 AXListMarker •
+								66 text Source: New-Future-Of-Work-Report-2025.pdf — pages 26–27 ("Human-AI co-creation..." section).
+						67 text Supporting figure (illustrative chat examples)
+					68 container
+						69 button Fullscreen: New-Future-Of-Work-Report-2025.pdf (page 26)
+						70 image
+						71 text New-Future-Of-Work-Report-2025.pdf (page 26)
+					72 container
+						73 content list
+							74 container
+								75 AXListMarker •
+								76 text Why this helps: it visually illustrates the multi‑turn interactions the text describes (user asks, AI replies, user asks follow‑ups).
+							77 container
+								78 AXListMarker •
+								79 text What it does not establish: it’s an illustrative example, not quantitative proof of performance gains from continuity.
+						80 content list
+							81 container
+								82 AXListMarker 2.
+								83 text UI and persistent interfaces should support different timeframes (ephemeral vs persistent)
+						84 content list
+							85 container
+								86 AXListMarker •
+								87 text What the report says (page 36, heading: "UI for AI systems should work across different timeframes"):
+								88 content list
+									89 container
+										90 AXListMarker ◦
+										91 text AI can generate ephemeral, in‑the‑moment interfaces, but persistent UIs and persistent widgets play a different role — supporting extended activities and workflows over time (examples: DynaVis, JELLY).
+									92 container
+										93 AXListMarker ◦
+										94 text Generative UIs that can evolve with a user’s activity enable continuity across sessions and support longer activities.
+							95 container
+								96 AXListMarker •
+								97 text Why it matters:
+								98 content list
+									99 container
+										100 AXListMarker ◦
+										101 text Persistent context in the interface (and UIs that evolve with users) provides continuity so agents can carry state, preferences, or partial work forward — making agent outputs more relevant and reducing repeated re‑specification by the user.
+							102 container
+								103 AXListMarker •
+								104 text Source: New-Future-Of-Work-Report-2025.pdf — page 36 ("UI for AI systems..." section).
+						105 text Supporting figure (interface example)
+					106 container
+						107 button Fullscreen: New-Future-Of-Work-Report-2025.pdf (page 36)
+						108 image
+						109 text New-Future-Of-Work-Report-2025.pdf (page 36)
+					110 container
+						111 content list
+							112 container
+								113 AXListMarker •
+								114 text Why this helps: shows how a generated UI exposes options and can persist choices that steer future outputs.
+							115 container
+								116 AXListMarker •
+								117 text What it does not establish: a single UI mockup; it doesn’t quantify how much persistence improves outcomes in different jobs.
+						118 content list
+							119 container
+								120 AXListMarker 3.
+								121 text Trust, understanding, and selective delegation depend on contextual alignment and continuity
+						122 content list
+							123 container
+								124 AXListMarker •
+								125 text What the report says (page 27, heading: "Collaborative human-AI decision-making can be made more effective through understanding, trust, and precision"):
+								126 content list
+									127 container
+										128 AXListMarker ◦
+										129 text Misunderstanding of user objectives can make otherwise-aligned agents behave as if misaligned.
+									130 container
+										131 AXListMarker ◦
+										132 text Allowing humans to choose when/what to delegate — and for agents to account for that selective delegation — improves decision outcomes.
+									133 container
+										134 AXListMarker ◦
+										135 text The report discusses “deferred trust” and individual/context factors that shape whether humans rely on agents.
+							136 container
+								137 AXListMarker •
+								138 text Why it matters:
+								139 content list
+									140 container
+										141 AXListMarker ◦
+										142 text Continuity of context (history of preferences, prior decisions, stated goals) and transparency about agent reasoning help users form appropriate trust and delegate effectively.
+							143 container
+								144 AXListMarker •
+								145 text Source: New-Future-Of-Work-Report-2025.pdf — page 27 ("Collaborative human-AI decision-making..." section).
+						146 text Supporting figure (conceptual trust/deferred-trust flow)
+					147 container
+						148 button Fullscreen: New-Future-Of-Work-Report-2025.pdf (page 27)
+						149 image
+						150 text New-Future-Of-Work-Report-2025.pdf (page 27)
+					151 container
+						152 content list
+							153 container
+								154 AXListMarker •
+								155 text Why this helps: visualizes how context and individual factors feed into trust and agent selection.
+							156 container
+								157 AXListMarker •
+								158 text What it does not establish: it’s a conceptual model, not empirical measurement of effect sizes.
+						159 text Short note on evidence strength and limits
+						160 content list
+							161 container
+								162 AXListMarker •
+								163 text The report synthesizes multiple empirical studies, prototypes, and conceptual frameworks; many items are observational or prototype evaluations rather than randomized causal experiments specifically isolating "continuity" as the variable. Where the report cites studies, some are in‑prep or working papers — check the individual citations listed in the report if you need primary study details.
+							164 container
+								165 AXListMarker •
+								166 text The report’s main support for the importance of context/continuity is: observed user behavior (multi‑turn collaboration), prototype demonstrations of persistent UIs, and conceptual/experimental work on trust and delegation. It does not present a single, definitive randomized trial that isolates persistence/context as the only causal factor across all domains.
+						167 text If you’d like:
+						168 content list
+							169 container
+								170 AXListMarker •
+								171 text I can extract verbatim quotes from any of the named report pages (I quoted/paraphrased the key lines above) or pull the report’s bibliography entries for the studies it cites about multi‑turn behavior and UI persistence.
+							172 container
+								173 AXListMarker •
+								174 text Or I can pull the specific study entries (e.g., Mysore et al. 2025, DynaVis / Vaithilingam et al. 2024, JELLY / Cao et al. 2025) the report references so you can read the primary evidence. Which would you prefer?
+					175 button (collapsed) Other image candidates (1; not selected in this answer), Secondary Actions: Expand
+						176 text Other image candidates (1; not selected in this answer)
+					177 container
+						178 text Cosmos RU · retrieval
+						179 text 67.21
+					180 container
+						181 text Retrieval time
+						182 text 3.39 s
+					183 container
+						184 text Total response time
+						185 text 44.01 s
+					186 container
+						187 text Model tokens
+						188 text 68,521
+					189 text Actual input: 65,363 tokens · output: 3,158 tokens. Cumulative across model calls; full-document size estimates are separate.
+					190 button (collapsed) Performance breakdown, Secondary Actions: Expand
+						191 text Performance breakdown
+					192 button (collapsed) Tool called: find_documents_library_combined-library → combined-library · 230 ms · 5.59 RU, Secondary Actions: Expand
+						193 text Tool called: find_documents_library_combined-library → combined-library · 230 ms · 5.59 RU
+					194 button (collapsed) Tool called: find_documents_library_combined-library → combined-library · 1095 ms · 25.77 RU, Secondary Actions: Expand
+						195 text Tool called: find_documents_library_combined-library → combined-library · 1095 ms · 25.77 RU
+					196 button (collapsed) Tool called: read_documents_library_combined-library → combined-library · 749 ms · 4.56 RU, Secondary Actions: Expand
+						197 text Tool called: read_documents_library_combined-library → combined-library · 749 ms · 4.56 RU
+					198 button (collapsed) Tool called: search_library_combined-library → combined-library · 861 ms · 22.97 RU, Secondary Actions: Expand
+						199 text Tool called: search_library_combined-library → combined-library · 861 ms · 22.97 RU
+					200 button (collapsed) Tool called: read_documents_library_combined-library → combined-library · 458 ms · 8.32 RU, Secondary Actions: Expand
+						201 text Tool called: read_documents_library_combined-library → combined-library · 458 ms · 8.32 RU
+				32 container
+					33 text entry area (settable) Ask a question
+					34 button (disabled) Send message
+
+The focused UI element is 33 text entry area (settable) Ask a question
