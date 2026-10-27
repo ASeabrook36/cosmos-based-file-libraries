@@ -1,5 +1,7 @@
 # Proposed agent retrieval strategy after natural-language testing
 
+**Later planning update (E53):** the capability package below is implemented. For planned compact REST responses, generated section summaries for image/passage discovery, and document summaries for agent selection plus interface previews, use the [follow-on roadmap](2026-10-27-retrieval-roadmap.md). Its user-approved priorities supersede this historical proposal's exclusions of summary-vector work; no current embedding default has changed.
+
 **Status: authorized for implementation after review; capability package implemented.** See the [current contract](../agent-retrieval.md) and E49 for validation and remaining model-quality limitations. The proposal below preserves the original rationale. This document records the recommended next work. It does not change the current API contract or authorize a deployment. Priority is (1) the best supported answer to the user's actual request, (2) retrieval/response time, and (3) cost in model/embedding tokens and Cosmos RU. A cheaper incomplete answer does not pass.
 
 The user is correct that practical improvements are available in both tool presentation and capabilities. The evidence does not justify replacing the Cosmos/Blob architecture. It does show that passing deterministic API tests is insufficient: the new document-grouping option can be used counterproductively by a real agent. We should own that interface weakness rather than attribute every failure to model variability or prototype quotas.

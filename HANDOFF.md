@@ -20,6 +20,10 @@ Priorities are best supported user result first, then retrieval/response time, t
 
 The natural-test capability package is implemented in [agent-retrieval.md](docs/agent-retrieval.md). Read E49 and the [iterative replay evidence](docs/testing/2026-10-27/agent-fixes/README.md) before making quality or speed claims: the tool mechanisms pass, while referent interpretation and causal claim strength still vary.
 
+## Planned follow-on development
+
+The user prioritized [the next roadmap](docs/consults/2026-10-27-retrieval-roadmap.md), E53: (1) compact REST evidence/attachment responses for easier integration, (2) generated section summaries shared by image and passage discovery, and (3) document summaries for semantic file selection and human-readable previews. These are planned, not implemented. Section-aware context must preserve vague/topic-only recall, expose uncertain source membership and retain original evidence/broad-search fallback. Document summaries are now desired for both agent and interface value, rather than only if today's file selection fails. This supersedes earlier planning deferrals; it does not change current embedding defaults or authorize bulk reprocessing, container changes or new agent critic calls.
+
 ## Work without Azure
 
 Use Python 3.12 or later:
