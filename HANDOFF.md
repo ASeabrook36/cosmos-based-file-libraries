@@ -49,3 +49,7 @@ Run `python -m scripts.phase3b_exit --help` for the existing four-format live ha
 The repo includes sanitized transcripts/case questions because the user requested a portable development record. That explicit test corpus is not permission to enable routine query, document or answer logging. Runtime identifiers, credentials, signed URLs, local paths and unrelated chats are excluded. The original unredacted machine state is neither needed nor appropriate for a cloud replay.
 
 Do not rebuild containers, change embedding inputs, raise caps/quotas, bulk reprocess user libraries or silently change whole-file completeness to solve the observed agent-integration failures. Document-scoped search, bounded reads, cross-format image inspection and evidence-aware recovery are now implemented; broader model-quality/recall validation remains. Keep the existing one-library binding, generation/revision checks, personal isolation, ingestion-time captions and text-first publication.
+
+## Scope clarification after E49
+
+Read [the library/agent boundary decision](docs/consults/2026-10-27-library-agent-scope.md), E50. The user rejected expanding typo handling into a large task and questioned the scope of agent-side subject/claim judgments. Experimental interpretation/critic passes and special homophone handling were removed. They are not shipped capabilities or approved next work. Keep library/tool improvements separate from developing the consuming agent; the retained follow-up is a small study-scope instruction correction with no extra model calls.

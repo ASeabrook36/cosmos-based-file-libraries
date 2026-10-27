@@ -1,0 +1,2000 @@
+{
+  "status": "Abandoned and removed after the user clarified scope. Not a release benchmark.",
+  "decision": "Do not add typo-specific handling, interpretation calls, or semantic critic/sharing gates to the file-library service. The consuming agent owns interpretation and claim strength.",
+  "limitations": "These were iterative diagnostic runs, with parsing/schema failures and degraded answers. They do not establish quality improvement. All experimental implementation was removed. Partial runs exclude any in-flight, unreported request costs.",
+  "runs": [
+    {
+      "experiment": "semantic-quality-v1",
+      "accepted": false,
+      "turnsCaptured": 5,
+      "sourceSnapshotsUnchanged": true,
+      "turns": [
+        {
+          "case": "spot-01",
+          "turn": 1,
+          "answer": "![Source figure](fli-image:document-reference-1:1:223)\n\nNo — in that blue chart the \"Human tasks that machines should automate\" (the small central circle) is smaller than the ring labeled \"Human tasks that machines could automate.\" Source: New-Future-Of-Work-Report-2025.pdf, page 23 (conceptual, qualitative schematic — no numeric sizing or quantities are provided).",
+          "metrics": {
+            "timestamp": "2026-10-27T18:28:40.800626+00:00",
+            "totalMs": 21978.27670793049,
+            "modelCalls": [
+              {
+                "purpose": "task_interpretation",
+                "promptTokens": 535,
+                "completionTokens": 223,
+                "totalTokens": 758,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 0,
+                "totalMs": 3916.1,
+                "providerMs": 3915.8,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "tool_request",
+                "promptTokens": 3527,
+                "completionTokens": 85,
+                "totalTokens": 3612,
+                "cachedPromptTokens": 3456,
+                "reasoningTokens": 0,
+                "totalMs": 1522.9,
+                "providerMs": 1522.8,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "answer",
+                "promptTokens": 8728,
+                "completionTokens": 688,
+                "totalTokens": 9416,
+                "cachedPromptTokens": 3456,
+                "reasoningTokens": 576,
+                "totalMs": 8008.3,
+                "providerMs": 8008.2,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "stop"
+              },
+              {
+                "purpose": "evidence_review",
+                "promptTokens": 4659,
+                "completionTokens": 539,
+                "totalTokens": 5198,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 512,
+                "totalMs": 6677.8,
+                "providerMs": 6677.8,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "tool_calls"
+              }
+            ],
+            "promptTokens": 17449,
+            "completionTokens": 1535,
+            "totalTokens": 18984,
+            "qualityChecks": [
+              {
+                "operation": "task_interpretation",
+                "status": "unavailable",
+                "issueCount": 0,
+                "sourceCount": null,
+                "omittedSourceCount": null,
+                "nativeImagesSupplied": null
+              },
+              {
+                "operation": "evidence_review",
+                "status": "supported",
+                "issueCount": 0,
+                "sourceCount": 8,
+                "omittedSourceCount": 0,
+                "nativeImagesSupplied": 1
+              }
+            ],
+            "tools": [
+              {
+                "operation": "search",
+                "mode": "evidence_search",
+                "resultUnit": "passages",
+                "overlapCount": 0,
+                "noProgress": false,
+                "imagesSelected": 1,
+                "imagesSupplied": 1,
+                "imagesWithheld": 0,
+                "latencyMs": 1615.8218340715393,
+                "requestCharge": 21.01,
+                "resultCount": 8,
+                "estimatedTokens": null,
+                "complete": null,
+                "error": false
+              }
+            ],
+            "retrievalRequestCharge": 21.01,
+            "retrievalMs": 1615.8218340715393,
+            "providerMs": 20124.6,
+            "rateLimitWaitMs": 0.0,
+            "rateLimitRetries": 0,
+            "retrievalChargeComplete": true
+          },
+          "checks": [
+            {
+              "operation": "task_interpretation",
+              "status": "unavailable",
+              "failureReason": null,
+              "issues": []
+            },
+            {
+              "operation": "evidence_review",
+              "status": "supported",
+              "failureReason": null,
+              "issues": []
+            }
+          ]
+        },
+        {
+          "case": "spot-02",
+          "turn": 1,
+          "answer": "I found relevant material, but could not verify a complete answer within this turn.\n\nThese are excerpts from the source material I retrieved, rather than a verified broader conclusion:\n\n01-allotment-seasonal-planting-guide.docx (paragraph 3):\n> Early spring\n> Sow broad beans under cloche from late February. Plant first early potatoes (variety Swift) on 20 March, 30 cm apart in rows 60 cm apart, and earth up when shoots reach 20 cm.\n\n01-allotment-seasonal-planting-guide.docx (paragraph 6):\n> Summer succession\n> Sow carrots every three weeks between April and July to avoid a glut. Beetroot sown after 15 June rarely bolts. Net brassicas against cabbage white from the day of planting.",
+          "metrics": {
+            "timestamp": "2026-10-27T18:29:20.561575+00:00",
+            "totalMs": 39759.815332945436,
+            "modelCalls": [
+              {
+                "purpose": "task_interpretation",
+                "promptTokens": 579,
+                "completionTokens": 454,
+                "totalTokens": 1033,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 0,
+                "totalMs": 4544.7,
+                "providerMs": 4544.7,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "tool_request",
+                "promptTokens": 4125,
+                "completionTokens": 211,
+                "totalTokens": 4336,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 128,
+                "totalMs": 2947.2,
+                "providerMs": 2947.2,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "tool_request",
+                "promptTokens": 5123,
+                "completionTokens": 232,
+                "totalTokens": 5355,
+                "cachedPromptTokens": 3968,
+                "reasoningTokens": 192,
+                "totalMs": 3517.2,
+                "providerMs": 3517.2,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "tool_request",
+                "promptTokens": 5856,
+                "completionTokens": 285,
+                "totalTokens": 6141,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 192,
+                "totalMs": 3510.9,
+                "providerMs": 3510.9,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "tool_request",
+                "promptTokens": 6864,
+                "completionTokens": 394,
+                "totalTokens": 7258,
+                "cachedPromptTokens": 5760,
+                "reasoningTokens": 320,
+                "totalMs": 4526.4,
+                "providerMs": 4526.3,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "answer",
+                "promptTokens": 8500,
+                "completionTokens": 1291,
+                "totalTokens": 9791,
+                "cachedPromptTokens": 6784,
+                "reasoningTokens": 1024,
+                "totalMs": 12562.6,
+                "providerMs": 12562.6,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "stop"
+              },
+              {
+                "purpose": "evidence_review",
+                "promptTokens": 2460,
+                "completionTokens": 619,
+                "totalTokens": 3079,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 0,
+                "totalMs": 6142.7,
+                "providerMs": 6142.7,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "tool_calls"
+              }
+            ],
+            "promptTokens": 33507,
+            "completionTokens": 3486,
+            "totalTokens": 36993,
+            "qualityChecks": [
+              {
+                "operation": "task_interpretation",
+                "status": "unavailable",
+                "issueCount": 0,
+                "sourceCount": null,
+                "omittedSourceCount": null,
+                "nativeImagesSupplied": null
+              },
+              {
+                "operation": "evidence_review",
+                "status": "unavailable",
+                "issueCount": 0,
+                "sourceCount": 7,
+                "omittedSourceCount": 0,
+                "nativeImagesSupplied": 0
+              }
+            ],
+            "tools": [
+              {
+                "operation": "search",
+                "mode": "evidence_search",
+                "resultUnit": "passages",
+                "overlapCount": 0,
+                "noProgress": false,
+                "imagesSelected": 0,
+                "imagesSupplied": 0,
+                "imagesWithheld": 0,
+                "latencyMs": 660.0758340209723,
+                "requestCharge": 9.67,
+                "resultCount": 3,
+                "estimatedTokens": null,
+                "complete": null,
+                "error": false
+              },
+              {
+                "operation": "discover",
+                "mode": "catalogue",
+                "resultUnit": "documents",
+                "overlapCount": 0,
+                "noProgress": false,
+                "imagesSelected": 0,
+                "imagesSupplied": 0,
+                "imagesWithheld": 0,
+                "latencyMs": 174.10133394878358,
+                "requestCharge": 5.62,
+                "resultCount": 1,
+                "estimatedTokens": null,
+                "complete": null,
+                "error": false
+              },
+              {
+                "operation": "search",
+                "mode": "evidence_search",
+                "resultUnit": "passages",
+                "overlapCount": 3,
+                "noProgress": false,
+                "imagesSelected": 0,
+                "imagesSupplied": 0,
+                "imagesWithheld": 0,
+                "latencyMs": 483.43845806084573,
+                "requestCharge": 9.67,
+                "resultCount": 3,
+                "estimatedTokens": null,
+                "complete": null,
+                "error": false
+              },
+              {
+                "operation": "read",
+                "mode": "full",
+                "resultUnit": "sections",
+                "overlapCount": 1,
+                "noProgress": false,
+                "imagesSelected": 0,
+                "imagesSupplied": 0,
+                "imagesWithheld": 0,
+                "latencyMs": 422.7449999889359,
+                "requestCharge": 4.56,
+                "resultCount": 1,
+                "estimatedTokens": 1933,
+                "complete": true,
+                "error": false
+              }
+            ],
+            "retrievalRequestCharge": 29.52,
+            "retrievalMs": 1740.3606260195374,
+            "providerMs": 37751.6,
+            "rateLimitWaitMs": 0.0,
+            "rateLimitRetries": 0,
+            "retrievalChargeComplete": true
+          },
+          "checks": [
+            {
+              "operation": "task_interpretation",
+              "status": "unavailable",
+              "failureReason": null,
+              "issues": []
+            },
+            {
+              "operation": "evidence_review",
+              "status": "unavailable",
+              "failureReason": null,
+              "issues": []
+            }
+          ]
+        },
+        {
+          "case": "final-three-turn-sequence",
+          "turn": 1,
+          "answer": "I found relevant material, but could not verify a complete answer within this turn.\n\nThese are excerpts from the source material I retrieved, rather than a verified broader conclusion:\n\nNew-Future-Of-Work-Report-2025.pdf (page 5):\n> This report is a product of Microsoft's New Future of Work Initiative\n> Microsoft New Future of Work Report aka.ms/nfw\n\nNew-Future-Of-Work-Report-2025.pdf (page 3):\n> Welcome to the 2025 Microsoft New Future of Work Report!\n> Welcome to the 2025 Microsoft New Future of Work Report! As you sit down to read the 2025 New Future of Work report, it's worth pausing to consider the thread that ties the past five years of reports together. The inaugural New Future of Work report, published in 2021, focused on new ways people could work without relying on colocation as a key productivity tool. The second, in 2022, centered on the reintroduction of physical offices and the emergence of hybrid work. In 2023, we explored how large language models could reshape everyday work, and, in 2024, how those advances moved from promise to real-world impact. Each year, as I've written this introduction, I've found myself saying that the previous year marked a once-in-a- lifetime generational shift. But after five years, it's clear that the reports aren't capturing a series of separate revolutions. Rather, they are chapters in a single story of the digital evolution of collaboration, each representing a phase that builds on, and is enabled by, what came before. Last year's report highlighted research showing that Al delivers substantial gains in individual productivity. \n[Excerpt ends here.]",
+          "metrics": {
+            "timestamp": "2026-10-27T18:30:42.995590+00:00",
+            "totalMs": 82433.17474995274,
+            "modelCalls": [
+              {
+                "purpose": "task_interpretation",
+                "promptTokens": 657,
+                "completionTokens": 2361,
+                "totalTokens": 3018,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 1792,
+                "totalMs": 17577.3,
+                "providerMs": 17577.2,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "tool_request",
+                "promptTokens": 4669,
+                "completionTokens": 284,
+                "totalTokens": 4953,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 192,
+                "totalMs": 3333.2,
+                "providerMs": 3333.1,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "tool_request",
+                "promptTokens": 9072,
+                "completionTokens": 530,
+                "totalTokens": 9602,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 384,
+                "totalMs": 7459.2,
+                "providerMs": 7459.1,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "tool_request",
+                "promptTokens": 14782,
+                "completionTokens": 243,
+                "totalTokens": 15025,
+                "cachedPromptTokens": 8960,
+                "reasoningTokens": 128,
+                "totalMs": 4281.5,
+                "providerMs": 4281.5,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "answer",
+                "promptTokens": 18876,
+                "completionTokens": 2149,
+                "totalTokens": 21025,
+                "cachedPromptTokens": 14592,
+                "reasoningTokens": 1216,
+                "totalMs": 22461.6,
+                "providerMs": 22461.6,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "stop"
+              },
+              {
+                "purpose": "evidence_review",
+                "promptTokens": 11879,
+                "completionTokens": 3124,
+                "totalTokens": 15003,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 1920,
+                "totalMs": 24840.7,
+                "providerMs": 24840.7,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "tool_calls"
+              }
+            ],
+            "promptTokens": 59935,
+            "completionTokens": 8691,
+            "totalTokens": 68626,
+            "qualityChecks": [
+              {
+                "operation": "task_interpretation",
+                "status": "unavailable",
+                "issueCount": 0,
+                "sourceCount": null,
+                "omittedSourceCount": null,
+                "nativeImagesSupplied": null
+              },
+              {
+                "operation": "evidence_review",
+                "status": "unavailable",
+                "issueCount": 0,
+                "sourceCount": 25,
+                "omittedSourceCount": 0,
+                "nativeImagesSupplied": 0
+              }
+            ],
+            "tools": [
+              {
+                "operation": "search",
+                "mode": "evidence_search",
+                "resultUnit": "passages",
+                "overlapCount": 0,
+                "noProgress": false,
+                "imagesSelected": 1,
+                "imagesSupplied": 1,
+                "imagesWithheld": 0,
+                "latencyMs": 799.2124169832096,
+                "requestCharge": 22.42,
+                "resultCount": 8,
+                "estimatedTokens": null,
+                "complete": null,
+                "error": false
+              },
+              {
+                "operation": "read",
+                "mode": "selected",
+                "resultUnit": "sections",
+                "overlapCount": 0,
+                "noProgress": false,
+                "imagesSelected": 0,
+                "imagesSupplied": 0,
+                "imagesWithheld": 0,
+                "latencyMs": 598.4232500195503,
+                "requestCharge": 8.2,
+                "resultCount": 1,
+                "estimatedTokens": 8203,
+                "complete": false,
+                "error": false
+              },
+              {
+                "operation": "search",
+                "mode": "evidence_search",
+                "resultUnit": "passages",
+                "overlapCount": 0,
+                "noProgress": false,
+                "imagesSelected": 0,
+                "imagesSupplied": 0,
+                "imagesWithheld": 0,
+                "latencyMs": 778.7442919798195,
+                "requestCharge": 22.85,
+                "resultCount": 8,
+                "estimatedTokens": null,
+                "complete": null,
+                "error": false
+              }
+            ],
+            "retrievalRequestCharge": 53.47,
+            "retrievalMs": 2176.3799589825794,
+            "providerMs": 79953.2,
+            "rateLimitWaitMs": 0.0,
+            "rateLimitRetries": 0,
+            "retrievalChargeComplete": true
+          },
+          "checks": [
+            {
+              "operation": "task_interpretation",
+              "status": "unavailable",
+              "failureReason": null,
+              "issues": []
+            },
+            {
+              "operation": "evidence_review",
+              "status": "unavailable",
+              "failureReason": null,
+              "issues": []
+            }
+          ]
+        },
+        {
+          "case": "final-three-turn-sequence",
+          "turn": 2,
+          "answer": "I found relevant material, but could not verify a complete answer within this turn.\n\nFor “the research”, did you mean The Microsoft document you mentioned earlier (a Microsoft Research report or blog post). or Some other paper or report you viewed (academic paper, preprint, or industry report) — not necessarily from Microsoft.?\n\nFor “any images”, did you mean Figures, charts or diagrams from the research paper (vector/bitmap figures). or Photographs, screenshots, or other media associated with the research.?\n\nFor “re-use”, did you mean Use in an internal meeting/presentation (slides not published externally). or Reuse in publicly shared materials (conference slides, blog, article, or commercial materials) requiring clear copyright permissions.?\n\nThese are excerpts from the source material I retrieved, rather than a verified broader conclusion:\n\nNew-Future-Of-Work-Report-2025.pdf (page 1):\n> Microsoft New Future of Work Report 2025\n> \n> A summary of recent research from Microsoft and around the world that can help us create a new and better future of work with AI.\n\nNew-Future-Of-Work-Report-2025.pdf (page 4):\n> Microsoft New Future of Work Report\n> \n> aka.ms/nfw",
+          "metrics": {
+            "timestamp": "2026-10-27T18:34:03.585488+00:00",
+            "totalMs": 200587.2523749713,
+            "modelCalls": [
+              {
+                "purpose": "task_interpretation",
+                "promptTokens": 668,
+                "completionTokens": 1541,
+                "totalTokens": 2209,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 1024,
+                "totalMs": 10925.8,
+                "providerMs": 10925.8,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "tool_request",
+                "promptTokens": 5762,
+                "completionTokens": 179,
+                "totalTokens": 5941,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 128,
+                "totalMs": 5151.6,
+                "providerMs": 5151.6,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "tool_request",
+                "promptTokens": 6535,
+                "completionTokens": 563,
+                "totalTokens": 7098,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 320,
+                "totalMs": 7346.7,
+                "providerMs": 7346.7,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "answer_repair",
+                "promptTokens": 17951,
+                "completionTokens": 2696,
+                "totalTokens": 20647,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 1472,
+                "totalMs": 24382.9,
+                "providerMs": 24382.8,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "stop"
+              },
+              {
+                "purpose": "tool_request",
+                "promptTokens": 19257,
+                "completionTokens": 459,
+                "totalTokens": 19716,
+                "cachedPromptTokens": 17792,
+                "reasoningTokens": 320,
+                "totalMs": 10022.2,
+                "providerMs": 10022.2,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "tool_request",
+                "promptTokens": 25949,
+                "completionTokens": 524,
+                "totalTokens": 26473,
+                "cachedPromptTokens": 19072,
+                "reasoningTokens": 448,
+                "totalMs": 7582.2,
+                "providerMs": 7582.1,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "answer_repair",
+                "promptTokens": 29025,
+                "completionTokens": 2357,
+                "totalTokens": 31382,
+                "cachedPromptTokens": 25728,
+                "reasoningTokens": 1344,
+                "totalMs": 21235.7,
+                "providerMs": 21235.7,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "stop"
+              },
+              {
+                "purpose": "evidence_review",
+                "promptTokens": 15127,
+                "completionTokens": 2610,
+                "totalTokens": 17737,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 1600,
+                "totalMs": 25076.8,
+                "providerMs": 25076.8,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "answer",
+                "promptTokens": 31088,
+                "completionTokens": 3549,
+                "totalTokens": 34637,
+                "cachedPromptTokens": 28800,
+                "reasoningTokens": 1216,
+                "totalMs": 26348.5,
+                "providerMs": 26348.5,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "stop"
+              },
+              {
+                "purpose": "evidence_review",
+                "promptTokens": 16499,
+                "completionTokens": 3200,
+                "totalTokens": 19699,
+                "cachedPromptTokens": 1024,
+                "reasoningTokens": 3200,
+                "totalMs": 59643.0,
+                "providerMs": 29640.0,
+                "rateLimitWaitMs": 30002.4,
+                "rateLimitRetries": 1,
+                "finishReason": "length"
+              }
+            ],
+            "promptTokens": 167861,
+            "completionTokens": 17678,
+            "totalTokens": 185539,
+            "qualityChecks": [
+              {
+                "operation": "task_interpretation",
+                "status": "interpreted",
+                "issueCount": 0,
+                "sourceCount": null,
+                "omittedSourceCount": null,
+                "nativeImagesSupplied": null
+              },
+              {
+                "operation": "evidence_review",
+                "status": "repair",
+                "issueCount": 5,
+                "sourceCount": 26,
+                "omittedSourceCount": 0,
+                "nativeImagesSupplied": 2
+              },
+              {
+                "operation": "evidence_review",
+                "status": "unavailable",
+                "issueCount": 0,
+                "sourceCount": 26,
+                "omittedSourceCount": 0,
+                "nativeImagesSupplied": 2
+              }
+            ],
+            "tools": [
+              {
+                "operation": "discover",
+                "mode": "catalogue",
+                "resultUnit": "documents",
+                "overlapCount": 0,
+                "noProgress": false,
+                "imagesSelected": 0,
+                "imagesSupplied": 0,
+                "imagesWithheld": 0,
+                "latencyMs": 216.1227500764653,
+                "requestCharge": 5.88,
+                "resultCount": 1,
+                "estimatedTokens": null,
+                "complete": null,
+                "error": false
+              },
+              {
+                "operation": "images",
+                "mode": "image_inspection",
+                "resultUnit": "images",
+                "overlapCount": 0,
+                "noProgress": false,
+                "imagesSelected": 7,
+                "imagesSupplied": 2,
+                "imagesWithheld": 5,
+                "latencyMs": 518.5585410799831,
+                "requestCharge": 4.56,
+                "resultCount": 7,
+                "estimatedTokens": null,
+                "complete": true,
+                "error": false
+              },
+              {
+                "operation": "images",
+                "mode": "image_inspection",
+                "resultUnit": "images",
+                "overlapCount": 9,
+                "noProgress": false,
+                "imagesSelected": 3,
+                "imagesSupplied": 1,
+                "imagesWithheld": 2,
+                "latencyMs": 724.3965830421075,
+                "requestCharge": 4.56,
+                "resultCount": 3,
+                "estimatedTokens": null,
+                "complete": true,
+                "error": false
+              },
+              {
+                "operation": "search",
+                "mode": "evidence_search",
+                "resultUnit": "passages",
+                "overlapCount": 0,
+                "noProgress": false,
+                "imagesSelected": 0,
+                "imagesSupplied": 0,
+                "imagesWithheld": 0,
+                "latencyMs": 920.3031669603661,
+                "requestCharge": 22.66,
+                "resultCount": 8,
+                "estimatedTokens": null,
+                "complete": null,
+                "error": false
+              }
+            ],
+            "retrievalRequestCharge": 37.66,
+            "retrievalMs": 2379.381041158922,
+            "providerMs": 167712.2,
+            "rateLimitWaitMs": 30002.4,
+            "rateLimitRetries": 1,
+            "retrievalChargeComplete": true
+          },
+          "checks": [
+            {
+              "operation": "task_interpretation",
+              "status": "interpreted",
+              "failureReason": null,
+              "issues": []
+            },
+            {
+              "operation": "evidence_review",
+              "status": "repair",
+              "failureReason": null,
+              "issues": [
+                {
+                  "kind": "claim_support",
+                  "quote": "but none of the inspected pages include an open reuse licence.",
+                  "reason": "The report's front-matter explicitly states a citation instruction and \"@ 2025 Microsoft. All rights reserved.\" which indicates no open reuse licence is present on the inspected pages; that supports treating the report as all-rights-reserved until permission is obtained (the PDF shows citation instructions and copyright)."
+                },
+                {
+                  "kind": "claim_support",
+                  "quote": "Conceptual schematic (concentric blue circles — qualitative point about augmentation vs automation):",
+                  "reason": "The supplied figure (image id 675...:1:223) and nearby text describe this as a qualitative/conceptual schematic (no numeric quantities or causal estimates). The caption explicitly frames it as an adapted conceptual claim (Adapted from Brynjolfsson, 2022)."
+                },
+                {
+                  "kind": "claim_support",
+                  "quote": "Occupational applicability scatter (quantitative chart showing where AI applies across occupations):",
+                  "reason": "The scatter plot image (id 675...:1:217) and the nearby 'Adoption and Usage' text (page 13) show AI applicability scores across occupations but the figure alone doesn't provide underlying numeric tables or statistical tests—the report cites Tomlinson et al. (2025) and other studies as sources for those measures."
+                },
+                {
+                  "kind": "deliverable",
+                  "quote": "I’m providing two relevant figures (visuals + tight interpretation), the source citations, and the practical reuse implication.",
+                  "reason": "The task contract requested several deliverables (checklist for reuse, permission steps + template, concise summary of Microsoft document after confirmation, alternatives). The draft offers figures, citations, and practical implications but does not include the requested checklist or a ready-to-send permission template or the concise summary (3–6 bullets) explicitly labeled and produced after document confirmation."
+                },
+                {
+                  "kind": "ambiguity",
+                  "quote": "the research",
+                  "reason": "The user and draft use 'the research' ambiguously; the task contract identified multiple plausible referents (the Microsoft report vs another paper). The draft appears to assume the Microsoft New Future of Work Report (2025), but that may not be what the user meant."
+                }
+              ]
+            },
+            {
+              "operation": "evidence_review",
+              "status": "unavailable",
+              "failureReason": null,
+              "issues": []
+            }
+          ]
+        },
+        {
+          "case": "final-three-turn-sequence",
+          "turn": 3,
+          "answer": "I found relevant material, but could not verify a complete answer within this turn.\n\nThese are excerpts from the source material I retrieved, rather than a verified broader conclusion:\n\nNew-Future-Of-Work-Report-2025.pdf (page 1):\n> Microsoft New Future of Work Report 2025\n> \n> A summary of recent research from Microsoft and around the world that can help us create a new and better future of work with AI.\n\nNew-Future-Of-Work-Report-2025.pdf (page 4):\n> Microsoft New Future of Work Report\n> \n> aka.ms/nfw",
+          "metrics": {
+            "timestamp": "2026-10-27T18:35:31.615505+00:00",
+            "totalMs": 88021.5399590088,
+            "modelCalls": [
+              {
+                "purpose": "task_interpretation",
+                "promptTokens": 655,
+                "completionTokens": 1450,
+                "totalTokens": 2105,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 896,
+                "totalMs": 12661.2,
+                "providerMs": 12661.1,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "tool_request",
+                "promptTokens": 5507,
+                "completionTokens": 627,
+                "totalTokens": 6134,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 384,
+                "totalMs": 7846.3,
+                "providerMs": 7846.2,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "answer_repair",
+                "promptTokens": 16931,
+                "completionTokens": 1283,
+                "totalTokens": 18214,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 832,
+                "totalMs": 13670.5,
+                "providerMs": 13670.5,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "stop"
+              },
+              {
+                "purpose": "tool_request",
+                "promptTokens": 17464,
+                "completionTokens": 395,
+                "totalTokens": 17859,
+                "cachedPromptTokens": 16768,
+                "reasoningTokens": 256,
+                "totalMs": 6016.9,
+                "providerMs": 6016.8,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "answer",
+                "promptTokens": 24164,
+                "completionTokens": 1976,
+                "totalTokens": 26140,
+                "cachedPromptTokens": 17280,
+                "reasoningTokens": 1088,
+                "totalMs": 18504.3,
+                "providerMs": 18504.2,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "stop"
+              },
+              {
+                "purpose": "evidence_review",
+                "promptTokens": 12390,
+                "completionTokens": 3200,
+                "totalTokens": 15590,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 3200,
+                "totalMs": 27644.9,
+                "providerMs": 27644.9,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "finishReason": "length"
+              }
+            ],
+            "promptTokens": 77111,
+            "completionTokens": 8931,
+            "totalTokens": 86042,
+            "qualityChecks": [
+              {
+                "operation": "task_interpretation",
+                "status": "unavailable",
+                "issueCount": 0,
+                "sourceCount": null,
+                "omittedSourceCount": null,
+                "nativeImagesSupplied": null
+              },
+              {
+                "operation": "evidence_review",
+                "status": "unavailable",
+                "issueCount": 0,
+                "sourceCount": 18,
+                "omittedSourceCount": 0,
+                "nativeImagesSupplied": 2
+              }
+            ],
+            "tools": [
+              {
+                "operation": "images",
+                "mode": "image_inspection",
+                "resultUnit": "images",
+                "overlapCount": 0,
+                "noProgress": false,
+                "imagesSelected": 7,
+                "imagesSupplied": 2,
+                "imagesWithheld": 5,
+                "latencyMs": 759.4097499968484,
+                "requestCharge": 4.56,
+                "resultCount": 7,
+                "estimatedTokens": null,
+                "complete": true,
+                "error": false
+              },
+              {
+                "operation": "images",
+                "mode": "image_inspection",
+                "resultUnit": "images",
+                "overlapCount": 9,
+                "noProgress": false,
+                "imagesSelected": 3,
+                "imagesSupplied": 1,
+                "imagesWithheld": 2,
+                "latencyMs": 544.5476250024512,
+                "requestCharge": 4.56,
+                "resultCount": 3,
+                "estimatedTokens": null,
+                "complete": true,
+                "error": false
+              }
+            ],
+            "retrievalRequestCharge": 9.12,
+            "retrievalMs": 1303.9573749992996,
+            "providerMs": 86343.7,
+            "rateLimitWaitMs": 0.0,
+            "rateLimitRetries": 0,
+            "retrievalChargeComplete": true
+          },
+          "checks": [
+            {
+              "operation": "task_interpretation",
+              "status": "unavailable",
+              "failureReason": null,
+              "issues": []
+            },
+            {
+              "operation": "evidence_review",
+              "status": "unavailable",
+              "failureReason": null,
+              "issues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "semantic-quality-v2",
+      "accepted": false,
+      "turnsCaptured": 5,
+      "sourceSnapshotsUnchanged": true,
+      "turns": [
+        {
+          "case": "spot-01",
+          "turn": 1,
+          "answer": "I found relevant material, but could not verify a complete answer within this turn.\n\nFor “cool blue chart”, did you mean A specific known chart/infographic with blue color scheme comparing human vs machine work (e.g., McKinsey, Gartner, or productivity report) or A user's personal image or a chart seen on web/social media whose exact source is unknown?\n\nFor “human work that should be automated”, did you mean A category in the chart indicating tasks currently done by humans that ideally should be automated or A label meaning 'work humans should automate themselves' or 'work that could be automated'?\n\nFor “machine work”, did you mean Tasks already performed by machines/automation in the chart or Work that machines are capable of doing or currently doing?\n\nThese are excerpts from the source material I retrieved, rather than a verified broader conclusion:\n\nNew-Future-Of-Work-Report-2025.pdf (page 1):\n> Microsoft New Future of Work Report 2025\n> Microsoft New Future of Work Report 2025 A summary of recent research from Microsoft and around the world that can help us create a new and better future of work with AI.\n\nNew-Future-Of-Work-Report-2025.pdf (page 2):\n> Microsoft New Future of Work Report\n> Microsoft New Future of Work Report aka.ms/nfw",
+          "metrics": {
+            "timestamp": "2026-10-27T18:35:41.988178+00:00",
+            "totalMs": 60936.43279094249,
+            "modelCalls": [
+              {
+                "purpose": "task_interpretation",
+                "promptTokens": 613,
+                "completionTokens": 264,
+                "totalTokens": 877,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 0,
+                "totalMs": 3989.9,
+                "providerMs": 3989.6,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "error": false,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "tool_request",
+                "promptTokens": 3819,
+                "completionTokens": 142,
+                "totalTokens": 3961,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 64,
+                "totalMs": 3013.7,
+                "providerMs": 3013.6,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "error": false,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "tool_request",
+                "promptTokens": 7475,
+                "completionTokens": 526,
+                "totalTokens": 8001,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 448,
+                "totalMs": 41007.7,
+                "providerMs": 10999.8,
+                "rateLimitWaitMs": 30005.1,
+                "rateLimitRetries": 1,
+                "error": false,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "answer",
+                "promptTokens": 10093,
+                "completionTokens": 905,
+                "totalTokens": 10998,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 704,
+                "totalMs": 10031.0,
+                "providerMs": 10031.0,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "error": false,
+                "finishReason": "stop"
+              },
+              {
+                "purpose": "evidence_review",
+                "promptTokens": null,
+                "completionTokens": null,
+                "totalTokens": null,
+                "cachedPromptTokens": null,
+                "reasoningTokens": null,
+                "totalMs": 455.6227499851957,
+                "providerMs": null,
+                "rateLimitWaitMs": null,
+                "rateLimitRetries": null,
+                "error": true,
+                "finishReason": null
+              }
+            ],
+            "promptTokens": null,
+            "completionTokens": null,
+            "totalTokens": null,
+            "qualityChecks": [
+              {
+                "operation": "task_interpretation",
+                "status": "interpreted",
+                "issueCount": 0,
+                "failureReason": null,
+                "sourceCount": null,
+                "omittedSourceCount": null,
+                "nativeImagesSupplied": null
+              },
+              {
+                "operation": "evidence_review",
+                "status": "unavailable",
+                "issueCount": 0,
+                "failureReason": "provider_error",
+                "sourceCount": 11,
+                "omittedSourceCount": 0,
+                "nativeImagesSupplied": 1
+              }
+            ],
+            "tools": [
+              {
+                "operation": "search",
+                "mode": "evidence_search",
+                "resultUnit": "passages",
+                "overlapCount": 0,
+                "noProgress": false,
+                "imagesSelected": 1,
+                "imagesSupplied": 1,
+                "imagesWithheld": 0,
+                "latencyMs": 1596.8057910213247,
+                "requestCharge": 21.4,
+                "resultCount": 8,
+                "estimatedTokens": null,
+                "complete": null,
+                "error": false
+              },
+              {
+                "operation": "images",
+                "mode": "image_inspection",
+                "resultUnit": "images",
+                "overlapCount": 0,
+                "noProgress": false,
+                "imagesSelected": 1,
+                "imagesSupplied": 1,
+                "imagesWithheld": 0,
+                "latencyMs": 602.0124170463532,
+                "requestCharge": 4.56,
+                "resultCount": 1,
+                "estimatedTokens": null,
+                "complete": true,
+                "error": false
+              }
+            ],
+            "retrievalRequestCharge": 25.959999999999997,
+            "retrievalMs": 2198.818208067678,
+            "providerMs": null,
+            "rateLimitWaitMs": null,
+            "rateLimitRetries": null,
+            "retrievalChargeComplete": true
+          },
+          "checks": [
+            {
+              "operation": "task_interpretation",
+              "status": "interpreted",
+              "failureReason": null,
+              "issues": []
+            },
+            {
+              "operation": "evidence_review",
+              "status": "unavailable",
+              "failureReason": "provider_error",
+              "issues": []
+            }
+          ]
+        },
+        {
+          "case": "spot-02",
+          "turn": 1,
+          "answer": "I found relevant material, but could not verify a complete answer within this turn.\n\nFor “stand pipe in plot for”, did you mean They mean a standpipe (outdoor water tap) located inside/next to a particular allotment/garden plot. or They mean a standpipe provided for a plot number (i.e., which plot is assigned a standpipe).?\n\nFor “i thought that one was on the waiting list too”, did you mean They refer to a specific plot that they can't recall the number/name of which they thought was on the waiting list for a plot or for access to a standpipe. or They mean a person was on a waiting list asking for a plot with a standpipe.?\n\nFor “someone was asking about whether there's a pipe”, did you mean A neighbour or member asked whether a particular plot has a water pipe/standpipe. or They recall an inquiry on a forum/group about which plots have standpipes.?\n\nThese are excerpts from the source material I retrieved, rather than a verified broader conclusion:\n\n01-allotment-seasonal-planting-guide.docx (paragraph 3):\n> Sow broad beans under cloche from late February. Plant first early potatoes (variety Swift) on 20 March, 30 cm apart in rows 60 cm apart, and earth up when shoots reach 20 cm.\n\n01-allotment-seasonal-planting-guide.docx (paragraph 6):\n> Sow carrots every three weeks between April and July to avoid a glut. Beetroot sown after 15 June rarely bolts. Net brassicas against cabbage white from the day of planting.",
+          "metrics": {
+            "timestamp": "2026-10-27T18:36:24.296024+00:00",
+            "totalMs": 42306.20274995454,
+            "modelCalls": [
+              {
+                "purpose": "task_interpretation",
+                "promptTokens": 657,
+                "completionTokens": 310,
+                "totalTokens": 967,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 0,
+                "totalMs": 3822.6,
+                "providerMs": 3822.6,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "error": false,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "tool_request",
+                "promptTokens": 4577,
+                "completionTokens": 156,
+                "totalTokens": 4733,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 128,
+                "totalMs": 3286.6,
+                "providerMs": 3286.6,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "error": false,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "tool_request",
+                "promptTokens": 6608,
+                "completionTokens": 133,
+                "totalTokens": 6741,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 64,
+                "totalMs": 4347.8,
+                "providerMs": 4347.7,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "error": false,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "answer",
+                "promptTokens": 8239,
+                "completionTokens": 2011,
+                "totalTokens": 10250,
+                "cachedPromptTokens": 6528,
+                "reasoningTokens": 1344,
+                "totalMs": 16247.1,
+                "providerMs": 16247.1,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "error": false,
+                "finishReason": "stop"
+              },
+              {
+                "purpose": "evidence_review",
+                "promptTokens": 3588,
+                "completionTokens": 2142,
+                "totalTokens": 5730,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 1728,
+                "totalMs": 13860.9,
+                "providerMs": 13860.8,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "error": false,
+                "finishReason": "tool_calls"
+              }
+            ],
+            "promptTokens": 23669,
+            "completionTokens": 4752,
+            "totalTokens": 28421,
+            "qualityChecks": [
+              {
+                "operation": "task_interpretation",
+                "status": "interpreted",
+                "issueCount": 0,
+                "failureReason": null,
+                "sourceCount": null,
+                "omittedSourceCount": null,
+                "nativeImagesSupplied": null
+              },
+              {
+                "operation": "evidence_review",
+                "status": "unavailable",
+                "issueCount": 0,
+                "failureReason": "inconsistent_verdict",
+                "sourceCount": 4,
+                "omittedSourceCount": 0,
+                "nativeImagesSupplied": 0
+              }
+            ],
+            "tools": [
+              {
+                "operation": "discover",
+                "mode": "catalogue",
+                "resultUnit": "documents",
+                "overlapCount": 0,
+                "noProgress": false,
+                "imagesSelected": 0,
+                "imagesSupplied": 0,
+                "imagesWithheld": 0,
+                "latencyMs": 224.21429201494902,
+                "requestCharge": 5.79,
+                "resultCount": 4,
+                "estimatedTokens": null,
+                "complete": null,
+                "error": false
+              },
+              {
+                "operation": "read",
+                "mode": "full",
+                "resultUnit": "sections",
+                "overlapCount": 1,
+                "noProgress": false,
+                "imagesSelected": 0,
+                "imagesSupplied": 0,
+                "imagesWithheld": 0,
+                "latencyMs": 398.75291602220386,
+                "requestCharge": 4.56,
+                "resultCount": 1,
+                "estimatedTokens": 1936,
+                "complete": true,
+                "error": false
+              }
+            ],
+            "retrievalRequestCharge": 10.35,
+            "retrievalMs": 622.9672080371529,
+            "providerMs": 41564.8,
+            "rateLimitWaitMs": 0.0,
+            "rateLimitRetries": 0,
+            "retrievalChargeComplete": true
+          },
+          "checks": [
+            {
+              "operation": "task_interpretation",
+              "status": "interpreted",
+              "failureReason": null,
+              "issues": []
+            },
+            {
+              "operation": "evidence_review",
+              "status": "unavailable",
+              "failureReason": "inconsistent_verdict",
+              "issues": []
+            }
+          ]
+        },
+        {
+          "case": "final-three-turn-sequence",
+          "turn": 1,
+          "answer": "I found relevant material, but could not verify a complete answer within this turn.\n\nThese are excerpts from the source material I retrieved, rather than a verified broader conclusion:\n\nNew-Future-Of-Work-Report-2025.pdf (page 27):\n> Human-AI co-creation is shifting from one-shot outputs to context-aware, interaction-driven partnerships\n> Human-AI Collaboration aka.ms/nfw\n\nNew-Future-Of-Work-Report-2025.pdf (page 25):\n> Establishing common ground is essential for human-AI collaboration (2)\n> Establishing common ground is essential for human-AI collaboration (2) · Bansal et al. (2024) identify 12 challenges to establishing common ground in human-agent interaction, including general communication challenges (e.g. choosing the appropriate level of detail), challenges with conveying information from a user to an agent (e.g. in relation to goals and preferences), and challenges with conveying information from an agent to a user (e.g. in relation to its capabilities, current and planned actions, and their side effects). · Tolzin and Janson (2025) identify five mechanisms that could support common ground in human-agent interaction: support for joint action, an underlying knowledge base, mental models, social features, and embodiment. · Shaikh et al. (2025) study grounding by analyzing LLM interaction logs. They find that early grounding failures predicted later interaction breakdowns. They develop a preliminary intervention aimed at mitigating grounding failures. This prompts the model to ask follow-up questions or request clarifications when predicted to be necessary. · Other recent advances seek to suppo\n[Excerpt ends here.]",
+          "metrics": {
+            "timestamp": "2026-10-27T18:37:57.499254+00:00",
+            "totalMs": 93202.14616693556,
+            "modelCalls": [
+              {
+                "purpose": "task_interpretation",
+                "promptTokens": 735,
+                "completionTokens": 387,
+                "totalTokens": 1122,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 0,
+                "totalMs": 3949.5,
+                "providerMs": 3949.5,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "error": false,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "tool_request",
+                "promptTokens": 5098,
+                "completionTokens": 296,
+                "totalTokens": 5394,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 192,
+                "totalMs": 3772.8,
+                "providerMs": 3772.7,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "error": false,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "tool_request",
+                "promptTokens": 9842,
+                "completionTokens": 415,
+                "totalTokens": 10257,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 192,
+                "totalMs": 5903.1,
+                "providerMs": 5903.0,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "error": false,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "tool_request",
+                "promptTokens": 10172,
+                "completionTokens": 219,
+                "totalTokens": 10391,
+                "cachedPromptTokens": 9728,
+                "reasoningTokens": 0,
+                "totalMs": 3952.6,
+                "providerMs": 3952.6,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "error": false,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "tool_request",
+                "promptTokens": 10539,
+                "completionTokens": 126,
+                "totalTokens": 10665,
+                "cachedPromptTokens": 10240,
+                "reasoningTokens": 0,
+                "totalMs": 2886.3,
+                "providerMs": 2886.2,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "error": false,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "answer",
+                "promptTokens": 15427,
+                "completionTokens": 1620,
+                "totalTokens": 17047,
+                "cachedPromptTokens": 10624,
+                "reasoningTokens": 768,
+                "totalMs": 14379.0,
+                "providerMs": 14378.9,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "error": false,
+                "finishReason": "stop"
+              },
+              {
+                "purpose": "evidence_review",
+                "promptTokens": 8014,
+                "completionTokens": 3200,
+                "totalTokens": 11214,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 3200,
+                "totalMs": 55198.4,
+                "providerMs": 25193.0,
+                "rateLimitWaitMs": 30005.0,
+                "rateLimitRetries": 1,
+                "error": false,
+                "finishReason": "length"
+              }
+            ],
+            "promptTokens": 59827,
+            "completionTokens": 6263,
+            "totalTokens": 66090,
+            "qualityChecks": [
+              {
+                "operation": "task_interpretation",
+                "status": "unavailable",
+                "issueCount": 0,
+                "failureReason": "unbound_phrase",
+                "sourceCount": null,
+                "omittedSourceCount": null,
+                "nativeImagesSupplied": null
+              },
+              {
+                "operation": "evidence_review",
+                "status": "unavailable",
+                "issueCount": 0,
+                "failureReason": "incomplete_output",
+                "sourceCount": 13,
+                "omittedSourceCount": 0,
+                "nativeImagesSupplied": 1
+              }
+            ],
+            "tools": [
+              {
+                "operation": "search",
+                "mode": "evidence_search",
+                "resultUnit": "passages",
+                "overlapCount": 0,
+                "noProgress": false,
+                "imagesSelected": 1,
+                "imagesSupplied": 1,
+                "imagesWithheld": 0,
+                "latencyMs": 1234.7951249685138,
+                "requestCharge": 22.05,
+                "resultCount": 8,
+                "estimatedTokens": null,
+                "complete": null,
+                "error": false
+              },
+              {
+                "operation": "read",
+                "mode": null,
+                "resultUnit": null,
+                "overlapCount": 0,
+                "noProgress": false,
+                "imagesSelected": 0,
+                "imagesSupplied": 0,
+                "imagesWithheld": 0,
+                "latencyMs": 4.30695794057101,
+                "requestCharge": null,
+                "resultCount": 0,
+                "estimatedTokens": null,
+                "complete": false,
+                "error": true
+              },
+              {
+                "operation": "read",
+                "mode": null,
+                "resultUnit": null,
+                "overlapCount": 0,
+                "noProgress": true,
+                "imagesSelected": 0,
+                "imagesSupplied": 0,
+                "imagesWithheld": 0,
+                "latencyMs": 411.6208329796791,
+                "requestCharge": null,
+                "resultCount": 0,
+                "estimatedTokens": null,
+                "complete": false,
+                "error": true
+              },
+              {
+                "operation": "search",
+                "mode": "evidence_search",
+                "resultUnit": "passages",
+                "overlapCount": 3,
+                "noProgress": false,
+                "imagesSelected": 1,
+                "imagesSupplied": 1,
+                "imagesWithheld": 0,
+                "latencyMs": 1172.4398750811815,
+                "requestCharge": 22.96,
+                "resultCount": 8,
+                "estimatedTokens": null,
+                "complete": null,
+                "error": false
+              }
+            ],
+            "retrievalRequestCharge": 45.010000000000005,
+            "retrievalMs": 2823.1627909699455,
+            "providerMs": 60035.9,
+            "rateLimitWaitMs": 30005.0,
+            "rateLimitRetries": 1,
+            "retrievalChargeComplete": false
+          },
+          "checks": [
+            {
+              "operation": "task_interpretation",
+              "status": "unavailable",
+              "failureReason": "unbound_phrase",
+              "issues": []
+            },
+            {
+              "operation": "evidence_review",
+              "status": "unavailable",
+              "failureReason": "incomplete_output",
+              "issues": []
+            }
+          ]
+        },
+        {
+          "case": "final-three-turn-sequence",
+          "turn": 2,
+          "answer": "I found relevant material, but could not verify a complete answer within this turn.\n\nThese are excerpts from the source material I retrieved, rather than a verified broader conclusion:\n\nNew-Future-Of-Work-Report-2025.pdf (page 25):\n> Human-AI Collaboration\n> \n> aka.ms/nfw\n\nNew-Future-Of-Work-Report-2025.pdf (page 25):\n> Establishing common ground is essential for human-AI collaboration (2)\n> \n> · Bansal et al. (2024) identify 12 challenges to establishing common ground in human-agent interaction, including general communication challenges (e.g. choosing the appropriate level of detail), challenges with conveying information from a user to an agent (e.g. in relation to goals and preferences), and challenges with conveying information from an agent to a user (e.g. in relation to its capabilities, current and planned actions, and their side effects).\n> \n> · Tolzin and Janson (2025) identify five mechanisms that could support common ground in human-agent interaction: support for joint action, an underlying knowledge base, mental models, social features, and embodiment.\n> \n> · Shaikh et al. (2025) study grounding by analyzing LLM interaction logs. They find that early grounding failures predicted later interaction breakdowns. They develop a preliminary intervention aimed at mitigating grounding failures. This prompts the model to ask follow-up questions or request clarifications when predicted to be necessary.\n> \n> · Other recent advances seek to support the user's overall goal over multiple turns. COLLABLLM (Wu et al\n[Excerpt ends here.]",
+          "metrics": {
+            "timestamp": "2026-10-27T18:39:18.913615+00:00",
+            "totalMs": 81413.41474989895,
+            "modelCalls": [
+              {
+                "purpose": "task_interpretation",
+                "promptTokens": 746,
+                "completionTokens": 3200,
+                "totalTokens": 3946,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 3200,
+                "totalMs": 20476.1,
+                "providerMs": 20476.0,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "error": false,
+                "finishReason": "length"
+              },
+              {
+                "purpose": "tool_request",
+                "promptTokens": 5564,
+                "completionTokens": 161,
+                "totalTokens": 5725,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 64,
+                "totalMs": 2645.9,
+                "providerMs": 2645.8,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "error": false,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "answer_repair",
+                "promptTokens": 10736,
+                "completionTokens": 1934,
+                "totalTokens": 12670,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 1024,
+                "totalMs": 18787.3,
+                "providerMs": 18787.3,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "error": false,
+                "finishReason": "stop"
+              },
+              {
+                "purpose": "tool_request",
+                "promptTokens": 11755,
+                "completionTokens": 474,
+                "totalTokens": 12229,
+                "cachedPromptTokens": 10624,
+                "reasoningTokens": 384,
+                "totalMs": 5635.1,
+                "providerMs": 5635.0,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "error": false,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "answer",
+                "promptTokens": 26354,
+                "completionTokens": 3063,
+                "totalTokens": 29417,
+                "cachedPromptTokens": 11648,
+                "reasoningTokens": 1216,
+                "totalMs": 24414.2,
+                "providerMs": 24414.2,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "error": false,
+                "finishReason": "stop"
+              },
+              {
+                "purpose": "evidence_review",
+                "promptTokens": 22128,
+                "completionTokens": 1079,
+                "totalTokens": 23207,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 0,
+                "totalMs": 7481.2,
+                "providerMs": 7481.1,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "error": false,
+                "finishReason": "tool_calls"
+              }
+            ],
+            "promptTokens": 77283,
+            "completionTokens": 9911,
+            "totalTokens": 87194,
+            "qualityChecks": [
+              {
+                "operation": "task_interpretation",
+                "status": "unavailable",
+                "issueCount": 0,
+                "failureReason": "incomplete_output",
+                "sourceCount": null,
+                "omittedSourceCount": null,
+                "nativeImagesSupplied": null
+              },
+              {
+                "operation": "evidence_review",
+                "status": "unavailable",
+                "issueCount": 0,
+                "failureReason": "inconsistent_verdict",
+                "sourceCount": 30,
+                "omittedSourceCount": 0,
+                "nativeImagesSupplied": 0
+              }
+            ],
+            "tools": [
+              {
+                "operation": "search",
+                "mode": "evidence_search",
+                "resultUnit": "passages",
+                "overlapCount": 0,
+                "noProgress": false,
+                "imagesSelected": 1,
+                "imagesSupplied": 1,
+                "imagesWithheld": 0,
+                "latencyMs": 948.5605420777574,
+                "requestCharge": 14.48,
+                "resultCount": 8,
+                "estimatedTokens": null,
+                "complete": null,
+                "error": false
+              },
+              {
+                "operation": "read",
+                "mode": "selected",
+                "resultUnit": "sections",
+                "overlapCount": 0,
+                "noProgress": false,
+                "imagesSelected": 0,
+                "imagesSupplied": 0,
+                "imagesWithheld": 0,
+                "latencyMs": 706.2659160001203,
+                "requestCharge": 4.56,
+                "resultCount": 1,
+                "estimatedTokens": 21556,
+                "complete": false,
+                "error": false
+              }
+            ],
+            "retrievalRequestCharge": 19.04,
+            "retrievalMs": 1654.8264580778778,
+            "providerMs": 79439.4,
+            "rateLimitWaitMs": 0.0,
+            "rateLimitRetries": 0,
+            "retrievalChargeComplete": true
+          },
+          "checks": [
+            {
+              "operation": "task_interpretation",
+              "status": "unavailable",
+              "failureReason": "incomplete_output",
+              "issues": []
+            },
+            {
+              "operation": "evidence_review",
+              "status": "unavailable",
+              "failureReason": "inconsistent_verdict",
+              "issues": []
+            }
+          ]
+        },
+        {
+          "case": "final-three-turn-sequence",
+          "turn": 3,
+          "answer": "I found relevant material, but could not verify a complete answer within this turn.\n\nThese are excerpts from the source material I retrieved, rather than a verified broader conclusion:\n\nNew-Future-Of-Work-Report-2025.pdf (page 24):\n> Establishing common ground is essential for human-AI collaboration (1)\n> Establishing common ground is essential for human-AI collaboration (1) · Common ground is the shared knowledge and assumptions that allow people to understand each other and coordinate effectively. · Building common ground is essential to human communication and is increasingly recognized as important in human-Al interaction. · Common ground is achieved through a dynamic process called grounding: speakers provide ongoing evidence of their understanding or confusion, and work to address gaps in mutual understanding (Clark & Brennan, 1991; Clark, 1996). · Grounding includes positive evidence of understanding, such as acknowledgments, relevant next conversational turns, and continued attention as well as negative evidence, such as requests for clarification. · Current LLMs generate language with less conversational grounding than people, instead generating text that suggests that shared understanding has already been reached (Shaikh et al., 2024; see figure for examples). Grounding Act Clarification TSCC | Example student: So I am the leader of my class. It is like the president or mayor. teacher: Oh, like a head g\n[Excerpt ends here.]\n\nNew-Future-Of-Work-Report-2025.pdf (page 25):\n> Establishing common ground is essential for human-AI collaboration (2)\n> Establishing common ground is essential for human-AI collaboration (2) · Bansal et al. (2024) identify 12 challenges to establishing common ground in human-agent interaction, including general communication challenges (e.g. choosing the appropriate level of detail), challenges with conveying information from a user to an agent (e.g. in relation to goals and preferences), and challenges with conveying information from an agent to a user (e.g. in relation to its capabilities, current and planned actions, and their side effects). · Tolzin and Janson (2025) identify five mechanisms that could support common ground in human-agent interaction: support for joint action, an underlying knowledge base, mental models, social features, and embodiment. · Shaikh et al. (2025) study grounding by analyzing LLM interaction logs. They find that early grounding failures predicted later interaction breakdowns. They develop a preliminary intervention aimed at mitigating grounding failures. This prompts the model to ask follow-up questions or request clarifications when predicted to be necessary. · Other recent advances seek to suppo\n[Excerpt ends here.]",
+          "metrics": {
+            "timestamp": "2026-10-27T18:40:56.102917+00:00",
+            "totalMs": 97185.7763750013,
+            "modelCalls": [
+              {
+                "purpose": "task_interpretation",
+                "promptTokens": 733,
+                "completionTokens": 281,
+                "totalTokens": 1014,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 0,
+                "totalMs": 35526.3,
+                "providerMs": 5522.1,
+                "rateLimitWaitMs": 30004.0,
+                "rateLimitRetries": 1,
+                "error": false,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "tool_request",
+                "promptTokens": 6083,
+                "completionTokens": 354,
+                "totalTokens": 6437,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 256,
+                "totalMs": 4068.0,
+                "providerMs": 4068.0,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "error": false,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "answer_repair",
+                "promptTokens": 11203,
+                "completionTokens": 1426,
+                "totalTokens": 12629,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 1024,
+                "totalMs": 13385.6,
+                "providerMs": 13385.5,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "error": false,
+                "finishReason": "stop"
+              },
+              {
+                "purpose": "tool_request",
+                "promptTokens": 11687,
+                "completionTokens": 786,
+                "totalTokens": 12473,
+                "cachedPromptTokens": 11008,
+                "reasoningTokens": 704,
+                "totalMs": 12112.1,
+                "providerMs": 12112.1,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "error": false,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "answer",
+                "promptTokens": 21143,
+                "completionTokens": 2225,
+                "totalTokens": 23368,
+                "cachedPromptTokens": 11520,
+                "reasoningTokens": 896,
+                "totalMs": 25577.6,
+                "providerMs": 25577.5,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "error": false,
+                "finishReason": "stop"
+              },
+              {
+                "purpose": "evidence_review",
+                "promptTokens": 15455,
+                "completionTokens": 538,
+                "totalTokens": 15993,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 0,
+                "totalMs": 4531.1,
+                "providerMs": 4531.1,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "error": false,
+                "finishReason": "tool_calls"
+              }
+            ],
+            "promptTokens": 66304,
+            "completionTokens": 5610,
+            "totalTokens": 71914,
+            "qualityChecks": [
+              {
+                "operation": "task_interpretation",
+                "status": "unavailable",
+                "issueCount": 0,
+                "failureReason": "unbound_phrase",
+                "sourceCount": null,
+                "omittedSourceCount": null,
+                "nativeImagesSupplied": null
+              },
+              {
+                "operation": "evidence_review",
+                "status": "unavailable",
+                "issueCount": 0,
+                "failureReason": "inconsistent_verdict",
+                "sourceCount": 23,
+                "omittedSourceCount": 0,
+                "nativeImagesSupplied": 0
+              }
+            ],
+            "tools": [
+              {
+                "operation": "search",
+                "mode": "evidence_search",
+                "resultUnit": "passages",
+                "overlapCount": 0,
+                "noProgress": false,
+                "imagesSelected": 1,
+                "imagesSupplied": 1,
+                "imagesWithheld": 0,
+                "latencyMs": 1084.7447500564158,
+                "requestCharge": 22.2,
+                "resultCount": 8,
+                "estimatedTokens": null,
+                "complete": null,
+                "error": false
+              },
+              {
+                "operation": "read",
+                "mode": "selected",
+                "resultUnit": "sections",
+                "overlapCount": 0,
+                "noProgress": false,
+                "imagesSelected": 0,
+                "imagesSupplied": 0,
+                "imagesWithheld": 0,
+                "latencyMs": 605.9827909339219,
+                "requestCharge": 4.56,
+                "resultCount": 1,
+                "estimatedTokens": 13801,
+                "complete": false,
+                "error": false
+              }
+            ],
+            "retrievalRequestCharge": 26.759999999999998,
+            "retrievalMs": 1690.7275409903377,
+            "providerMs": 65196.3,
+            "rateLimitWaitMs": 30004.0,
+            "rateLimitRetries": 1,
+            "retrievalChargeComplete": true
+          },
+          "checks": [
+            {
+              "operation": "task_interpretation",
+              "status": "unavailable",
+              "failureReason": "unbound_phrase",
+              "issues": []
+            },
+            {
+              "operation": "evidence_review",
+              "status": "unavailable",
+              "failureReason": "inconsistent_verdict",
+              "issues": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "experiment": "semantic-quality-v3",
+      "accepted": false,
+      "turnsCaptured": 1,
+      "sourceSnapshotsUnchanged": null,
+      "turns": [
+        {
+          "case": "spot-01",
+          "turn": 1,
+          "answer": "I found relevant material, but could not verify a complete answer within this turn.\n\nThese are excerpts from the source material I retrieved, rather than a verified broader conclusion:\n\nNew-Future-Of-Work-Report-2025.pdf (page 23):\n> Automation tends to cap upside - augmentation and innovation expand opportunity\n> Automation tends to cap upside - augmentation and innovation expand opportunity · A version of this figure has appeared in the last two New Future of Work Reports, but it remains as important (if not more) today. · Automation-first approaches mainly remove cost from existing tasks, limiting gains to labor arbitrage and replication (Brynjolfsson, 2022; Autor, 2022). · Strategies focused on augmentation and innovation can create new categories of work and value, driving positive- sum growth. For instance, Amazon's success came from reinventing retail through human-machine complementarity, not automating cashiers. Opportunities for augmenting humans are far greater than opportunities to automate existing tasks (Adapted from Brynjolfsson, 2022). · Automation also risks reducing the autonomy, recognition, and connection workers receive (making work less \"meaningful\"), all of which matter for engagement, performance, and wellbeing (Bailey et al., 2019; Allen et al., 1990). · Automation without augmentation or innovation can also reduce worker bargaining power, thereby concentrating wealth and power and amplif\n[Excerpt ends here.]\n\nNew-Future-Of-Work-Report-2025.pdf (page 1):\n> Microsoft New Future of Work Report 2025\n> Microsoft New Future of Work Report 2025 A summary of recent research from Microsoft and around the world that can help us create a new and better future of work with AI.",
+          "metrics": {
+            "timestamp": "2026-10-27T18:43:21.925543+00:00",
+            "totalMs": 30635.965917026624,
+            "modelCalls": [
+              {
+                "purpose": "task_interpretation",
+                "promptTokens": 658,
+                "completionTokens": 269,
+                "totalTokens": 927,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 0,
+                "totalMs": 3715.4,
+                "providerMs": 3715.0,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "error": false,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "tool_request",
+                "promptTokens": 3567,
+                "completionTokens": 82,
+                "totalTokens": 3649,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 0,
+                "totalMs": 1865.9,
+                "providerMs": 1865.9,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "error": false,
+                "finishReason": "tool_calls"
+              },
+              {
+                "purpose": "answer",
+                "promptTokens": 8765,
+                "completionTokens": 633,
+                "totalTokens": 9398,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 512,
+                "totalMs": 7592.9,
+                "providerMs": 7592.8,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "error": false,
+                "finishReason": "stop"
+              },
+              {
+                "purpose": "evidence_review",
+                "promptTokens": 5335,
+                "completionTokens": 1309,
+                "totalTokens": 6644,
+                "cachedPromptTokens": 0,
+                "reasoningTokens": 768,
+                "totalMs": 15117.6,
+                "providerMs": 15117.5,
+                "rateLimitWaitMs": 0.0,
+                "rateLimitRetries": 0,
+                "error": false,
+                "finishReason": "tool_calls"
+              }
+            ],
+            "promptTokens": 18325,
+            "completionTokens": 2293,
+            "totalTokens": 20618,
+            "qualityChecks": [
+              {
+                "operation": "task_interpretation",
+                "status": "unavailable",
+                "issueCount": 0,
+                "failureReason": "unbound_phrase",
+                "sourceCount": null,
+                "omittedSourceCount": null,
+                "nativeImagesSupplied": null
+              },
+              {
+                "operation": "evidence_review",
+                "status": "unavailable",
+                "issueCount": 0,
+                "failureReason": "inconsistent_verdict",
+                "sourceCount": 8,
+                "omittedSourceCount": 0,
+                "nativeImagesSupplied": 1
+              }
+            ],
+            "tools": [
+              {
+                "operation": "search",
+                "mode": "evidence_search",
+                "resultUnit": "passages",
+                "overlapCount": 0,
+                "noProgress": false,
+                "imagesSelected": 1,
+                "imagesSupplied": 1,
+                "imagesWithheld": 0,
+                "latencyMs": 2146.012582932599,
+                "requestCharge": 21.02,
+                "resultCount": 8,
+                "estimatedTokens": null,
+                "complete": null,
+                "error": false
+              }
+            ],
+            "retrievalRequestCharge": 21.02,
+            "retrievalMs": 2146.012582932599,
+            "providerMs": 28291.2,
+            "rateLimitWaitMs": 0.0,
+            "rateLimitRetries": 0,
+            "retrievalChargeComplete": true
+          },
+          "checks": [
+            {
+              "operation": "task_interpretation",
+              "status": "unavailable",
+              "failureReason": "unbound_phrase",
+              "issues": []
+            },
+            {
+              "operation": "evidence_review",
+              "status": "unavailable",
+              "failureReason": "inconsistent_verdict",
+              "issues": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

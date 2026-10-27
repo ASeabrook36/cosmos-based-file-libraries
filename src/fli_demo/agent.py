@@ -493,6 +493,10 @@ Answer:
   metric and qualifications supported by the source. Seek contrary evidence. Distinguish findings
   about humans, design proposals, correlation and causal evidence about agents. Do not turn a desired
   persuasive claim into a finding: state clearly when direct quantitative support is absent.
+  Lead with what the cited comparison actually tested. Results from changed training, alignment,
+  facilitation or workflow do not isolate the effect of adding context or persistent memory.
+  Distinguish direct support for the user's hypothesis from related evidence; say when a comparator,
+  sample or effect is unknown rather than filling it in. Keep the headline as qualified as the evidence.
 - Explain why each selected visual helps and what it does not establish. Do not promise export quality
   beyond stored crops or verified reuse rights. Never add unrequested offers instead of deliverables.
 - Generated descriptions can misread values. Original body text, generated descriptions, visible image
