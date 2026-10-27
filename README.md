@@ -17,7 +17,7 @@ It removes the limit that prompted it. Azure AI Search allows 200 indexes per se
 
 ## Why one Cosmos container
 
-Today every library is its own search index, and the search service counts indexes. Here every library lives in one Cosmos DB container: each passage of each document is stored with its text, its meaning as a vector, and the ID of its library. Cosmos keeps each library's passages together and builds a separate vector index for each library inside that one container. A search names one library, so it reaches only that library's passages and that library's index.
+Using Azure AI Search, every library would be its own search index, and the search service counts indexes. Under this alternative, every library lives in one Cosmos DB container: each passage of each document is stored with its text, its meaning as a vector, and the ID of its library. Cosmos keeps each library's passages together and builds a separate vector index for each library inside that one container. A search names one library, so it reaches only that library's passages and that library's index.
 
 **Today.** One Azure AI Search index per library, and the service stops at 200.
 
