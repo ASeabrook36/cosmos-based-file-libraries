@@ -24,9 +24,9 @@ Start with the [lab guide](../structure-lab.md), [research assessment](2026-10-2
 
 ## Current decision and next work
 
-The user wants reuse of Microsoft products, including previews, before further
+The user wants to explore reuse of Microsoft products, including previews, before further
 custom ingestion development. They want the full agent-facing feature set kept
-visible when comparing products. Do a bounded compatibility experiment next:
+visible when comparing products. A bounded compatibility experiment has been defined:
 
 1. Establish a supported external source-evidence retrieval path for KBaaS.
    Its documented integration is with Logic Apps agent loops; management REST
