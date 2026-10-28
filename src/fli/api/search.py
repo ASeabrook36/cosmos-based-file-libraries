@@ -17,6 +17,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, String
 from fli.api.documents import FILE_TYPES
 from fli.auth import require_caller
 from fli.errors import ApiError
+from fli.presentation import CompactResponse, EvidenceBudget, ResponseView, respond
 from fli.query import DateRange, SearchFilters
 from fli.search import Searcher, SearchRequest
 
@@ -110,12 +111,14 @@ class SearchBody(BaseModel):
     document: DocumentScope | None = None
 
 
-@router.post("/search")
+@router.post("/search", response_model=CompactResponse | dict[str, Any])
 async def search(
     library_id: str,
     body: SearchBody,
     request: Request,
     x_agent_id: Annotated[str | None, Header()] = None,
+    view: ResponseView = "raw",
+    maxEvidenceTokens: EvidenceBudget = None,
 ) -> dict[str, Any]:
     settings = request.app.state.settings
     top = settings.search_default_top if body.top is None else body.top
@@ -125,7 +128,7 @@ async def search(
         raise ApiError(400, "invalid_request", "query must not be blank")
     filters = body.filters or Filters()
     searcher: Searcher = request.app.state.searcher
-    return await searcher.search(
+    response = await searcher.search(
         library_id,
         x_agent_id,
         SearchRequest(
@@ -138,3 +141,5 @@ async def search(
             body.document.model_dump(exclude_none=True) if body.document else None,
         ),
     )
+
+    return await respond(response, view, maxEvidenceTokens)

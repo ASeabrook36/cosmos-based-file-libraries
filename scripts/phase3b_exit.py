@@ -99,7 +99,7 @@ def main():
     record["services"]["ingestionMetrics"] = [d.get("processingMetrics") for d in documents]
     expected = next(d["documentId"] for d in state["documents"] if d["name"].endswith(".pdf"))
     search = client.search(lib, agent_id, "I remember a chart showing GDP growth over time", top=8)
-    images = [r for r in search["results"] if r.get("image")]
+    images = search["attachments"]
     assert any(r["documentId"] == expected and r["image"]["kind"] == "pdf_figure" for r in images)
     with httpx.Client(timeout=30) as fetcher:
         for image in images:
@@ -116,20 +116,20 @@ def main():
         "imageResults": len(images),
         "expectedVisualFound": True,
         "delegationReadLinksFetched": True,
-        "usage": search["usage"],
+        "usage": search["metadata"]["usage"],
     }
     full = client.read_documents(lib, agent_id, documents=[{"documentId": expected}])
-    assert full["complete"] and any(s.get("image") for s in full["documents"][0]["sections"])
+    assert full["evidence"]["complete"] and full["attachments"]
     assert "productivity" in json.dumps(full).lower()
     record["services"]["completeRead"] = {
         "imageIncluded": True,
         "sourceExplanationIncluded": True,
-        "estimatedTokens": full["estimatedTokens"],
-        "usage": full["usage"],
+        "estimatedTokens": full["metadata"]["budget"]["requiredTokens"],
+        "usage": full["metadata"]["usage"],
     }
     search = client.search(lib, agent_id, "Show me the regional margin chart", filters={"contentKinds": ["image"]})
     deck = next(d["documentId"] for d in state["documents"] if d["name"].endswith(".pptx"))
-    assert any(r["documentId"] == deck and r.get("image") for r in search["results"])
+    assert any(r["documentId"] == deck and r.get("image") for r in search["evidence"]["results"])
     record["services"]["deckChartFound"] = True
     save()
     print("Live image search, signed reads, full-document visuals and deck retrieval passed", flush=True)

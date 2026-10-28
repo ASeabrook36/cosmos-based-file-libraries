@@ -1,18 +1,20 @@
 # Planned retrieval and integration development — 2026-10-27
 
-**Status: user-requested roadmap; not implemented by this documentation change.** This updates the earlier [issue #2 decisions](2026-10-27-retrieval-followups.md). The user selected the order below and values integration simplicity, preserving vague-image recall, and summaries that help both agents and people. Priority remains supported user results, then time, then model/embedding/vision tokens and Cosmos RU. See [E53](../evidence.md#e53-user-prioritized-the-next-integration-and-retrieval-roadmap-2026-10-27).
+**Status: item 1 implemented and locally validated; items 2–3 planned.** This updates the earlier [issue #2 decisions](2026-10-27-retrieval-followups.md). The user selected the order below and values integration simplicity, preserving vague-image recall, and summaries that help both agents and people. Priority remains supported user results, then time, then model/embedding/vision tokens and Cosmos RU. See [E53](../evidence.md#e53-user-prioritized-the-next-integration-and-retrieval-roadmap-2026-10-27).
 
 | Order | Planned work | Main responsibility | Existing-file impact |
 |---|---|---|---|
-| 1 | Compact REST responses with separate evidence and attachments | Library API/presentation and platform adapter | No ingestion or index change expected |
+| 1 | **Implemented:** compact REST responses with separate evidence, attachments and metadata | Library API/presentation and platform adapter | No ingestion or index change expected |
 | 2 | Section structure, generated section summaries and section-aware image/text retrieval | Library ingestion, stored provenance, indexing and retrieval | Enrichment/backfill design required; no automatic reprocessing |
 | 3 | Document summaries for semantic file selection and interface previews | Library ingestion/storage/discovery and consuming interfaces | Summary generation and indexing/backfill required |
 
-These are planned library capabilities, not extra answering-time agent critics, typo classifiers or subject-matter sharing gates. The [library/agent boundary](2026-10-27-library-agent-scope.md) still applies. The current API remains as specified in [agent-retrieval.md](../agent-retrieval.md).
+These are planned library capabilities, not extra answering-time agent critics, typo classifiers or subject-matter sharing gates. The [library/agent boundary](2026-10-27-library-agent-scope.md) still applies. The current API is specified in [agent-retrieval.md](../agent-retrieval.md) and the [compact REST integration contract](../compact-rest.md).
 
 ## 1. Make the compact response a reusable REST contract
 
-The demo already projects raw service replies into model-facing evidence and separately held image attachments. Make that available as a supported, opt-in service response so another platform can integrate without copying demo internals. `view=agent` and a `{content, attachments}` envelope are candidate names/shapes, not finalized API syntax.
+**Implemented:** `?view=compact` returns `fli.compact.v1` with `evidence`, `attachments` and `metadata` across all four retrieval operations. Raw REST remains the default; full/selected reads budget exact evidence JSON all-or-nothing. The demo consumes it, and an independent consumer example and contract/regression tests cover display/native-input separation, references and access checks. No ingestion/index migration or re-upload. See [E54](../evidence.md#e54-compact-rest-evidence-and-attachments-2026-10-27) and [response-token measurements](../../records/compact-rest-responses-20261027.json). Live platform/model validation and host-specific native-image accounting/cache policies remain integration work.
+
+Original design intent: the demo projected raw service replies into model-facing evidence and separately held image attachments. Make that available as a supported, opt-in service response so another platform can integrate without copying demo internals. `view=agent` and a `{content, attachments}` envelope are candidate names/shapes, not finalized API syntax.
 
 - Specify evidence, attachment and operational-metadata parts across search, discovery, reads and image inspection. Keep citations, source scope, completeness, limitations and all selected source text intact.
 - Keep signed image links and operational details with the platform. Supply returned references in model-facing text; delivering native pixels and displaying an attachment are separate platform actions.
@@ -65,4 +67,4 @@ The existing per-document `description` is an opening-text discovery hint (spec 
 
 ## Evidence and implementation boundaries
 
-E45–E52 and the [test review](2026-10-27-agent-retrieval-test-review.md) establish implemented mechanisms and observed limits. They do not establish gains from section/document-summary vectors: those paths have not been built or evaluated. This roadmap supersedes the original summary-vector prerequisite and broad image-context deferral as product planning, while retaining rollout evaluation gates. It records priorities and direction, not new measured gains or deployment authorization.
+E45–E52 and the [test review](2026-10-27-agent-retrieval-test-review.md) establish implemented mechanisms and observed limits. They do not establish gains from section/document-summary vectors: those paths have not been built or evaluated. This roadmap supersedes the original summary-vector prerequisite and broad image-context deferral as product planning, while retaining rollout evaluation gates. Items 2–3 record priorities and direction, not measured gains or deployment authorization. Item 1's local implementation/response-size evidence is recorded separately in E54; it does not establish cumulative model-token or RU savings.

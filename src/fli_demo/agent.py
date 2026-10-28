@@ -19,11 +19,11 @@ from typing import Any, Protocol
 
 from fli.chunking import default_tokenizer
 from fli.http import parse_retry_after
+from fli.presentation import compact_response, project
 
 log = logging.getLogger("fli_demo.agent")
 
 MAX_ROUNDS = 12
-TOOL_RESULT_CHARS = 1500  # per chunk, as handed to the model
 FILTER_ARGUMENTS = ("period", "authoredBetween", "authors", "tags", "fileTypes", "contentKinds")
 
 
@@ -138,98 +138,21 @@ def build_tools(
     return tools, owners
 
 
-def _passage_text(row):
-    text = row["text"]
-    if row.get("image"):
-        marker = f", under '{row.get('heading') or ''}': "
-        position = text.find(marker)
-        if 0 <= position < 1000:
-            text = text[position + len(marker) :]
-    return text
-
-
-def _image_section_context(row):
-    heading = row.get("heading")
-    nearby = row["text"].partition("\nNearby source text: ")[2]
-    return heading if heading and heading in nearby else None
-
-
 def model_view(value):
-    """Project tool evidence without credentials/geometry; never clip complete-read text.
-
-    Attachments stay in SearchTrace and native image inputs, independently of this view.
-    Token estimates remain the API's conservative estimate of its larger response.
-    """
-    if isinstance(value, list):
-        return [model_view(item) for item in value]
-    if not isinstance(value, dict):
-        return value
-    projected = {}
-    for key, item in value.items():
-        if key in {
-            "url",
-            "expiresAt",
-            "regions",
-            "captionLocation",
-            "mime",
-            "width",
-            "height",
-            "usage",
-            "tokenizer",
-            "estimateScope",
-            "telemetryId",
-        }:
-            continue
-        if key == "image" and isinstance(item, dict):
-            projected[key] = {k: item.get(k) for k in ("kind", "caption", "captionStatus", "captionAssociation")}
-        elif key in {"location", "sourceScope"} and isinstance(item, dict):
-            projected[key] = {k: v for k, v in item.items() if k != "figure"}
-        else:
-            projected[key] = model_view(item)
-    return projected
+    """Compatibility helper for scripted raw fixtures; production consumes REST evidence."""
+    return project(value)[0]
 
 
 def compact(results: Mapping[str, Any]) -> dict[str, Any]:
-    """Passages identify their parent file for subsequent full reads. Clipped text is labelled."""
-    coverage = results["coverage"]
-    return model_view(
-        {
-            "mode": results.get("mode", "evidence_search"),
-            "resultUnit": results.get("resultUnit", "passages"),
-            "documentScope": results.get("documentScope"),
-            "disposition": coverage["disposition"],
-            "filtersApplied": coverage.get("filtersApplied") or {},
-            "notes": coverage.get("notes") or [],
-            "results": [
-                {
-                    "imageId": (r.get("imageId") or r.get("chunkId")) if r.get("image") else None,
-                    "contentKind": r.get("contentKind", "text"),
-                    "textSource": "generated_image_description" if r.get("image") else "extracted_source_text",
-                    "citation": Citation(
-                        r["fileName"], {k: v for k, v in r["location"].items() if k != "figure"}
-                    ).label(),
-                    "image": r.get("image"),
-                    "documentId": r.get("documentId"),
-                    "generation": r.get("generation"),
-                    "contentRevision": r.get("contentRevision"),
-                    "evidenceId": r.get("evidenceId"),
-                    "sourceScope": r.get("sourceScope"),
-                    "documentTokens": r.get("documentTokens"),
-                    "representation": r.get("representation"),
-                    **({"passagesInWindow": r["passagesInWindow"]} if "passagesInWindow" in r else {}),
-                    "file": r["fileName"],
-                    "location": {k: v for k, v in r["location"].items() if k != "figure"}
-                    if r.get("image")
-                    else r["location"],
-                    "heading": r.get("heading") if not r.get("image") else None,
-                    "sectionContext": _image_section_context(r) if r.get("image") else None,
-                    "text": _passage_text(r)[:TOOL_RESULT_CHARS],
-                    "truncated": len(_passage_text(r)) > TOOL_RESULT_CHARS,
-                }
-                for r in results["results"]
-            ],
-        }
-    )
+    return model_view(results)
+
+
+def evidence_response(response):
+    # IndexClient always requests the supported envelope. Raw test doubles and older
+    # in-process consumers use the same service presenter, never a demo projection.
+    if response.get("contract") == "fli.compact.v1":
+        return response
+    return compact_response(response, max_tokens=200_000)
 
 
 def images_from_payload(payload):
@@ -751,8 +674,12 @@ def _run_search(call, index, agent, owners, names, searches, clock, remaining=No
         )  # fmt: skip
         return json.dumps({"error": str(exc)}), []
     latency = (clock() - started) * 1000
-    payload = compact(response)
-    matched = len(payload["results"])
+    envelope = evidence_response(response)
+    payload = envelope["evidence"]
+    response = {**payload, **envelope["metadata"]}
+    matched = len(payload.get("results") or [])
+    payload.setdefault("results", [])
+    payload.setdefault("notes", [])
     payload.update(passagesMatched=matched, passagesDelivered=matched, contextLimited=False)
     if remaining is not None and tokenizer is not None:
         base_notes = list(payload["notes"])
@@ -765,14 +692,16 @@ def _run_search(call, index, agent, owners, names, searches, clock, remaining=No
                 f"Context budget limited this reply to {delivered} of {matched} matching passages. "
                 "Narrow the search if more evidence is needed. Complete documents already delivered remain in context."
             ]
-    shown = response["results"][: len(payload["results"])]
+    shown = response.get("results", [])[: len(payload["results"])]
     seen: list[Citation] = []
     for r in shown:
         c = Citation(r["fileName"], r["location"], r.get("heading"))
         if c.label() not in {x.label() for x in seen}:
             seen.append(c)
-    coverage = response["coverage"]
-    images = images_from_payload({"results": shown})
+    coverage = response.get("coverage") or {}
+    shown_ids = {r.get("imageId") for r in shown}
+    attachments = [a for a in envelope["attachments"] if a["imageId"] in shown_ids]
+    images = images_from_payload({"results": attachments})
     searches.append(
         SearchTrace(
             call.name, library_id, response["library"]["name"], query, latency,
@@ -783,7 +712,8 @@ def _run_search(call, index, agent, owners, names, searches, clock, remaining=No
         )
     )  # fmt: skip
     # Preserve overall rank for automatic previews: never promote a later image over text.
-    previews = images_from_payload({"results": shown[:1]})
+    first_id = shown[0].get("imageId") if shown else None
+    previews = images_from_payload({"results": [a for a in attachments if a["imageId"] == first_id]})
     return json.dumps(payload, ensure_ascii=False), previews
 
 
@@ -841,6 +771,10 @@ def _run_documents(call, index, agent, owners, names, searches, clock, remaining
             )
         )
         return json.dumps({"error": str(exc), "complete": False}), []
+    envelope = evidence_response(response)
+    payload = envelope["evidence"]
+    response = {**payload, **envelope["metadata"]}
+    attachments = images_from_payload({"results": envelope["attachments"]})
     documents = response.get("documents") or []
     results = response.get("results") or []
     searches.append(
@@ -864,17 +798,17 @@ def _run_documents(call, index, agent, owners, names, searches, clock, remaining
             if operation == "images"
             else [Citation(d["fileName"], {}) for d in documents],
             operation=operation,
-            images=images_from_payload(response),
+            images=attachments,
             filters={k: v for k, v in arguments.items() if k != "maxTokens"},
             notes=response.get("notes") or (response.get("coverage") or {}).get("notes") or [],
-            estimated_tokens=response.get("estimatedTokens"),
+            estimated_tokens=envelope["metadata"]["budget"]["requiredTokens"],
             complete=response.get("complete"),
         )
     )
     # Selected regions/full files offer figure candidates; pixels are sent only after
     # explicit inspection. Full reads retain all text and image attachment metadata.
-    previews = images_from_payload(response) if operation == "images" else []
-    return json.dumps(model_view(response), ensure_ascii=False), previews
+    previews = attachments if operation == "images" else []
+    return json.dumps(payload, ensure_ascii=False), previews
 
 
 def azure_chat(

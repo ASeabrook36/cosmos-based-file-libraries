@@ -93,17 +93,29 @@ class IndexClient:
 
     def discover_documents(self, library_id: str, agent_id: str, **selectors: Any) -> dict[str, Any]:
         return self._call(
-            "POST", f"/v1/libraries/{library_id}/documents:discover", json=selectors, headers={"X-Agent-Id": agent_id}
+            "POST",
+            f"/v1/libraries/{library_id}/documents:discover",
+            params={"view": "compact"},
+            json=selectors,
+            headers={"X-Agent-Id": agent_id},
         )
 
     def read_documents(self, library_id: str, agent_id: str, **selection: Any) -> dict[str, Any]:
         return self._call(
-            "POST", f"/v1/libraries/{library_id}/documents:read", json=selection, headers={"X-Agent-Id": agent_id}
+            "POST",
+            f"/v1/libraries/{library_id}/documents:read",
+            params={"view": "compact"},
+            json=selection,
+            headers={"X-Agent-Id": agent_id},
         )
 
     def read_images(self, library_id: str, agent_id: str, **selection: Any) -> dict[str, Any]:
         return self._call(
-            "POST", f"/v1/libraries/{library_id}/documents:images", json=selection, headers={"X-Agent-Id": agent_id}
+            "POST",
+            f"/v1/libraries/{library_id}/documents:images",
+            params={"view": "compact"},
+            json=selection,
+            headers={"X-Agent-Id": agent_id},
         )
 
     def library_metrics(self, library_id: str, agent_id: str) -> dict[str, Any]:
@@ -141,4 +153,10 @@ class IndexClient:
             body["filters"] = filters
         if distinct_documents:
             body["distinctDocuments"] = True
-        return self._call("POST", f"/v1/libraries/{library_id}/search", json=body, headers={"X-Agent-Id": agent_id})
+        return self._call(
+            "POST",
+            f"/v1/libraries/{library_id}/search",
+            params={"view": "compact"},
+            json=body,
+            headers={"X-Agent-Id": agent_id},
+        )

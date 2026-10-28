@@ -68,6 +68,8 @@ def test_image_search_separates_section_context_from_caption_and_title():
     )
     row = payload["results"][0]
     assert row["heading"] is None and row["sectionContext"] is None
+    assert row["contextHeading"] == "Previous section heading"
+    assert "not_figure_title" in row["headingAssociation"]
     assert row["image"]["caption"] is None
     assert row["text"] == "Actual figure description"
 

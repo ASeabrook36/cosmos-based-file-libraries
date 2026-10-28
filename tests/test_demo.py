@@ -397,7 +397,7 @@ def test_passages_can_be_reduced_to_fit_remaining_context_without_discarding_all
     assert 0 < result["passagesDelivered"] < result["passagesMatched"] == 8
     assert result["contextLimited"] and result["disposition"] == "context_limited"
     assert len(tokenizer.encode(content)) <= 1000
-    assert result["results"][0]["file"] == "source-0.md"
+    assert result["results"][0]["fileName"] == "source-0.md"
     assert traces[0].result_count == result["passagesDelivered"]
     assert len(traces[0].citations) == result["passagesDelivered"]
 

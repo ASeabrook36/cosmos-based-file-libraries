@@ -20,6 +20,7 @@ from fli.ids import chunk_id
 from fli.image_assets import load_assets
 from fli.metrics import record as record_metric
 from fli.permissions import check_search_allowed
+from fli.presentation import compact_response
 from fli.query import RenderedQuery, SearchFilters, metadata_clauses
 from fli.search import QueryCost, Searcher
 from fli.store import Record
@@ -242,6 +243,7 @@ async def read_documents(
     scopes: dict | None = None,
     after_section: int = 0,
     section_limit: int = 100,
+    view: str = "raw",
 ) -> Record:
     started = time.perf_counter()
     cost = QueryCost()
@@ -280,7 +282,7 @@ async def read_documents(
         if (d.get("fullText") or {}).get("generation") == d["activeGeneration"]
         and (d.get("fullText") or {}).get("tokenizer") == tokenizer.name
     )
-    if mode == "full" and include_text and known_tokens > max_tokens:
+    if view == "raw" and mode == "full" and include_text and known_tokens > max_tokens:
         # The stored sections alone already exceed the budget. Avoid downloading and
         # tokenizing a large artifact just to refuse it. Unknown legacy sizes contribute
         # zero here, as do counts made with another tokenizer. The per-document margin
@@ -378,6 +380,9 @@ async def read_documents(
             public["image"] = await searcher.image(library_id, document_id, generation, section)
             public_sections.append(public)
         item = {**manifest(doc), "representation": representation, "sections": public_sections}
+        if view == "compact":
+            item["documentTokens"] = (doc.get("fullText") or {}).get("tokenCount")
+            item["documentTokenTokenizer"] = (doc.get("fullText") or {}).get("tokenizer")
         if assets is not None:
             candidates = [
                 a
@@ -424,9 +429,10 @@ async def read_documents(
                 )
             )
         # Count the serialized document, including identifiers, locations and headings.
-        item["estimatedTokens"] = await asyncio.to_thread(
-            lambda item=item: len(tokenizer.encode(json.dumps(item, ensure_ascii=False)))
-        )
+        if view == "raw":
+            item["estimatedTokens"] = await asyncio.to_thread(
+                lambda item=item: len(tokenizer.encode(json.dumps(item, ensure_ascii=False)))
+            )
         item["tokenizer"] = tokenizer.name
         if doc.get("imageCount"):
             notes.append(
@@ -471,28 +477,34 @@ async def read_documents(
         "usage": {"requestCharge": round(cost.request_charge, 2), "totalMs": elapsed},
         "nextAction": None,
     }
-    # Count the complete envelope once off the event loop. A small allowance covers the
-    # estimate's own digits and final latency value without repeatedly tokenizing files.
-    response["estimatedTokens"] = await asyncio.to_thread(
-        lambda: len(tokenizer.encode(json.dumps(response, ensure_ascii=False))) + 64
-    )
-    tokens = response["estimatedTokens"]
-    fits = tokens <= max_tokens
-    if not include_text or not fits:
-        response.update(
-            complete=False,
-            selectionComplete=False,
-            documentComplete=False,
-            disposition="inspected" if not include_text else "budget_exceeded",
-            nextAction="Use an outline or select fewer source sections/pages/slides within the remaining capacity. "
-            "If a document cannot fit, explain the limitation; do not claim a full read.",
+    if view == "compact":
+        result = await asyncio.to_thread(compact_response, response, max_tokens, include_text)
+        tokens = result["metadata"]["budget"]["requiredTokens"]
+        fits = result["metadata"]["budget"]["fits"]
+        response = {**result["evidence"], "usage": result["metadata"]["usage"]}
+    else:
+        # Count the complete envelope once off the event loop. A small allowance covers the
+        # estimate's own digits and final latency value without repeatedly tokenizing files.
+        response["estimatedTokens"] = await asyncio.to_thread(
+            lambda: len(tokenizer.encode(json.dumps(response, ensure_ascii=False))) + 64
         )
-        for item in items:
-            item["complete"] = False
-            item.pop("sections", None)
-            item.pop("outline", None)
-            item.pop("candidateImages", None)
-            item.update(selectionComplete=False, documentComplete=False)
+        tokens = response["estimatedTokens"]
+        fits = tokens <= max_tokens
+        if not include_text or not fits:
+            response.update(
+                complete=False,
+                selectionComplete=False,
+                documentComplete=False,
+                disposition="inspected" if not include_text else "budget_exceeded",
+                nextAction="Use an outline or select fewer source sections/pages/slides within the remaining capacity. "
+                "If a document cannot fit, explain the limitation; do not claim a full read.",
+            )
+            for item in items:
+                item["complete"] = False
+                item.pop("sections", None)
+                item.pop("outline", None)
+                item.pop("candidateImages", None)
+                item.update(selectionComplete=False, documentComplete=False)
     elapsed = round((time.perf_counter() - started) * 1000, 1)
     response["usage"]["totalMs"] = elapsed
     log.info(
@@ -520,4 +532,4 @@ async def read_documents(
         contentReturned=include_text and fits,
         **response["usage"],
     )
-    return response
+    return result if view == "compact" else response

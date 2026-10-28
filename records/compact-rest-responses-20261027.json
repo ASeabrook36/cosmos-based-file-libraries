@@ -1,0 +1,75 @@
+{
+  "method": "Local invented PDF/Office fixtures; in-memory services; mocked layout, descriptions and embeddings.",
+  "tokenizer": "cl100k_base",
+  "serialization": "UTF-8 JSON, ensure_ascii=False, separators=(',', ':')",
+  "scope": "Raw response JSON versus compact evidence JSON; excludes attachments/metadata from model text.",
+  "actual_cumulative_model_tokens_measured": false,
+  "actual_cosmos_ru_measured": false,
+  "latency_or_dollar_savings_established": false,
+  "results": [
+    {
+      "operation": "catalogue",
+      "raw_json_text_tokens": 563,
+      "compact_evidence_text_tokens": 534,
+      "reduction_percent": 5.2,
+      "attachments": 0,
+      "all_source_text_and_descriptions_preserved": true
+    },
+    {
+      "operation": "semantic_candidates",
+      "raw_json_text_tokens": 319,
+      "compact_evidence_text_tokens": 291,
+      "reduction_percent": 8.8,
+      "attachments": 0,
+      "all_source_text_and_descriptions_preserved": true
+    },
+    {
+      "operation": "search_with_neighbors",
+      "raw_json_text_tokens": 1642,
+      "compact_evidence_text_tokens": 1236,
+      "reduction_percent": 24.7,
+      "attachments": 2,
+      "all_source_text_and_descriptions_preserved": true
+    },
+    {
+      "operation": "full_pdf",
+      "raw_json_text_tokens": 919,
+      "compact_evidence_text_tokens": 691,
+      "reduction_percent": 24.8,
+      "attachments": 1,
+      "all_source_text_and_descriptions_preserved": true
+    },
+    {
+      "operation": "full_office",
+      "raw_json_text_tokens": 876,
+      "compact_evidence_text_tokens": 720,
+      "reduction_percent": 17.8,
+      "attachments": 1,
+      "all_source_text_and_descriptions_preserved": true
+    },
+    {
+      "operation": "selected_pdf",
+      "raw_json_text_tokens": 1325,
+      "compact_evidence_text_tokens": 879,
+      "reduction_percent": 33.7,
+      "attachments": 1,
+      "all_source_text_and_descriptions_preserved": true
+    },
+    {
+      "operation": "outline_pdf",
+      "raw_json_text_tokens": 640,
+      "compact_evidence_text_tokens": 587,
+      "reduction_percent": 8.3,
+      "attachments": 0,
+      "all_source_text_and_descriptions_preserved": true
+    },
+    {
+      "operation": "image_inspection",
+      "raw_json_text_tokens": 721,
+      "compact_evidence_text_tokens": 525,
+      "reduction_percent": 27.2,
+      "attachments": 1,
+      "all_source_text_and_descriptions_preserved": true
+    }
+  ]
+}

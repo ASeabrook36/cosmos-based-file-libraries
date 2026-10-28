@@ -14,6 +14,7 @@ from fli.errors import ApiError
 from fli.metrics import record as record_metric
 from fli.page_images import read_page_images
 from fli.permissions import check_search_allowed
+from fli.presentation import CompactResponse, EvidenceBudget, ResponseView, respond
 from fli.reading import DEFAULT_READ_TOKENS, MAX_READ_TOKENS, manifest, read_documents, render_catalog
 from fli.search import QueryCost, SearchRequest
 from fli.tool import tool_definitions
@@ -85,11 +86,16 @@ class ImagesBody(DocumentScope):
         return self
 
 
-@router.post("/documents:images")
+@router.post("/documents:images", response_model=CompactResponse | dict[str, Any])
 async def images(
-    library_id: str, body: ImagesBody, request: Request, x_agent_id: Annotated[str | None, Header()] = None
+    library_id: str,
+    body: ImagesBody,
+    request: Request,
+    x_agent_id: Annotated[str | None, Header()] = None,
+    view: ResponseView = "raw",
+    maxEvidenceTokens: EvidenceBudget = None,
 ):
-    return await read_page_images(
+    response = await read_page_images(
         request.app.state.searcher,
         request.app.state.blobs,
         library_id,
@@ -100,6 +106,8 @@ async def images(
         image_ids=body.imageIds,
         content_revision=body.contentRevision,
     )
+
+    return await respond(response, view, maxEvidenceTokens)
 
 
 @router.get("/tools")
@@ -113,12 +121,14 @@ async def get_tools(
     return {"tools": tool_definitions(library)}
 
 
-@router.post("/documents:discover")
+@router.post("/documents:discover", response_model=CompactResponse | dict[str, Any])
 async def discover(
     library_id: str,
     body: DiscoverBody,
     request: Request,
     x_agent_id: Annotated[str | None, Header()] = None,
+    view: ResponseView = "raw",
+    maxEvidenceTokens: EvidenceBudget = None,
 ) -> dict[str, Any]:
     if body.mode == "semantic_candidates":
         if not body.query or body.fileNames or body.fileNameContains or body.after:
@@ -151,7 +161,7 @@ async def discover(
                     )
                 }
             )
-        return {
+        response = {
             **response,
             "documents": rows,
             "disposition": response["selectionStatus"],
@@ -162,6 +172,7 @@ async def discover(
             "exhaustive": False,
             "nextAction": "Search evidence within a selected document using document selector.",
         }
+        return await respond(response, view, maxEvidenceTokens)
     if body.query is not None:
         raise ApiError(400, "invalid_request", "query requires mode=semantic_candidates")
     started = time.perf_counter()
@@ -184,7 +195,7 @@ async def discover(
         requestCharge=round(cost.request_charge, 2),
         totalMs=round((time.perf_counter() - started) * 1000, 1),
     )
-    return {
+    response = {
         "library": {"libraryId": library_id, "name": library.get("name")},
         "mode": "catalogue",
         "resultUnit": "documents",
@@ -212,13 +223,17 @@ async def discover(
         },
     }
 
+    return await respond(response, view, maxEvidenceTokens)
 
-@router.post("/documents:read")
+
+@router.post("/documents:read", response_model=CompactResponse | dict[str, Any])
 async def read(
     library_id: str,
     body: ReadBody,
     request: Request,
     x_agent_id: Annotated[str | None, Header()] = None,
+    view: ResponseView = "raw",
+    maxEvidenceTokens: EvidenceBudget = None,
 ) -> dict[str, Any]:
     return await read_documents(
         request.app.state.searcher,
@@ -226,10 +241,13 @@ async def read(
         library_id,
         x_agent_id,
         [(s.documentId, s.generation) for s in body.documents],
-        body.maxTokens,
+        min(body.maxTokens, maxEvidenceTokens)
+        if view == "compact" and maxEvidenceTokens is not None
+        else body.maxTokens,
         body.includeText,
         mode=body.mode,
         scopes={s.documentId: s.model_dump(exclude_none=True, exclude_defaults=True) for s in body.documents},
         after_section=body.afterSection,
         section_limit=body.sectionLimit,
+        view=view,
     )
