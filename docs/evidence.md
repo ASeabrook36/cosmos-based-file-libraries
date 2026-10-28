@@ -619,3 +619,47 @@ Validation: **641 local tests passed** on Python 3.14, including 30 compact-cont
 The [response-text record](../records/compact-rest-responses-20261027.json) is reproducible with `python -m scripts.measure_compact_responses`, using invented PDF/Office fixtures, in-memory services and mocked layout/descriptions/embeddings. It compares canonical raw response JSON with compact evidence JSON using the real `cl100k_base` tokenizer, retaining all source text/descriptions/captions. Image-bearing responses use **17.8–33.7% fewer text tokens** in the committed run; discovery/outlines use **5.2–8.8% fewer**. Repeated runs vary slightly with generated IDs and timing. These are response-text differences, **not actual cumulative model-token, Cosmos RU, latency or dollar savings**. Presentation adds no Cosmos query and inherently removes no retrieval RU. Provider usage, repeated calls, native images and host serialization/context policy determine actual model cost.
 
 Remaining integration choices are the host's model/tokenizer and native-image cost accounting, authorized image cache/proxy/expiry policy, display syntax and production authentication/deployment. Displaying attachments does not establish model pixel delivery; the service never claims native delivery. API/demo processes must refresh together, and a live consuming-platform evaluation remains necessary before claiming end-to-end savings or answer-quality improvements.
+
+## E55: Isolated structured-retrieval experiment (2026-10-28)
+
+The [lab](structure-lab.md) implements source heading trees, generated node
+summaries with dependency reuse, source-subtree reads, inventory-based library
+overviews, and matched shared/split Cosmos layouts. It preserves the existing
+vector policy and library/document partition key in three new experimental
+containers. The normal API and worker do not import the experimental module.
+
+All three containers passed the standard canary with 1,500 real book passages
+each and mean vector recall@10 of 0.985 against exact search. Index engagement
+took 215–400 seconds. The initial structured corpus had 23 passages and 23
+summaries across three synthetic documents; 72 vector/hybrid measurements across
+both layouts completed without errors. A four-document snapshot added 84
+measurements, including discovery of the new letter. These are functional
+demonstrations, not evidence of general relevance gains or a preferred layout.
+See the [sanitized record](../records/structure-lab-20261028.json).
+
+Replaying the inventory required no summary or embedding calls. Adding a letter
+required five summary calls and one embedding request while preserving all 23
+existing document/section summaries and the owner's description. Removing it
+reused the previously cached inventory. The selected salinity chapter returned
+311 serialized evidence tokens versus 688 for the complete fixture; an inadequate
+budget returned no source text. Those figures establish the mechanisms, not
+general cost savings. Initial aborted summary attempts are excluded from the
+per-invocation usage examples.
+
+Local tests cover structure/source preservation, Unicode and heading boundaries,
+complete subtree budgets, add/edit/delete dependencies, model revision changes,
+bounded summary retries, cache reuse, typed query invariants, canary target and
+cleanup isolation, receipt binding and identical A/B queries. Snapshot publication
+is isolated and immutable; mutable-library concurrency, independent-client
+freshness, production permissions and real agent answers remain integration work.
+
+The user prioritizes reuse of Microsoft's existing tooling, including previews.
+Document Indexer and Logic Apps KBaaS compatibility should be evaluated before
+expanding custom ingestion. Their documented capabilities are external evidence;
+this project has not deployed or benchmarked those services. The [proposal](consults/2026-10-28-document-understanding-proposal.md)
+defines the reuse experiment and remaining acceptance criteria.
+
+Validation at completion: **666 local tests passed**. Ruff lint/format, diff checks
+and the private-deny-list reference-privacy check passed. Fourteen existing
+TestClient timeout-deprecation warnings remain. No private environment identifiers
+or generated source/summary text were added to the repository.

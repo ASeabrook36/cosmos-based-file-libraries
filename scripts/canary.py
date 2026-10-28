@@ -761,17 +761,23 @@ async def wait_for_index(
         await sleep(INDEX_POLL_SECONDS)
 
 
-async def check_definitions(database: Any) -> dict[str, list[str]]:
+async def check_definitions(database: Any, index_container: str = "chunks") -> dict[str, list[str]]:
     problems: dict[str, list[str]] = {}
     for name in CONTAINERS:
-        expected = json.loads((REPO / "cosmos" / f"{name}.container.json").read_text())
+        physical_name = index_container if name == "chunks" else name
+        expected = json.loads((REPO / "cosmos" / f"{physical_name}.container.json").read_text())
         try:
-            actual = await database.get_container_client(name).read()
+            actual = await database.get_container_client(physical_name).read()
         except Exception as exc:  # noqa: BLE001 — recorded as the check's observation
             problems[name] = [f"read failed: {type(exc).__name__}: {str(exc)[:200]}"]
             continue
         problems[name] = definition_mismatches(expected, actual)
     return problems
+
+
+def target_fingerprint(endpoint: str, database: str, container: str, rid: str) -> str:
+    """Bind a private passing canary receipt to this incarnation of the container."""
+    return hashlib.sha256(json.dumps([endpoint.rstrip("/"), database, container, rid]).encode()).hexdigest()
 
 
 async def write_all(
@@ -852,6 +858,7 @@ async def run(args: argparse.Namespace) -> int:
 
     from fli.embedding import AzureOpenAIEmbedder
 
+    index_container = getattr(args, "index_container", "chunks")
     cosmos_endpoint = _require_env("COSMOS_ENDPOINT")
     database_name = os.environ.get("COSMOS_DATABASE") or "fli"
     aoai_endpoint = _require_env("AOAI_ENDPOINT")
@@ -888,6 +895,7 @@ async def run(args: argparse.Namespace) -> int:
     by_document = {d["documentId"]: d for d in loaded_docs}
     record: dict[str, Any] = {
         "canary": "phase-0",
+        "indexContainer": index_container,
         "startedAt": now,
         "libraryId": library_id,
         "gitCommit": _git_commit(),
@@ -927,7 +935,7 @@ async def run(args: argparse.Namespace) -> int:
             )
 
             log("checking stored container definitions against cosmos/*.json")
-            definition_problems = await check_definitions(database)
+            definition_problems = await check_definitions(database, index_container)
             for name, problems in definition_problems.items():
                 for problem in problems:
                     log(f"definition mismatch in {name}: {problem}")
@@ -943,11 +951,17 @@ async def run(args: argparse.Namespace) -> int:
 
             libraries = database.get_container_client("libraries")
             docs_container = database.get_container_client("documents")
-            chunks_container = database.get_container_client("chunks")
+            chunks_container = database.get_container_client(index_container)
+            stored_definition = await chunks_container.read()
+            record["targetFingerprint"] = target_fingerprint(
+                cosmos_endpoint, database_name, index_container, stored_definition["_rid"]
+            )
             load_throttle, search_throttle = Throttle(), Throttle()
 
             log(f"step 1: write, read and query one record per container (library {library_id})")
-            log(f"  if this run is interrupted: python scripts/canary.py --cleanup {library_id}")
+            log(
+                f"  if interrupted: python scripts/canary.py --index-container {index_container} --cleanup {library_id}"
+            )
             bodies = [
                 chunk_record(library_id, c, by_document[c.document_id], v, now, chunking_version)
                 for c, v in zip(chunks, vectors, strict=True)
@@ -1131,7 +1145,7 @@ async def run(args: argparse.Namespace) -> int:
 
             if not args.keep:
                 log("removing the canary library (use --keep to retain it)")
-                await purge(database, library_id)
+                await purge(database, library_id, index_container)
                 record["cleanedUp"] = True
             else:
                 record["cleanedUp"] = False
@@ -1149,11 +1163,14 @@ async def run(args: argparse.Namespace) -> int:
     shown = out.relative_to(REPO) if out.is_relative_to(REPO) else out
     log(f"{'PASSED' if record['passed'] else 'FAILED'}; record written to {shown}")
     if args.keep:
-        log(f"kept library {library_id}; remove it with: python scripts/canary.py --cleanup {library_id}")
+        log(
+            f"kept library {library_id}; cleanup: python scripts/canary.py "
+            f"--index-container {index_container} --cleanup {library_id}"
+        )
     return 0 if record["passed"] else 1
 
 
-async def purge(database: Any, library_id: str) -> int:
+async def purge(database: Any, library_id: str, index_container: str = "chunks") -> int:
     """Delete one canary library's chunks, documents and record. Returns the items deleted."""
     from azure.cosmos.exceptions import CosmosResourceNotFoundError
 
@@ -1170,7 +1187,7 @@ async def purge(database: Any, library_id: str) -> int:
             except CosmosResourceNotFoundError:
                 pass
 
-    chunks = database.get_container_client("chunks")
+    chunks = database.get_container_client(index_container)
     docs = database.get_container_client("documents")
     params = [{"name": "@libraryId", "value": library_id}]
     chunk_keys = [
@@ -1193,7 +1210,7 @@ async def purge(database: Any, library_id: str) -> int:
     return deleted
 
 
-async def cleanup(library_id: str) -> int:
+async def cleanup(library_id: str, index_container: str = "chunks") -> int:
     from azure.cosmos.aio import CosmosClient
     from azure.identity.aio import DefaultAzureCredential
 
@@ -1210,7 +1227,7 @@ async def cleanup(library_id: str) -> int:
                     raise CanaryError(f"library {library_id} was not created by the canary; refusing to delete it")
             except CosmosResourceNotFoundError:
                 log("no library record; deleting any leftover chunks and documents")
-            deleted = await purge(database, library_id)
+            deleted = await purge(database, library_id, index_container)
             log(f"deleted {deleted} items")
             return 0
     finally:
@@ -1235,6 +1252,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--queries", type=Path, help="optional file of real questions, one per line (20 or 40)")
     parser.add_argument("--target-chunks", type=int, default=TARGET_CHUNKS)
     parser.add_argument(
+        "--index-container",
+        default="chunks",
+        choices=("chunks", "lab-shared", "lab-passages", "lab-summaries"),
+        help="validate an isolated experimental index with the same canary",
+    )
+    parser.add_argument(
         "--index-wait-minutes", type=float, default=20, help="how long to wait for the vector index to engage"
     )
     parser.add_argument("--records-dir", type=Path, default=REPO / "records")
@@ -1244,7 +1267,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         if args.cleanup:
-            return asyncio.run(cleanup(args.cleanup))
+            return asyncio.run(cleanup(args.cleanup, args.index_container))
         if not args.corpus:
             parser.error("--corpus is required")
         if args.count_only:

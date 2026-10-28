@@ -149,9 +149,12 @@ class FakeContainer:
 
 class FakeDatabase:
     def __init__(self, store):
+        self.store = store
         self.containers = {n: FakeContainer(n, store) for n in canary.CONTAINERS}
 
     def get_container_client(self, name):
+        if name not in self.containers:
+            self.containers[name] = FakeContainer(name, self.store)
         return self.containers[name]
 
 
@@ -284,3 +287,34 @@ def test_the_canary_fails_if_hybrid_searches_are_routed_by_partition_key(fakes, 
     [path] = tmp_path.glob("canary-*.json")
     checks = {c["name"]: c for c in json.loads(path.read_text())["checks"]}
     assert checks["hybrid_ranks"]["passed"] is False
+
+
+@pytest.mark.parametrize("index", ["lab-shared", "lab-passages", "lab-summaries"])
+def test_experimental_index_target_receipt_and_cleanup(fakes, tmp_path, index):
+    assert (
+        canary.main(
+            [
+                "--corpus",
+                str(REPO / "docs"),
+                "--index-container",
+                index,
+                "--index-wait-minutes",
+                "5",
+                "--records-dir",
+                str(tmp_path),
+            ]
+        )
+        == 0
+    )
+    [path] = tmp_path.glob("canary-*.json")
+    record = json.loads(path.read_text())
+    assert record["passed"] and record["indexContainer"] == index
+    assert record["targetFingerprint"] == canary.target_fingerprint(
+        "https://fake.documents.azure.com:443/", "fli", index, "x"
+    )
+    store = FakeCosmosClient.last.store
+    assert not store["chunks"]
+    assert not store[index] and not store["documents"] and not store["libraries"]
+    assert record["targetFingerprint"] != canary.target_fingerprint(
+        "https://fake.documents.azure.com:443/", "fli", index, "recreated"
+    )

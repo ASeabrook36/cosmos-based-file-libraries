@@ -10,6 +10,13 @@
 
 These are planned library capabilities, not extra answering-time agent critics, typo classifiers or subject-matter sharing gates. The [library/agent boundary](2026-10-27-library-agent-scope.md) still applies. The current API is specified in [agent-retrieval.md](../agent-retrieval.md) and the [compact REST integration contract](../compact-rest.md).
 
+**2026-10-28 research follow-up:** the [structured document understanding research](2026-10-28-document-understanding-research.md) and [implementation proposal](2026-10-28-document-understanding-proposal.md) assess a broader workstream encompassing items 2–3 plus genre/role interpretation, navigable source hierarchy and maintained library overviews. These are research findings and proposed delivery milestones, not a claim that the expanded design is implemented or approved for rollout.
+
+The first [isolated experiment](../structure-lab.md) now runs with shared/split
+Cosmos layouts, real summaries, source-subtree reads and incremental reuse.
+Production-path integration remains planned. Evaluate Microsoft's existing
+ingestion and knowledge-base previews before expanding custom ingestion.
+
 ## 1. Make the compact response a reusable REST contract
 
 **Implemented:** `?view=compact` returns `fli.compact.v1` with `evidence`, `attachments` and `metadata` across all four retrieval operations. Raw REST remains the default; full/selected reads budget exact evidence JSON all-or-nothing. The demo consumes it, and an independent consumer example and contract/regression tests cover display/native-input separation, references and access checks. No ingestion/index migration or re-upload. See [E54](../evidence.md#e54-compact-rest-evidence-and-attachments-2026-10-27) and [response-token measurements](../../records/compact-rest-responses-20261027.json). Live platform/model validation and host-specific native-image accounting/cache policies remain integration work.

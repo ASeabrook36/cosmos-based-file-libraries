@@ -1,0 +1,199 @@
+{
+  "date": "2026-10-28",
+  "status": "initial live functional experiment; no storage winner or answer-quality improvement claimed",
+  "implementation": "experimental working tree; independent of normal API and worker",
+  "canaryCorpus": {
+    "kind": "public-domain books; real text and real embeddings",
+    "sources": [
+      "https://www.gutenberg.org/cache/epub/2600/pg2600.txt",
+      "https://www.gutenberg.org/cache/epub/2701/pg2701.txt"
+    ]
+  },
+  "canaries": {
+    "lab-shared": {
+      "passed": true,
+      "chunks": 1500,
+      "indexWaitSeconds": 400,
+      "vectorRu": {
+        "n": 20,
+        "min": 15.78,
+        "median": 15.8,
+        "max": 15.81
+      },
+      "hybridRu": {
+        "n": 20,
+        "min": 132.0,
+        "median": 191.74,
+        "max": 192.6
+      },
+      "recallAt10": {
+        "mean": 0.985,
+        "min": 0.7,
+        "queries": 20
+      },
+      "cleanedUp": true
+    },
+    "lab-passages": {
+      "passed": true,
+      "chunks": 1500,
+      "indexWaitSeconds": 215,
+      "vectorRu": {
+        "n": 20,
+        "min": 15.28,
+        "median": 15.3,
+        "max": 15.31
+      },
+      "hybridRu": {
+        "n": 20,
+        "min": 131.31,
+        "median": 191.06,
+        "max": 191.91
+      },
+      "recallAt10": {
+        "mean": 0.985,
+        "min": 0.7,
+        "queries": 20
+      },
+      "cleanedUp": true
+    },
+    "lab-summaries": {
+      "passed": true,
+      "chunks": 1500,
+      "indexWaitSeconds": 215,
+      "vectorRu": {
+        "n": 20,
+        "min": 15.28,
+        "median": 15.3,
+        "max": 15.31
+      },
+      "hybridRu": {
+        "n": 20,
+        "min": 131.31,
+        "median": 191.05,
+        "max": 191.91
+      },
+      "recallAt10": {
+        "mean": 0.985,
+        "min": 0.7,
+        "queries": 20
+      },
+      "cleanedUp": true
+    }
+  },
+  "structuredSmoke": {
+    "fixture": "tests/fixtures/structure-lab/manifest.json",
+    "documents": 3,
+    "passageRows": 23,
+    "summaryRows": 23,
+    "queries": 6,
+    "repeats": 3,
+    "measurements": 72,
+    "errors": 0,
+    "results": [
+      {
+        "layout": "shared",
+        "mode": "vector",
+        "measurements": 18,
+        "medianRu": 3.545,
+        "medianMs": 66.15,
+        "meanLabelledDocumentRecall": 1.0,
+        "meanAnnRecall": 1.0
+      },
+      {
+        "layout": "shared",
+        "mode": "hybrid",
+        "measurements": 18,
+        "medianRu": 14.535,
+        "medianMs": 375.04999999999995,
+        "meanLabelledDocumentRecall": 1.0,
+        "meanAnnRecall": null
+      },
+      {
+        "layout": "split",
+        "mode": "vector",
+        "measurements": 18,
+        "medianRu": 3.48,
+        "medianMs": 65.15,
+        "meanLabelledDocumentRecall": 1.0,
+        "meanAnnRecall": 1.0
+      },
+      {
+        "layout": "split",
+        "mode": "hybrid",
+        "measurements": 18,
+        "medianRu": 14.485,
+        "medianMs": 366.5,
+        "meanLabelledDocumentRecall": 1.0,
+        "meanAnnRecall": null
+      }
+    ],
+    "limitation": "Tiny synthetic corpus; some queries preselect the correct document. Labels test routing, not general relevance. No scaled performance conclusion."
+  },
+  "incremental": {
+    "unchangedReplay": {
+      "summaryCalls": 0,
+      "summaryCacheHits": 24,
+      "embeddingRequests": 0
+    },
+    "addDocument": {
+      "newDocumentNodes": 4,
+      "summaryCalls": 5,
+      "existingSummaryCacheHits": 23,
+      "summaryPromptTokens": 1864,
+      "summaryCompletionTokens": 2603,
+      "embeddingRequests": 1,
+      "embeddingPromptTokens": 606
+    },
+    "allExistingDocumentSummariesUnchanged": true,
+    "ownerDescriptionPreserved": true,
+    "inventoryDependencyChanged": true,
+    "removalReturnsToPreviouslyCachedInventory": {
+      "summaryCalls": 0,
+      "summaryCacheHits": 24,
+      "embeddingRequests": 0
+    },
+    "scope": "Separate immutable library snapshots; not a concurrent application publication test. Usage is per invocation; prior aborted runs are not included."
+  },
+  "sourceRead": {
+    "fixtureDocument": "research",
+    "selectedNode": "n5",
+    "selectedEvidenceTokens": 311,
+    "wholeDocumentEvidenceTokens": 688,
+    "tokenizer": "cl100k_base",
+    "oneTokenBudgetRefusedWholeRead": true
+  },
+  "boundaries": [
+    "No automatic genre classification; roles supplied or inferred from exact headings.",
+    "No PDF/DOCX structural adapter in the isolated lab yet.",
+    "No compact REST integration or live agent answer evaluation.",
+    "No Document Indexer or KBaaS deployment tested yet.",
+    "Private settings, raw canary receipts, generated summaries and frozen artifacts remain outside the repository."
+  ],
+  "addedDocumentSmoke": {
+    "documents": 4,
+    "passageRows": 27,
+    "summaryRows": 27,
+    "queries": 7,
+    "measurements": 84,
+    "errors": 0,
+    "newLetterDocumentRecall": 1.0,
+    "newLetterMatchedMeasurements": 12,
+    "scope": "Synthetic functional test in a fresh frozen snapshot; both layouts and both query modes."
+  },
+  "localValidation": {
+    "pytestPassed": 666,
+    "pytestWarnings": 14,
+    "warnings": "Existing TestClient timeout deprecations",
+    "ruffLintPassed": true,
+    "ruffFormatPassed": true,
+    "referencePrivacyPassed": true
+  },
+  "implementationDigests": {
+    "src/fli/structure_lab.py": "50de9c0caa8d37f330b78afd8e9cf262aef3d0ba9b217664195c0fd8c30295fb",
+    "scripts/structure_lab.py": "9870c43001e9737dccc06e832bab0da7e4e45f84272bde53e6634f8db2c485ff",
+    "scripts/canary.py": "569988a14ee33d1043bfb4f19eec58e7a46c98946a34215c36adf61fdda84bf5",
+    "cosmos/lab-shared.container.json": "535062079a7261abb77cae551be34b0002677d4630862671d85e85ecbf82d5cc",
+    "cosmos/lab-passages.container.json": "b99db6756867731bc5fd25b1977fad34eafd64895a87af1f1e7e4a5ecc6cf621",
+    "cosmos/lab-summaries.container.json": "4eeccf23744024fb92a121785916792456545c74de560b3de0a6af147c1d76d7"
+  }
+}

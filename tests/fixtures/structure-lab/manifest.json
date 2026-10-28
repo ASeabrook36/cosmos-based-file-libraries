@@ -1,0 +1,16 @@
+{
+  "ownerDescription": "Demonstration library about a marsh project and its public discussion.",
+  "documents": [
+    {"id": "research", "title": "Marsh drainage and salinity study", "path": "research.md", "genre": "research_paper"},
+    {"id": "opinion", "title": "Marsh records disclosure opinion", "path": "opinion.md", "genre": "court_opinion"},
+    {"id": "play", "title": "The missing observations", "path": "play.md", "genre": "play"}
+  ],
+  "queries": [
+    {"id": "find-study", "text": "Which report compares changes in drainage with changes in salt exposure?", "level": "document", "top": 1, "relevantDocumentIds": ["research"]},
+    {"id": "find-study-baseline", "text": "Which report compares changes in drainage with changes in salt exposure?", "level": "passage", "top": 1, "relevantDocumentIds": ["research"]},
+    {"id": "disclosure-holding", "text": "What must the authority release and what is outside the disclosure requirement?", "level": "section", "documentId": "opinion", "top": 2, "relevantDocumentIds": ["opinion"]},
+    {"id": "salinity-chapter", "text": "The chapter examining salt exposure and vegetation after channels reopened", "level": "chapter", "documentId": "research", "top": 1, "relevantDocumentIds": ["research"]},
+    {"id": "find-play", "text": "A dramatic dialogue ends with a village choosing another year of observations", "level": "document", "top": 1, "relevantDocumentIds": ["play"]},
+    {"id": "specific-measurement", "text": "What were the median durations of standing water in reopened and blocked plots?", "level": "passage", "documentId": "research", "top": 2, "relevantDocumentIds": ["research"]}
+  ]
+}

@@ -63,6 +63,12 @@ The latency and per-owner figures come from earlier measurements of the same Cos
 
 ## Status
 
+An isolated [structured-retrieval lab](docs/structure-lab.md) now compares shared
+and separate Cosmos summary indexes using frozen source trees, summaries and
+vectors. Its three index canaries and initial live functional demonstration
+passed. The normal API/worker are unchanged; representative quality/scale tests
+and Microsoft ingestion-preview compatibility are the next steps.
+
 Phases 0–3 of `docs/build-plan.md` have passed on live Azure.
 
 - Phase 0: the Cosmos configuration deployed and passed its canary at small scale (`records/`).
