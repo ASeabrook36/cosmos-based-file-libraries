@@ -1,0 +1,751 @@
+{
+  "kind": "e27-hybrid-routing-investigation",
+  "date": "2026-10-28",
+  "evidence": "docs/evidence.md E56",
+  "readOnly": true,
+  "target": {
+    "container": "chunks (deployed definition, cosmos/chunks.container.json)",
+    "account": "serverless demo account",
+    "library": {
+      "chunks": 1008,
+      "documents": 17,
+      "content": "published research papers (PDF)"
+    },
+    "fullKeyDocumentChunks": 125
+  },
+  "method": {
+    "questions": 4,
+    "top": 10,
+    "queries": "rendered by src/fli/query.py render_search (hybrid, vector) and scripts/diagnose_search.py fulltext_sql; parameterized; float16 query vectors",
+    "ranksMeans": "the four questions returned four different top-10 id lists",
+    "ru": "sum of x-ms-request-charge over responses seen by raw_response_hook; the query-plan request is not seen by that hook and is not included",
+    "forcedPlan": "test-only patch: the SDK's own _create_execution_context_with_query_plan called before the first request, imitating clients that fetch the plan up front; not a supported API",
+    "requestTrace": "azure-cosmos 4.17.1 request headers logged for one question per shape (partition-key and query-plan headers only)"
+  },
+  "requestTrace4171": {
+    "hybrid_pk_prefix": "one query request carrying the library's effective-partition-key range (x-ms-start-epk/x-ms-end-epk); no query-plan request",
+    "hybrid_no_pk": "a direct query attempt, then a query-plan request (x-ms-cosmos-is-query-plan-request, HybridSearch among supported features), then three component queries by partition-key range",
+    "hybrid_pk_prefix_forced_plan_local": "a query-plan request, then three component queries by partition-key range id with no effective-partition-key bounds"
+  },
+  "runs": [
+    {
+      "sdk": "azure-cosmos 4.17.1",
+      "variants": {
+        "vector_pk_prefix": {
+          "ranks": true,
+          "distinctTop10Lists": 4,
+          "questions": 4,
+          "ruRange": [
+            12.69,
+            12.91
+          ],
+          "responsesPerSearch": [
+            1
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        },
+        "hybrid_pk_prefix": {
+          "ranks": false,
+          "distinctTop10Lists": 1,
+          "questions": 4,
+          "ruRange": [
+            3.92,
+            4.01
+          ],
+          "responsesPerSearch": [
+            1
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        },
+        "hybrid_pk_full": {
+          "ranks": false,
+          "distinctTop10Lists": 1,
+          "questions": 4,
+          "ruRange": [
+            3.85,
+            3.85
+          ],
+          "responsesPerSearch": [
+            1
+          ],
+          "requestsWithPartitionKeyHeader": [
+            1
+          ]
+        },
+        "hybrid_no_pk": {
+          "ranks": true,
+          "distinctTop10Lists": 4,
+          "questions": 4,
+          "ruRange": [
+            138.41,
+            158.14
+          ],
+          "responsesPerSearch": [
+            4
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        },
+        "hybrid_no_pk_local": {
+          "ranks": true,
+          "distinctTop10Lists": 4,
+          "questions": 4,
+          "ruRange": [
+            138.51,
+            158.24
+          ],
+          "responsesPerSearch": [
+            4
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        },
+        "hybrid_pk_prefix_local": {
+          "ranks": false,
+          "distinctTop10Lists": 1,
+          "questions": 4,
+          "ruRange": [
+            3.92,
+            3.92
+          ],
+          "responsesPerSearch": [
+            1
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        },
+        "hybrid_pk_prefix_forced_plan": {
+          "ranks": true,
+          "distinctTop10Lists": 4,
+          "questions": 4,
+          "ruRange": [
+            138.51,
+            158.24
+          ],
+          "responsesPerSearch": [
+            3
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        },
+        "hybrid_pk_prefix_forced_plan_local": {
+          "ranks": true,
+          "distinctTop10Lists": 4,
+          "questions": 4,
+          "ruRange": [
+            138.41,
+            158.24
+          ],
+          "responsesPerSearch": [
+            3
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        },
+        "hybrid_pk_full_forced_plan": {
+          "ranks": true,
+          "distinctTop10Lists": 4,
+          "questions": 4,
+          "ruRange": [
+            104.31,
+            124.26
+          ],
+          "responsesPerSearch": [
+            3
+          ],
+          "requestsWithPartitionKeyHeader": [
+            3
+          ]
+        },
+        "fulltext_pk_prefix": {
+          "ranks": false,
+          "distinctTop10Lists": 1,
+          "questions": 4,
+          "ruRange": [
+            3.92,
+            4.01
+          ],
+          "responsesPerSearch": [
+            1
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        },
+        "fulltext_no_pk": {
+          "ranks": true,
+          "distinctTop10Lists": 4,
+          "questions": 4,
+          "ruRange": [
+            57.94,
+            71.12
+          ],
+          "responsesPerSearch": [
+            3
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        },
+        "fulltext_pk_prefix_forced_plan": {
+          "ranks": true,
+          "distinctTop10Lists": 4,
+          "questions": 4,
+          "ruRange": [
+            57.94,
+            71.12
+          ],
+          "responsesPerSearch": [
+            2
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        }
+      }
+    },
+    {
+      "sdk": "azure-cosmos 4.16.3",
+      "variants": {
+        "vector_pk_prefix": {
+          "ranks": true,
+          "distinctTop10Lists": 4,
+          "questions": 4,
+          "ruRange": [
+            12.68,
+            13.01
+          ],
+          "responsesPerSearch": [
+            1
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        },
+        "hybrid_pk_prefix": {
+          "ranks": false,
+          "distinctTop10Lists": 1,
+          "questions": 4,
+          "ruRange": [
+            3.92,
+            4.01
+          ],
+          "responsesPerSearch": [
+            1
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        },
+        "hybrid_pk_full": {
+          "ranks": false,
+          "distinctTop10Lists": 1,
+          "questions": 4,
+          "ruRange": [
+            3.85,
+            3.85
+          ],
+          "responsesPerSearch": [
+            1
+          ],
+          "requestsWithPartitionKeyHeader": [
+            1
+          ]
+        },
+        "hybrid_no_pk": {
+          "ranks": true,
+          "distinctTop10Lists": 4,
+          "questions": 4,
+          "ruRange": [
+            138.51,
+            158.24
+          ],
+          "responsesPerSearch": [
+            4
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        },
+        "hybrid_no_pk_local": {
+          "ranks": true,
+          "distinctTop10Lists": 4,
+          "questions": 4,
+          "ruRange": [
+            138.51,
+            158.24
+          ],
+          "responsesPerSearch": [
+            4
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        },
+        "hybrid_pk_prefix_local": {
+          "ranks": false,
+          "distinctTop10Lists": 1,
+          "questions": 4,
+          "ruRange": [
+            3.92,
+            4.01
+          ],
+          "responsesPerSearch": [
+            1
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        },
+        "hybrid_pk_prefix_forced_plan": {
+          "ranks": true,
+          "distinctTop10Lists": 4,
+          "questions": 4,
+          "ruRange": [
+            138.51,
+            158.24
+          ],
+          "responsesPerSearch": [
+            3
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        },
+        "hybrid_pk_prefix_forced_plan_local": {
+          "ranks": true,
+          "distinctTop10Lists": 4,
+          "questions": 4,
+          "ruRange": [
+            138.51,
+            158.24
+          ],
+          "responsesPerSearch": [
+            3
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        },
+        "hybrid_pk_full_forced_plan": {
+          "ranks": true,
+          "distinctTop10Lists": 4,
+          "questions": 4,
+          "ruRange": [
+            104.41,
+            124.26
+          ],
+          "responsesPerSearch": [
+            3
+          ],
+          "requestsWithPartitionKeyHeader": [
+            3
+          ]
+        },
+        "fulltext_pk_prefix": {
+          "ranks": false,
+          "distinctTop10Lists": 1,
+          "questions": 4,
+          "ruRange": [
+            3.92,
+            3.92
+          ],
+          "responsesPerSearch": [
+            1
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        },
+        "fulltext_no_pk": {
+          "ranks": true,
+          "distinctTop10Lists": 4,
+          "questions": 4,
+          "ruRange": [
+            57.94,
+            71.12
+          ],
+          "responsesPerSearch": [
+            3
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        },
+        "fulltext_pk_prefix_forced_plan": {
+          "ranks": true,
+          "distinctTop10Lists": 4,
+          "questions": 4,
+          "ruRange": [
+            57.94,
+            71.12
+          ],
+          "responsesPerSearch": [
+            2
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        }
+      }
+    },
+    {
+      "sdk": "azure-cosmos 4.14.0",
+      "variants": {
+        "vector_pk_prefix": {
+          "ranks": true,
+          "distinctTop10Lists": 4,
+          "questions": 4,
+          "ruRange": [
+            12.69,
+            12.92
+          ],
+          "responsesPerSearch": [
+            1
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        },
+        "hybrid_pk_prefix": {
+          "ranks": false,
+          "distinctTop10Lists": 1,
+          "questions": 4,
+          "ruRange": [
+            3.92,
+            4.01
+          ],
+          "responsesPerSearch": [
+            1
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        },
+        "hybrid_pk_full": {
+          "ranks": false,
+          "distinctTop10Lists": 1,
+          "questions": 4,
+          "ruRange": [
+            3.85,
+            3.85
+          ],
+          "responsesPerSearch": [
+            1
+          ],
+          "requestsWithPartitionKeyHeader": [
+            1
+          ]
+        },
+        "hybrid_no_pk": {
+          "ranks": true,
+          "distinctTop10Lists": 4,
+          "questions": 4,
+          "ruRange": [
+            138.51,
+            158.24
+          ],
+          "responsesPerSearch": [
+            4
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        },
+        "hybrid_no_pk_local": {
+          "ranks": false,
+          "distinctTop10Lists": 0,
+          "questions": 4,
+          "error": "option not supported in this SDK version"
+        },
+        "hybrid_pk_prefix_local": {
+          "ranks": false,
+          "distinctTop10Lists": 0,
+          "questions": 4,
+          "error": "option not supported in this SDK version"
+        },
+        "hybrid_pk_prefix_forced_plan": {
+          "ranks": true,
+          "distinctTop10Lists": 4,
+          "questions": 4,
+          "ruRange": [
+            138.51,
+            158.14
+          ],
+          "responsesPerSearch": [
+            3
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        },
+        "hybrid_pk_prefix_forced_plan_local": {
+          "ranks": true,
+          "distinctTop10Lists": 4,
+          "questions": 4,
+          "ruRange": [
+            138.51,
+            158.14
+          ],
+          "responsesPerSearch": [
+            3
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        },
+        "hybrid_pk_full_forced_plan": {
+          "ranks": true,
+          "distinctTop10Lists": 4,
+          "questions": 4,
+          "ruRange": [
+            104.31,
+            124.26
+          ],
+          "responsesPerSearch": [
+            3
+          ],
+          "requestsWithPartitionKeyHeader": [
+            3
+          ]
+        },
+        "fulltext_pk_prefix": {
+          "ranks": false,
+          "distinctTop10Lists": 1,
+          "questions": 4,
+          "ruRange": [
+            3.92,
+            4.01
+          ],
+          "responsesPerSearch": [
+            1
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        },
+        "fulltext_no_pk": {
+          "ranks": true,
+          "distinctTop10Lists": 4,
+          "questions": 4,
+          "ruRange": [
+            57.94,
+            71.12
+          ],
+          "responsesPerSearch": [
+            3
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        },
+        "fulltext_pk_prefix_forced_plan": {
+          "ranks": true,
+          "distinctTop10Lists": 4,
+          "questions": 4,
+          "ruRange": [
+            57.94,
+            71.12
+          ],
+          "responsesPerSearch": [
+            2
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        }
+      }
+    },
+    {
+      "sdk": "azure-cosmos 4.9.0",
+      "variants": {
+        "vector_pk_prefix": {
+          "ranks": true,
+          "distinctTop10Lists": 4,
+          "questions": 4,
+          "ruRange": [
+            12.79,
+            12.91
+          ],
+          "responsesPerSearch": [
+            1
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        },
+        "hybrid_pk_prefix": {
+          "ranks": false,
+          "distinctTop10Lists": 1,
+          "questions": 4,
+          "ruRange": [
+            3.92,
+            4.01
+          ],
+          "responsesPerSearch": [
+            1
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        },
+        "hybrid_pk_full": {
+          "ranks": false,
+          "distinctTop10Lists": 1,
+          "questions": 4,
+          "ruRange": [
+            3.85,
+            3.85
+          ],
+          "responsesPerSearch": [
+            1
+          ],
+          "requestsWithPartitionKeyHeader": [
+            1
+          ]
+        },
+        "hybrid_no_pk": {
+          "ranks": false,
+          "distinctTop10Lists": 0,
+          "questions": 4,
+          "error": "CosmosHttpResponseError: code 2206 Unsupported ORDER BY clause"
+        },
+        "hybrid_no_pk_local": {
+          "ranks": false,
+          "distinctTop10Lists": 0,
+          "questions": 4,
+          "error": "option not supported in this SDK version"
+        },
+        "hybrid_pk_prefix_local": {
+          "ranks": false,
+          "distinctTop10Lists": 0,
+          "questions": 4,
+          "error": "option not supported in this SDK version"
+        },
+        "hybrid_pk_prefix_forced_plan": {
+          "ranks": false,
+          "distinctTop10Lists": 0,
+          "questions": 4,
+          "error": "forced-plan patch not applicable to this SDK version"
+        },
+        "hybrid_pk_prefix_forced_plan_local": {
+          "ranks": false,
+          "distinctTop10Lists": 0,
+          "questions": 4,
+          "error": "forced-plan patch not applicable to this SDK version"
+        },
+        "hybrid_pk_full_forced_plan": {
+          "ranks": false,
+          "distinctTop10Lists": 0,
+          "questions": 4,
+          "error": "forced-plan patch not applicable to this SDK version"
+        },
+        "fulltext_pk_prefix": {
+          "ranks": false,
+          "distinctTop10Lists": 1,
+          "questions": 4,
+          "ruRange": [
+            4.01,
+            4.01
+          ],
+          "responsesPerSearch": [
+            1
+          ],
+          "requestsWithPartitionKeyHeader": [
+            0
+          ]
+        },
+        "fulltext_no_pk": {
+          "ranks": false,
+          "distinctTop10Lists": 0,
+          "questions": 4,
+          "error": "CosmosHttpResponseError: code 2206 Unsupported ORDER BY clause"
+        },
+        "fulltext_pk_prefix_forced_plan": {
+          "ranks": false,
+          "distinctTop10Lists": 0,
+          "questions": 4,
+          "error": "forced-plan patch not applicable to this SDK version"
+        }
+      }
+    },
+    {
+      "sdk": "@azure/cosmos 4.10.1",
+      "variants": {
+        "vector_pk_prefix": {
+          "ranks": false,
+          "distinctTop10Lists": 0,
+          "questions": 4,
+          "error": "prefix partition key rejected by this SDK"
+        },
+        "hybrid_pk_prefix": {
+          "ranks": false,
+          "distinctTop10Lists": 0,
+          "questions": 4,
+          "error": "prefix partition key rejected by this SDK"
+        },
+        "hybrid_pk_full": {
+          "ranks": false,
+          "distinctTop10Lists": 1,
+          "questions": 4,
+          "ruRange": [
+            3.85,
+            3.85
+          ]
+        },
+        "hybrid_no_pk": {
+          "ranks": true,
+          "distinctTop10Lists": 4,
+          "questions": 4,
+          "ruRange": [
+            116.69,
+            129.96
+          ]
+        },
+        "hybrid_pk_prefix_local": {
+          "ranks": false,
+          "distinctTop10Lists": 0,
+          "questions": 4,
+          "error": "prefix partition key rejected by this SDK"
+        },
+        "fulltext_pk_prefix": {
+          "ranks": false,
+          "distinctTop10Lists": 0,
+          "questions": 4,
+          "error": "prefix partition key rejected by this SDK"
+        },
+        "fulltext_no_pk": {
+          "ranks": true,
+          "distinctTop10Lists": 4,
+          "questions": 4,
+          "ruRange": [
+            38.47,
+            45.18
+          ]
+        }
+      }
+    }
+  ],
+  "canaryRule": {
+    "hybrid_pk_prefix": false,
+    "hybrid_pk_full": false,
+    "hybrid_no_pk": true,
+    "rule": "scripts/canary.py hybrid_ranks applied to the azure-cosmos 4.17.1 lists"
+  },
+  "notMeasured": [
+    "hybrid ranking quality (N3)",
+    "hybrid cost as libraries are added (Phase 4)",
+    ".NET SDK",
+    "raw REST (Microsoft states full-text querying is not supported via the REST API)",
+    "a container with more than one physical partition"
+  ]
+}

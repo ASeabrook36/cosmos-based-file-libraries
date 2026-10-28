@@ -192,7 +192,7 @@ Images were moved out of Phase 3 on 2026-10-23 so that metadata and lifecycle co
   - On a realistic large library with about 2–5% image rows, measure `contentKinds: ["image"]` recall@k against vector-only exact search (`VectorDistance(..., true, ...)`), plus RU, latency, result-slot duplication and the observed index type (N11, N16). Keep `filterPriority` at its default unless those measurements justify a change.
   - Wait for the index before measuring search cost (E25).
   - Measure the cross-partition library list at 1,000+ libraries, and `refresh_library` (which reads every document record after each ingest) during a bulk load into one library (review finding 4).
-  - Measure hybrid search cost (`SEARCH_MODE=hybrid`) on the same libraries before and after loading the 1,000: its full-text statistics span the container, so it may grow with the number of libraries (E27).
+  - Measure hybrid search cost (`SEARCH_MODE=hybrid`) on the same libraries before and after loading the 1,000: its full-text statistics span the container, so it may grow with the number of libraries (E27). `full_text_score_scope="Local"` limits those statistics to the query's partition-key values, but from Python it cannot yet be combined with a partition-keyed hybrid query that ranks (E56); re-test it if a newer SDK can.
 - **Routing telemetry (enhancement 3):** `library_search` and `search_usage` events, the usage endpoint, the saved Log Analytics query, and `GET …/routing-report`. Show it in the demo app.
 
 **Exit check**

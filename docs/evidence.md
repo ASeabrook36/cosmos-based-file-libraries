@@ -257,6 +257,8 @@ Consequences:
 - Vector measurements (E8, E12, E25) are unaffected: vector search is correct when routed by partition key.
 - The SDK floor is the measured version, `azure-cosmos` 4.17.1. Whether a partition key skips the query plan may differ between versions; the canary's `hybrid_ranks` check catches a change on live runs.
 
+*Investigated 2026-10-28 (E56).* The inferred cause is now observed in the SDK's requests and matches a Microsoft maintainer's explanation of the same behaviour in the .NET SDK. It is a client-side gap, not a misuse here; the routing rule stands.
+
 
 ### E25. The vector index engages minutes after writes · Measured (Phase 0) and Vendor
 
@@ -663,3 +665,43 @@ Validation at completion: **666 local tests passed**. Ruff lint/format, diff che
 and the private-deny-list reference-privacy check passed. Fourteen existing
 TestClient timeout-deprecation warnings remain. No private environment identifiers
 or generated source/summary text were added to the repository.
+
+## E56: Hybrid search routed by partition key, investigated (2026-10-28)
+
+E27 recorded that a hybrid query sent with the library as partition key returns unranked results, and inferred the cause from response counts. This entry tests that inference. Record: [`records/e27-hybrid-routing-20261028.json`](../records/e27-hybrid-routing-20261028.json). Read-only queries against one existing library on the demo account (1,008 chunks of 17 published research papers), four questions with different answers, `TOP 10`, the API's own rendered SQL. A shape "ranks" when the four questions return four different top-10 lists.
+
+**The cause, observed · Measured.** `azure-cosmos` fetches a query plan only after the service rejects its first, direct attempt (`_execution_context/execution_dispatcher.py`). Request headers logged on 4.17.1 show:
+
+- With the library as partition key, the SDK sends one query, scoped to the library's effective-partition-key range, and no query-plan request. The service answers it without an error, in storage order.
+- Without a partition key, the direct attempt is refused, the SDK requests the query plan (advertising `HybridSearch`) and runs three component queries.
+
+The SDK source on the repository's `main` branch was unchanged from 4.17.1 on 2026-10-28, and its changelog lists no fix.
+
+**Microsoft's explanation · Vendor.** In [azure-cosmos-dotnet-v3#5332](https://github.com/Azure/azure-cosmos-dotnet-v3/issues/5332) (opened 2025-08-03, closed 2026-08-05), the same behaviour was reported for `ORDER BY RANK FullTextScore` with a partition key. A Microsoft maintainer replied that the query has to be rewritten from the query plan, and that the service cannot tell the right thing to do without it. Another maintainer linked a fix (PR #5273); the reporter found it resolved in .NET SDK 3.53.0. A commenter reported the same behaviour from Python and raw HTTP. Microsoft also states there that full-text querying is not supported through the REST API. Microsoft's [hybrid search](https://learn.microsoft.com/en-us/azure/cosmos-db/gen-ai/hybrid-search) (updated 2026-04-27) and [full-text search](https://learn.microsoft.com/en-us/azure/cosmos-db/gen-ai/full-text-search) (updated 2026-08-18) pages, read 2026-10-28, say nothing about partition keys.
+
+**Call shapes · Measured.** RU per search, four questions:
+
+| Shape | Python 4.17.1, 4.16.3, 4.14.0 | Python 4.9.0 | JavaScript `@azure/cosmos` 4.10.1 |
+|---|---|---|---|
+| Vector, library as partition key | Ranks; 12.7–13.0 RU, 1 response | Ranks | Prefix key rejected for every query |
+| Hybrid, library as partition key | **No**: one list for all questions; 3.9–4.0 RU, 1 response | **No** | Prefix key rejected |
+| Hybrid, full key (library and one document) | **No**; 3.85 RU | **No** | **No**; 3.85 RU |
+| Hybrid, no partition key, library in `WHERE` | Ranks; 138–158 RU, 4 responses | Refused: code 2206, unsupported `ORDER BY` | Ranks; 117–130 RU |
+| Full-text only, library as partition key | **No**; 3.9–4.0 RU | **No** | Prefix key rejected |
+| Full-text only, no partition key | Ranks; 58–71 RU, 3 responses | Refused: code 2206 | Ranks; 38–45 RU |
+| `full_text_score_scope="Local"`, with or without the library as partition key | Same rankings and RU as the default (4.16.3 and 4.17.1 only) | Not available | Prefix key rejected |
+
+The query-plan request is not in these RU figures: `raw_response_hook` does not see it.
+
+**Forcing the plan · Measured, test-only.** A test patch that makes the Python SDK request the plan before its first query (as .NET 3.53 is reported to) made every partition-keyed shape rank on 4.14.0 and later. With the library as partition key, its results and RU equalled the no-partition-key shape, and its component queries carried a partition-key-range id but not the library's key bounds: the routing was lost. With a full key, it ranked within that one document at 104–124 RU and kept the partition-key header. This is not a supported API and the service does not use it.
+
+**What follows · Inference.**
+
+- E27 describes a client-side gap in the Python and JavaScript SDKs. It is not a misuse of Cosmos here. The same behaviour appears in an independent SDK, on every Python version tested, and Microsoft has explained and fixed it in .NET.
+- `partition_key_for` and `CLAUDE.md` invariant 2 stay as they are: no supported Python call ranks a hybrid query scoped by partition key. Re-test when a new `azure-cosmos` release names hybrid or full-text queries with partition keys; the canary's `hybrid_ranks` check catches a change.
+- `full_text_score_scope="Local"`, which limits BM25 statistics to the query's partition-key values, is the documented remedy for E27's cost concern. From Python it cannot currently be combined with a working partition-keyed hybrid query, so its effect on cost and ranking is unmeasured here. Whether hybrid cost grows with the number of libraries remains a Phase 4 measurement.
+- This single library sits on one physical partition, so these runs cannot show whether the no-partition-key shape fans out to other partitions on a large container (N4).
+
+**The canary · Measured.** `scripts/canary.py`'s `hybrid_ranks` rule, applied to the live 4.17.1 lists, fails both partition-keyed shapes (one distinct list of four) and passes the working shape (four of four). The canary routes hybrid queries through `partition_key_for`, and `tests/test_canary.py` and `tests/test_canary_run.py` assert the failing case.
+
+Not measured: hybrid ranking quality (N3), the .NET SDK, and containers with several physical partitions.
