@@ -100,6 +100,14 @@ A separate 2024 paper explicitly studies maintaining recursive summary trees whe
 
 **Application:** retain a simple baseline and compare each addition separately. A combined improvement cannot tell us whether genre roles, summaries, reranking or a parser change caused the gain.
 
+### 13. Microsoft Document Indexer and Logic Apps KBaaS: reuse candidates
+
+Cosmos Document Indexer is a preview ingestion workflow built on Logic Apps Standard: Blob/SharePoint acquisition, parsing (optionally Document Intelligence), chunking, embedding and Cosmos writes. It is an orchestration option alongside our worker, not a replacement for the structural representation. [Document Indexer](https://learn.microsoft.com/en-us/azure/cosmos-db/gen-ai/document-indexer)
+
+Logic Apps KBaaS separately stores source chunks and embedded chunk summaries in `KnowledgeArtifactChunks` and `KnowledgeArtifactChunkSummaries`. Its preview documents default chunking and text-only parsing. This is concrete Microsoft precedent for split summary storage, not comparative performance evidence. [KBaaS](https://learn.microsoft.com/en-us/azure/logic-apps/create-knowledge-base-agentic-workflow)
+
+**Application:** evaluate these previews before expanding custom ingestion. Accept preview status where the reference prototype can use the feature. Inspect actual emitted schemas and retained provenance, then test an adapter against our frozen corpus. Keep the A/B harness independent of the ingestion provider. Adopt useful existing capabilities and implement only measured gaps; do not infer source hierarchy or update guarantees from product names.
+
 ## Cosmos-specific implications
 
 Microsoft documents vector search alongside operational records, and filtering vector queries by ordinary properties. This supports our proposed source/summary record types. It is an inference from those primitives that our hierarchy fits; the documentation is not a ready-made implementation of our publication and summary lifecycle. [Cosmos RAG guidance](https://learn.microsoft.com/en-us/azure/cosmos-db/gen-ai/rag), [vector search](https://learn.microsoft.com/en-us/azure/cosmos-db/vector-search)

@@ -75,6 +75,20 @@ Start with general reports and research papers, adding a complete correspondence
 
 Native extraction and Document Intelligence remain the starting adapters. A small comparison against Docling/GROBID or Content Understanding can justify a specialized adapter. Preserve original Office visual behavior when evaluating replacements; changing parser vendors is not a prerequisite.
 
+### Reuse Microsoft capabilities before extending custom ingestion
+
+Preview status is acceptable for this reference prototype. The next integration decision is reuse-first: evaluate [Document Indexer](https://learn.microsoft.com/en-us/azure/cosmos-db/gen-ai/document-indexer) as an ingestion route and [Logic Apps KBaaS](https://learn.microsoft.com/en-us/azure/logic-apps/create-knowledge-base-agentic-workflow) as a summary/retrieval baseline. Continue using Document Intelligence for PDF extraction. These choices occupy different stages of the pipeline.
+
+Run a bounded compatibility experiment before building more general-purpose ingestion:
+
+1. Process the same small research report, opinion, play and letter through the Microsoft route. Inspect actual records, partition keys, vector policy, source references, summaries and query outputs. Use an isolated database for service-owned schemas; never point a schema-creating preview at application containers.
+2. Test replacement, deletion, retry behavior and link resolution. Check whether section ancestry and figure membership survive parsing and chunking; document missing information explicitly.
+3. Determine which outputs can enter our structure/summary contract through a thin adapter. Reuse working acquisition, extraction, orchestration, summarization or retrieval components instead of maintaining equivalents solely for the prototype.
+4. Retain custom work only where needed: navigable source structure, incremental library overviews, revision-aware publication, typed source/summary results and the consuming-agent contract. Each is a capability to verify, not an assumed product deficiency.
+5. Compare total operating costs, including workflow hosting/actions, model calls, Cosmos writes/searches and source expansion. Report provider limitations alongside measured results. Preview availability is not itself a rejection criterion.
+
+The initial custom lab is an experimental control and portable contract, not a decision to own every ingestion stage. No Document Indexer or KBaaS instance has been deployed or validated by this project yet. The live canaries validate the lab indexes only.
+
 ## Ingestion and maintenance
 
 ```mermaid
