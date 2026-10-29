@@ -143,3 +143,20 @@ def test_overlap_labels_preserve_legacy_recipe_but_correct_its_units():
     recipe["chunking"]["overlapTokens"] = 200
     assert "200 characters" in chunking_description(recipe)
     assert "legacy" in chunking_description(recipe)
+
+
+def test_functional_smoke_does_not_claim_index_readiness(tmp_path, monkeypatch):
+    monkeypatch.setattr(evaluation, "replay", lambda *args: None)
+    result = evaluation.replay_pair(
+        Index(),
+        object,
+        {},
+        "exp",
+        [],
+        tmp_path,
+        repeats=1,
+        run_controls=CONTROLS,
+        measurement_mode="functional-smoke",
+    )
+    assert result["indexReadiness"] == "not-confirmed"
+    assert result["measurementMode"] == "functional-smoke"

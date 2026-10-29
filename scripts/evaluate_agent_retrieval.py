@@ -91,6 +91,7 @@ def replay_pair(
     repeats=3,
     index_ready=False,
     run_controls=None,
+    measurement_mode="steady-state",
 ):
     """Alternate independent single-library sessions. Preserve source-based review cases.
 
@@ -101,7 +102,9 @@ def replay_pair(
 
     if repeats < 1:
         raise ValueError("repeats must be positive")
-    if not index_ready:
+    if measurement_mode not in {"steady-state", "functional-smoke"}:
+        raise ValueError("unknown measurement mode")
+    if not index_ready and measurement_mode == "steady-state":
         raise ValueError("record index readiness before steady-state replay")
     if not run_controls or not all(run_controls.get(k) for k in ("modelRevision", "searchMode", "backgroundLoad")):
         raise ValueError("record modelRevision, searchMode and backgroundLoad controls")
@@ -171,7 +174,8 @@ def replay_pair(
         "budget": budget,
         "repeats": repeats,
         "casesHash": digest(cases),
-        "indexReadiness": "operator-confirmed",
+        "indexReadiness": "operator-confirmed" if index_ready else "not-confirmed",
+        "measurementMode": measurement_mode,
         "cacheState": run_controls.get("cacheState", "unavailable"),
         "quality": "unreviewed; source-fact/citation judgments required",
         "usage": "measured per turn; hosting cost and unavailable provider counters are not inferred",
@@ -223,6 +227,7 @@ def main():
     parser.add_argument("--experiment-id")
     parser.add_argument("--repeats", type=int, default=3)
     parser.add_argument("--index-ready", action="store_true")
+    parser.add_argument("--measurement-mode", choices=["steady-state", "functional-smoke"], default="steady-state")
     parser.add_argument(
         "--run-controls", type=Path, help="private JSON: modelRevision, searchMode, backgroundLoad, cacheState"
     )
@@ -239,6 +244,7 @@ def main():
             args.repeats,
             args.index_ready,
             json.loads(args.run_controls.read_text()) if args.run_controls else None,
+            args.measurement_mode,
         )
         return
     replay(

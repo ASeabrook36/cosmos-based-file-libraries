@@ -40,7 +40,9 @@ def test_one_shared_workflow_uses_trusted_dynamic_scope_and_no_cosmos_or_blob_tr
     assert actions["Read_blob_content"]["inputs"]["parameters"]["blobName"] == "@triggerBody()?['job']?['sourcePath']"
     processing = actions["Produce_representation"]["else"]["actions"]
     assert processing["Chunk_text"]["inputs"]["TokenSize"].endswith("['targetTokens']")
-    assert processing["Chunk_text"]["inputs"]["PageOverlapLength"].endswith("['overlapCharacters']")
+    overlap = processing["Chunk_text"]["inputs"]["PageOverlapLength"]
+    assert overlap.startswith("@coalesce(")
+    assert overlap.index("overlapCharacters") < overlap.index("overlapTokens")
     assert processing["Chunk_text"]["inputs"]["chunkingStrategy"] == "TokenSize"
     projection = processing["Select_embeddings_and_map_to_CosmosDB"]["inputs"]["select"]
     assert projection["embedding"] == "@body('Get_multiple_embeddings')['embeddings'][item()]"
@@ -49,6 +51,10 @@ def test_one_shared_workflow_uses_trusted_dynamic_scope_and_no_cosmos_or_blob_tr
     assert emitted["sourceBase64"] == "@outputs('Effective_extraction')?['sourceBase64']"
     assert emitted["embedding"]["modelRevision"] == "@parameters('EmbeddingModelRevision')"
     assert emitted["usage"] == {}
+    assert emitted["workflowVersion"] == (
+        "@if(equals(triggerBody()?['job']?['profile']?['workflowVersion'],"
+        "'shared-indexer-v1'),'shared-indexer-v1','shared-indexer-v2')"
+    )
     save = processing["Save_result"]
     assert save["inputs"]["parameters"]["overrideIfExists"] is False
     assert save["runtimeConfiguration"]["secureData"]["properties"] == ["inputs", "outputs"]

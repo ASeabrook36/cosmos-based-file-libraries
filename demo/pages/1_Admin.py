@@ -53,7 +53,10 @@ for lib in libraries:
     stats = lib.get("stats") or {}
     with st.expander(f"{lib['name']} · {lib.get('comparisonMember', '')} · {stats.get('documentCount', 0)} documents"):
         recipe = lib.get("ingestionProfile") or profile()
-        st.caption(f"{recipe['id']} · {chunking_description(recipe)} · {recipe['chunking']['algorithm']}")
+        st.caption(
+            f"{recipe['id']} recipe {recipe['version']} · {chunking_description(recipe)} "
+            f"· {recipe['chunking']['algorithm']}"
+        )
         for limitation in recipe["limitations"]:
             st.caption(limitation)
         if lib.get("experimentId"):

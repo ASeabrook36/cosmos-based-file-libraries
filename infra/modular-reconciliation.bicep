@@ -6,6 +6,7 @@ param managedIdentityId string
 param managedIdentityClientId string
 param image string
 param registryServer string
+param blobAccountUrl string
 param servicebusNamespace string
 param servicebusQueue string = 'ingest'
 @minLength(1)
@@ -29,12 +30,13 @@ resource reconciliation 'Microsoft.App/jobs@2024-03-01' = {
         name: 'reconcile'
         image: image
         command: ['python', '-m', 'fli.reconcile']
-        args: flatten(map(libraryIds, id => ['--library-id', id]))
+        args: concat(['--discover-blob-scopes'], flatten(map(libraryIds, id => ['--library-id', id])))
         resources: { cpu: json('0.5'), memory: '1Gi' }
         env: [
           { name: 'ENVIRONMENT', value: 'demo' }
           { name: 'AUTH_MODE', value: 'entra' }
           { name: 'AZURE_CLIENT_ID', value: managedIdentityClientId }
+          { name: 'BLOB_ACCOUNT_URL', value: blobAccountUrl }
           { name: 'SERVICEBUS_NAMESPACE', value: servicebusNamespace }
           { name: 'SERVICEBUS_QUEUE', value: servicebusQueue }
         ]

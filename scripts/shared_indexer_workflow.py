@@ -90,7 +90,10 @@ def definition(template: dict) -> dict:
     # Preserve all unknown upstream fields privately. Validation strips them on publication.
     result = {
         "schema": "fli.indexer-result.v1",
-        "workflowVersion": VERSION,
+        # Revision 1 used the token-named field for character overlap. Preserve its
+        # actual execution semantics for frozen old libraries; never echo arbitrary versions.
+        "workflowVersion": "@if(equals(triggerBody()?['job']?['profile']?['workflowVersion'],"
+        "'shared-indexer-v1'),'shared-indexer-v1','shared-indexer-v2')",
         "job": "@triggerBody()?['job']",
         "sourceBase64": "@outputs('Effective_extraction')?['sourceBase64']",
         "embedding": {
@@ -142,7 +145,10 @@ def definition(template: dict) -> dict:
         if key.lower() == "tokensize":
             chunk[key] = "@triggerBody()?['job']?['profile']?['chunking']?['targetTokens']"
         elif key.lower() in {"pageoverlaplength"}:
-            chunk[key] = "@triggerBody()?['job']?['profile']?['chunking']?['overlapCharacters']"
+            chunk[key] = (
+                "@coalesce(triggerBody()?['job']?['profile']?['chunking']?['overlapCharacters'],"
+                "triggerBody()?['job']?['profile']?['chunking']?['overlapTokens'])"
+            )
     value.setdefault("parameters", {}).update(
         {
             "EmbeddingModel": {"type": "String", "defaultValue": "text-embedding-3-large"},
