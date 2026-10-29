@@ -152,18 +152,4 @@ Planning judgment from inspection:
 
 Acceptance includes all four creation choices, repeatable same-source pairs, persisted profile versions, visible failures/coverage, compatible retrieval, retained metadata, duplicate/replacement/deletion safety and honest usage accounting. Use focused meaningful tests plus repository-required checks. New queried Cosmos containers require the established real-text canary; preserve existing query/vector/permission invariants.
 
-## Local-session starter prompt
-
-Work in the cosmos-based-file-libraries repository. Implement the modular ingestion and paired-library evaluation design in docs/consults/2026-10-29-modular-ingestion-assessment.md. This is infrastructure for comparing strategies, not a request to choose a winner.
-
-Read repository instructions, docs/spec.md and docs/build-plan.md, then the assessment and its linked Indexer/structure/observability documents. Inspect the current branch and preserve unrelated work.
-
-Support three versioned profiles: current ingestion, custom granular/structure-aware processing, and adapted Microsoft Document Indexer. At library creation expose those three options plus an action creating a matched custom/Microsoft pair from identical sources. Keep ingestion provider and structural enrichment separately represented inside profiles. Default existing libraries to current behavior.
-
-Start with a brief implementation plan and revised scope estimate, then implement a tested vertical slice. Establish trusted profile/job/result contracts, profile snapshots per generation, reliable paired creation and routing, and common validation/publication without re-embedding Microsoft vectors. Preserve metadata, source provenance, permissions, complete reads, retries, replacement and deletion safety. Integrate the structure lab incrementally; expose honest capability/coverage rather than presenting unfinished functionality as ready.
-
-Prepare Azure hosting for queue-driven custom workers and the shared Microsoft workflow so operational measurements can be comparable. Inspect available configuration and access before live actions. Keep local development authentication local; use managed identity and the repository's hosted-auth requirements. Keep environment identifiers and raw source/telemetry outside the repo.
-
-Extend existing metrics and agent replay for complete-strategy and controlled-component comparisons. Explicitly record 500/50 section-aware versus tested 5,000/200 token-window differences, model/configuration versions, source hashes, failures/retries, actual token use, RU, hosting boundaries and missing counters. Quality needs common source-based judgments, independent matched agent sessions and index readiness; canary recall alone is not answer-quality evidence.
-
 Follow repository validation requirements, update the spec/build plan with implementation decisions, and report tested behavior, remaining gaps and any exact cloud blockers. Continue through useful local implementation and checks when cloud credentials or quota are unavailable; do not claim unrun live results.
