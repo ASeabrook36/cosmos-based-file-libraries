@@ -162,6 +162,8 @@ Phase 0 saw Cosmos serve a vector search on one 1,500-vector library through `Qu
 
 Nothing here contradicts Phase 0, because the configurations differ: Phase 0 had a shard key and one library. But with many libraries in one container, whether a small library's `QuantizedFlat` search stays scoped to that library's shard, rather than reading a shared quantized index, is **untested**. If it does not, a small library's search cost would grow with the container's total content, which is the claim this design most depends on. This is recorded as a risk, not a finding. Phase 4 item "QuantizedFlat scoping at many libraries" (`build-plan.md`) measures it.
 
+**Measured 2026-10-29 (E59): scoped.** From 10 to 1,013 libraries and from 25,000 to about 245,000 passages on one physical partition, ten probe libraries of 1,000–5,000 vectors kept their cost (within 1%), documents read and recall, and Cosmos reported the `/libraryId` shard throughout. The same search without its library filter grew from 1,204 to 11,777 RU. Several physical partitions and libraries above 5,000 vectors remain open.
+
 ## What would make us reconsider the design
 
 - Microsoft says the hierarchical key combined with a library shard key is not a supported configuration (N6).

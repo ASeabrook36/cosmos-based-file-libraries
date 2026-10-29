@@ -1,6 +1,6 @@
 # Specification: File Library Index
 
-*Version 0.20, 2026-10-29. Modular ingestion local slice (§7.9; E59), with cloud runtime validation pending. Version 0.19, 2026-10-27. Compact REST evidence/attachments (§6.8) implemented and locally validated. Working name. Phases 0–3 passed on live Azure (`build-plan.md`). Adaptive document retrieval (§6.6) is implemented and its live smoke check passed; human answer-quality and broader routing evaluation remain pending. Images (Phase 3B, including PDF vector charts) are implemented; see `image-retrieval.md` for validation and limitations. Phases 4–5 remain to build. Every measured design choice is traced in `evidence.md`.*
+*Version 0.20, 2026-10-29. Modular ingestion local slice (§7.9; E60), with cloud runtime validation pending. Version 0.19, 2026-10-27. Compact REST evidence/attachments (§6.8) implemented and locally validated. Working name. Phases 0–3 passed on live Azure (`build-plan.md`). Adaptive document retrieval (§6.6) is implemented and its live smoke check passed; human answer-quality and broader routing evaluation remain pending. Images (Phase 3B, including PDF vector charts) are implemented; see `image-retrieval.md` for validation and limitations. Phases 4–5 remain to build. Every measured design choice is traced in `evidence.md`.*
 
 ## 1. Scope
 
