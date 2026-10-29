@@ -34,6 +34,7 @@ from fli.blobs import BlobStore
 from fli.errors import ApiError, document_not_found, library_not_found
 from fli.generation import latest_generation
 from fli.ids import new_id, original_blob_path, safe_file_name
+from fli.ingestion import job, snapshot
 from fli.proposals import facets
 from fli.queue import Queue
 from fli.store import Conflict, DocumentStore, Record, public
@@ -145,7 +146,7 @@ async def upload_document(
     metadata: Annotated[str | None, Form()] = None,
     uploadedBy: Annotated[str | None, Form(max_length=200)] = None,  # noqa: N803 — the API's field name
 ) -> dict[str, str]:
-    await active_library(libraries, library_id)
+    library = await active_library(libraries, library_id)
     try:
         meta = UploadMetadata.model_validate(json.loads(metadata)) if metadata else UploadMetadata()
     except json.JSONDecodeError as exc:
@@ -191,6 +192,7 @@ async def upload_document(
         "imagesSkipped": 0,
         "updatedAt": now(),
     }
+    record["ingestionJob"] = job(library_id, document_id, 1, record, snapshot(library), 0)
     try:
         created = await store.create(record)
     except Exception:
@@ -379,7 +381,7 @@ async def replace_content(
     The active generation stays searchable until the new one commits. A replacement sent while
     another is still pending supersedes it: the worker abandons the older one.
     """
-    await active_library(libraries, library_id)
+    library = await active_library(libraries, library_id)
     data = await read_file(request, file)
     file_name = safe_file_name(file.filename or "")
     content_type = file.content_type or "application/octet-stream"
@@ -396,6 +398,9 @@ async def replace_content(
             "uploadedAt": now(),
             "uploadedBy": uploadedBy,
         }
+        pending["ingestionJob"] = job(
+            library_id, document_id, generation, pending, snapshot(library), record.get("metadataVersion", 0)
+        )
         record.update(
             generation=generation,
             pendingGeneration=generation,
@@ -469,6 +474,10 @@ async def delete_document(
             raise document_not_found(document_id)
         if record.get("status") == "deleting":
             break
+        if record.get("experimentId"):
+            from fli.api.experiments import mark_source_deleted
+
+            await mark_source_deleted(store, record)
         record.update(status="deleting", updatedAt=now())
         try:
             await store.replace(record)

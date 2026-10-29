@@ -10,11 +10,24 @@ libraries = guard(api.list_libraries, "shared") or []
 if not libraries:
     st.info("Create a shared library first.")
     st.stop()
-library = st.selectbox("Library", libraries, format_func=lambda lib: lib["name"])
+library = st.selectbox(
+    "Library",
+    libraries,
+    format_func=lambda lib: lib["name"] + (f" · {lib['comparisonMember']}" if lib.get("comparisonMember") else ""),
+)
 st.button("Refresh measurements")
 data = guard(api.library_metrics, library["id"], "prototype-performance-viewer")
 if not data:
     st.stop()
+st.json(data["ingestionProfile"])
+if data.get("experimentId"):
+    st.json(guard(api.get_experiment, data["experimentId"]))
+st.caption(
+    "Complete-strategy comparisons vary the full pipeline. Controlled 500/50 pairs share layout extraction "
+    "and model settings; "
+    "chunk boundaries differ, with hierarchy and visuals disabled. Hosting/orchestration still differ. "
+    "Missing counters are unavailable, not zero."
+)
 inv, summary, history = data["inventory"], data["summary"], data["history"]
 inventory_tab, retrieval_tab = st.tabs(["Documents, chunks & embeddings", "Retrieval history"])
 with inventory_tab:
@@ -36,6 +49,9 @@ with inventory_tab:
         rows.append(
             {
                 "file": doc["fileName"],
+                "profile": (doc.get("ingestionProfile") or {}).get("id", "current-v1"),
+                "attempt events": len(doc.get("attemptEvents") or []),
+                "coverage": str(doc.get("coverage") or {}),
                 "status": doc["status"],
                 "generation": doc["generation"],
                 "chunks": doc["chunkCount"],
@@ -61,7 +77,7 @@ with inventory_tab:
         tokens = [m.get("embeddingTokens") for m in measured]
         cols[0].metric("Known embedding input tokens", f"{sum(t for t in tokens if t is not None):,}")
         cols[1].metric("Known chunk-write RU", f"{sum(m.get('chunkWriteCharge') or 0 for m in measured):.2f}")
-        cols[2].metric("Embedding retries", sum(m.get("embeddingRetries", 0) for m in measured))
+        cols[2].metric("Embedding retries", sum(m.get("embeddingRetries") or 0 for m in measured))
         st.caption("Known totals cover measured current generations only; blank values mean unavailable, not zero.")
     else:
         st.info(

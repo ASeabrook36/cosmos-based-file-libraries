@@ -6,7 +6,9 @@ from fli_demo.registry import OFFICIAL, create_personal_agent
 st.title("Agents")
 api, reg = client(), registry()
 shared = guard(api.list_libraries, "shared") or []  # the attach screen lists shared libraries only (spec §5 rule 4)
-names = {lib["id"]: lib["name"] for lib in shared}
+names = {
+    lib["id"]: lib["name"] + (f" · {lib['comparisonMember']}" if lib.get("comparisonMember") else "") for lib in shared
+}
 
 left, right = st.columns(2)
 with left, st.form("official"):

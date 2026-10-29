@@ -168,11 +168,13 @@ def create_app(
         return {"status": "ok"}
 
     from fli.api import documents as document_routes
+    from fli.api import experiments as experiment_routes
     from fli.api import libraries as library_routes
     from fli.api import metrics as metrics_routes
     from fli.api import reading as reading_routes
     from fli.api import search as search_routes
 
+    app.include_router(experiment_routes.router)
     app.include_router(library_routes.router)
     app.include_router(document_routes.router)
     app.include_router(search_routes.router)

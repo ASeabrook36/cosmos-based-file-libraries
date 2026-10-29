@@ -47,12 +47,38 @@ class IndexClient:
         return self._call("GET", f"/v1/libraries/{library_id}")
 
     def create_library(
-        self, kind: str, name: str, description: str = "", bound_agent_id: str | None = None
+        self,
+        kind: str,
+        name: str,
+        description: str = "",
+        bound_agent_id: str | None = None,
+        ingestion_profile: str = "current-v1",
     ) -> dict[str, Any]:
-        body: dict[str, Any] = {"kind": kind, "name": name, "description": description}
+        body: dict[str, Any] = {
+            "kind": kind,
+            "name": name,
+            "description": description,
+            "ingestionProfile": ingestion_profile,
+        }
         if bound_agent_id:
             body["boundAgentId"] = bound_agent_id
         return self._call("POST", "/v1/libraries", json=body)
+
+    def create_pair(self, experiment_id, name, description="", comparison="complete-strategy"):
+        body = {"experimentId": experiment_id, "name": name, "description": description, "comparison": comparison}
+        if comparison == "controlled-component":
+            body["component"] = "chunk-boundaries"
+        return self._call("POST", "/v1/experiments", json=body)
+
+    def get_experiment(self, experiment_id):
+        return self._call("GET", f"/v1/experiments/{experiment_id}")
+
+    def upload_pair(self, experiment_id, source_id, file_name, data, content_type=None):
+        return self._call(
+            "POST",
+            f"/v1/experiments/{experiment_id}/sources/{source_id}",
+            files={"file": (file_name, data, content_type or "application/octet-stream")},
+        )
 
     def update_description(self, library_id: str, description: str) -> dict[str, Any]:
         return self._call("PATCH", f"/v1/libraries/{library_id}", json={"description": description})

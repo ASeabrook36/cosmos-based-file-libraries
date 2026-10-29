@@ -211,7 +211,10 @@ def tool_definitions(library: Mapping[str, Any]) -> list[dict[str, Any]]:
             "Full returns every stored section in the selected files or no content if over maxTokens; complete=true "
             "alone confirms a full read. Never replace an explicit whole-file request with snippets. "
             "For focused facts/research in a large file, use document-scoped search then mode=selected with "
-            "evidenceIds, sectionIds, or source pages/slides/paragraphs. Selected returns exact stored extraction "
+            "evidenceIds, sectionIds, or source pages/slides/paragraphs. When outline locations include nodeId, "
+            "nodeIds expands complete authored subtrees; supply generation and contentRevision from that outline. "
+            "Hierarchy is format-dependent; generated summaries are unavailable. "
+            "Selected returns exact stored extraction "
             "regions plus figure candidates, selectionComplete and documentComplete=false. DOCX paragraph lookup "
             "expands the containing stored section, not an exact layout boundary. "
             "For research synthesis in a long report, use mode=outline to locate relevant themes and studies; "
@@ -243,6 +246,7 @@ def tool_definitions(library: Mapping[str, Any]) -> list[dict[str, Any]]:
                                     key: {"type": "array", "maxItems": 20, "items": {"type": kind}}
                                     for key, kind in (
                                         ("sectionIds", "string"),
+                                        ("nodeIds", "string"),
                                         ("evidenceIds", "string"),
                                         ("pages", "integer"),
                                         ("slides", "integer"),

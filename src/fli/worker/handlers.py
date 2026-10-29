@@ -31,9 +31,11 @@ import hashlib
 import logging
 import time
 from collections.abc import Callable
+from contextvars import ContextVar
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from typing import Any
+from uuid import uuid4
 
 from fli.blobs import BlobStore
 from fli.checkpoints import digest, encoded, freeze, load
@@ -42,7 +44,7 @@ from fli.chunks import ChunkStore
 from fli.config import EMBEDDING_MODEL
 from fli.embedding import Embedder, measure_embeddings
 from fli.enums import ExtractionMethod
-from fli.extraction import Extracted, OcrClient, OcrError, extract, inspect_pdf
+from fli.extraction import Extracted, OcrClient, OcrError, Section, extract, inspect_pdf
 from fli.figures import LayoutReader, extract_pdf_figures
 from fli.generation import is_obsolete, latest_generation
 from fli.ids import (
@@ -56,6 +58,7 @@ from fli.ids import (
 )
 from fli.image_assets import store_assets
 from fli.images import IMAGE_TYPES, Visual, describe_cached, normalize_visuals, visual_candidates
+from fli.ingestion import IngestionProvider, job, result_plan, snapshot, validate_layout_extraction, validate_microsoft
 from fli.metrics import record as record_metric
 from fli.proposals import (
     OPENING_CHARS,
@@ -73,11 +76,13 @@ from fli.proposals import (
 )
 from fli.queue import Message, Queue
 from fli.store import Conflict, DocumentStore, LibraryStore, Record
+from fli.structural_enrichment import source_structure
 from fli.vocabulary import filter_values, searchable, tag_vocabulary
 
 log = logging.getLogger("fli.worker")
 
 MUTATE_ATTEMPTS = 5
+ATTEMPT: ContextVar[dict | None] = ContextVar("ingestion_attempt", default=None)
 
 
 class ImageWorkStopped(Exception):
@@ -172,6 +177,7 @@ class Worker:
     image_max_per_document: int = 50
     image_asset_max_per_document: int = 1000
     vision_concurrency: int = 2
+    microsoft: IngestionProvider | None = None
 
     async def handle(self, message: Message) -> None:
         kind = message.get("type")
@@ -182,12 +188,21 @@ class Worker:
             document_id, generation = message.get("documentId"), message.get("generation")
             if not isinstance(document_id, str) or not isinstance(generation, int) or generation < 1:
                 raise BadMessage("ingest needs documentId and a positive generation")
-            await self.ingest(library_id, document_id, generation, images=kind == "enrichImages")
+            await self.ingest(
+                library_id,
+                document_id,
+                generation,
+                images=kind == "enrichImages",
+                delivery_number=message.get("_deliveryNumber"),
+                enqueue_to_delivery_ms=message.get("_enqueueToDeliveryMs"),
+            )
         elif kind == "purgeDocument":
             document_id = message.get("documentId")
             if not isinstance(document_id, str) or not document_id:
                 raise BadMessage("purgeDocument needs documentId")
             await self.purge_document(library_id, document_id, deleted=message.get("deleted") is True)
+        elif kind == "reconcileLibrary":
+            await self.reconcile_library(library_id)
         elif kind == "purgeLibrary":
             await self.purge_library(library_id)
         elif kind == "retag":
@@ -202,7 +217,57 @@ class Worker:
 
     # -- ingest -------------------------------------------------------------------------------
 
-    async def ingest(self, library_id: str, document_id: str, generation: int, *, images: bool = False) -> None:
+    async def ingest(
+        self,
+        library_id: str,
+        document_id: str,
+        generation: int,
+        *,
+        images: bool = False,
+        delivery_number=None,
+        enqueue_to_delivery_ms=None,
+    ) -> None:
+        attempt_id = uuid4().hex
+        path = f"{library_id}/{document_id}/attempts/{generation}-{attempt_id}/"
+        attempt = {
+            "attemptId": attempt_id,
+            "generation": generation,
+            "startedAt": _now(),
+            "stage": "images" if images else "ingest",
+            "status": "started",
+            "deliveryNumber": delivery_number,
+            "enqueueToDeliveryMs": enqueue_to_delivery_ms,
+        }
+        await freeze(self.blobs, path + "start.json", attempt)
+        token = ATTEMPT.set(attempt)
+        try:
+            await self._ingest(library_id, document_id, generation, images=images)
+        except Exception as exc:
+            attempt.update(status="error", errorType=type(exc).__name__)
+            raise
+        else:
+            current = await self.documents.get(library_id, document_id)
+            attempt["status"] = (
+                "failed"
+                if current and current.get("status") == "failed"
+                else "published"
+                if current and current.get("activeGeneration") == generation
+                else "stopped"
+            )
+        finally:
+            attempt["finishedAt"] = _now()
+            ATTEMPT.reset(token)
+            await freeze(self.blobs, path + "finish.json", attempt)
+            record_metric(
+                "ingest_attempt",
+                library_id,
+                documentId=document_id,
+                generation=generation,
+                attemptId=attempt_id,
+                status=attempt["status"],
+            )
+
+    async def _ingest(self, library_id: str, document_id: str, generation: int, *, images: bool = False) -> None:
         library = await self.libraries.get(library_id)
         if library is None or library.get("status") == "deleting":
             # Uploaded as the library was being deleted: never index it.
@@ -210,6 +275,14 @@ class Worker:
             await self._purge_later(library_id, document_id)
             return
 
+        # Pair retries and late deliveries honor durable source-deletion receipts even
+        # after the ordinary document record has been purged.
+        initial = await self.documents.get(library_id, document_id)
+        if initial and initial.get("experimentId"):
+            receipt = await self.documents.get("experiment:" + initial["experimentId"], "upload:" + document_id)
+            if receipt and receipt.get("state") == "deleted":
+                await self._mark_deleting(library_id, document_id)
+                return
         seen: list[Record] = []
 
         def start(doc: Record) -> bool:
@@ -218,6 +291,11 @@ class Worker:
                 return False  # deleted, superseded, failed or already committed
             if doc.get("processingGeneration") != generation:
                 doc.update(processingGeneration=generation, processingStartedAt=_now())
+            source = doc.get("pendingFile") or doc
+            if not source.get("ingestionJob"):
+                source["ingestionJob"] = job(
+                    library_id, document_id, generation, source, snapshot(library), doc.get("metadataVersion", 0)
+                )
             doc.update(status="processing", updatedAt=_now())
             if images and doc.get("imageStatus") == "queued":
                 doc["imageStatus"] = "processing"
@@ -230,6 +308,23 @@ class Worker:
 
         # A replacement's file waits in pendingFile; a first upload's is the record's own (spec §4.2).
         source = document.get("pendingFile") or document
+        work = source["ingestionJob"]
+        if (work["libraryId"], work["documentId"], work["generation"], work["sourceSha256"], work["sourcePath"]) != (
+            library_id,
+            document_id,
+            generation,
+            source["sha256"],
+            source["blobPath"],
+        ):
+            raise ValueError("job scope/source mismatch")
+        if attempt := ATTEMPT.get():
+            attempt.update(
+                executionId=work["executionId"],
+                profileId=work["profile"]["id"],
+                sourceSha256=work["sourceSha256"],
+                unavailableCounters=["metadataRU", "cleanupRU", "hostingCost", "indexReadinessMs"],
+            )
+        recipe = work["profile"]
         stages = {
             "extractionMs": 0,
             "chunkingMs": 0,
@@ -242,6 +337,29 @@ class Worker:
         plan_path = f"{text_prefix(library_id, document_id)}{generation}/plan.json"
         plan = await load(self.blobs, plan_path)
         plan_hit = plan is not None
+        if recipe["provider"] == "microsoft-indexer":
+            if plan is None:
+                if self.microsoft is None:
+                    await self._fail(library_id, document_id, generation, "microsoft_provider_unconfigured")
+                    return
+                if not recipe["embedding"]["modelRevision"]:
+                    await self._fail(library_id, document_id, generation, "embedding_model_revision_unconfigured")
+                    return
+                data = await self.blobs.download(source["blobPath"])
+                output = await self.microsoft.prepare(work, data)
+                result = validate_microsoft(output, work, data, self.embedder.dimensions)
+                if attempt := ATTEMPT.get():
+                    attempt.update(
+                        providerResultUsage=result.usage,
+                        providerResultReused=output.get("resultReused"),
+                        providerAttemptUsage="unavailable",
+                    )
+                if len(result.pieces) > self.max_chunks_per_document:
+                    await self._fail(library_id, document_id, generation, "too_many_chunks")
+                    return
+                plan = await freeze(self.blobs, plan_path, result_plan(result, work, document, self.chunker.count))
+            await self._publish(library_id, document_id, generation, source, plan, {}, plan_hit=plan_hit)
+            return
         if plan is None:
             preparation_path = f"{text_prefix(library_id, document_id)}{generation}/preparation.json"
             preparation = await load(self.blobs, preparation_path)
@@ -301,6 +419,14 @@ class Worker:
         if not current or current.get("status") == "deleting" or current.get("pendingGeneration") != generation:
             await self._purge_later(library_id, document_id)
             return
+        if current.get("experimentId"):
+            control = await self.documents.get("experiment:" + current["experimentId"], "experiment")
+            library = await self.libraries.get(library_id)
+            member = (control or {}).get("members", {}).get((library or {}).get("comparisonMember"), {})
+            receipt = await self.documents.get("experiment:" + current["experimentId"], "upload:" + document_id)
+            if member.get("state") != "created" or (receipt or {}).get("state") == "deleted":
+                await self._mark_deleting(library_id, document_id)
+                return
         text_published = current.get("activeGeneration") == generation and current.get("contentRevision", 0) >= 1
         if partial and text_published:
             return
@@ -310,18 +436,41 @@ class Worker:
             or plan.get("sourceSha256") != source["sha256"]
         ):
             raise ValueError("ingestion plan does not match the requested generation")
+        if plan.get("job") and plan["job"] != source.get("ingestionJob"):
+            raise ValueError("frozen plan/job mismatch")
         pieces = [Chunk(**piece) for piece in plan["pieces"]]
         image_records = {int(index): value for index, value in plan["imageRecords"].items()}
         proposals = DocumentProposals(**plan["proposals"]) if plan["proposals"] is not None else None
         meta, accept = plan["meta"], plan["accept"]
-        if text_published:
+        # A metadata PATCH may race extraction on any provider. Copy current user fields;
+        # proposals only fill unset fields and are settled conditionally at commit.
+        if (
+            current.get("metadataVersion", 0)
+            != plan.get("job", {}).get("metadataVersion", current.get("metadataVersion", 0))
+            or text_published
+        ):
             meta = {**meta, **{name: current.get(name) for name in RETAG_FIELDS}}
         authored_at = plan["authoredAt"]
 
         new_pieces = [p for p in pieces if not (text_published and p.index < plan.get("textChunkCount", 0))]
         embedding_started = time.perf_counter()
         with measure_embeddings() as embedding_usage:
-            vectors = await self.embedder.embed([p.text for p in new_pieces]) if new_pieces else []
+            try:
+                vectors = (
+                    plan["vectors"]
+                    if "vectors" in plan
+                    else await self.embedder.embed([p.text for p in new_pieces])
+                    if new_pieces
+                    else []
+                )
+            finally:
+                if attempt := ATTEMPT.get():
+                    attempt["localEmbeddingUsage"] = {
+                        "tokens": embedding_usage.prompt_tokens if embedding_usage.tokens_reported else None,
+                        "requests": embedding_usage.requests,
+                        "retries": embedding_usage.retries,
+                        "throttles": embedding_usage.throttled,
+                    }
         embedding_ms = (time.perf_counter() - embedding_started) * 1000
         # authoredAt only ever comes from the file (spec §4.2), so each generation takes its own file's.
         created = _now()
@@ -371,7 +520,29 @@ class Worker:
             )
         # The worker-wide cap inside the chunk store decides how many of these run at once.
         writes_started = time.perf_counter()
-        write_charges = await asyncio.gather(*(self.chunks.upsert(r) for r in records))
+        attempt = ATTEMPT.get()
+        if attempt is not None:
+            attempt.update(chunkWriteChargeKnown=0, chunkWriteChargeComplete=True)
+
+        async def write(row):
+            try:
+                charge = await self.chunks.upsert(row)
+            except Exception:
+                if attempt is not None:
+                    attempt["chunkWriteChargeComplete"] = False
+                raise
+            if attempt is not None:
+                if charge is None:
+                    attempt["chunkWriteChargeComplete"] = False
+                else:
+                    attempt["chunkWriteChargeKnown"] += charge
+            return charge
+
+        # Wait for every writer before settling the attempt, including failed writes.
+        write_charges = await asyncio.gather(*(write(r) for r in records), return_exceptions=True)
+        for charge in write_charges:
+            if isinstance(charge, BaseException):
+                raise charge
         writes_ms = (time.perf_counter() - writes_started) * 1000
         chunk_tokens = [p.token_count for p in pieces]
         previous = current.get("processingMetrics") or {} if text_published else {}
@@ -394,10 +565,22 @@ class Worker:
             "embeddingModel": self.embedder.model,
             "embeddingDimensions": self.embedder.dimensions,
             "chunkWriteCharge": round(sum(write_charges), 2) if all(x is not None for x in write_charges) else None,
-            "chunkingVersion": self.chunker.version,
+            "chunkingVersion": plan["chunkingVersion"],
             "tokenizer": self.chunker.tokenizer.name,
+            "chunkingTokenizer": "cl100k_base" if "vectors" in plan else self.chunker.tokenizer.name,
+            "sourceTextTokensEstimate": self.chunker.count(
+                "".join(section["text"] for section in plan["sections"] if section.get("contentKind", "text") == "text")
+            ),
         }
 
+        if "vectors" in plan:
+            processing_metrics.update(plan.get("providerUsage") or {})
+            if plan_hit:
+                # Reusing a result incurs no new embedding call. Original provider usage is
+                # stored with the generation; do not count it again as attempt consumption.
+                processing_metrics["providerResultReused"] = True
+        processing_metrics["profileId"] = (plan.get("job") or {}).get("profile", {}).get("id", "current-v1")
+        processing_metrics["executionId"] = (plan.get("job") or {}).get("executionId")
         if text_published:
             for key in (
                 "embeddingMs",
@@ -431,6 +614,10 @@ class Worker:
             if hashlib.sha256(existing).hexdigest() != full_text["sha256"]:
                 raise ValueError("immutable extraction conflicts with the generation plan; reprocess")
 
+        if plan.get("structure"):
+            await freeze(
+                self.blobs, f"{text_prefix(library_id, document_id)}{generation}/structure.json", plan["structure"]
+            )
         image_assets = None
         if plan.get("sourceAssets") is not None:
             image_assets = await store_assets(
@@ -476,8 +663,29 @@ class Worker:
                         1,
                     ),
                 },
+                ingestionJob=plan.get("job") or doc.get("ingestionJob"),
+                processingCoverage=plan.get("coverage"),
+                providerTextSha256=hashlib.sha256(
+                    "".join(
+                        section["text"] for section in plan["sections"] if section.get("contentKind", "text") == "text"
+                    ).encode()
+                ).hexdigest(),
+                structure=(
+                    {
+                        "blobPath": f"{text_prefix(library_id, document_id)}{generation}/structure.json",
+                        "generation": generation,
+                        "sha256": digest(plan["structure"]),
+                    }
+                    if plan.get("structure")
+                    else None
+                ),
                 description=proposals.description if proposals is not None else None,
-                author=doc.get("author") or plan["author"],
+                author=(
+                    doc.get("author")
+                    if doc.get("metadataVersion", 0)
+                    != plan.get("job", {}).get("metadataVersion", doc.get("metadataVersion", 0))
+                    else doc.get("author") or plan["author"]
+                ),
                 authoredAt=authored_at,
                 extraction={**plan["extraction"], "chunkingVersion": plan["chunkingVersion"]},
                 updatedAt=_now(),
@@ -511,11 +719,33 @@ class Worker:
         stages: dict,
     ) -> dict | None:
         data = await self.blobs.download(source["blobPath"])
+        if hashlib.sha256(data).hexdigest() != source["sha256"]:
+            raise ValueError("original source digest mismatch")
+        recipe = source.get("ingestionJob", {}).get("profile") or snapshot(library)
+        structured = recipe["enrichment"]["adapter"] is not None
+        if structured and source.get("fileType") not in ("md", "docx"):
+            await self._fail(library_id, document_id, generation, "structured_format_unsupported")
+            return
         extraction_started = time.perf_counter()
         standalone = source["fileName"].rsplit(".", 1)[-1].lower() in IMAGE_TYPES
         is_pdf = source["fileName"].lower().endswith(".pdf")
+        controlled = recipe.get("extractionOnly", False)
+        shared_result = None
+        if controlled:
+            if self.microsoft is None:
+                await self._fail(library_id, document_id, generation, "microsoft_provider_unconfigured")
+                return
+            raw = await self.microsoft.prepare(source["ingestionJob"], data)
+            shared_result = validate_layout_extraction(raw, source["ingestionJob"], data)
+            await freeze(self.blobs, f"{text_prefix(library_id, document_id)}{generation}/shared-layout.json", raw)
         result = (
-            await asyncio.to_thread(inspect_pdf, data)
+            Extracted(
+                "ok",
+                sections=[Section(None, shared_result["content"], {})],
+                method=ExtractionMethod.DOCUMENT_INTELLIGENCE_LAYOUT,
+            )
+            if controlled
+            else await asyncio.to_thread(inspect_pdf, data)
             if is_pdf
             else Extracted("ok", method=ExtractionMethod.VISION_DESCRIPTION)
             if standalone
@@ -524,9 +754,9 @@ class Worker:
         if result.outcome != "ok":
             await self._fail(library_id, document_id, generation, status_detail(result))
             return
-        visuals, images_skipped = None, 0
+        visuals, images_skipped = ([] if controlled else None), 0
         asset_skipped_pages = {}
-        if is_pdf:
+        if is_pdf and not controlled:
             if self.layout is None:
                 await self._fail(library_id, document_id, generation, "layout_unavailable")
                 return
@@ -560,9 +790,32 @@ class Worker:
                 layoutBatchesReused=figures.batches_reused,
             )
         stages["extractionMs"] = (time.perf_counter() - extraction_started) * 1000
+        structure = None
+        selected_chunker = self.chunker
+        if controlled:
+            selected_chunker = Chunker(
+                self.chunker.tokenizer,
+                target=recipe["chunking"]["targetTokens"],
+                overlap=recipe["chunking"]["overlapTokens"],
+            )
+            selected_chunker.version += "+shared-layout-controlled-v1"
+        if structured:
+            try:
+                result.sections, structure = await asyncio.to_thread(
+                    source_structure, data, document_id, source["fileName"], source["fileType"]
+                )
+            except (ValueError, UnicodeDecodeError):
+                await self._fail(library_id, document_id, generation, "structured_source_invalid")
+                return
+            selected_chunker = Chunker(
+                self.chunker.tokenizer,
+                target=recipe["chunking"]["targetTokens"],
+                overlap=recipe["chunking"]["overlapTokens"],
+            )
+            selected_chunker.version += "+source-structure-v1"
         chunking_started = time.perf_counter()
-        kind = "email" if source.get("fileType") == "eml" else "document"
-        pieces = await asyncio.to_thread(self.chunker.chunk, result.sections, kind)  # CPU-bound tokenizing
+        kind = "email" if source.get("fileType") == "eml" and not controlled else "document"
+        pieces = await asyncio.to_thread(selected_chunker.chunk, result.sections, kind)  # CPU-bound tokenizing
         stages["chunkingMs"] = (time.perf_counter() - chunking_started) * 1000
         visual_started = time.perf_counter()
         if visuals is None:
@@ -608,7 +861,11 @@ class Worker:
                 }
             )
         # Proposals come before embedding, so accepted ones are written with the chunks (spec §7.2 step 6).
-        proposals = await self._propose_metadata(library, document_id, source["fileName"], pieces) if pieces else None
+        proposals = (
+            await self._propose_metadata(library, document_id, source["fileName"], pieces)
+            if pieces and not controlled
+            else None
+        )
         accept = library.get("autoAcceptTagProposals") is True
         meta = {name: document.get(name) for name in ("tags", "periodStart", "periodEnd")}
         meta["author"] = document.get("author") or result.author
@@ -622,6 +879,17 @@ class Worker:
         ]
         return {
             "version": 1,
+            "job": source.get("ingestionJob"),
+            "structure": structure,
+            "coverage": {
+                "authoredHierarchy": structure["adapter"]
+                if structured
+                else "unavailable"
+                if controlled
+                else "extraction-sections",
+                "visuals": "unavailable" if controlled else "bounded-native-and-layout",
+                "generatedSummaries": "unavailable",
+            },
             "generation": generation,
             "sourceSha256": source["sha256"],
             "pieces": [asdict(piece) for piece in pieces],
@@ -654,7 +922,7 @@ class Worker:
             "textChunkCount": len(pieces),
             "preparationMetrics": stages.copy(),
             "imagesSkipped": images_skipped,
-            "chunkingVersion": self.chunker.version,
+            "chunkingVersion": selected_chunker.version,
             "extraction": {
                 "method": str(result.method),
                 "ocrApplied": result.ocr_applied,
@@ -994,6 +1262,44 @@ class Worker:
             for path in await self.blobs.list_prefix(prefix):
                 if is_obsolete(blob_generation(path), document):
                     await self.blobs.delete(path)
+
+    async def reconcile_library(self, library_id: str) -> None:
+        """Reconcile late workflow artifacts after timeouts/deletion. Explicit trusted scope.
+
+        Queue this periodically for experiment member IDs, including deleted members.
+        It performs no cross-library chunk query and never republishes a failed job.
+        """
+        library = await self.libraries.get(library_id)
+        if library is None or library.get("status") == "deleting":
+            await self.purge_library(library_id)
+            return
+        documents = {doc["id"]: doc for doc in await self.documents.list(library_id, status=None, facet=None)}
+        paths = await self.blobs.list_prefix(f"{library_id}/")
+        observed = {path.split("/")[1] for path in paths if len(path.split("/")) > 2}
+        for document_id in observed | documents.keys():
+            doc = documents.get(document_id)
+            if doc is None or doc.get("status") == "deleting":
+                await self._purge_later(library_id, document_id)
+                continue
+            await self._purge_later(library_id, document_id)
+            generation = doc.get("pendingGeneration")
+            source = doc.get("pendingFile") or doc
+            work = source.get("ingestionJob") or {}
+            if generation and (
+                work.get("profile", {}).get("provider") == "microsoft-indexer"
+                or work.get("profile", {}).get("extractionOnly")
+            ):
+                result_path = f"{text_prefix(library_id, document_id)}{generation}/microsoft-result.json"
+                if result_path in paths:
+                    await self.queue.send(
+                        {
+                            "type": "ingest",
+                            "libraryId": library_id,
+                            "documentId": document_id,
+                            "generation": generation,
+                        },
+                        session_id=library_id,
+                    )
 
     async def purge_library(self, library_id: str) -> None:
         library = await self.libraries.get(library_id)

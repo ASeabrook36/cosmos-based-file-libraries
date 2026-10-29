@@ -779,3 +779,39 @@ What follows:
 - **The design rests on two preview features, not one** (N5). Sharded DiskANN is what makes a library its own vector index. A GA alternative that keeps one container exists only by dropping the shard key, which E2 found much more expensive.
 - **float16 is supported** (N10 corrected). The risk recorded in E17 is operational, not one of support status.
 - The performance-tips page recommends `quantizedFlat`, not sharded DiskANN, for tenants of up to about 50,000 vectors, and sharded DiskANN with the shard key set to the partition key above that. Most libraries here will be small. Whether a library-sharded DiskANN index serves small libraries as cheaply as Phase 0's `QuantizedFlat` reading suggests, at many libraries, is a Phase 4 measurement (`build-plan.md`).
+
+
+## E59: Modular ingestion local vertical slice (2026-10-29) · Local validation
+
+The [assessment](consults/2026-10-29-modular-ingestion-assessment.md) is now followed
+by the [local implementation](modular-ingestion.md). No existing query, float16,
+permission, vector-policy or authentication invariant was relaxed. The normal
+conditional generation publisher is reused instead of the lab's metadata-reset
+publisher. Tests exercise complete source reads, job/source/vector binding,
+metadata retention, profile snapshots, retry/partial-pair recovery, personal-library
+isolation, late deletion/replacement, cleanup reconciliation and independent replay.
+
+Three profiles and a paired creation action extend the existing demo. The custom
+complete-strategy slice is Markdown ATX and DOCX main-body headings only. Controlled pairs reuse the same
+Microsoft extractor/version/settings and 500/50 limits with enrichment disabled;
+Python boundary/embedding orchestration differs from the Microsoft workflow. The
+5,000/200 complete Microsoft recipe remains explicit. Generated summaries, full
+visual parity and broader structural formats are not implemented by this slice.
+
+The offline workflow transformation uses the same pinned template/hash as the
+prior experiment, with shared trusted scope, extraction-only controls and immutable
+result staging instead of direct Cosmos writes. New Bicep compiles locally. This
+is evidence for code contracts, not Azure runtime/authentication, cost, retrieval
+quality, index readiness, model routing or scale. No live resources, tokens or
+ongoing scaling measurements were inspected or modified. See the runbook for
+unrun cloud gates and measurement exclusions.
+
+
+Final local checks: **737 full-suite tests passed** on Python 3.14; **41 focused
+modular tests passed** after the final bridge query-parameter change. The latter
+includes the new noncredential `api-version`/SAS-refusal regression. Fourteen
+existing TestClient deprecation warnings remain. Ruff lint/format, diff and
+reference-privacy checks passed. Both new Bicep files compiled. The exact pinned
+Microsoft source hash and generated Standard ZIP contents were verified offline.
+The worker image and Streamlit UI were not run interactively; no live Azure/model
+or distributed consistency result is claimed.

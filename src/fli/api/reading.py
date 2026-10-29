@@ -44,6 +44,7 @@ class DiscoverBody(BaseModel):
 
 
 class Selection(DocumentScope):
+    nodeIds: list[Value] = Field(default_factory=list, max_length=100)
     sectionIds: list[Value] = Field(default_factory=list, max_length=100)
     evidenceIds: list[Value] = Field(default_factory=list, max_length=20)
     pages: list[Annotated[StrictInt, Field(ge=1, le=2000)]] = Field(default_factory=list, max_length=20)
@@ -65,8 +66,10 @@ class ReadBody(BaseModel):
         if len({s.documentId for s in self.documents}) != len(self.documents):
             raise ValueError("documents must have distinct documentIds")
         for selection in self.documents:
+            if selection.nodeIds and (selection.generation is None or selection.contentRevision is None):
+                raise ValueError("nodeIds require generation and contentRevision from an outline")
             has_scope = any(
-                getattr(selection, k) for k in ("sectionIds", "evidenceIds", "pages", "slides", "paragraphs")
+                getattr(selection, k) for k in ("sectionIds", "nodeIds", "evidenceIds", "pages", "slides", "paragraphs")
             )
             if has_scope != (self.mode == "selected"):
                 raise ValueError("source selectors are required only in selected mode")

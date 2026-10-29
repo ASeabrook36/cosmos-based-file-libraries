@@ -15,8 +15,11 @@ from pathlib import Path
 from typing import Any
 
 log = logging.getLogger("fli.metrics")
-OPERATIONS = {"search", "read", "discover", "images", "ingest", "error"}
+OPERATIONS = {"search", "read", "discover", "images", "ingest", "ingest_attempt", "error"}
 FIELDS = {
+    "attemptId",
+    "executionId",
+    "profileId",
     "mode",
     "resultUnit",
     "documentScoped",

@@ -57,10 +57,14 @@ class Settings:
     servicebus_queue: str = "ingest"
     aoai_endpoint: str | None = None
     aoai_embedding_deployment: str | None = None
+    aoai_embedding_model_revision: str | None = None
     aoai_embedding_dimensions: int = 3072
     aoai_vision_deployment: str | None = None
     aoai_chat_deployment: str | None = None
     docintel_endpoint: str | None = None
+    ingestion_code_revision: str | None = None
+    microsoft_workflow_endpoint: str | None = None
+    microsoft_workflow_audience: str | None = None
     ocr_max_pages: int = 200
     pdf_layout_max_pages: int = 2000
     pdf_layout_batch_pages: int = 20
@@ -110,10 +114,14 @@ class Settings:
             servicebus_queue=env.get("SERVICEBUS_QUEUE") or "ingest",
             aoai_endpoint=env.get("AOAI_ENDPOINT") or None,
             aoai_embedding_deployment=env.get("AOAI_EMBEDDING_DEPLOYMENT") or None,
+            aoai_embedding_model_revision=env.get("AOAI_EMBEDDING_MODEL_REVISION") or None,
             aoai_embedding_dimensions=_int(env, "AOAI_EMBEDDING_DIMENSIONS", 3072),
             aoai_vision_deployment=env.get("AOAI_VISION_DEPLOYMENT") or None,
             aoai_chat_deployment=env.get("AOAI_CHAT_DEPLOYMENT") or None,
             docintel_endpoint=env.get("DOCINTEL_ENDPOINT") or None,
+            ingestion_code_revision=env.get("FLI_CODE_REVISION") or None,
+            microsoft_workflow_endpoint=env.get("MICROSOFT_WORKFLOW_ENDPOINT") or None,
+            microsoft_workflow_audience=env.get("MICROSOFT_WORKFLOW_AUDIENCE") or None,
             ocr_max_pages=_int(env, "OCR_MAX_PAGES", 200),
             pdf_layout_max_pages=_int(env, "PDF_LAYOUT_MAX_PAGES", 2000),
             pdf_layout_batch_pages=_int(env, "PDF_LAYOUT_BATCH_PAGES", 20),
@@ -143,6 +151,8 @@ class Settings:
         if self.aoai_embedding_dimensions != 3072:
             # cosmos/chunks.container.json fixes the vector dimension at creation (E16).
             raise ConfigError("AOAI_EMBEDDING_DIMENSIONS must equal the chunks vector policy (3072)")
+        if bool(self.microsoft_workflow_endpoint) != bool(self.microsoft_workflow_audience):
+            raise ConfigError("MICROSOFT_WORKFLOW_ENDPOINT and MICROSOFT_WORKFLOW_AUDIENCE must be set together")
         if self.ingest_max_chunks_per_document < 1:
             raise ConfigError("INGEST_MAX_CHUNKS_PER_DOCUMENT must be at least 1")
         if not 1 <= self.pdf_layout_batch_pages <= self.pdf_layout_max_pages <= 2000:

@@ -324,6 +324,7 @@ class Searcher:
                 "evidenceId": reference(documents[c["documentId"]], "chunk", c["chunkIndex"]),
                 "sourceScope": c.get("location") or {},
                 "documentTokens": (documents[c["documentId"]].get("fullText") or {}).get("tokenCount"),
+                "processingCoverage": documents[c["documentId"]].get("processingCoverage"),
                 "representation": "extracted_sections"
                 if (documents[c["documentId"]].get("fullText") or {}).get("generation") == c["generation"]
                 else "indexed_chunks",

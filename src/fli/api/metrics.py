@@ -8,6 +8,8 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends, Header, Request
 
 from fli.auth import require_caller
+from fli.checkpoints import load
+from fli.ingestion import snapshot
 from fli.metrics import read_events, summarize
 from fli.permissions import check_search_allowed
 
@@ -26,6 +28,10 @@ async def library_metrics(
     rows = []
     for doc in docs:
         measured = doc.get("processingMetrics") or {}
+        attempt_paths = await request.app.state.blobs.list_prefix(f"{library_id}/{doc['id']}/attempts/")
+        # Bound the protected runtime dashboard. A start without finish is an interrupted/unknown attempt.
+        selected = sorted(attempt_paths)[-200:]
+        attempts = [await load(request.app.state.blobs, path) for path in selected]
         rows.append(
             {
                 "documentId": doc["id"],
@@ -36,6 +42,13 @@ async def library_metrics(
                 "extractedTextTokens": (doc.get("fullText") or {}).get("tokenCount"),
                 "chunkingVersion": (doc.get("extraction") or {}).get("chunkingVersion"),
                 "processingMetrics": measured or None,
+                "ingestionProfile": (doc.get("ingestionJob") or {}).get("profile"),
+                "sourceId": doc.get("sourceId"),
+                "sha256": doc.get("sha256"),
+                "coverage": doc.get("processingCoverage"),
+                "attemptEvents": attempts,
+                "attemptsBounded": len(attempt_paths) > 200,
+                "unavailableCounters": ["metadataRU", "cleanupRU", "hostingCost", "indexReadinessMs"],
             }
         )
     try:
@@ -46,6 +59,8 @@ async def library_metrics(
     check_search_allowed(library_id, latest, x_agent_id)
     return {
         "library": {"libraryId": library_id, "name": library["name"]},
+        "ingestionProfile": snapshot(library),
+        "experimentId": library.get("experimentId"),
         "inventory": {
             "documents": len(docs),
             "activeDocuments": len(active),

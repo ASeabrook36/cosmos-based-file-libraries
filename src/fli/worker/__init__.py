@@ -44,12 +44,18 @@ def attempt_number(delivery_count: int | None) -> int:
     return (delivery_count or 0) + 1
 
 
-async def settle(worker: Worker, body: bytes, delivery_count: int | None) -> Settlement:
+async def settle(worker: Worker, body: bytes, delivery_count: int | None, *, enqueue_to_delivery_ms=None) -> Settlement:
     try:
         message = json.loads(body)
         if not isinstance(message, dict):
             raise BadMessage("message body is not a JSON object")
-        await worker.handle(message)
+        await worker.handle(
+            {
+                **message,
+                "_deliveryNumber": attempt_number(delivery_count),
+                "_enqueueToDeliveryMs": enqueue_to_delivery_ms,
+            }
+        )
         return Settlement("complete")
     except (BadMessage, json.JSONDecodeError, UnicodeDecodeError) as exc:
         log.error("bad message dead-lettered", extra={"reason": type(exc).__name__})
@@ -215,6 +221,16 @@ async def run(settings: Settings, stopping: asyncio.Event) -> None:
             vision_concurrency=settings.vision_concurrency,
         )
 
+        if settings.microsoft_workflow_endpoint:
+            from fli.microsoft import MicrosoftWorkflow
+
+            worker.microsoft = MicrosoftWorkflow(
+                settings.microsoft_workflow_endpoint,
+                CachedToken(credential, settings.microsoft_workflow_audience.rstrip("/") + "/.default"),
+                http,
+                worker.blobs,
+            )
+
         async def take_session() -> bool:
             try:
                 receiver = bus.get_queue_receiver(
@@ -232,7 +248,13 @@ async def run(settings: Settings, stopping: asyncio.Event) -> None:
                             "message received",
                             extra={"libraryId": library_id, "deliveryCount": message.delivery_count},
                         )
-                        outcome = await settle(worker, b"".join(message.body), message.delivery_count)
+                        from datetime import UTC, datetime
+
+                        enqueued = message.enqueued_time_utc
+                        elapsed = (datetime.now(UTC) - enqueued).total_seconds() * 1000 if enqueued else None
+                        outcome = await settle(
+                            worker, b"".join(message.body), message.delivery_count, enqueue_to_delivery_ms=elapsed
+                        )
                         log.info("message settled", extra={"libraryId": library_id, "action": outcome.action})
                         if outcome.action == "complete":
                             await receiver.complete_message(message)

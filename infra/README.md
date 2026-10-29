@@ -58,3 +58,16 @@ The canary prints each check and writes `records/canary-<UTC timestamp>.json`. *
 - Index not engaged: DiskANN builds asynchronously, so the canary polls one search for up to `--index-wait-minutes` (default 20) before searching. The record's `indexWait.polls` show each poll's charge and retrieved count, with and without the partition-key prefix, plus Cosmos's index-utilization report. If it never engages, recreate the account and rerun (`docs/evidence.md` E17).
 - Low recall: recreate the account and rerun. If it fails again, fall back to the product quantizer and float32 (`docs/build-plan.md` Phase 0, "If it fails"). That needs a new container.
 - An interrupted run leaves its test library behind. The canary prints the command that removes it: `python scripts/canary.py --cleanup <libraryId>`.
+
+
+## Modular worker and shared Indexer preparation
+
+`modular-worker.bicep` prepares a warm managed-identity worker in an explicitly
+selected Container Apps environment; `worker.Dockerfile` is its build recipe.
+`shared-workflow-auth.bicep` configures the dedicated Standard workflow host's
+Entra audience and worker-only principal/client authorization. These opt-in files
+do not alter `main.bicep`, current demo resources or scale labs. The offline shared
+workflow/package builder retains Microsoft processing and stages results for the
+normal controller. See [the integration runbook](../docs/modular-ingestion.md) for
+private bindings, required roles, reconciliation scheduling and untested runtime
+checks. Hosted FastAPI Entra support remains Phase 5.

@@ -1,6 +1,6 @@
 # Specification: File Library Index
 
-*Version 0.19, 2026-10-27. Compact REST evidence/attachments (§6.8) implemented and locally validated. Working name. Phases 0–3 passed on live Azure (`build-plan.md`). Adaptive document retrieval (§6.6) is implemented and its live smoke check passed; human answer-quality and broader routing evaluation remain pending. Images (Phase 3B, including PDF vector charts) are implemented; see `image-retrieval.md` for validation and limitations. Phases 4–5 remain to build. Every measured design choice is traced in `evidence.md`.*
+*Version 0.20, 2026-10-29. Modular ingestion local slice (§7.9; E59), with cloud runtime validation pending. Version 0.19, 2026-10-27. Compact REST evidence/attachments (§6.8) implemented and locally validated. Working name. Phases 0–3 passed on live Azure (`build-plan.md`). Adaptive document retrieval (§6.6) is implemented and its live smoke check passed; human answer-quality and broader routing evaluation remain pending. Images (Phase 3B, including PDF vector charts) are implemented; see `image-retrieval.md` for validation and limitations. Phases 4–5 remain to build. Every measured design choice is traced in `evidence.md`.*
 
 ## 1. Scope
 
@@ -198,7 +198,7 @@ Base path `/v1`. JSON throughout except uploads. Errors: `{"error": {"code": "..
 
 | Method and path | Body / query | Result |
 |---|---|---|
-| `POST /v1/libraries` | `{kind, boundAgentId?, name, description}` | `201` library |
+| `POST /v1/libraries` | `{kind, boundAgentId?, name, description, ingestionProfile?}` | `201` library |
 | `GET /v1/libraries` | `?kind=shared\|personal&status=active` | List (for the platform's attach screen) |
 | `GET /v1/libraries/{libraryId}` | | Library, including `descriptionProposal`, `tagVocabulary`, `stats` |
 | `PATCH /v1/libraries/{libraryId}` | `{name?, description?, autoAcceptTagProposals?}` | Library |
@@ -487,6 +487,55 @@ Cosmos throttles with HTTP 429 when a partition's throughput is exceeded. The SD
 - **Replacement (`PUT …/content`):** `generation + 1`, the new original under that generation's own path, `ingest` (§6.2). The old generation stays searchable until the new one commits. Then `purgeDocument` deletes its chunks and its original; blob soft delete keeps the original recoverable for 7 days, like any deleted blob. Only the active generation's original is kept for rebuilds (E16).
 - **Library delete:** set `status: deleting` (search refused immediately, §5), then `purgeLibrary`.
 - **Retention:** a delete removes a document from the library and from search at once. Blob soft delete and Cosmos continuous backup keep deleted data recoverable by an operator for 7 days; after that it is gone.
+
+### 7.9 Versioned modular ingestion (local slice)
+
+Libraries choose immutable `current-v1` (default), `custom-structured-v1` or
+`microsoft-indexer-layout-v1`. Profiles record provider separately from optional
+structural enrichment, plus extraction, chunking, embedding/model revision,
+workflow/code versions and capability limitations. `ingestionJob` snapshots the
+recipe/source/metadata version per generation, including `pendingFile` for a
+replacement. Legacy libraries default to current processing. PATCH cannot change
+profiles; new settings require an explicit staged reprocessing design.
+
+`POST /v1/experiments` creates a resumable ordinary custom/Microsoft library pair
+using a client-retained experiment UUID. `GET /v1/experiments/{id}` reports both
+member statuses. Multipart `POST /v1/experiments/{id}/sources/{sourceId}` binds one
+retained source UUID to identical bytes/metadata on each side, rejects conflicting
+reuse and reports recoverable partial uploads without duplicate documents. Point-read
+control records in `documents` use `experiment:<UUID>` partitions; they contain
+IDs/digests/fingerprints rather than user metadata or text. Tombstones prevent
+creation/upload retries resurrecting deleted pair members or documents.
+
+The complete-strategy custom slice supports Markdown ATX and DOCX Heading-style ancestry and exact extracted source
+blocks; other formats fail explicitly. Selected reads accept `nodeIds` with an
+outline's generation/contentRevision, expanding complete source subtrees under the
+existing budget/visibility/permission checks. Summaries and summary search remain
+unavailable. The Microsoft recipe uses a shared request-driven workflow with
+5,000/200 token windows, retaining complete provider text and raw layout. Its
+validated finite vectors are published without re-embedding; row scope/metadata
+come from the controller. Figures, native Office visuals and authored hierarchy
+are unavailable and disclosed. Current processing retains 500/50 section/sentence
+chunking and the existing image path.
+
+Controlled `chunk-boundaries` pairs share pinned Microsoft layout extraction,
+500/50 limits and embedding settings, disabling hierarchy/proposals/visuals. The
+Python side requests extraction only and runs its own chunker/embedding client.
+Boundary algorithms and operational runtimes still differ; interpretations must
+state those boundaries. Complete-strategy results concern the whole composition.
+
+All providers reuse conditional publication, immutable generation artifacts,
+metadata updates, retag, inventory refresh and purge. Blob attempt receipts extend
+existing metrics with failures, delivery/broker timing and known usage/RU;
+unknown provider counters and allocated hosting charges remain unavailable.
+Trusted `reconcileLibrary` messages clean late workflow artifacts and resume
+pending complete results. They must be scheduled for cloud comparisons, including
+deleted scopes while remote runs may finish. They never republish failed jobs.
+
+Worker Container Apps and workflow Entra configuration are prepared offline. No
+hosted API authentication or live runtime validation is implied. See
+[modular ingestion](modular-ingestion.md) for contracts, comparison semantics,
+configuration, cleanup scheduling and exact cloud gates.
 
 ## 8. Search execution
 

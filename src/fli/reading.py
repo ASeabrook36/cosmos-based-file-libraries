@@ -13,6 +13,7 @@ import logging
 import time
 
 from fli.blobs import BlobStore
+from fli.checkpoints import digest, load
 from fli.chunking import default_tokenizer
 from fli.errors import ApiError
 from fli.evidence import reference, resolve_reference
@@ -54,6 +55,7 @@ CATALOG_FIELDS = (
     "imageStatus",
     "imagePendingCount",
     "contentRevision",
+    "processingCoverage",
 )
 
 
@@ -110,8 +112,10 @@ def manifest(doc: Record) -> Record:
         "sourceImagesSkipped": doc.get("sourceImagesSkipped", 0),
         "imageStatus": doc.get("imageStatus", "ready" if doc.get("imageCount") else "none"),
         "imagePendingCount": doc.get("imagePendingCount", 0),
+        "processingCoverage": doc.get("processingCoverage"),
         "visualsComplete": (
-            doc.get("imageStatus") not in ("queued", "processing", "failed")
+            (doc.get("processingCoverage") or {}).get("visuals") != "unavailable"
+            and doc.get("imageStatus") not in ("queued", "processing", "failed")
             and doc.get("sourceImageCount", 0) <= doc.get("imageCount", 0)
             and not doc.get("sourceImagesSkipped", 0)
             and not doc.get("imagesSkipped", 0)
@@ -123,9 +127,13 @@ def manifest(doc: Record) -> Record:
 def region_matches(section, location, sections):
     """DOCX extraction stores section starts, not exact paragraph spans."""
     here = section.get("location") or {}
+    if "charStart" in location and "charEnd" in location and "charStart" in here and "charEnd" in here:
+        return here["charStart"] < location["charEnd"] and location["charStart"] < here["charEnd"]
     for key in ("page", "slide", "paragraph"):
         if key not in location or key not in here:
             continue
+        if key == "paragraph" and here.get("paragraphEnd") is not None:
+            return here[key] <= location[key] <= here["paragraphEnd"]
         if key == "paragraph" and section.get("contentKind", "text") == "text":
             end = min(
                 (
@@ -140,8 +148,21 @@ def region_matches(section, location, sections):
     return False
 
 
-async def select_sections(searcher, library_id, doc, sections, scope, cost, assets=None):
+async def select_sections(searcher, library_id, doc, sections, scope, cost, assets=None, structure=None):
     selected = set()
+    if scope.get("nodeIds"):
+        if not structure:
+            raise ApiError(409, "source_scope_unavailable", "authored hierarchy unavailable for this generation")
+        nodes = {node["id"]: node for node in structure["nodes"]}
+        chosen = set(scope["nodeIds"])
+        if not chosen <= nodes.keys():
+            raise ApiError(409, "source_scope_unavailable", "source node unavailable")
+        for node in structure["nodes"]:
+            if node["parentId"] in chosen:
+                chosen.add(node["id"])
+        selected.update(
+            i for i, section in enumerate(sections) if (section.get("location") or {}).get("nodeId") in chosen
+        )
     for value in scope.get("sectionIds", []):
         i = resolve_reference(doc, value, "section")
         if i >= len(sections):
@@ -168,7 +189,8 @@ async def select_sections(searcher, library_id, doc, sections, scope, cost, asse
                     raise ApiError(409, "evidence_changed", "source passage no longer exists")
                 locations.append(by_index[index].get("location") or {})
     known_paragraphs = [
-        s.get("location", {}).get("paragraph", 0) for s in sections + ((assets or {}).get("assets") or [])
+        s.get("location", {}).get("paragraphEnd", s.get("location", {}).get("paragraph", 0))
+        for s in sections + ((assets or {}).get("assets") or [])
     ]
     for location in locations:
         if location.get("paragraph", 0) > max(known_paragraphs, default=0):
@@ -353,7 +375,18 @@ async def read_documents(
                     409, "document_images_unavailable", "stored image assets unavailable; reprocess"
                 ) from exc
         if mode == "selected":
-            sections = await select_sections(searcher, library_id, doc, sections, selected_scope, cost, assets)
+            structure = None
+            if selected_scope.get("nodeIds") and doc.get("structure"):
+                descriptor = doc["structure"]
+                try:
+                    structure = await load(blobs, descriptor["blobPath"])
+                except Exception as exc:
+                    raise ApiError(409, "document_text_unavailable", "source hierarchy artifact unavailable") from exc
+                if descriptor.get("generation") != generation or digest(structure) != descriptor.get("sha256"):
+                    raise ApiError(409, "document_text_incomplete", "source hierarchy artifact incomplete")
+            sections = await select_sections(
+                searcher, library_id, doc, sections, selected_scope, cost, assets, structure
+            )
         elif mode == "outline":
             sections = sections[after_section : after_section + section_limit]
         if representation == "indexed_chunks":

@@ -1,6 +1,10 @@
+import hashlib
+from uuid import UUID, uuid4, uuid5
+
 import streamlit as st
 from common import client, guard
 
+from fli.ingestion import PROFILE_IDS, profile
 from fli_demo.proposals import accept_all, proposals_of, review_request, summary
 
 st.title("Admin: shared libraries")
@@ -17,16 +21,46 @@ with st.expander("Create a shared library"):
     with st.form("create"):
         name = st.text_input("Name")
         description = st.text_area("Description (this is what the agent's model reads to choose the tool)")
+        choice = st.selectbox("Processing", [*PROFILE_IDS, "Compare custom and Microsoft"])
+        comparison = st.selectbox("Pair comparison", ["complete-strategy", "controlled-component"])
+        st.caption(
+            "Current/custom: 500/50 tokens, section/sentence boundaries. Microsoft: 5,000/200 token windows. "
+            "Controlled pairs share Microsoft layout extraction, use 500/50, and disable hierarchy/visuals; "
+            "boundaries differ. "
+            "Custom structure currently supports Markdown ATX and DOCX Heading styles; summaries are unavailable."
+        )
         if st.form_submit_button("Create") and name:
-            if guard(api.create_library, "shared", name, description):
+            if choice == "Compare custom and Microsoft":
+                experiment_id = st.session_state.setdefault("pair-creation-id", str(uuid4()))
+                result = guard(api.create_pair, experiment_id, name, description, comparison)
+                if result:
+                    st.session_state["pair-creation-result"] = result
+                    if all(m["state"] == "created" for m in result["members"].values()):
+                        st.session_state.pop("pair-creation-id", None)
+                    st.rerun()
+            elif guard(api.create_library, "shared", name, description, ingestion_profile=choice):
                 st.rerun()
+    if st.session_state.get("pair-creation-result"):
+        st.json(st.session_state["pair-creation-result"])
+        st.caption("Partial creation retains these IDs. Retry Create with the same settings to resume.")
 
 libraries = guard(api.list_libraries, "shared") or []
 if not libraries:
     st.info("No shared libraries yet.")
 for lib in libraries:
     stats = lib.get("stats") or {}
-    with st.expander(f"{lib['name']}  ·  {stats.get('documentCount', 0)} documents"):
+    with st.expander(f"{lib['name']} · {lib.get('comparisonMember', '')} · {stats.get('documentCount', 0)} documents"):
+        recipe = lib.get("ingestionProfile") or profile()
+        st.caption(
+            f"{recipe['id']} · {recipe['chunking']['targetTokens']}/{recipe['chunking']['overlapTokens']} tokens "
+            f"· {recipe['chunking']['algorithm']}"
+        )
+        for limitation in recipe["limitations"]:
+            st.caption(limitation)
+        if lib.get("experimentId"):
+            st.caption("Matched pair: uploads here feed identical bytes to both libraries.")
+            if st.button("Pair progress", key=f"pair-{lib['id']}"):
+                st.json(guard(api.get_experiment, lib["experimentId"]))
         new_description = st.text_area("Description", lib.get("description", ""), key=f"d-{lib['id']}")
         if st.button("Save description", key=f"s-{lib['id']}") and guard(
             api.update_description, lib["id"], new_description
@@ -64,8 +98,15 @@ for lib in libraries:
         files = st.file_uploader("Upload files", accept_multiple_files=True, key=f"u-{lib['id']}")
         if files and st.button(f"Upload {len(files)} file(s)", key=f"b-{lib['id']}"):
             for f in files:
-                guard(api.upload, lib["id"], f.name, f.getvalue(), f.type)
+                if lib.get("experimentId"):
+                    source_id = str(uuid5(UUID(lib["experimentId"]), f.name + hashlib.sha256(f.getvalue()).hexdigest()))
+                    result = guard(api.upload_pair, lib["experimentId"], source_id, f.name, f.getvalue(), f.type)
+                    st.session_state["pair-upload-result"] = result
+                else:
+                    guard(api.upload, lib["id"], f.name, f.getvalue(), f.type)
             st.rerun()
+        if lib.get("experimentId") and st.session_state.get("pair-upload-result"):
+            st.json(st.session_state["pair-upload-result"])
         st.button("Refresh status", key=f"r-{lib['id']}")
         documents = guard(api.list_documents, lib["id"]) or []
         counts: dict[str, int] = {}

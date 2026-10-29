@@ -307,3 +307,14 @@ Subsequent human-run paired and casual tests exposed remaining agent-integration
 Natural-test follow-ups implement the [agent evidence contract](docs/agent-retrieval.md): explicit file finding versus passage evidence, scoped searches, bounded source expansion, cross-format image inspection and reference-adapter progress/follow-up handling. Refresh API/adapter/tool definitions; compatible existing source artifacts need no re-ingestion.
 
 When deploying Python changes to the API or demo adapter, restart the affected API and Streamlit processes. A browser reload or Streamlit **Rerun** can leave imported Python modules and cached clients from an older version in memory. After tool/signature changes, restart both processes together. The library contents and agent registry persist; in-memory chat history resets on a Streamlit process restart. See E51 in [the evidence record](docs/evidence.md).
+
+
+## Modular ingestion profiles
+
+The existing Admin demo now offers current processing, a Markdown/DOCX structural
+vertical slice, adapted Microsoft Document Indexer and matched custom/Microsoft
+pair creation. Complete strategies and controlled shared-extraction/500-token
+boundary comparisons are explicit. This is locally tested integration with offline
+hosting preparation; cloud workflow/authentication and broader structure/visual
+parity remain pending. See [modular ingestion](docs/modular-ingestion.md) for API,
+recovery, measurements, replay, configuration and exact cloud gates.

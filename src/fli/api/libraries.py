@@ -13,6 +13,7 @@ from fli.auth import require_caller
 from fli.config import EMBEDDING_MODEL
 from fli.errors import ApiError, library_not_found
 from fli.ids import new_id
+from fli.ingestion import ProfileId, profile
 from fli.permissions import check_immutable
 from fli.queue import Queue
 from fli.store import Conflict, LibraryStore, Record, public
@@ -29,6 +30,7 @@ REPLACE_ATTEMPTS = 3
 class LibraryCreate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
+    ingestionProfile: ProfileId = "current-v1"
     kind: Literal["shared", "personal"]
     boundAgentId: str | None = Field(default=None, min_length=1, max_length=200)
     name: str = Field(min_length=1, max_length=200)
@@ -72,9 +74,12 @@ async def load(store: LibraryStore, library_id: str) -> Record:
 
 @router.post("", status_code=201)
 async def create_library(body: LibraryCreate, request: Request, store: Libraries) -> Record:
-    library_id = new_id()
-    settings = request.app.state.settings
+    return public(await store.create(library_record(body, request.app.state.settings, new_id())))
+
+
+def library_record(body: LibraryCreate, settings, library_id: str) -> Record:
     record: Record = {
+        "ingestionProfile": profile(body.ingestionProfile),
         "id": library_id,
         "libraryId": library_id,
         "kind": body.kind,
@@ -92,9 +97,11 @@ async def create_library(body: LibraryCreate, request: Request, store: Libraries
         "createdBy": body.createdBy,
         "updatedAt": now(),
     }
+    record["ingestionProfile"]["codeRevision"] = settings.ingestion_code_revision
+    record["ingestionProfile"]["embedding"]["modelRevision"] = settings.aoai_embedding_model_revision
     if body.kind == "personal":
         record["boundAgentId"] = body.boundAgentId
-    return public(await store.create(record))
+    return record
 
 
 @router.get("")
@@ -147,6 +154,9 @@ async def delete_library(library_id: str, request: Request, store: Libraries) ->
             raise library_not_found(library_id)
         if record.get("status") == "deleting":
             break
+        from fli.api.experiments import mark_member_deleted
+
+        await mark_member_deleted(request, record)
         record.update(status="deleting", updatedAt=now())
         try:
             await store.replace(record)
