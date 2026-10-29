@@ -3,6 +3,8 @@
 import streamlit as st
 from common import client, guard
 
+from fli.ingestion import chunking_description
+
 st.title("Library performance")
 st.caption("Inventory, ingestion and retrieval measurements for Azure architects and AI developers.")
 api = client()
@@ -13,7 +15,15 @@ if not libraries:
 library = st.selectbox(
     "Library",
     libraries,
-    format_func=lambda lib: lib["name"] + (f" · {lib['comparisonMember']}" if lib.get("comparisonMember") else ""),
+    format_func=lambda lib: (
+        lib["name"]
+        + (
+            f" · {lib['comparisonMember']} · {lib['ingestionProfile']['extraction']}"
+            f" · {chunking_description(lib['ingestionProfile'])}"
+            if lib.get("comparisonMember")
+            else ""
+        )
+    ),
 )
 st.button("Refresh measurements")
 data = guard(api.library_metrics, library["id"], "prototype-performance-viewer")
@@ -23,10 +33,14 @@ st.json(data["ingestionProfile"])
 if data.get("experimentId"):
     st.json(guard(api.get_experiment, data["experimentId"]))
 st.caption(
-    "Complete-strategy comparisons vary the full pipeline. Controlled 500/50 pairs share layout extraction "
+    "Complete-strategy comparisons vary the full pipeline. "
+    "Controlled 500-token, zero-overlap pairs share layout extraction "
     "and model settings; "
     "chunk boundaries differ, with hierarchy and visuals disabled. Hosting/orchestration still differ. "
     "Missing counters are unavailable, not zero."
+)
+st.caption(
+    "Chunk and extracted-text token counts are tokenizer estimates; embedding input tokens are provider-reported."
 )
 inv, summary, history = data["inventory"], data["summary"], data["history"]
 inventory_tab, retrieval_tab = st.tabs(["Documents, chunks & embeddings", "Retrieval history"])
@@ -74,10 +88,12 @@ with inventory_tab:
     measured = [d["processingMetrics"] for d in data["documents"] if d["processingMetrics"]]
     if measured:
         cols = [*st.columns(2), *st.columns(2)]
-        tokens = [m.get("embeddingTokens") for m in measured]
-        cols[0].metric("Known embedding input tokens", f"{sum(t for t in tokens if t is not None):,}")
-        cols[1].metric("Known chunk-write RU", f"{sum(m.get('chunkWriteCharge') or 0 for m in measured):.2f}")
-        cols[2].metric("Embedding retries", sum(m.get("embeddingRetries") or 0 for m in measured))
+        tokens = [m["embeddingTokens"] for m in measured if m.get("embeddingTokens") is not None]
+        charges = [m["chunkWriteCharge"] for m in measured if m.get("chunkWriteCharge") is not None]
+        retries = [m["embeddingRetries"] for m in measured if m.get("embeddingRetries") is not None]
+        cols[0].metric("Known embedding input tokens", f"{sum(tokens):,}" if tokens else "Unavailable")
+        cols[1].metric("Known chunk-write RU", f"{sum(charges):.2f}" if charges else "Unavailable")
+        cols[2].metric("Known embedding retries", sum(retries) if retries else "Unavailable")
         st.caption("Known totals cover measured current generations only; blank values mean unavailable, not zero.")
     else:
         st.info(

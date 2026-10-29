@@ -14,7 +14,7 @@ one demo and one retrieval/publication contract.
 |---|---|
 | `current-v1` | Existing formats, native/layout extraction, 500/50 section/sentence chunking, existing bounded image enrichment. Legacy libraries default here. |
 | `custom-structured-v1` | First complete-strategy slice: UTF-8 Markdown ATX and DOCX Heading-style hierarchy, exact extracted source blocks, source subtree reads and 500/50 section/sentence chunks. Other formats fail as `structured_format_unsupported`. DOCX covers main-body paragraphs/tables with explicit Heading 1–9 styles; headers, footnotes, text boxes and revision interpretation are outside this adapter. No generated summaries or summary-vector search. |
-| `microsoft-indexer-layout-v1` | Shared adapted Indexer layout workflow, 5,000/200 token windows, Microsoft embeddings accepted by the common publisher. Full provider text is one canonical section; no authored chapter inference, copied figure crops or native Office visuals. Requires the workflow configuration and an explicit embedding model revision. |
+| `microsoft-indexer-layout-v1` | Shared adapted Indexer layout workflow, 5,000-token windows / 200 characters overlap, Microsoft embeddings accepted by the common publisher. Full provider text is one canonical section; no authored chapter inference, copied figure crops or native Office visuals. Requires the workflow configuration and an explicit embedding model revision. |
 | Compare custom and Microsoft | Two normal shared libraries and a resumable experiment control record; identical original bytes and initial metadata, independent status/failure. |
 
 Profiles separately record provider, extraction, chunking, optional structural
@@ -34,7 +34,7 @@ The local Microsoft tests use synthetic provider responses; they do not establis
 cloud acceptance of Markdown or any format beyond the documented/live-tested path.
 
 The controlled-component pair sets both sides to the same pinned
-`prebuilt-layout` extraction and model settings, 500/50 token limits, no hierarchy,
+`prebuilt-layout` extraction and model settings, 500-token targets with zero overlap, no hierarchy,
 no proposals and no visuals. Custom processing asks the shared workflow for
 **extraction only**, then chunks/embeds in Python. Microsoft processing uses the
 workflow's token chunker and embeddings. This supports comparing source passage
@@ -265,3 +265,15 @@ summary discovery. Distributed dashboards, operator intervention accounting,
 remote per-attempt usage/cancellation and full visual parity remain open.
 
 The Streamlit pages were updated in code; interactive browser QA remains unrun.
+
+## Cloud review correction: overlap units
+
+Live output exposed a unit error in the initial recipe: Microsoft
+[`PageOverlapLength`](https://learn.microsoft.com/en-us/azure/logic-apps/parse-document-chunk-text)
+is characters, whereas the Python overlap limit is tokens. Recipe revision 2 and
+`shared-indexer-v2` record `overlapCharacters` separately. Complete Microsoft
+processing retains 5,000 tokens / 200 characters. New controlled pairs use
+500-token targets and zero overlap on both sides. Existing recipes stay immutable;
+the UI corrects legacy labels and replay rejects the old controlled recipes.
+Retokenized Microsoft output can exceed its nominal target slightly; actual
+distributions are recorded rather than asserting an exact token ceiling.

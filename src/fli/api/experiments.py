@@ -98,7 +98,9 @@ async def create_pair(body: PairCreate, request: Request):
             "extraction": "prebuilt-layout both; same pinned workflow and DI API"
             if body.component
             else "native Markdown/DOCX versus prebuilt-layout; not aligned",
-            "chunking": "500/50 both" if body.component else "custom 500/50; Microsoft 5000/200",
+            "chunking": "500 tokens, zero overlap both"
+            if body.component
+            else "custom 500 tokens / up to 50 tokens overlap; Microsoft 5000 tokens / 200 characters overlap",
             "attribution": "section/sentence versus token-window boundaries; hierarchy, proposals and visuals disabled"
             if body.component
             else "end-to-end strategies; multiple stages differ",

@@ -1,5 +1,6 @@
 // Dedicated validation hosting; deploy only into the isolated validation group.
 param location string = resourceGroup().location
+param environmentLocation string = location
 param registryName string
 param environmentName string
 param workerIdentityName string
@@ -24,7 +25,7 @@ resource pull 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
 }
 resource environment 'Microsoft.App/managedEnvironments@2024-03-01' = {
   name: environmentName
-  location: location
+  location: environmentLocation
   properties: {
     workloadProfiles: [{ name: 'Consumption', workloadProfileType: 'Consumption' }]
   }

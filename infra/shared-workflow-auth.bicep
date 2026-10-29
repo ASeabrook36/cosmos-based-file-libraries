@@ -14,7 +14,10 @@ resource auth 'Microsoft.Web/sites/config@2022-09-01' = {
   properties: {
     platform: { enabled: true }
     httpSettings: { requireHttps: true }
-    globalValidation: { requireAuthentication: true, unauthenticatedClientAction: 'Return401' }
+    // Standard Logic Apps consumes EasyAuth's result and enforces the trigger policy.
+    // Return401 prevents ARM runtime-management requests from reaching that validator.
+    // Deploy only with disableTriggerSasAuth=true on the dedicated host, then test denial.
+    globalValidation: { requireAuthentication: true, unauthenticatedClientAction: 'AllowAnonymous' }
     identityProviders: {
       azureActiveDirectory: {
         enabled: true

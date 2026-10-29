@@ -142,6 +142,18 @@ def replay_pair(
     if sources(snapshots["custom"]) != sources(snapshots["microsoft"]):
         raise ValueError("source bytes or metadata differ between pair members")
     if manifest.get("comparison") == "controlled-component":
+        # PageOverlapLength is characters, not tokens. Earlier recipes mislabeled it.
+        recipes = [lib.get("ingestionProfile", {}) for lib in tool_context]
+        if any(
+            recipe.get("chunking", {}).get("targetTokens") != 500
+            or recipe.get("chunking", {}).get("overlapTokens") != 0
+            or (
+                recipe.get("provider") == "microsoft-indexer"
+                and recipe.get("chunking", {}).get("overlapCharacters") != 0
+            )
+            for recipe in recipes
+        ):
+            raise ValueError("controlled comparisons require 500-token targets and explicit zero overlap")
         provider_texts = [
             {d["sourceId"]: d.get("providerTextSha256") for d in snapshots[key]} for key in ("custom", "microsoft")
         ]

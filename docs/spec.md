@@ -516,16 +516,19 @@ blocks; other formats fail explicitly. Selected reads accept `nodeIds` with an
 outline's generation/contentRevision, expanding complete source subtrees under the
 existing budget/visibility/permission checks. Summaries and summary search remain
 unavailable. The Microsoft recipe uses a shared request-driven workflow with
-5,000/200 token windows, retaining complete provider text and raw layout. Its
+5,000-token windows with 200 characters of overlap, retaining complete provider text and raw layout. Its
 validated finite vectors are published without re-embedding; row scope/metadata
 come from the controller. Figures, native Office visuals and authored hierarchy
 are unavailable and disclosed. Current processing retains 500/50 section/sentence
 chunking and the existing image path.
 
 Controlled `chunk-boundaries` pairs share pinned Microsoft layout extraction,
-500/50 limits and embedding settings, disabling hierarchy/proposals/visuals. The
+500-token targets with zero overlap and matching embedding settings, disabling hierarchy/proposals/visuals. The
 Python side requests extraction only and runs its own chunker/embedding client.
-Boundary algorithms and operational runtimes still differ; interpretations must
+Recipe revision 2 corrects the Microsoft overlap unit: `PageOverlapLength` is characters,
+not tokens. Immutable revision-1 records retain their original fields; their overlap
+labels are corrected for display and controlled replay refuses them. The shared
+workflow is version 2. Boundary algorithms and operational runtimes still differ; interpretations must
 state those boundaries. Complete-strategy results concern the whole composition.
 
 All providers reuse conditional publication, immutable generation artifacts,

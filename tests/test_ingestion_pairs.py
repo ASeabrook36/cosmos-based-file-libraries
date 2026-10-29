@@ -122,7 +122,7 @@ def test_controlled_comparison_records_chunk_settings_and_remaining_confounds():
     client, _ = api()
     result, _ = create(client, comparison="controlled-component")
     recipes = [m["ingestionProfile"] for m in result["members"].values()]
-    assert all(p["chunking"]["targetTokens"] == 500 and p["chunking"]["overlapTokens"] == 50 for p in recipes)
+    assert all(p["chunking"]["targetTokens"] == 500 and p["chunking"]["overlapTokens"] == 0 for p in recipes)
     assert recipes[0]["chunking"]["algorithm"] != recipes[1]["chunking"]["algorithm"]
     assert all(p["extraction"] == "prebuilt-layout" for p in recipes)
     assert all(p["enrichment"]["adapter"] is None for p in recipes)

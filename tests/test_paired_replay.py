@@ -112,3 +112,34 @@ def test_existing_replay_resets_context_between_cases_but_preserves_questions_wi
         tmp_path,
     )
     assert len(histories[0]) == 0 and len(histories[1]) == 2 and len(histories[2]) == 0
+
+
+def test_controlled_replay_rejects_legacy_mislabeled_overlap(tmp_path):
+    from fli.ingestion import profile
+
+    index = Index()
+    index.get_experiment = lambda _: {
+        "comparison": "controlled-component",
+        "members": {key: {"libraryId": key} for key in index.rows},
+    }
+    recipes = {
+        key: profile(f"{key}-structured-v1" if key == "custom" else "microsoft-indexer-layout-v1", controlled=True)
+        for key in index.rows
+    }
+    recipes["microsoft"]["chunking"].pop("overlapCharacters")
+    index.get_library = lambda key: {"name": "Matched", "ingestionProfile": recipes[key]}
+    with pytest.raises(ValueError, match="explicit zero overlap"):
+        evaluation.replay_pair(index, object, {}, "exp", [], tmp_path, index_ready=True, run_controls=CONTROLS)
+
+
+def test_overlap_labels_preserve_legacy_recipe_but_correct_its_units():
+    from fli.ingestion import chunking_description, profile
+
+    recipe = profile("microsoft-indexer-layout-v1")
+    assert recipe["version"] == 2
+    assert recipe["chunking"]["overlapTokens"] is None
+    assert "200 characters" in chunking_description(recipe)
+    recipe["chunking"].pop("overlapCharacters")
+    recipe["chunking"]["overlapTokens"] = 200
+    assert "200 characters" in chunking_description(recipe)
+    assert "legacy" in chunking_description(recipe)

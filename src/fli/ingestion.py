@@ -28,7 +28,7 @@ def profile(profile_id: str = "current-v1", *, controlled: bool = False) -> dict
     structured = profile_id == "custom-structured-v1"
     return {
         "id": profile_id,
-        "version": 1,
+        "version": 2 if microsoft or controlled else 1,
         "codeRevision": None,
         "provider": "microsoft-indexer" if microsoft else "python",
         "extraction": "prebuilt-layout" if microsoft or controlled else "native-and-layout",
@@ -36,7 +36,8 @@ def profile(profile_id: str = "current-v1", *, controlled: bool = False) -> dict
         "chunking": {
             "algorithm": "token-window" if microsoft else "section-sentence",
             "targetTokens": 500 if controlled or not microsoft else 5000,
-            "overlapTokens": 50 if controlled or not microsoft else 200,
+            "overlapTokens": 0 if controlled else None if microsoft else 50,
+            "overlapCharacters": (0 if controlled else 200) if microsoft else None,
             "emailSingleChunkMax": 700 if not microsoft and not structured and not controlled else None,
         },
         "enrichment": {
@@ -44,7 +45,7 @@ def profile(profile_id: str = "current-v1", *, controlled: bool = False) -> dict
             "generatedSummaries": False,
         },
         "embedding": {"model": EMBEDDING_MODEL, "dimensions": 3072, "modelRevision": None},
-        "workflowVersion": "shared-indexer-v1" if microsoft or controlled else None,
+        "workflowVersion": "shared-indexer-v2" if microsoft or controlled else None,
         "capabilities": {
             "passages": True,
             "completeProviderText": True,
@@ -220,3 +221,16 @@ def validate_layout_extraction(output: dict, work: dict, source: bytes) -> dict:
     ):
         raise ValueError("complete layout extraction/source required")
     return analysis
+
+
+def chunking_description(recipe: dict) -> str:
+    """Display real units, including immutable recipes created before the unit fix."""
+    chunking = recipe["chunking"]
+    microsoft = recipe["provider"] == "microsoft-indexer"
+    if microsoft:
+        overlap = chunking.get("overlapCharacters", chunking.get("overlapTokens"))
+        unit = "characters"
+        correction = " (legacy field mislabeled tokens)" if "overlapCharacters" not in chunking else ""
+    else:
+        overlap, unit, correction = chunking.get("overlapTokens"), "tokens", ""
+    return f"{chunking['targetTokens']} tokens / {overlap} {unit} overlap{correction}"

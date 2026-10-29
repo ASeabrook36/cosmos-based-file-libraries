@@ -36,10 +36,11 @@ def test_one_shared_workflow_uses_trusted_dynamic_scope_and_no_cosmos_or_blob_tr
     actions = result["actions"]
     assert "For_each" not in actions
     assert actions["Accepted"]["inputs"]["statusCode"] == 202
+    assert actions["Accepted"]["runtimeConfiguration"]["secureData"]["properties"] == ["inputs"]
     assert actions["Read_blob_content"]["inputs"]["parameters"]["blobName"] == "@triggerBody()?['job']?['sourcePath']"
     processing = actions["Produce_representation"]["else"]["actions"]
     assert processing["Chunk_text"]["inputs"]["TokenSize"].endswith("['targetTokens']")
-    assert processing["Chunk_text"]["inputs"]["PageOverlapLength"].endswith("['overlapTokens']")
+    assert processing["Chunk_text"]["inputs"]["PageOverlapLength"].endswith("['overlapCharacters']")
     assert processing["Chunk_text"]["inputs"]["chunkingStrategy"] == "TokenSize"
     projection = processing["Select_embeddings_and_map_to_CosmosDB"]["inputs"]["select"]
     assert projection["embedding"] == "@body('Get_multiple_embeddings')['embeddings'][item()]"

@@ -23,7 +23,7 @@ from scripts.indexer_workflow_lab import (
 )
 from scripts.microsoft_reuse_lab import private_directory
 
-VERSION = "shared-indexer-v1"
+VERSION = "shared-indexer-v2"
 NAME = "shared"
 
 
@@ -142,7 +142,7 @@ def definition(template: dict) -> dict:
         if key.lower() == "tokensize":
             chunk[key] = "@triggerBody()?['job']?['profile']?['chunking']?['targetTokens']"
         elif key.lower() in {"pageoverlaplength"}:
-            chunk[key] = "@triggerBody()?['job']?['profile']?['chunking']?['overlapTokens']"
+            chunk[key] = "@triggerBody()?['job']?['profile']?['chunking']?['overlapCharacters']"
     value.setdefault("parameters", {}).update(
         {
             "EmbeddingModel": {"type": "String", "defaultValue": "text-embedding-3-large"},
@@ -152,7 +152,7 @@ def definition(template: dict) -> dict:
     )
     value.setdefault("parameters", {})["SourceContainer"] = {"type": "String", "defaultValue": "files"}
     # Controlled component runs share the identical extractor/model/version, but the
-    # Python side requests extraction only and applies its own 500/50 chunk boundaries.
+    # Python side requests extraction only and applies its own 500-token, zero-overlap chunk boundaries.
     extraction = {**result, "schema": "fli.indexer-extraction.v1", "rows": [], "embedding": None}
     extraction_save = json.loads(json.dumps(actions["Save_result"]))
     extraction_save["inputs"]["parameters"]["content"] = "@string(outputs('Compose_extraction_result'))"

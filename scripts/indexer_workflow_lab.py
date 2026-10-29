@@ -24,8 +24,9 @@ def secure_actions(actions: dict) -> None:
     for action in actions.values():
         # Control actions reject secureData; redact the data-bearing child actions.
         if action["type"].lower() not in {"foreach", "if", "scope", "switch", "until", "terminate"}:
-            # Compose implicitly secures its output when inputs are secured; explicit outputs is rejected.
-            properties = ["inputs"] if action["type"].lower() == "compose" else ["inputs", "outputs"]
+            # Compose implicitly hides outputs. Response has no securable outputs.
+            # Azure rejects explicit secure outputs on either action type.
+            properties = ["inputs"] if action["type"].lower() in {"compose", "response"} else ["inputs", "outputs"]
             action.setdefault("runtimeConfiguration", {})["secureData"] = {"properties": properties}
         if "actions" in action:
             secure_actions(action["actions"])

@@ -4,7 +4,7 @@ from uuid import UUID, uuid4, uuid5
 import streamlit as st
 from common import client, guard
 
-from fli.ingestion import PROFILE_IDS, profile
+from fli.ingestion import PROFILE_IDS, chunking_description, profile
 from fli_demo.proposals import accept_all, proposals_of, review_request, summary
 
 st.title("Admin: shared libraries")
@@ -24,8 +24,10 @@ with st.expander("Create a shared library"):
         choice = st.selectbox("Processing", [*PROFILE_IDS, "Compare custom and Microsoft"])
         comparison = st.selectbox("Pair comparison", ["complete-strategy", "controlled-component"])
         st.caption(
-            "Current/custom: 500/50 tokens, section/sentence boundaries. Microsoft: 5,000/200 token windows. "
-            "Controlled pairs share Microsoft layout extraction, use 500/50, and disable hierarchy/visuals; "
+            "Current/custom: 500/50 tokens, section/sentence boundaries. "
+            "Microsoft: 5,000 tokens / 200 characters overlap. "
+            "Controlled pairs share Microsoft layout extraction, use 500 tokens with zero overlap, "
+            "and disable hierarchy/visuals; "
             "boundaries differ. "
             "Custom structure currently supports Markdown ATX and DOCX Heading styles; summaries are unavailable."
         )
@@ -51,10 +53,7 @@ for lib in libraries:
     stats = lib.get("stats") or {}
     with st.expander(f"{lib['name']} · {lib.get('comparisonMember', '')} · {stats.get('documentCount', 0)} documents"):
         recipe = lib.get("ingestionProfile") or profile()
-        st.caption(
-            f"{recipe['id']} · {recipe['chunking']['targetTokens']}/{recipe['chunking']['overlapTokens']} tokens "
-            f"· {recipe['chunking']['algorithm']}"
-        )
+        st.caption(f"{recipe['id']} · {chunking_description(recipe)} · {recipe['chunking']['algorithm']}")
         for limitation in recipe["limitations"]:
             st.caption(limitation)
         if lib.get("experimentId"):
