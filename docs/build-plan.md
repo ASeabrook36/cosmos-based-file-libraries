@@ -192,6 +192,8 @@ Images were moved out of Phase 3 on 2026-10-23 so that metadata and lifecycle co
 
 ## Phase 4: Scale proof and routing telemetry
 
+**Status, 2026-10-29: the library-count measurement passed** (`evidence.md` E59; `records/scale-probe-20261029.json`). Ten probe libraries of 1,000–5,000 vectors graded scoped at 413 and 1,013 libraries on one physical partition, and a new library's index engaged at once (N12). It ran as `scripts/scale_probe.py` against a disposable database (`infra/scale-lab.bicep`), with real public abstracts rather than the demo corpus. Still to do: large libraries and the DiskANN switch (N11), hybrid cost as the container grows, several physical partitions, the cross-partition library list, and routing telemetry.
+
 **Build**
 
 - `scripts/scale_demo.py`:

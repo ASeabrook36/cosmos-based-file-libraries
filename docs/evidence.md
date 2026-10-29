@@ -486,8 +486,8 @@ These are the honest limits of the evidence. Phase 0 and Phase 4 of `build-plan.
 - **N8. ~~float16 write cost was not measured separately.~~ Measured in Phase 0:** about 144 RU per chunk, not the 91 measured on float32 builds (E10).
 - **N9. Proposal quality is untested.** Nothing measures how good AI-proposed descriptions and tags are; the review-and-accept step exists for that reason.
 - **N10. ~~float16 is not in Microsoft's documented data types.~~ Corrected 2026-10-28: float16 is generally available (E58).** Azure Updates announced float16 for vector indexes as generally available in November 2025, and the vector-search page (updated 2026-09-29) and `VectorDistance` reference (updated 2026-04-15) list it. This entry said that in October 2026 the vector-indexing documentation listed only `float32`, `int8` and `uint8`. No current page matches that, and the vector-search page listed float16 before this entry was written, so it was most likely out of date when written (Inference). The open float16 risk is operational, not support status: two accounts in the source project stopped serving float16 (E17), with no Microsoft explanation, and the subnormal null-score behaviour (E8) is undocumented. The fallback is still float32 in a new container (E16).
-- **N11. The DiskANN graph has not been observed in use.** At 1,500 vectors, Cosmos used the vector index in its `QuantizedFlat` mode (E12). The library size at which it walks the DiskANN graph, and that graph's cost and recall on this configuration, are unmeasured. `build-plan.md` Phase 4's large libraries should report the index type Cosmos used.
-- **N12. Index lag for a new library in a populated container is unmeasured.** E25 measured a new container. A personal library created in a container that already holds a million chunks may engage faster or slower.
+- **N11. The DiskANN graph has not been observed in use.** At 1,500 vectors, Cosmos used the vector index in its `QuantizedFlat` mode (E12), and it still did at 5,000 (E59). The library size at which it walks the DiskANN graph, and that graph's cost and recall on this configuration, are unmeasured. `build-plan.md` Phase 4's large libraries should report the index type Cosmos used.
+- **N12. ~~Index lag for a new library in a populated container is unmeasured.~~ Measured 2026-10-29 (E59):** a 1,500-passage library added to a container of about 177,000 passages was served through its index at the first poll after writing. At a million chunks it is still unmeasured.
 - **N13. Visibility across Cosmos clients is unproven.** The API and the worker hold separate Cosmos clients, and under Session consistency a client reads another's writes with Eventual consistency (E28). Within one API process, a search sees that process's own deletes. A delete handled by one API instance and a search on another, or a search after the API restarts, may briefly return the deleted document. A commit by the worker may be seen late, which is a miss, not a leak. Test it before running more than one API instance (`build-plan.md` Phase 5).
 - **N14. ~~Proposal quality and cost are unmeasured.~~ Partly measured (E32).** Authors and periods were accurate on a 36-file sample, and the chat cost per document is recorded. The model did not reliably reuse the library's vocabulary. Whether descriptions steer agents well is still untested; the Phase 4 routing report and the Phase 5 evaluation set should show it.
 
@@ -779,3 +779,38 @@ What follows:
 - **The design rests on two preview features, not one** (N5). Sharded DiskANN is what makes a library its own vector index. A GA alternative that keeps one container exists only by dropping the shard key, which E2 found much more expensive.
 - **float16 is supported** (N10 corrected). The risk recorded in E17 is operational, not one of support status.
 - The performance-tips page recommends `quantizedFlat`, not sharded DiskANN, for tenants of up to about 50,000 vectors, and sharded DiskANN with the shard key set to the partition key above that. Most libraries here will be small. Whether a library-sharded DiskANN index serves small libraries as cheaply as Phase 0's `QuantizedFlat` reading suggests, at many libraries, is a Phase 4 measurement (`build-plan.md`).
+
+## E59: Small-library searches stay scoped from 10 to 1,013 libraries (2026-10-29) · Measured
+
+The first Phase 4 measurement (`build-plan.md`, "`QuantizedFlat` scoping at many libraries"; `capacity/untested-at-scale.md` §6). Record: [`records/scale-probe-20261029.json`](../records/scale-probe-20261029.json). Script: `scripts/scale_probe.py`.
+
+**Setup.** A disposable database on the serverless demo account, holding the three `cosmos/*.json` containers unchanged (`infra/scale-lab.bicep`), on which the canary passed first. Passages were public DBpedia-entity abstracts with publisher-supplied `text-embedding-3-large` 3,072-dimension vectors, one abstract per passage. Library membership was assigned with a fixed seed, so libraries are not topically coherent. Ten probe libraries of 1,000–5,000 vectors each had 20 questions, each a sentence from one of the library's own passages, embedded fresh. Each search used the API's own query (`render_search`, routed by `partition_key_for` to the library's partition-key prefix) and was run three times per stage, plus once with brute force forced for recall. Only `chunks` was written.
+
+| Stage | Libraries | Passages in the container |
+|---|---:|---:|
+| 1: probes alone | 10 | 25,000 |
+| 2: plus 400 libraries of 50–500 and three of 10,000–20,000 | 413 | 176,599 |
+| 3: plus 600 libraries of 30–200 | 1,013 (1,014 with the lag test's) | 243,273 (244,773) |
+
+**Results.**
+
+| Probe size (vectors) | RU per search, stage 1 → 2 → 3 | Documents read | Recall@10 | Brute-force RU |
+|---:|---|---:|---:|---:|
+| 1,000 | 12.3 → 12.4 → 12.4 | 50 | 0.995–1.0 | about 71 |
+| 2,000 | 17.8 → 17.9 → 17.9 | 50 | 1.0 | about 138 |
+| 3,000 | 23.5 → 23.5 → 23.5 | 50 | 1.0 | about 205 |
+| 5,000 | 34.5 → 34.8 → 34.8 | 50 | 0.995 | about 340 |
+
+(All ten in the record.) Every probe graded **scoped** at stages 2 and 3 by the criteria set before the run: median RU and documents read within 20% (in fact within 1%), Cosmos's index report naming `QuantizedFlat` sharded on `/libraryId`, and recall@10 at or above 0.95. Server latency stayed in 110–170 ms. Run-to-run RU varied by under 0.1 RU.
+
+**The control.** The same question without the library filter (deliberately breaking invariant 2, in the disposable database only) read every passage: 1,204 RU at 25,000, 8,496 RU at 176,599 and 11,777 RU at 244,773. That measures E5's "priced by the whole container" on this configuration.
+
+**New-library index lag (N12).** A 1,500-passage library written after stage 2 (57 seconds) was served through its index at the first poll. A new container took about 6 minutes (E25).
+
+**What follows.**
+
+- For small libraries on one physical partition, **a search's cost tracks the size of the library searched, not the number of libraries or the container's total content**, measured to 1,013 libraries and about 245,000 passages, five times AI Search's 200-index cap on S2 and S3. This replaces the inference in E3 for this range.
+- Within `QuantizedFlat`, cost grows with the library's own size, about 5.5 RU per extra 1,000 vectors, as a scan of compressed vectors should. The source project's 5,450 RU scope-independent `QuantizedFlat` search (E57) did not occur here; that configuration had no shard key.
+- `QuantizedFlat` served every probe up to 5,000 vectors. The DiskANN graph was still not observed (N11).
+
+**Not shown.** More than one physical partition (N4); libraries beyond 5,000 vectors at these container sizes; hybrid search (`capacity/untested-at-scale.md` §5); concurrent load and throughput ceilings; tens of thousands of libraries; workplace documents or retrieval quality beyond recall against brute force. The final index wait polled a library of about 200 vectors, which Cosmos reads whole, so it timed out after 30 minutes; the probes were measured after it and the settle period.

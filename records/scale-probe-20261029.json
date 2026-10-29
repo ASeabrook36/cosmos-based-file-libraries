@@ -1,0 +1,862 @@
+{
+  "kind": "phase-4-scale-probe",
+  "evidence": "docs/evidence.md E59",
+  "createdAt": "2026-10-29T17:37:00.644036Z",
+  "client": {
+    "azureCosmos": "4.17.1"
+  },
+  "account": "serverless demo account, disposable database with the cosmos/*.json containers",
+  "corpus": "public DBpedia-entity abstracts with publisher-supplied text-embedding-3-large 3,072-d vectors; one abstract per passage; library membership assigned with a fixed seed",
+  "method": {
+    "seed": 20261029,
+    "questionsPerLibrary": 20,
+    "questionSource": "a sentence from a passage of the same library, embedded fresh",
+    "runs": 3,
+    "k": 10,
+    "tolerance": 0.2,
+    "recallFloor": 0.95,
+    "query": "render_search + scored_variant, routed by partition_key_for (library prefix)",
+    "exact": "VectorDistance(..., true, ...), once per question per stage"
+  },
+  "probeSizes": {
+    "scale-p01": 1000,
+    "scale-p02": 1000,
+    "scale-p03": 1500,
+    "scale-p04": 1500,
+    "scale-p05": 2000,
+    "scale-p06": 2500,
+    "scale-p07": 3000,
+    "scale-p08": 3500,
+    "scale-p09": 4000,
+    "scale-p10": 5000
+  },
+  "container": {
+    "1": {
+      "libraries": 10,
+      "passages": 25000
+    },
+    "2": {
+      "libraries": 413,
+      "passages": 176599
+    },
+    "3": {
+      "libraries": 1013,
+      "passages": 243273
+    }
+  },
+  "loads": {
+    "1": {
+      "written": 25000,
+      "ru": 2297534.7000000034,
+      "throttled": 0,
+      "seconds": 893.2873188770609
+    },
+    "2": {
+      "written": 151599,
+      "ru": 13929438.35000001,
+      "throttled": 0,
+      "seconds": 5349.931325075566
+    },
+    "3": {
+      "written": 66674,
+      "ru": 6124944.480000005,
+      "throttled": 0,
+      "seconds": 2458.894215053413
+    },
+    "4": null
+  },
+  "indexWaits": {
+    "1": {
+      "engaged": true,
+      "secondsToEngage": 1,
+      "waitMinutes": 30,
+      "retrievedLimit": 1000.0
+    },
+    "2": {
+      "engaged": true,
+      "secondsToEngage": 2,
+      "waitMinutes": 30,
+      "retrievedLimit": 4000.0
+    },
+    "3": {
+      "engaged": false,
+      "secondsToEngage": null,
+      "waitMinutes": 30,
+      "retrievedLimit": 40.0
+    }
+  },
+  "stages": {
+    "1": {
+      "scale-p01": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 12.33,
+        "ruRunMedians": [
+          12.33,
+          12.33,
+          12.33
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 118.3,
+        "exactRuMedian": 70.62,
+        "recallAt10Mean": 1.0,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      },
+      "scale-p02": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 12.42,
+        "ruRunMedians": [
+          12.42,
+          12.42,
+          12.42
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 120.15,
+        "exactRuMedian": 70.82,
+        "recallAt10Mean": 0.995,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      },
+      "scale-p03": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 15.11,
+        "ruRunMedians": [
+          15.11,
+          15.11,
+          15.11
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 140.55,
+        "exactRuMedian": 104.33,
+        "recallAt10Mean": 0.995,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      },
+      "scale-p04": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 14.81,
+        "ruRunMedians": [
+          14.76,
+          14.81,
+          14.8
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 141.2,
+        "exactRuMedian": 104.35,
+        "recallAt10Mean": 0.995,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      },
+      "scale-p05": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 17.8,
+        "ruRunMedians": [
+          17.8,
+          17.8,
+          17.8
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 135.4,
+        "exactRuMedian": 137.95,
+        "recallAt10Mean": 1.0,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      },
+      "scale-p06": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 20.68,
+        "ruRunMedians": [
+          20.68,
+          20.68,
+          20.68
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 138.0,
+        "exactRuMedian": 171.66,
+        "recallAt10Mean": 0.995,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      },
+      "scale-p07": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 23.46,
+        "ruRunMedians": [
+          23.46,
+          23.46,
+          23.46
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 151.15,
+        "exactRuMedian": 205.27,
+        "recallAt10Mean": 1.0,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      },
+      "scale-p08": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 26.25,
+        "ruRunMedians": [
+          26.25,
+          26.25,
+          26.24
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 158.3,
+        "exactRuMedian": 238.97,
+        "recallAt10Mean": 0.995,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      },
+      "scale-p09": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 28.84,
+        "ruRunMedians": [
+          28.84,
+          28.84,
+          28.84
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 162.8,
+        "exactRuMedian": 272.51,
+        "recallAt10Mean": 0.995,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      },
+      "scale-p10": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 34.51,
+        "ruRunMedians": [
+          34.51,
+          34.51,
+          34.42
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 169.2,
+        "exactRuMedian": 339.86,
+        "recallAt10Mean": 0.995,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      }
+    },
+    "2": {
+      "scale-p01": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 12.42,
+        "ruRunMedians": [
+          12.42,
+          12.42,
+          12.42
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 133.95,
+        "exactRuMedian": 70.72,
+        "recallAt10Mean": 1.0,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      },
+      "scale-p02": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 12.52,
+        "ruRunMedians": [
+          12.52,
+          12.52,
+          12.52
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 139.6,
+        "exactRuMedian": 70.82,
+        "recallAt10Mean": 0.995,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      },
+      "scale-p03": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 15.11,
+        "ruRunMedians": [
+          15.11,
+          15.11,
+          15.11
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 143.5,
+        "exactRuMedian": 104.33,
+        "recallAt10Mean": 0.995,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      },
+      "scale-p04": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 14.89,
+        "ruRunMedians": [
+          14.91,
+          14.81,
+          14.72
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 146.9,
+        "exactRuMedian": 104.35,
+        "recallAt10Mean": 0.995,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      },
+      "scale-p05": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 17.9,
+        "ruRunMedians": [
+          17.9,
+          17.9,
+          17.9
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 145.85,
+        "exactRuMedian": 137.95,
+        "recallAt10Mean": 1.0,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      },
+      "scale-p06": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 20.78,
+        "ruRunMedians": [
+          20.78,
+          20.78,
+          20.78
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 142.45,
+        "exactRuMedian": 171.66,
+        "recallAt10Mean": 0.995,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      },
+      "scale-p07": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 23.46,
+        "ruRunMedians": [
+          23.46,
+          23.46,
+          23.46
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 151.35,
+        "exactRuMedian": 205.27,
+        "recallAt10Mean": 1.0,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      },
+      "scale-p08": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 26.25,
+        "ruRunMedians": [
+          26.25,
+          26.25,
+          26.25
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 149.7,
+        "exactRuMedian": 238.97,
+        "recallAt10Mean": 0.995,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      },
+      "scale-p09": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 29.04,
+        "ruRunMedians": [
+          29.04,
+          29.04,
+          29.04
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 160.25,
+        "exactRuMedian": 272.61,
+        "recallAt10Mean": 0.995,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      },
+      "scale-p10": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 34.81,
+        "ruRunMedians": [
+          34.8,
+          34.81,
+          34.8
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 167.3,
+        "exactRuMedian": 340.06,
+        "recallAt10Mean": 0.995,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      }
+    },
+    "3": {
+      "scale-p01": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 12.42,
+        "ruRunMedians": [
+          12.42,
+          12.42,
+          12.42
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 109.8,
+        "exactRuMedian": 70.72,
+        "recallAt10Mean": 1.0,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      },
+      "scale-p02": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 12.52,
+        "ruRunMedians": [
+          12.52,
+          12.52,
+          12.52
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 125.95,
+        "exactRuMedian": 70.82,
+        "recallAt10Mean": 0.995,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      },
+      "scale-p03": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 15.11,
+        "ruRunMedians": [
+          15.11,
+          15.11,
+          15.11
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 127.05,
+        "exactRuMedian": 104.33,
+        "recallAt10Mean": 0.995,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      },
+      "scale-p04": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 14.72,
+        "ruRunMedians": [
+          14.72,
+          14.91,
+          14.72
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 139.6,
+        "exactRuMedian": 104.35,
+        "recallAt10Mean": 0.995,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      },
+      "scale-p05": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 17.9,
+        "ruRunMedians": [
+          17.9,
+          17.9,
+          17.9
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 138.35,
+        "exactRuMedian": 137.95,
+        "recallAt10Mean": 1.0,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      },
+      "scale-p06": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 20.78,
+        "ruRunMedians": [
+          20.78,
+          20.78,
+          20.78
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 152.9,
+        "exactRuMedian": 171.66,
+        "recallAt10Mean": 0.995,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      },
+      "scale-p07": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 23.46,
+        "ruRunMedians": [
+          23.46,
+          23.46,
+          23.46
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 145.9,
+        "exactRuMedian": 205.27,
+        "recallAt10Mean": 1.0,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      },
+      "scale-p08": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 26.25,
+        "ruRunMedians": [
+          26.25,
+          26.25,
+          26.25
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 155.1,
+        "exactRuMedian": 238.97,
+        "recallAt10Mean": 0.995,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      },
+      "scale-p09": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 29.04,
+        "ruRunMedians": [
+          29.04,
+          29.04,
+          29.04
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 159.1,
+        "exactRuMedian": 272.61,
+        "recallAt10Mean": 0.995,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      },
+      "scale-p10": {
+        "searches": 60,
+        "errors": 0,
+        "nullScores": 0,
+        "throttled": 0,
+        "ruMedian": 34.8,
+        "ruRunMedians": [
+          34.81,
+          34.8,
+          34.8
+        ],
+        "retrievedMedian": 50.0,
+        "msMedian": 163.45,
+        "exactRuMedian": 340.06,
+        "recallAt10Mean": 0.995,
+        "vectorIndexes": [
+          "QuantizedFlat:/libraryId"
+        ]
+      }
+    }
+  },
+  "unscopedControl": {
+    "1": {
+      "ru": 1203.87,
+      "responses": 2,
+      "retrieved": 25000.0,
+      "ms": 2423.0,
+      "rows": 10,
+      "vectorIndex": null,
+      "shardKeys": []
+    },
+    "2": {
+      "ru": 8496.07,
+      "responses": 5,
+      "retrieved": 176599.0,
+      "ms": 16259.3,
+      "rows": 10,
+      "vectorIndex": null,
+      "shardKeys": []
+    },
+    "3": {
+      "ru": 11777.02,
+      "responses": 7,
+      "retrieved": 244773.0,
+      "ms": 23587.8,
+      "rows": 10,
+      "vectorIndex": null,
+      "shardKeys": []
+    }
+  },
+  "grades": {
+    "2": {
+      "scale-p01": {
+        "ruHolds": true,
+        "retrievedHolds": true,
+        "libraryShardReported": true,
+        "recallAtFloor": true,
+        "scoped": true
+      },
+      "scale-p02": {
+        "ruHolds": true,
+        "retrievedHolds": true,
+        "libraryShardReported": true,
+        "recallAtFloor": true,
+        "scoped": true
+      },
+      "scale-p03": {
+        "ruHolds": true,
+        "retrievedHolds": true,
+        "libraryShardReported": true,
+        "recallAtFloor": true,
+        "scoped": true
+      },
+      "scale-p04": {
+        "ruHolds": true,
+        "retrievedHolds": true,
+        "libraryShardReported": true,
+        "recallAtFloor": true,
+        "scoped": true
+      },
+      "scale-p05": {
+        "ruHolds": true,
+        "retrievedHolds": true,
+        "libraryShardReported": true,
+        "recallAtFloor": true,
+        "scoped": true
+      },
+      "scale-p06": {
+        "ruHolds": true,
+        "retrievedHolds": true,
+        "libraryShardReported": true,
+        "recallAtFloor": true,
+        "scoped": true
+      },
+      "scale-p07": {
+        "ruHolds": true,
+        "retrievedHolds": true,
+        "libraryShardReported": true,
+        "recallAtFloor": true,
+        "scoped": true
+      },
+      "scale-p08": {
+        "ruHolds": true,
+        "retrievedHolds": true,
+        "libraryShardReported": true,
+        "recallAtFloor": true,
+        "scoped": true
+      },
+      "scale-p09": {
+        "ruHolds": true,
+        "retrievedHolds": true,
+        "libraryShardReported": true,
+        "recallAtFloor": true,
+        "scoped": true
+      },
+      "scale-p10": {
+        "ruHolds": true,
+        "retrievedHolds": true,
+        "libraryShardReported": true,
+        "recallAtFloor": true,
+        "scoped": true
+      }
+    },
+    "3": {
+      "scale-p01": {
+        "ruHolds": true,
+        "retrievedHolds": true,
+        "libraryShardReported": true,
+        "recallAtFloor": true,
+        "scoped": true
+      },
+      "scale-p02": {
+        "ruHolds": true,
+        "retrievedHolds": true,
+        "libraryShardReported": true,
+        "recallAtFloor": true,
+        "scoped": true
+      },
+      "scale-p03": {
+        "ruHolds": true,
+        "retrievedHolds": true,
+        "libraryShardReported": true,
+        "recallAtFloor": true,
+        "scoped": true
+      },
+      "scale-p04": {
+        "ruHolds": true,
+        "retrievedHolds": true,
+        "libraryShardReported": true,
+        "recallAtFloor": true,
+        "scoped": true
+      },
+      "scale-p05": {
+        "ruHolds": true,
+        "retrievedHolds": true,
+        "libraryShardReported": true,
+        "recallAtFloor": true,
+        "scoped": true
+      },
+      "scale-p06": {
+        "ruHolds": true,
+        "retrievedHolds": true,
+        "libraryShardReported": true,
+        "recallAtFloor": true,
+        "scoped": true
+      },
+      "scale-p07": {
+        "ruHolds": true,
+        "retrievedHolds": true,
+        "libraryShardReported": true,
+        "recallAtFloor": true,
+        "scoped": true
+      },
+      "scale-p08": {
+        "ruHolds": true,
+        "retrievedHolds": true,
+        "libraryShardReported": true,
+        "recallAtFloor": true,
+        "scoped": true
+      },
+      "scale-p09": {
+        "ruHolds": true,
+        "retrievedHolds": true,
+        "libraryShardReported": true,
+        "recallAtFloor": true,
+        "scoped": true
+      },
+      "scale-p10": {
+        "ruHolds": true,
+        "retrievedHolds": true,
+        "libraryShardReported": true,
+        "recallAtFloor": true,
+        "scoped": true
+      }
+    }
+  },
+  "scopedEverywhere": {
+    "2": true,
+    "3": true
+  },
+  "newLibraryIndexLag": {
+    "writeSeconds": 56.8,
+    "engaged": true,
+    "secondsToEngage": 0,
+    "waitMinutes": 30,
+    "retrievedLimit": 300.0
+  },
+  "notes": [
+    "Stage 3's index wait polled its largest library (about 200 vectors), which Cosmos reads whole at that size, so 'stops scanning' never applied; it timed out after 30 minutes and the probes were measured after the settle period. Probe libraries reported their sharded index as before.",
+    "The new-library lag test added a 1,500-passage library after stage 2; the container at stage 3 therefore held 1,014 libraries and 244,773 passages, as the unscoped control's documents-read figure shows.",
+    "Everything ran on one physical partition of a serverless account. Write charge was about 92 RU per passage: these passages are single abstracts, shorter than the canary's chunks (144 RU, E10).",
+    "The canary passed on the disposable database before loading (15.2 RU median, recall 1.0, hybrid ranking)."
+  ],
+  "cosmosCost": {
+    "writeRu": 22351918.0,
+    "note": "plus about 0.14 million RU for the lag test and well under 0.2 million RU of searches"
+  }
+}
