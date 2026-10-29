@@ -1,0 +1,119 @@
+{
+  "id": "indexer-lab",
+  "partitionKey": {
+    "paths": [
+      "/libraryId",
+      "/documentId"
+    ],
+    "kind": "MultiHash",
+    "version": 2
+  },
+  "indexingPolicy": {
+    "indexingMode": "consistent",
+    "includedPaths": [
+      {
+        "path": "/libraryId/?"
+      },
+      {
+        "path": "/documentId/?"
+      },
+      {
+        "path": "/generation/?"
+      },
+      {
+        "path": "/chunkIndex/?"
+      },
+      {
+        "path": "/contentKind/?"
+      },
+      {
+        "path": "/fileType/?"
+      },
+      {
+        "path": "/author/?"
+      },
+      {
+        "path": "/uploadedAt/?"
+      },
+      {
+        "path": "/authoredAt/?"
+      },
+      {
+        "path": "/periodStart/?"
+      },
+      {
+        "path": "/periodEnd/?"
+      },
+      {
+        "path": "/facets/[]/?"
+      },
+      {
+        "path": "/documentName/?"
+      },
+      {
+        "path": "/chunkNumber/?"
+      },
+      {
+        "path": "/totalChunks/?"
+      },
+      {
+        "path": "/sourceRevision/?"
+      },
+      {
+        "path": "/sourceSha256/?"
+      },
+      {
+        "path": "/sourceArtifact/?"
+      },
+      {
+        "path": "/recordKind/?"
+      },
+      {
+        "path": "/workflowVariant/?"
+      }
+    ],
+    "excludedPaths": [
+      {
+        "path": "/*"
+      },
+      {
+        "path": "/embedding/*"
+      }
+    ],
+    "fullTextIndexes": [
+      {
+        "path": "/text"
+      }
+    ],
+    "vectorIndexes": [
+      {
+        "path": "/embedding",
+        "type": "diskANN",
+        "quantizerType": "spherical",
+        "indexingSearchListSize": 300,
+        "vectorIndexShardKey": [
+          "/libraryId"
+        ]
+      }
+    ]
+  },
+  "vectorEmbeddingPolicy": {
+    "vectorEmbeddings": [
+      {
+        "path": "/embedding",
+        "dataType": "float16",
+        "distanceFunction": "cosine",
+        "dimensions": 3072
+      }
+    ]
+  },
+  "fullTextPolicy": {
+    "defaultLanguage": "en-US",
+    "fullTextPaths": [
+      {
+        "path": "/text",
+        "language": "en-US"
+      }
+    ]
+  }
+}

@@ -1254,7 +1254,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument(
         "--index-container",
         default="chunks",
-        choices=("chunks", "lab-shared", "lab-passages", "lab-summaries"),
+        choices=("chunks", "lab-shared", "lab-passages", "lab-summaries", "indexer-lab"),
         help="validate an isolated experimental index with the same canary",
     )
     parser.add_argument(

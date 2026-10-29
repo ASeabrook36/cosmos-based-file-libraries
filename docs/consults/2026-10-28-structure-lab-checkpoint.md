@@ -1,9 +1,27 @@
 # Continue the structured retrieval work
 
 Updated 2026-10-28. This checkpoint accompanies the packaged experimental code.
+**Continuation completed 2026-10-29:** read the [deployed Indexer assessment](2026-10-29-indexer-workflow-experiment.md),
+[reproduction guide](../indexer-workflow-lab.md) and
+[aggregate record](../../records/indexer-workflow-20261028.json) first. Actual
+workflow, connector, revision/publication and API isolation tests are complete;
+697 tests passed and temporary resources/external role assignments were removed.
+KBaaS external evidence, authored-section completeness and durable visual evidence
+remain gaps. The material below records the earlier checkpoint, not current cloud state.
+
 Start with the [lab guide](../structure-lab.md), [research assessment](2026-10-28-document-understanding-research.md),
 [proposal](2026-10-28-document-understanding-proposal.md), and
 [sanitized live measurements](../../records/structure-lab-20261028.json).
+
+**Follow-on experiment:** read the [Microsoft reuse compatibility assessment](2026-10-28-microsoft-reuse-compatibility.md)
+and [reproduction runbook](../microsoft-reuse-lab.md). Six cases passed live text
+extraction probes against both read/layout in an isolated account. Layout supplied
+section/figure relationships, but one chapter-boundary probe failed and the DOCX
+image was omitted. The pinned Indexer template uses read and discards relationship
+JSON. External KBaaS evidence retrieval and a deployed Indexer workflow remain
+unverified; no preview integration was signed off. The new aggregate record states
+the exact scope and resource cleanup status. Continue with those open gates rather
+than repeating the completed parser comparison or extending custom ingestion.
 
 ## What is available
 

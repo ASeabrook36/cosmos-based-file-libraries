@@ -1,0 +1,422 @@
+{
+  "date": "2026-10-28",
+  "scope": "deployed-microsoft-indexer-compatibility-experiment",
+  "productionRollout": false,
+  "normalDemoChanged": false,
+  "readiness": {
+    "effectivePermissionsVerified": true,
+    "initialWS1Quota": 0,
+    "alternateWS1Quota": 30,
+    "alternateUsage": 0,
+    "oneWS1InstanceCreated": true,
+    "storageSharedKeyAccessDisabled": true,
+    "documentIntelligenceLocalAuthDisabled": true,
+    "serviceAuthentication": "managed-identity",
+    "operatorAuthentication": "local-Entra-Azure-CLI"
+  },
+  "baseline": {
+    "templateCommit": "e6b7d87e120a400b3e321caacf858c08fa4d060f",
+    "templateSha256": "52a2ff79422ea461cb38c1ebc4e2b17351b893a87c1a15b8ea46b3eb6b386e55",
+    "deployedProcessingMatchedPinnedTemplate": true,
+    "nonfunctionalChanges": [
+      "parameter substitution",
+      "secure run-history settings"
+    ],
+    "inputCases": 6,
+    "successfulReadAnalyzeChunkEmbedPaths": 6,
+    "failedManagedWrites": 6,
+    "emittedRows": 0,
+    "mappedManagedWriterCounterfactual": {
+      "httpStatus": 400,
+      "failure": "partition-key-mismatch",
+      "reportedSDK": "Microsoft.Azure.Documents.Common/2.14.0"
+    }
+  },
+  "canary": {
+    "passed": true,
+    "realPassages": 1500,
+    "indexEngagementSeconds": 307,
+    "vectorRecallAt10": {
+      "mean": 0.985,
+      "min": 0.7,
+      "queries": 20
+    },
+    "load": {
+      "chunks": 1500,
+      "documents": 2,
+      "seconds": 51.4,
+      "chunksPerSecond": 29.2,
+      "chunkRequestCharge": 213179.7,
+      "ruPerChunk": 142.2,
+      "documentRequestCharge": 8.8,
+      "concurrentWrites": 2,
+      "throttledRetries": 0
+    },
+    "embedding": {
+      "deployment": "text-embedding-3-large",
+      "model": "text-embedding-3-large",
+      "dimensions": 3072,
+      "seconds": 260.8,
+      "promptTokens": 675685,
+      "throttled": 8
+    }
+  },
+  "writeBridge": {
+    "connector": "Microsoft-built-in-AzureCosmosDB",
+    "operation": "CreateOrUpdateDocument",
+    "connectionParameter": "accountURI",
+    "hierarchicalKeyInference": "derive-from-item-body",
+    "scalarPartitionKeyOverrideFailed": true,
+    "automaticWriteRetriesInLab": false,
+    "defaultIdStrategyPreserved": "guid",
+    "retryMethod": "trigger-history-resubmit",
+    "stages": {
+      "added": {
+        "rows": 6,
+        "documents": 6,
+        "uniqueTextDigests": 6,
+        "allDimensions3072": true
+      },
+      "retried": {
+        "rows": 7,
+        "documents": 6,
+        "uniqueTextDigests": 6,
+        "allDimensions3072": true
+      },
+      "replaced": {
+        "rows": 8,
+        "documents": 6,
+        "uniqueTextDigests": 6,
+        "allDimensions3072": true
+      },
+      "deleted-input": {
+        "rows": 8,
+        "documents": 6,
+        "uniqueTextDigests": 6,
+        "allDimensions3072": true
+      }
+    },
+    "replacementRetainedOldAndNewText": true,
+    "deleteObservationSeconds": 90,
+    "rowsRemovedAfterInputDelete": 0
+  },
+  "layoutAdapter": {
+    "initialSourceFiles": 7,
+    "libraries": 2,
+    "exactOriginalByteMatches": 7,
+    "preservesFullLayoutJSON": true,
+    "sourcePipeline": "Microsoft-Blob-DocumentIntelligence-ChunkText-OpenAI-Cosmos-connectors",
+    "publicationAdapter": "opt-in-existing-API-contract",
+    "figuresCopied": 0,
+    "managedAnalysisReturnedOperationLocation": false,
+    "initialArtifacts": [
+      {
+        "case": "nested-report",
+        "metrics": {
+          "contentCharacters": 739,
+          "pages": 2,
+          "sections": 9,
+          "paragraphs": 17,
+          "tables": 0,
+          "figures": 1,
+          "sectionElementReferences": 23,
+          "nestedSectionReferences": 8,
+          "unresolvedSectionReferences": 0,
+          "figuresWithCaption": 1,
+          "figuresWithElements": 1
+        },
+        "probes": [
+          true,
+          true,
+          true
+        ],
+        "sectionDiagnostics": [
+          {
+            "task": "chapter-one-coverage",
+            "resolved": true,
+            "included": [
+              true,
+              false
+            ],
+            "excluded": [
+              true
+            ],
+            "passed": false,
+            "selectedCharacters": 350
+          },
+          {
+            "task": "chapter-two-coverage",
+            "resolved": true,
+            "included": [
+              true,
+              true
+            ],
+            "excluded": [
+              true
+            ],
+            "passed": true,
+            "selectedCharacters": 279
+          }
+        ],
+        "sourceBytesMatch": true
+      },
+      {
+        "case": "office",
+        "metrics": {
+          "contentCharacters": 649,
+          "pages": 1,
+          "sections": 6,
+          "paragraphs": 8,
+          "tables": 0,
+          "figures": 0,
+          "sectionElementReferences": 13,
+          "nestedSectionReferences": 5,
+          "unresolvedSectionReferences": 0,
+          "figuresWithCaption": 0,
+          "figuresWithElements": 0
+        },
+        "probes": [
+          true,
+          true,
+          true
+        ],
+        "sectionDiagnostics": [],
+        "sourceBytesMatch": true
+      },
+      {
+        "case": "scan",
+        "metrics": {
+          "contentCharacters": 150,
+          "pages": 1,
+          "sections": 1,
+          "paragraphs": 1,
+          "tables": 0,
+          "figures": 0,
+          "sectionElementReferences": 1,
+          "nestedSectionReferences": 0,
+          "unresolvedSectionReferences": 0,
+          "figuresWithCaption": 0,
+          "figuresWithElements": 0
+        },
+        "probes": [
+          true,
+          true
+        ],
+        "sectionDiagnostics": [],
+        "sourceBytesMatch": true
+      },
+      {
+        "case": "paper",
+        "metrics": {
+          "contentCharacters": 2177,
+          "pages": 2,
+          "sections": 10,
+          "paragraphs": 17,
+          "tables": 0,
+          "figures": 0,
+          "sectionElementReferences": 26,
+          "nestedSectionReferences": 9,
+          "unresolvedSectionReferences": 0,
+          "figuresWithCaption": 0,
+          "figuresWithElements": 0
+        },
+        "probes": [
+          true,
+          true
+        ],
+        "sectionDiagnostics": [],
+        "sourceBytesMatch": true
+      },
+      {
+        "case": "play",
+        "metrics": {
+          "contentCharacters": 862,
+          "pages": 1,
+          "sections": 6,
+          "paragraphs": 13,
+          "tables": 0,
+          "figures": 0,
+          "sectionElementReferences": 18,
+          "nestedSectionReferences": 5,
+          "unresolvedSectionReferences": 0,
+          "figuresWithCaption": 0,
+          "figuresWithElements": 0
+        },
+        "probes": [
+          true,
+          true
+        ],
+        "sectionDiagnostics": [
+          {
+            "task": "act-two-coverage",
+            "resolved": true,
+            "included": [
+              true
+            ],
+            "excluded": [],
+            "passed": true,
+            "selectedCharacters": 350
+          }
+        ],
+        "sourceBytesMatch": true
+      },
+      {
+        "case": "opinion",
+        "metrics": {
+          "contentCharacters": 1570,
+          "pages": 1,
+          "sections": 9,
+          "paragraphs": 14,
+          "tables": 0,
+          "figures": 0,
+          "sectionElementReferences": 22,
+          "nestedSectionReferences": 8,
+          "unresolvedSectionReferences": 0,
+          "figuresWithCaption": 0,
+          "figuresWithElements": 0
+        },
+        "probes": [
+          true,
+          true
+        ],
+        "sectionDiagnostics": [
+          {
+            "task": "dissent-coverage",
+            "resolved": true,
+            "included": [
+              true
+            ],
+            "excluded": [],
+            "passed": true,
+            "selectedCharacters": 172
+          }
+        ],
+        "sourceBytesMatch": true
+      }
+    ],
+    "lifecycle": {
+      "retryStatus": "Succeeded",
+      "retryRowsUnchanged": true,
+      "checkpointUnchanged": true,
+      "retryAnalysisStates": [
+        "Skipped"
+      ],
+      "replacementWorkflowStatus": "Succeeded",
+      "rowsBeforePublication": 7,
+      "generationTwoRows": 1
+    },
+    "immutableSourceProbe": {
+      "runStatus": "Failed",
+      "errorCode": "source_revision_changed",
+      "publishedGenerationUnchanged": true,
+      "publishedSourceDigestUnchanged": true,
+      "checkpointUnchanged": true
+    }
+  },
+  "apiIntegration": {
+    "initial": {
+      "stage": "initial",
+      "transport": "existing-ASGI-API-with-real-isolated-Azure-stores",
+      "fullReads": 7,
+      "wrongAgentStatuses": [
+        403,
+        403,
+        403,
+        403,
+        403,
+        403,
+        403,
+        403,
+        403,
+        403
+      ],
+      "crossLibraryReadStatus": 404,
+      "allOrNothingBudgetPassed": true,
+      "searchCountA": 6,
+      "searchCountB": 1
+    },
+    "replacement": {
+      "stage": "replacement",
+      "transport": "existing-ASGI-API-with-real-isolated-Azure-stores",
+      "fullReads": 0,
+      "wrongAgentStatuses": [
+        403,
+        403,
+        403,
+        403,
+        403,
+        403,
+        403,
+        403,
+        403,
+        403
+      ],
+      "replacementFullReadPassed": true,
+      "staleGenerationStatus": 409,
+      "staleSectionReferenceStatus": 409,
+      "staleReferenceOrigin": "frozen-revision-derived",
+      "documentCountA": 6,
+      "documentCountB": 1,
+      "crossLibraryReadStatus": 404,
+      "allOrNothingBudgetPassed": true,
+      "searchCountA": 6,
+      "searchCountB": 1,
+      "oldSourceVisibleUntilPublication": true
+    },
+    "deleted": {
+      "stage": "deleted",
+      "transport": "existing-ASGI-API-with-real-isolated-Azure-stores",
+      "fullReads": 0,
+      "wrongAgentStatuses": [
+        403,
+        403,
+        403,
+        403,
+        403,
+        403,
+        403,
+        403,
+        403,
+        403
+      ],
+      "hiddenBeforePurgeStatus": 404,
+      "allRowsAndArtifactsPurged": true,
+      "otherLibrarySameIdPreserved": true,
+      "documentCountA": 5,
+      "documentCountB": 1,
+      "crossLibraryReadStatus": 404,
+      "searchCountA": 5,
+      "searchCountB": 1
+    }
+  },
+  "limitations": [
+    "ASGI transport with real isolated Azure stores; no deployed API/Entra rollout",
+    "sequential lifecycle checks; no general concurrent/cross-instance freshness claim",
+    "provider graph retained; authored chapter completeness still fails one probe",
+    "PDF figure metadata retained, but crops need a result/operation handle not emitted by the managed connector",
+    "native Office images require the existing native path",
+    "library statistics refreshed through existing worker; generated overview not implemented",
+    "no relevance/answer-quality/scale conclusion",
+    "KBaaS external source-evidence retrieval remains a separate unverified contract",
+    "invoiced full workflow operating cost not observed",
+    "cached replay verified in first scope; second scope exercised initial ingestion and isolation, not replay"
+  ],
+  "cleanup": {
+    "labResourceGroupAbsent": true,
+    "isolatedDatabaseAbsent": true,
+    "labCosmosRoleAssignmentsRemaining": 0,
+    "labOpenAIRoleAssignmentsRemaining": 0,
+    "providerRegistrationsRemain": true
+  },
+  "validation": {
+    "fullSuitePassed": 697,
+    "existingWarnings": 14,
+    "ruffCheckPassed": true,
+    "ruffFormatPassed": true,
+    "optInBicepCompilePassed": true,
+    "privacyDenyCheckPassed": true,
+    "diffCheckPassed": true,
+    "finalPublicBuilderMatchesReplayTestedMountedDefinition": true
+  },
+  "completedDate": "2026-10-29"
+}

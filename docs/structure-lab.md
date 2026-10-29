@@ -5,6 +5,12 @@ It does not change the API, worker or compact REST contract. The initial live
 results are in [the sanitized experiment record](../records/structure-lab-20261028.json).
 The broader direction is in the [research assessment](consults/2026-10-28-document-understanding-research.md)
 and [implementation proposal](consults/2026-10-28-document-understanding-proposal.md).
+The follow-on [Microsoft reuse assessment](consults/2026-10-28-microsoft-reuse-compatibility.md)
+records a pinned template inspection and six live extraction comparisons, including
+a chapter-boundary failure. See its [runbook](microsoft-reuse-lab.md). The subsequent
+[deployed Indexer assessment](consults/2026-10-29-indexer-workflow-experiment.md)
+and [workflow runbook](indexer-workflow-lab.md) cover actual output, connector,
+publication, lifecycle and isolation tests. KBaaS external evidence remains an open gate.
 
 ## What runs now
 

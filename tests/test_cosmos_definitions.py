@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 COSMOS = Path(__file__).resolve().parent.parent / "cosmos"
-NAMES = ("libraries", "documents", "chunks")
+NAMES = ("libraries", "documents", "chunks", "indexer-lab")
 
 
 def load(name: str) -> dict:

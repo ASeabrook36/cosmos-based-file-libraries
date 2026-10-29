@@ -289,7 +289,7 @@ def test_the_canary_fails_if_hybrid_searches_are_routed_by_partition_key(fakes, 
     assert checks["hybrid_ranks"]["passed"] is False
 
 
-@pytest.mark.parametrize("index", ["lab-shared", "lab-passages", "lab-summaries"])
+@pytest.mark.parametrize("index", ["lab-shared", "lab-passages", "lab-summaries", "indexer-lab"])
 def test_experimental_index_target_receipt_and_cleanup(fakes, tmp_path, index):
     assert (
         canary.main(

@@ -26,6 +26,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+reuse-lab = ["reportlab>=4.4,<5"]  # opt-in compatibility fixtures only; no application dependency
 samples = ["Pillow>=10.1,<14"]
 demo = [
   "streamlit>=1.40,<2",

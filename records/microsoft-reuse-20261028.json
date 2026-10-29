@@ -1,0 +1,444 @@
+{
+  "date": "2026-10-28",
+  "scope": "bounded-direct-extraction-and-static-template-inspection",
+  "azureReadinessRecheckedBeforeProvisioning": true,
+  "normalDemoModified": false,
+  "workflowExecuted": false,
+  "kbaasExternalEvidenceContract": "not-established",
+  "templateCommit": "e6b7d87e120a400b3e321caacf858c08fa4d060f",
+  "templateSha256": "52a2ff79422ea461cb38c1ebc4e2b17351b893a87c1a15b8ea46b3eb6b386e55",
+  "templateInspection": {
+    "model": "prebuilt-read",
+    "chunkInput": "analyzeResult.content",
+    "chunkTokens": 5000,
+    "overlapTokens": 200,
+    "elementGraphProjected": false,
+    "randomChunkIds": true,
+    "libraryBindingProjected": false,
+    "deleteTriggerPresent": false
+  },
+  "measurements": [
+    {
+      "case": "nested-report",
+      "model": "prebuilt-read",
+      "status": "succeeded",
+      "elapsedSeconds": 4.36,
+      "metrics": {
+        "contentCharacters": 627,
+        "pages": 2,
+        "sections": 0,
+        "paragraphs": 17,
+        "tables": 0,
+        "figures": 0,
+        "sectionElementReferences": 0,
+        "nestedSectionReferences": 0,
+        "unresolvedSectionReferences": 0,
+        "figuresWithCaption": 0,
+        "figuresWithElements": 0
+      },
+      "probes": [
+        true,
+        true,
+        true
+      ],
+      "acceptancePassed": true,
+      "sectionDiagnostics": [
+        {
+          "task": "chapter-one-coverage",
+          "resolved": false,
+          "passed": false
+        },
+        {
+          "task": "chapter-two-coverage",
+          "resolved": false,
+          "passed": false
+        }
+      ]
+    },
+    {
+      "case": "nested-report",
+      "model": "prebuilt-layout",
+      "status": "succeeded",
+      "elapsedSeconds": 5.744,
+      "metrics": {
+        "contentCharacters": 739,
+        "pages": 2,
+        "sections": 9,
+        "paragraphs": 17,
+        "tables": 0,
+        "figures": 1,
+        "sectionElementReferences": 23,
+        "nestedSectionReferences": 8,
+        "unresolvedSectionReferences": 0,
+        "figuresWithCaption": 1,
+        "figuresWithElements": 1
+      },
+      "probes": [
+        true,
+        true,
+        true
+      ],
+      "acceptancePassed": true,
+      "sectionDiagnostics": [
+        {
+          "task": "chapter-one-coverage",
+          "resolved": true,
+          "included": [
+            true,
+            false
+          ],
+          "excluded": [
+            true
+          ],
+          "passed": false,
+          "selectedCharacters": 350
+        },
+        {
+          "task": "chapter-two-coverage",
+          "resolved": true,
+          "included": [
+            true,
+            true
+          ],
+          "excluded": [
+            true
+          ],
+          "passed": true,
+          "selectedCharacters": 279
+        }
+      ]
+    },
+    {
+      "case": "office",
+      "model": "prebuilt-read",
+      "status": "succeeded",
+      "elapsedSeconds": 1.675,
+      "metrics": {
+        "contentCharacters": 624,
+        "pages": 1,
+        "sections": 0,
+        "paragraphs": 8,
+        "tables": 0,
+        "figures": 0,
+        "sectionElementReferences": 0,
+        "nestedSectionReferences": 0,
+        "unresolvedSectionReferences": 0,
+        "figuresWithCaption": 0,
+        "figuresWithElements": 0
+      },
+      "probes": [
+        true,
+        true,
+        true
+      ],
+      "acceptancePassed": true,
+      "sectionDiagnostics": []
+    },
+    {
+      "case": "office",
+      "model": "prebuilt-layout",
+      "status": "succeeded",
+      "elapsedSeconds": 1.696,
+      "metrics": {
+        "contentCharacters": 649,
+        "pages": 1,
+        "sections": 6,
+        "paragraphs": 8,
+        "tables": 0,
+        "figures": 0,
+        "sectionElementReferences": 13,
+        "nestedSectionReferences": 5,
+        "unresolvedSectionReferences": 0,
+        "figuresWithCaption": 0,
+        "figuresWithElements": 0
+      },
+      "probes": [
+        true,
+        true,
+        true
+      ],
+      "acceptancePassed": true,
+      "sectionDiagnostics": []
+    },
+    {
+      "case": "scan",
+      "model": "prebuilt-read",
+      "status": "succeeded",
+      "elapsedSeconds": 2.812,
+      "metrics": {
+        "contentCharacters": 149,
+        "pages": 1,
+        "sections": 0,
+        "paragraphs": 1,
+        "tables": 0,
+        "figures": 0,
+        "sectionElementReferences": 0,
+        "nestedSectionReferences": 0,
+        "unresolvedSectionReferences": 0,
+        "figuresWithCaption": 0,
+        "figuresWithElements": 0
+      },
+      "probes": [
+        true,
+        true
+      ],
+      "acceptancePassed": true,
+      "sectionDiagnostics": []
+    },
+    {
+      "case": "scan",
+      "model": "prebuilt-layout",
+      "status": "succeeded",
+      "elapsedSeconds": 8.441,
+      "metrics": {
+        "contentCharacters": 150,
+        "pages": 1,
+        "sections": 1,
+        "paragraphs": 1,
+        "tables": 0,
+        "figures": 0,
+        "sectionElementReferences": 1,
+        "nestedSectionReferences": 0,
+        "unresolvedSectionReferences": 0,
+        "figuresWithCaption": 0,
+        "figuresWithElements": 0
+      },
+      "probes": [
+        true,
+        true
+      ],
+      "acceptancePassed": true,
+      "sectionDiagnostics": []
+    },
+    {
+      "case": "paper",
+      "model": "prebuilt-read",
+      "status": "succeeded",
+      "elapsedSeconds": 3.728,
+      "metrics": {
+        "contentCharacters": 2109,
+        "pages": 2,
+        "sections": 0,
+        "paragraphs": 17,
+        "tables": 0,
+        "figures": 0,
+        "sectionElementReferences": 0,
+        "nestedSectionReferences": 0,
+        "unresolvedSectionReferences": 0,
+        "figuresWithCaption": 0,
+        "figuresWithElements": 0
+      },
+      "probes": [
+        true,
+        true
+      ],
+      "acceptancePassed": true,
+      "sectionDiagnostics": []
+    },
+    {
+      "case": "paper",
+      "model": "prebuilt-layout",
+      "status": "succeeded",
+      "elapsedSeconds": 5.731,
+      "metrics": {
+        "contentCharacters": 2177,
+        "pages": 2,
+        "sections": 10,
+        "paragraphs": 17,
+        "tables": 0,
+        "figures": 0,
+        "sectionElementReferences": 26,
+        "nestedSectionReferences": 9,
+        "unresolvedSectionReferences": 0,
+        "figuresWithCaption": 0,
+        "figuresWithElements": 0
+      },
+      "probes": [
+        true,
+        true
+      ],
+      "acceptancePassed": true,
+      "sectionDiagnostics": []
+    },
+    {
+      "case": "play",
+      "model": "prebuilt-read",
+      "status": "succeeded",
+      "elapsedSeconds": 1.5,
+      "metrics": {
+        "contentCharacters": 834,
+        "pages": 1,
+        "sections": 0,
+        "paragraphs": 13,
+        "tables": 0,
+        "figures": 0,
+        "sectionElementReferences": 0,
+        "nestedSectionReferences": 0,
+        "unresolvedSectionReferences": 0,
+        "figuresWithCaption": 0,
+        "figuresWithElements": 0
+      },
+      "probes": [
+        true,
+        true
+      ],
+      "acceptancePassed": true,
+      "sectionDiagnostics": [
+        {
+          "task": "act-two-coverage",
+          "resolved": false,
+          "passed": false
+        }
+      ]
+    },
+    {
+      "case": "play",
+      "model": "prebuilt-layout",
+      "status": "succeeded",
+      "elapsedSeconds": 4.883,
+      "metrics": {
+        "contentCharacters": 862,
+        "pages": 1,
+        "sections": 6,
+        "paragraphs": 13,
+        "tables": 0,
+        "figures": 0,
+        "sectionElementReferences": 18,
+        "nestedSectionReferences": 5,
+        "unresolvedSectionReferences": 0,
+        "figuresWithCaption": 0,
+        "figuresWithElements": 0
+      },
+      "probes": [
+        true,
+        true
+      ],
+      "acceptancePassed": true,
+      "sectionDiagnostics": [
+        {
+          "task": "act-two-coverage",
+          "resolved": true,
+          "included": [
+            true
+          ],
+          "excluded": [],
+          "passed": true,
+          "selectedCharacters": 350
+        }
+      ]
+    },
+    {
+      "case": "opinion",
+      "model": "prebuilt-read",
+      "status": "succeeded",
+      "elapsedSeconds": 2.73,
+      "metrics": {
+        "contentCharacters": 1529,
+        "pages": 1,
+        "sections": 0,
+        "paragraphs": 14,
+        "tables": 0,
+        "figures": 0,
+        "sectionElementReferences": 0,
+        "nestedSectionReferences": 0,
+        "unresolvedSectionReferences": 0,
+        "figuresWithCaption": 0,
+        "figuresWithElements": 0
+      },
+      "probes": [
+        true,
+        true
+      ],
+      "acceptancePassed": true,
+      "sectionDiagnostics": [
+        {
+          "task": "dissent-coverage",
+          "resolved": false,
+          "passed": false
+        }
+      ]
+    },
+    {
+      "case": "opinion",
+      "model": "prebuilt-layout",
+      "status": "succeeded",
+      "elapsedSeconds": 4.746,
+      "metrics": {
+        "contentCharacters": 1570,
+        "pages": 1,
+        "sections": 9,
+        "paragraphs": 14,
+        "tables": 0,
+        "figures": 0,
+        "sectionElementReferences": 22,
+        "nestedSectionReferences": 8,
+        "unresolvedSectionReferences": 0,
+        "figuresWithCaption": 0,
+        "figuresWithElements": 0
+      },
+      "probes": [
+        true,
+        true
+      ],
+      "acceptancePassed": true,
+      "sectionDiagnostics": [
+        {
+          "task": "dissent-coverage",
+          "resolved": true,
+          "included": [
+            true
+          ],
+          "excluded": [],
+          "passed": true,
+          "selectedCharacters": 172
+        }
+      ]
+    }
+  ],
+  "costScope": {
+    "analysisRequests": 13,
+    "reportedAnalyzedPageUnits": 18,
+    "figureGets": 1,
+    "workflowActions": 0,
+    "embeddingRequests": 0,
+    "cosmosQueries": 0,
+    "invoiceCost": "not-yet-observed",
+    "excludes": [
+      "workflow hosting",
+      "managed connector actions",
+      "Cosmos indexing and retrieval",
+      "embedding and summarization models",
+      "external evidence serving"
+    ]
+  },
+  "runtimeLifecycleTests": "not-run",
+  "isolationTests": "not-run",
+  "overviewRefreshTests": "not-run",
+  "resourceCleanup": "deletion-confirmed",
+  "figureProbe": {
+    "analysisElapsedSeconds": 5.921,
+    "figureAssets": [
+      {
+        "bytes": 11744,
+        "sha256": "556960b82525a3b1e63d76d8e66e3bde8b406b74a2cfcab67c5d9914d32a1dc0"
+      }
+    ],
+    "visualInspectionPassed": true
+  },
+  "corpusGeneration": {
+    "reportlab": "4.4.9",
+    "pillow": "12.3.0",
+    "invariantRegenerationPassed": true,
+    "originalRunUsedInvariantMode": false
+  },
+  "validation": {
+    "fullSuitePassed": 677,
+    "existingDeprecationWarnings": 14,
+    "newProbeTests": 11,
+    "ruffCheckPassed": true,
+    "ruffFormatPassed": true,
+    "bicepCompilationPassed": true,
+    "extendedPrivateDenyPrivacyCheckPassed": true,
+    "offlineReplayAnalysisCalls": 0
+  }
+}
