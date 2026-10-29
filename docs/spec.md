@@ -1,6 +1,6 @@
 # Specification: File Library Index
 
-*Version 0.20, 2026-10-29. Modular ingestion local slice (§7.9; E60), with cloud runtime validation pending. Version 0.19, 2026-10-27. Compact REST evidence/attachments (§6.8) implemented and locally validated. Working name. Phases 0–3 passed on live Azure (`build-plan.md`). Adaptive document retrieval (§6.6) is implemented and its live smoke check passed; human answer-quality and broader routing evaluation remain pending. Images (Phase 3B, including PDF vector charts) are implemented; see `image-retrieval.md` for validation and limitations. Phases 4–5 remain to build. Every measured design choice is traced in `evidence.md`.*
+*Version 0.20, 2026-10-29. Modular ingestion slice (§7.9; E60–E61), with isolated cloud validation. Version 0.19, 2026-10-27. Compact REST evidence/attachments (§6.8) implemented and locally validated. Working name. Phases 0–3 passed on live Azure (`build-plan.md`). Adaptive document retrieval (§6.6) is implemented and its live smoke check passed; human answer-quality and broader routing evaluation remain pending. Images (Phase 3B, including PDF vector charts) are implemented; see `image-retrieval.md` for validation and limitations. Phases 4–5 remain to build. Every measured design choice is traced in `evidence.md`.*
 
 ## 1. Scope
 
@@ -488,7 +488,7 @@ Cosmos throttles with HTTP 429 when a partition's throughput is exceeded. The SD
 - **Library delete:** set `status: deleting` (search refused immediately, §5), then `purgeLibrary`.
 - **Retention:** a delete removes a document from the library and from search at once. Blob soft delete and Cosmos continuous backup keep deleted data recoverable by an operator for 7 days; after that it is gone.
 
-### 7.9 Versioned modular ingestion (local slice)
+### 7.9 Versioned modular ingestion
 
 Libraries choose immutable `current-v1` (default), `custom-structured-v1` or
 `microsoft-indexer-layout-v1`. Profiles record provider separately from optional
@@ -537,10 +537,14 @@ existing metrics with failures, delivery/broker timing and known usage/RU;
 unknown provider counters and allocated hosting charges remain unavailable.
 Trusted `reconcileLibrary` messages clean late workflow artifacts and resume
 pending complete results. They must be scheduled for cloud comparisons, including
-deleted scopes while remote runs may finish. They never republish failed jobs.
+deleted scopes while remote runs may finish. The scheduled job also discovers
+canonical library prefixes in Blob storage, so new libraries and late orphan
+artifacts do not depend on manually updating the schedule. Each queued cleanup
+still addresses exactly one library. They never republish failed jobs.
 
-Worker Container Apps and workflow Entra configuration are prepared offline. No
-hosted API authentication or live runtime validation is implied. See
+The warm Container Apps worker and shared Logic Apps workflow are validated on
+isolated Azure services (E61), including managed identities and denied callers.
+The API remains localhost-only; hosted API authentication is not implemented. See
 [modular ingestion](modular-ingestion.md) for contracts, comparison semantics,
 configuration, cleanup scheduling and exact cloud gates.
 

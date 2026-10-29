@@ -1,0 +1,680 @@
+{
+  "schema": "fli.modular-cloud-validation.v1",
+  "date": "2026-10-29",
+  "scope": "isolated two-DOCX functional slice; not a quality, scaling or steady-state cost benchmark",
+  "runtimeRevision": "53ffe2c",
+  "models": {
+    "embedding": "text-embedding-3-large:1",
+    "dimensions": 3072,
+    "chat": "gpt-5-mini:2025-08-07",
+    "autoUpgrade": false,
+    "embeddingSku": "GlobalStandard",
+    "chatSku": "GlobalStandard",
+    "actualInferenceRegion": "unavailable; resource regions do not establish GlobalStandard inference location"
+  },
+  "regions": {
+    "workerAndData": "East US 2",
+    "workflow": "Central US",
+    "reason": "Workflow Standard quota unavailable in worker region"
+  },
+  "authentication": {
+    "authorizedWorker": "live ingestion succeeded",
+    "anonymous": 401,
+    "invalidToken": 401,
+    "wrongAudience": 401,
+    "sameAudienceDifferentManagedIdentity": 403,
+    "sasTriggers": "Disabled",
+    "easyAuthUnauthenticatedAction": "AllowAnonymous; enforcement in Logic Apps runtime"
+  },
+  "ingestion": {
+    "complete-strategy-custom": {
+      "profile": {
+        "id": "custom-structured-v1",
+        "version": 1,
+        "provider": "python",
+        "extraction": "native-and-layout",
+        "chunking": {
+          "algorithm": "section-sentence",
+          "targetTokens": 500,
+          "overlapTokens": 50,
+          "overlapCharacters": null,
+          "emailSingleChunkMax": null
+        },
+        "workflowVersion": null
+      },
+      "documentCount": 2,
+      "sourceSha256": [
+        "b191349dc18aca3b074b56b50e940390a049687d5de03a306b601ad496bf9f78",
+        "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e"
+      ],
+      "chunks": 371,
+      "estimatedChunkTokens": {
+        "sum": 19417,
+        "min": 2,
+        "max": 185,
+        "mean": 52.34
+      },
+      "measuredEmbeddingTokens": 19417,
+      "measuredEmbeddingRequests": 24,
+      "measuredChunkWriteRU": 29678.91,
+      "publishedProcessMs": [
+        38425.4,
+        12432.8
+      ],
+      "publishedProcessTimingCaveat": "excludes queue wait, prior failed work and index readiness; ingestion overlapped across profiles",
+      "attempts": {
+        "published": 2
+      },
+      "estimatedSourceTextTokens": 18249
+    },
+    "complete-strategy-microsoft": {
+      "profile": {
+        "id": "microsoft-indexer-layout-v1",
+        "version": 2,
+        "provider": "microsoft-indexer",
+        "extraction": "prebuilt-layout",
+        "chunking": {
+          "algorithm": "token-window",
+          "targetTokens": 5000,
+          "overlapTokens": null,
+          "overlapCharacters": 200,
+          "emailSingleChunkMax": null
+        },
+        "workflowVersion": "shared-indexer-v2"
+      },
+      "documentCount": 2,
+      "sourceSha256": [
+        "b191349dc18aca3b074b56b50e940390a049687d5de03a306b601ad496bf9f78",
+        "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e"
+      ],
+      "chunks": 5,
+      "estimatedChunkTokens": {
+        "sum": 18685,
+        "min": 253,
+        "max": 5001,
+        "mean": 3737.0
+      },
+      "measuredEmbeddingTokens": null,
+      "measuredEmbeddingRequests": null,
+      "measuredChunkWriteRU": 3449.9,
+      "publishedProcessMs": [
+        20472.2,
+        13523.8
+      ],
+      "publishedProcessTimingCaveat": "excludes queue wait, prior failed work and index readiness; ingestion overlapped across profiles",
+      "attempts": {
+        "published": 2
+      },
+      "estimatedSourceTextTokens": 18535
+    },
+    "controlled-component-custom": {
+      "profile": {
+        "id": "custom-structured-v1",
+        "version": 2,
+        "provider": "python",
+        "extraction": "prebuilt-layout",
+        "chunking": {
+          "algorithm": "section-sentence",
+          "targetTokens": 500,
+          "overlapTokens": 0,
+          "overlapCharacters": null,
+          "emailSingleChunkMax": null
+        },
+        "workflowVersion": "shared-indexer-v2"
+      },
+      "documentCount": 2,
+      "sourceSha256": [
+        "b191349dc18aca3b074b56b50e940390a049687d5de03a306b601ad496bf9f78",
+        "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e"
+      ],
+      "chunks": 41,
+      "estimatedChunkTokens": {
+        "sum": 18464,
+        "min": 170,
+        "max": 483,
+        "mean": 450.34
+      },
+      "measuredEmbeddingTokens": 18464,
+      "measuredEmbeddingRequests": 4,
+      "measuredChunkWriteRU": 6706.74,
+      "publishedProcessMs": [
+        25032.5,
+        12531.5
+      ],
+      "publishedProcessTimingCaveat": "excludes queue wait, prior failed work and index readiness; ingestion overlapped across profiles",
+      "attempts": {
+        "published": 2
+      },
+      "estimatedSourceTextTokens": 18535
+    },
+    "controlled-component-microsoft": {
+      "profile": {
+        "id": "microsoft-indexer-layout-v1",
+        "version": 2,
+        "provider": "microsoft-indexer",
+        "extraction": "prebuilt-layout",
+        "chunking": {
+          "algorithm": "token-window",
+          "targetTokens": 500,
+          "overlapTokens": 0,
+          "overlapCharacters": 0,
+          "emailSingleChunkMax": null
+        },
+        "workflowVersion": "shared-indexer-v2"
+      },
+      "documentCount": 2,
+      "sourceSha256": [
+        "b191349dc18aca3b074b56b50e940390a049687d5de03a306b601ad496bf9f78",
+        "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e"
+      ],
+      "chunks": 38,
+      "estimatedChunkTokens": {
+        "sum": 18534,
+        "min": 103,
+        "max": 501,
+        "mean": 487.74
+      },
+      "measuredEmbeddingTokens": null,
+      "measuredEmbeddingRequests": null,
+      "measuredChunkWriteRU": 6441.3,
+      "publishedProcessMs": [
+        26640.6,
+        10975.3
+      ],
+      "publishedProcessTimingCaveat": "excludes queue wait, prior failed work and index readiness; ingestion overlapped across profiles",
+      "attempts": {
+        "published": 2
+      },
+      "estimatedSourceTextTokens": 18535
+    },
+    "current": {
+      "profile": {
+        "id": "current-v1",
+        "version": 1,
+        "provider": "python",
+        "extraction": "native-and-layout",
+        "chunking": {
+          "algorithm": "section-sentence",
+          "targetTokens": 500,
+          "overlapTokens": 50,
+          "emailSingleChunkMax": 700
+        },
+        "workflowVersion": null
+      },
+      "documentCount": 2,
+      "sourceSha256": [
+        "b191349dc18aca3b074b56b50e940390a049687d5de03a306b601ad496bf9f78",
+        "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e"
+      ],
+      "chunks": 45,
+      "estimatedChunkTokens": {
+        "sum": 19503,
+        "min": 78,
+        "max": 485,
+        "mean": 433.4
+      },
+      "measuredEmbeddingTokens": 19503,
+      "measuredEmbeddingRequests": 4,
+      "measuredChunkWriteRU": 7210.46,
+      "publishedProcessMs": [
+        13784.2,
+        12979.7
+      ],
+      "publishedProcessTimingCaveat": "excludes queue wait, prior failed work and index readiness; ingestion overlapped across profiles",
+      "attempts": {
+        "published": 2
+      },
+      "estimatedSourceTextTokens": 18092
+    }
+  },
+  "replay": {
+    "complete-strategy": {
+      "turns": 8,
+      "measuredPromptTokens": 390961,
+      "measuredCompletionTokens": 27253,
+      "measuredCachedPromptTokens": 286464,
+      "measuredReasoningTokens": 13376,
+      "modelCalls": 58,
+      "toolCalls": 51,
+      "toolErrors": 8,
+      "knownRetrievalRU": 486.64,
+      "retrievalRUComplete": false,
+      "rateLimitRetries": 3,
+      "rateLimitWaitMs": 90010.9,
+      "totalMsRange": [
+        18532.8,
+        136100.9
+      ],
+      "mode": "functional-smoke; timings include quota contention and no general winner is inferred"
+    },
+    "controlled-component": {
+      "turns": 8,
+      "measuredPromptTokens": 623726,
+      "measuredCompletionTokens": 29209,
+      "measuredCachedPromptTokens": 480128,
+      "measuredReasoningTokens": 15104,
+      "modelCalls": 77,
+      "toolCalls": 71,
+      "toolErrors": 13,
+      "knownRetrievalRU": 649.64,
+      "retrievalRUComplete": false,
+      "rateLimitRetries": 12,
+      "rateLimitWaitMs": 360046.7,
+      "totalMsRange": [
+        31192.3,
+        167548.3
+      ],
+      "mode": "functional-smoke; timings include quota contention and no general winner is inferred"
+    },
+    "current-1": {
+      "turns": 2,
+      "measuredPromptTokens": 98700,
+      "measuredCompletionTokens": 6296,
+      "measuredCachedPromptTokens": 66048,
+      "measuredReasoningTokens": 2304,
+      "modelCalls": 16,
+      "toolCalls": 14,
+      "toolErrors": 3,
+      "knownRetrievalRU": 85.36,
+      "retrievalRUComplete": false,
+      "rateLimitRetries": 1,
+      "rateLimitWaitMs": 30001.9,
+      "totalMsRange": [
+        15161.9,
+        96742.6
+      ],
+      "mode": "functional-smoke; timings include quota contention and no general winner is inferred"
+    },
+    "current-2": {
+      "turns": 2,
+      "measuredPromptTokens": 106077,
+      "measuredCompletionTokens": 7290,
+      "measuredCachedPromptTokens": 82432,
+      "measuredReasoningTokens": 3328,
+      "modelCalls": 17,
+      "toolCalls": 15,
+      "toolErrors": 3,
+      "knownRetrievalRU": 103.8,
+      "retrievalRUComplete": false,
+      "rateLimitRetries": 1,
+      "rateLimitWaitMs": 30004.5,
+      "totalMsRange": [
+        45814.3,
+        74975.3
+      ],
+      "mode": "functional-smoke; timings include quota contention and no general winner is inferred"
+    }
+  },
+  "unavailable": [
+    "Microsoft embedding tokens/requests/retries/throttles",
+    "Document Intelligence page usage",
+    "Logic Apps billed actions/connectors",
+    "allocated hosting cost",
+    "metadata and cleanup RU",
+    "upload-to-index-readiness time"
+  ],
+  "canary": {
+    "realChunks": 1500,
+    "passed": true,
+    "cleanedUp": true,
+    "indexEngagedAfterSeconds": 215,
+    "vectorQueries": 20,
+    "vectorMedianRU": 15.07,
+    "vectorRecallAt10": 1.0,
+    "distinctHybridRankings": 20,
+    "qualityMeaning": "index diagnostic only",
+    "corpus": "two real public annual-report PDFs; separate from the matched DOCX corpus"
+  },
+  "preliminaryFailures": {
+    "failedDocuments": 6,
+    "failedAttempts": 30,
+    "cause": "workflow Response secured outputs invalid; unhealthy route returned 404",
+    "recovery": "ordinary identical-byte replacement after workflow fix",
+    "initialControlledRecipe": "invalid as overlap control: characters were mislabeled as tokens; superseded by fresh recipe-2 pairs"
+  },
+  "sourceFactReview": {
+    "method": "assistant review of critical facts and both-file task completion against retained source text; not human review or an exhaustive citation audit",
+    "caseCriteria": {
+      "deadline": "expiry date and later-of-two-dates six-month rule, supported by source text",
+      "compare-options": "use both source bodies for permanent-versus-do-nothing consequences"
+    },
+    "outcomes": {
+      "complete-strategy-custom": {
+        "turnsReviewed": 4,
+        "narrowTaskSuccesses": 4
+      },
+      "complete-strategy-microsoft": {
+        "turnsReviewed": 4,
+        "narrowTaskSuccesses": 0
+      },
+      "controlled-component-custom": {
+        "turnsReviewed": 4,
+        "narrowTaskSuccesses": 1
+      },
+      "controlled-component-microsoft": {
+        "turnsReviewed": 4,
+        "narrowTaskSuccesses": 3
+      },
+      "current": {
+        "turnsReviewed": 4,
+        "narrowTaskSuccesses": 2
+      }
+    },
+    "reviews": [
+      {
+        "run": "complete-strategy/run-1-custom",
+        "case": "deadline",
+        "taskSuccess": true,
+        "deadlineFactsCovered": 2,
+        "deadlineFactsExpected": 2,
+        "reviewer": "assistant critical-fact review",
+        "citationAudit": "support for critical facts spot-checked; exhaustive citation correctness unscored",
+        "notes": "Both deadline facts cited to source text."
+      },
+      {
+        "run": "complete-strategy/run-1-custom",
+        "case": "compare-options",
+        "taskSuccess": true,
+        "deadlineFactsCovered": null,
+        "deadlineFactsExpected": null,
+        "reviewer": "assistant critical-fact review",
+        "citationAudit": "support for critical facts spot-checked; exhaustive citation correctness unscored",
+        "notes": "Uses both sources for proposal, sunset and applicant/council consequences."
+      },
+      {
+        "run": "complete-strategy/run-2-custom",
+        "case": "deadline",
+        "taskSuccess": true,
+        "deadlineFactsCovered": 2,
+        "deadlineFactsExpected": 2,
+        "reviewer": "assistant critical-fact review",
+        "citationAudit": "support for critical facts spot-checked; exhaustive citation correctness unscored",
+        "notes": "Both deadline facts cited to source text."
+      },
+      {
+        "run": "complete-strategy/run-2-custom",
+        "case": "compare-options",
+        "taskSuccess": true,
+        "deadlineFactsCovered": null,
+        "deadlineFactsExpected": null,
+        "reviewer": "assistant critical-fact review",
+        "citationAudit": "support for critical facts spot-checked; exhaustive citation correctness unscored",
+        "notes": "Uses both sources and distinguishes the proposal from the current temporary provision."
+      },
+      {
+        "run": "complete-strategy/run-1-microsoft",
+        "case": "deadline",
+        "taskSuccess": false,
+        "deadlineFactsCovered": 1,
+        "deadlineFactsExpected": 2,
+        "reviewer": "assistant critical-fact review",
+        "citationAudit": "support for critical facts spot-checked; exhaustive citation correctness unscored",
+        "notes": "Expiry correct; says the later-date tie-breaker is unresolved despite source-1 containing it."
+      },
+      {
+        "run": "complete-strategy/run-1-microsoft",
+        "case": "compare-options",
+        "taskSuccess": false,
+        "deadlineFactsCovered": null,
+        "deadlineFactsExpected": null,
+        "reviewer": "assistant critical-fact review",
+        "citationAudit": "support for critical facts spot-checked; exhaustive citation correctness unscored",
+        "notes": "Only source-2 body retrieved; unsupported opening claims agreement of both sources, then discloses inability to read source-1."
+      },
+      {
+        "run": "complete-strategy/run-2-microsoft",
+        "case": "deadline",
+        "taskSuccess": false,
+        "deadlineFactsCovered": 0,
+        "deadlineFactsExpected": 2,
+        "reviewer": "assistant critical-fact review",
+        "citationAudit": "support for critical facts spot-checked; exhaustive citation correctness unscored",
+        "notes": "No source evidence delivered; refuses after budget/tool failures."
+      },
+      {
+        "run": "complete-strategy/run-2-microsoft",
+        "case": "compare-options",
+        "taskSuccess": false,
+        "deadlineFactsCovered": null,
+        "deadlineFactsExpected": null,
+        "reviewer": "assistant critical-fact review",
+        "citationAudit": "support for critical facts spot-checked; exhaustive citation correctness unscored",
+        "notes": "Uses source-2 only and discloses source-1 read unfinished."
+      },
+      {
+        "run": "controlled-component/run-1-custom",
+        "case": "deadline",
+        "taskSuccess": false,
+        "deadlineFactsCovered": 1,
+        "deadlineFactsExpected": 2,
+        "reviewer": "assistant critical-fact review",
+        "citationAudit": "support for critical facts spot-checked; exhaustive citation correctness unscored",
+        "notes": "Expiry correct; misses later-date rule by relying on source-2."
+      },
+      {
+        "run": "controlled-component/run-1-custom",
+        "case": "compare-options",
+        "taskSuccess": false,
+        "deadlineFactsCovered": null,
+        "deadlineFactsExpected": null,
+        "reviewer": "assistant critical-fact review",
+        "citationAudit": "support for critical facts spot-checked; exhaustive citation correctness unscored",
+        "notes": "Uses source-1 only; tool round limit prevents second file."
+      },
+      {
+        "run": "controlled-component/run-2-custom",
+        "case": "deadline",
+        "taskSuccess": true,
+        "deadlineFactsCovered": 2,
+        "deadlineFactsExpected": 2,
+        "reviewer": "assistant critical-fact review",
+        "citationAudit": "support for critical facts spot-checked; exhaustive citation correctness unscored",
+        "notes": "Both deadline facts supported by source-1 passage."
+      },
+      {
+        "run": "controlled-component/run-2-custom",
+        "case": "compare-options",
+        "taskSuccess": false,
+        "deadlineFactsCovered": null,
+        "deadlineFactsExpected": null,
+        "reviewer": "assistant critical-fact review",
+        "citationAudit": "support for critical facts spot-checked; exhaustive citation correctness unscored",
+        "notes": "Uses source-1 only and discloses second file read incomplete."
+      },
+      {
+        "run": "controlled-component/run-1-microsoft",
+        "case": "deadline",
+        "taskSuccess": true,
+        "deadlineFactsCovered": 2,
+        "deadlineFactsExpected": 2,
+        "reviewer": "assistant critical-fact review",
+        "citationAudit": "support for critical facts spot-checked; exhaustive citation correctness unscored",
+        "notes": "Both deadline facts supported by source-1."
+      },
+      {
+        "run": "controlled-component/run-1-microsoft",
+        "case": "compare-options",
+        "taskSuccess": false,
+        "deadlineFactsCovered": null,
+        "deadlineFactsExpected": null,
+        "reviewer": "assistant critical-fact review",
+        "citationAudit": "support for critical facts spot-checked; exhaustive citation correctness unscored",
+        "notes": "Context-budget refusal, no complete comparison."
+      },
+      {
+        "run": "controlled-component/run-2-microsoft",
+        "case": "deadline",
+        "taskSuccess": true,
+        "deadlineFactsCovered": 2,
+        "deadlineFactsExpected": 2,
+        "reviewer": "assistant critical-fact review",
+        "citationAudit": "support for critical facts spot-checked; exhaustive citation correctness unscored",
+        "notes": "Both deadline facts supported by source-1 passage."
+      },
+      {
+        "run": "controlled-component/run-2-microsoft",
+        "case": "compare-options",
+        "taskSuccess": true,
+        "deadlineFactsCovered": null,
+        "deadlineFactsExpected": null,
+        "reviewer": "assistant critical-fact review",
+        "citationAudit": "support for critical facts spot-checked; exhaustive citation correctness unscored",
+        "notes": "Uses source-2 options/costs and source-1 equality/engagement material; both-file requirement met."
+      },
+      {
+        "run": "current-1",
+        "case": "deadline",
+        "taskSuccess": true,
+        "deadlineFactsCovered": 2,
+        "deadlineFactsExpected": 2,
+        "reviewer": "assistant critical-fact review",
+        "citationAudit": "support for critical facts spot-checked; exhaustive citation correctness unscored",
+        "notes": "Both deadline facts supported by source-1."
+      },
+      {
+        "run": "current-1",
+        "case": "compare-options",
+        "taskSuccess": false,
+        "deadlineFactsCovered": null,
+        "deadlineFactsExpected": null,
+        "reviewer": "assistant critical-fact review",
+        "citationAudit": "support for critical facts spot-checked; exhaustive citation correctness unscored",
+        "notes": "Only catalogue/outline received; answer infers practical consequences from metadata and discloses missing full text."
+      },
+      {
+        "run": "current-2",
+        "case": "deadline",
+        "taskSuccess": true,
+        "deadlineFactsCovered": 2,
+        "deadlineFactsExpected": 2,
+        "reviewer": "assistant critical-fact review",
+        "citationAudit": "support for critical facts spot-checked; exhaustive citation correctness unscored",
+        "notes": "Both deadline facts supported by source-1."
+      },
+      {
+        "run": "current-2",
+        "case": "compare-options",
+        "taskSuccess": false,
+        "deadlineFactsCovered": null,
+        "deadlineFactsExpected": null,
+        "reviewer": "assistant critical-fact review",
+        "citationAudit": "support for critical facts spot-checked; exhaustive citation correctness unscored",
+        "notes": "Uses outlines/opening descriptions after budget failures, not adequate source-body evidence for the requested comparison."
+      }
+    ],
+    "interpretation": "two cases and two source documents; no general quality winner. Routing, evidence budgets, limits and representation all affect outcomes."
+  },
+  "temporaryChatQuotaChange": {
+    "at": "2026-10-29T20:46:45.128306+00:00",
+    "fromTokensPerMinute": 50000,
+    "toTokensPerMinute": 200000,
+    "scope": "isolated chat deployment only",
+    "interpretation": "functional answer checks only; no latency comparison across quota change",
+    "restoreCapacity": 50,
+    "restoredAt": "2026-10-29T20:56:37.882679+00:00"
+  },
+  "lifecycle": {
+    "custom": {
+      "checks": [
+        "budget_no_partial_source",
+        "custom_cloud_ingestion",
+        "delete_hides_library",
+        "delete_hides_source_immediately",
+        "failed_replacement_keeps_generation",
+        "failed_replacement_keeps_source",
+        "full_source_read",
+        "metadata_retag_search",
+        "source_root_subtree",
+        "stale_source_refused",
+        "successful_replacement",
+        "wrong_agent/documents:discover",
+        "wrong_agent/documents:images",
+        "wrong_agent/documents:read",
+        "wrong_agent/search",
+        "wrong_agent_tools"
+      ],
+      "purge": {
+        "chunkRowsRemaining": 0,
+        "blobsRemaining": 0,
+        "libraryExists": false
+      }
+    },
+    "microsoft": {
+      "checks": [
+        "initial_ready",
+        "wrong_agent_read_denied",
+        "complete_provider_source",
+        "old_generation_readable_during_replacement",
+        "replacement_preserves_concurrent_metadata",
+        "stale_reference_denied",
+        "live_result_reused_without_resubmission",
+        "delete_during_remote_processing_hides_library"
+      ],
+      "purge": {
+        "initialPurge": {
+          "chunks": 0,
+          "documents": 0,
+          "blobs": 0,
+          "libraryExists": false
+        },
+        "lateArtifact": "real result bytes reintroduced after deletion (fault injection)",
+        "scheduledCleanupSeconds": 130.9,
+        "final": {
+          "chunks": 0,
+          "documents": 0,
+          "blobs": 0,
+          "libraryExists": false
+        }
+      }
+    },
+    "legacyRecipe": {
+      "passed": true,
+      "workflowVersion": "shared-indexer-v1",
+      "frozenRecipeUnchanged": true,
+      "replacementPublished": true
+    },
+    "lateCleanupScope": "disposable library deliberately absent from explicit job IDs; discovered from Blob prefix"
+  },
+  "localValidation": {
+    "fullSuitePassed": 752,
+    "focusedDiscoveryAndLifecyclePassed": 27,
+    "ruff": "passed",
+    "bicep": "changed modules compiled; connections module has generated-schema warnings but deployed successfully",
+    "streamlitAppTest": "Admin four creation actions and Performance render without exceptions; final inventory has five libraries",
+    "interactiveBrowserQA": "not run"
+  },
+  "deployment": {
+    "workerRuntimeRevision": "53ffe2c",
+    "reconciliationRevision": "fde7061",
+    "reconciliationSchedule": "every two minutes with Blob scope discovery and retained IDs",
+    "unusedFallbackEnvironment": "removed",
+    "temporaryAuthorizationJob": "removed",
+    "supersededLibraries": "removed from active inventory through normal deletion; private receipts retained",
+    "activeResources": "five demo libraries, warm worker, Logic Apps host, reconciliation job and isolated backing services retained",
+    "api": "localhost dev authentication only",
+    "workflowPackageSha256": "4e5582911fdab18e96cbb4b025db82fed7a6b03bf3fe9af62422c9b7568e91c6",
+    "finalChecks": {
+      "librariesReady": 5,
+      "sourceDocumentsReady": 10,
+      "localDemoHealthy": true,
+      "chatCapacity": 50,
+      "reconciliationSuccessful": true
+    }
+  },
+  "remaining": [
+    "Broader structural formats and native/PDF visual parity",
+    "Generated summaries and summary-vector navigation",
+    "Agent evidence-budget, routing and metadata-grounding failures found in smoke replay",
+    "Representative labeled quality evaluation and exhaustive citation review",
+    "Multi-replica races, natural late-output failure combinations, cancellation and long jobs",
+    "Large-namespace reconciliation sweep capacity",
+    "Hosted API Entra authentication",
+    "Steady-state retrieval benchmark for each profile"
+  ],
+  "measurementBoundaries": {
+    "publishedGeneration": "embedding/write counters refer to published representations; failed preliminary attempts are reported separately",
+    "tokenEstimates": "chunk and source token counts use local tokenization, not provider billing counters",
+    "unknownCounters": "null means unavailable, never zero",
+    "latency": "functional run only; quota changed, regions differ and small-library index readiness was not established"
+  }
+}

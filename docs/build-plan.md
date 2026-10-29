@@ -1,20 +1,21 @@
 # Build plan
 
-**Implementation update, 2026-10-29 (E60):** a locally tested modular-ingestion
-vertical slice now extends the existing API/worker/demo/metrics/replay. It provides
-three versioned profiles, resumable matched pairs, Markdown/DOCX source hierarchy,
-validated Microsoft result publication without re-embedding, and controlled
-shared-extraction comparisons. Warm worker and shared-workflow hosting/auth
-configuration are prepared offline. No cloud resources or scale measurements were
-touched. This does not complete granular PDF/native adapters, generated summaries,
-visual parity, hosted API authentication or cloud comparison acceptance. See the
-[implementation/runbook](modular-ingestion.md). Next: isolated cloud authentication,
-quota/roles, image/workflow deployment and reconciliation scheduling; then matched
-real-source ingestion/readiness and reviewed agent replays. Estimate 10–20 total
-engineering days for cloud-validated comparisons, 20–35 for broader structural and
-visual coverage; these remain planning judgments.
+**Implementation and cloud review, 2026-10-29 (E60–E61):** the modular-ingestion
+vertical slice extends the existing API, worker, demo, measurements and replay.
+Three profiles and matched creation are implemented. Dedicated Azure services
+passed the real-text canary; the warm custom worker and authenticated shared
+Microsoft workflow ingested the same two DOCX files. The review corrected a real
+unit mismatch: Microsoft overlap is characters. Recipe revision 2 uses explicit
+units; controlled pairs use 500-token targets with zero overlap. Auth denial
+checks and scheduled reconciliation passed. Existing scale resources remain untouched.
+See the [runbook](modular-ingestion.md) and E61 for live evidence and limits.
+Next: broader labeled corpora, remote races/cancellation and format coverage.
+Granular PDF/native adapters, generated summaries, visual parity and hosted API
+authentication remain open. Estimate 10–20 total engineering days for representative
+cloud comparisons, 20–35 for broader structural/visual coverage; planning judgments,
+not completion claims.
 
-**Modularity handoff, 2026-10-29:** the agreed evaluation design adds library-level profiles for current ingestion, custom granular document processing and adapted Microsoft Document Indexer, plus paired custom/Microsoft library creation. See the [modular ingestion assessment and local-session prompt](consults/2026-10-29-modular-ingestion-assessment.md) for integration boundaries, cloud hosting, comparison controls, scope and acceptance criteria. This is a design handoff; the three-profile UI and runtime are not yet implemented. It does not select an ingestion winner or establish quality/cost superiority.
+**Modularity handoff, 2026-10-29:** the agreed evaluation design adds library-level profiles for current ingestion, custom granular document processing and adapted Microsoft Document Indexer, plus paired custom/Microsoft library creation. See the [modular ingestion assessment and local-session prompt](consults/2026-10-29-modular-ingestion-assessment.md) for integration boundaries, cloud hosting, comparison controls, scope and acceptance criteria. The implementation update above supersedes the handoff status. It does not select an ingestion winner or establish quality/cost superiority.
 
 **Evidence update, 2026-10-28 (E57, E58):** the source measurements this plan relied on were corrected against their own records. None of them routed by partition key, and sharded DiskANN is public preview. Phase 4 gains two measurements of the claim that a search's cost does not grow with the number of libraries: hybrid cost as the container grows, and `QuantizedFlat` scoping at many libraries.
 

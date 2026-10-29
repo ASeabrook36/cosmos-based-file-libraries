@@ -850,3 +850,121 @@ reference-privacy checks passed. Both new Bicep files compiled. The exact pinned
 Microsoft source hash and generated Standard ZIP contents were verified offline.
 The worker image and Streamlit UI were not run interactively; no live Azure/model
 or distributed consistency result is claimed.
+
+## E61. Isolated modular-ingestion cloud validation and overlap correction
+
+2026-10-29. Follow-up to E60 on the separate ingestion branch. Dedicated Azure
+Cosmos/Blob/Service Bus/model resources, registry, warm Container Apps worker and
+Logic Apps Standard workflow were used. Existing scale-measurement resources were
+not used or changed. The API remained localhost-only. The sanitized receipt is
+[modular-cloud-20261029.json](../records/modular-cloud-20261029.json); originals,
+identifiers, packages, model captures and cleanup manifests remain private.
+
+The mandatory 1,500-real-chunk canary passed before application ingestion. The
+vector index engaged after about 215 seconds; 20 vector queries had median 15.07 RU
+and recall@10 of 1.0 against exact search. Twenty hybrid questions produced 20
+distinct rankings. Canary rows were purged. These are index diagnostics, not
+answer-quality or ingestion-provider superiority evidence.
+
+All three profiles ingested identical copies of two public DOCX draft impact
+assessments. The complete recipes produced 45 current, 371 custom and 5 Microsoft
+chunks. The custom adapter retained authored DOCX ancestry and granular source
+blocks; Microsoft's complete recipe retained one provider-text section per file.
+No generated summaries or visual parity are claimed.
+
+Review also closed a cleanup configuration gap: a schedule containing only the
+initial pair IDs would miss later demo creations. The job now discovers canonical
+UUID library prefixes with Blob delimiter listing, including scopes recreated by
+late writes after deletion. It sends ordinary single-library reconciliation messages;
+no cross-library chunk query or new container is introduced. Explicit retained IDs
+remain supported. Sweep capacity at scale is not established by this small test.
+
+**A live comparison defect was corrected.** Microsoft's `ChunkText`
+[`PageOverlapLength`](https://learn.microsoft.com/en-us/azure/logic-apps/parse-document-chunk-text)
+is characters, not tokens. E60's 500/50 control was therefore not equivalent.
+Recipe revision 2 records `overlapCharacters` separately; complete Microsoft uses
+5,000-token targets / 200 characters, while controlled pairs use 500-token targets
+and zero overlap on both sides. Fresh controlled pairs had equal complete extracted
+text digests and the same tokenizer/model, producing 41 custom and 38 Microsoft
+chunks. Actual Microsoft retokenized maxima reached 5,001 and 501 respectively;
+the UI reports actual distribution and explicit settings, not an exact measured
+ceiling. Frozen older recipes remain immutable, display corrected units and cannot
+pass the new controlled replay guard. The shared workflow retains their execution
+semantics explicitly.
+
+The worker uses managed identity and a digest-pinned image. Model versions are
+pinned with auto-upgrade disabled. Workflow Standard quota was unavailable in the
+worker region, so the workflow runs in another region; timing comparisons cannot
+isolate implementation speed. A second unused environment was scheduled for
+removal. The active worker/workflow remain available for the isolated demo.
+
+Authentication was tested on a healthy route: authorized worker ingestion succeeded;
+anonymous, invalid-token and wrong-audience requests returned 401; a different
+managed identity with the same audience returned 403. SAS triggers are disabled.
+Following explicit user approval, EasyAuth uses `AllowAnonymous` so Logic Apps can
+enforce its downstream token policy. `Return401` prevented runtime-management
+access. The initial 404 responses on an unhealthy route were **not** counted as
+authorization evidence. Azure also rejected `secureData.outputs` on the generated
+Response action; securing inputs only fixed deployment. Six preliminary documents
+had 30 recorded failed attempts before normal replacement recovered them. These
+failures are retained separately from successful-generation metrics.
+
+The existing replay alternates fresh sessions across pair members with the same
+model, questions, instructions and 24,000-token context budget. Two source-fact
+cases are repeated twice per pair, with current-profile baseline runs. Several
+small libraries still scanned all their rows, so replay is explicitly
+`functional-smoke`; the default steady-state readiness gate remains intact.
+Prompt/completion/cached/reasoning usage and real rate-limit waits are captured.
+The isolated chat throughput cap was temporarily raised from 50,000 to 200,000
+tokens/minute during the functional run, with the same pinned model/version; the
+private controls record its timestamp. No latency comparison across that change
+is valid. The original cap is restored after replay.
+The complete Microsoft recipe exposed evidence-budget failures and incomplete
+answers; the record separates source-fact review from approximate-vector recall.
+No general quality, latency or cost winner is established by this corpus.
+
+Known embedding counters and chunk-write RU are measured. Microsoft connector
+embedding counters remain unavailable, as do DI page usage, allocated hosting
+cost, workflow billed actions, metadata/cleanup RU and upload-to-index-readiness
+time. Chunk/source token counts are estimates. Source snapshots, generation checks
+and matched digests are retained; all cloud artifacts are outside the repository.
+
+Broader formats, generated summaries, native/PDF visual parity, multi-replica
+publication races, natural late completion across all failure modes, cancellation,
+long-running remote jobs and hosted API authentication remain open. Streamlit
+AppTest is rendering evidence, not interactive browser/visual QA. The live record
+distinguishes a fault-injected late artifact from a naturally reproduced race.
+
+The completed run captured **20 turns**. Assistant review of the two narrow case
+requirements found task completion in 2/4 current, 4/4 complete custom, 0/4 complete
+Microsoft, 1/4 controlled custom and 3/4 controlled Microsoft turns. These are
+small, source-based smoke judgments, **not** general accuracy scores or an
+exhaustive citation audit. Failures included omitted later-date rules, inability to
+use both files, context/round limits, and answers treating catalogue/outline
+metadata as evidence. Routing and budget handling remain open agent work across
+profiles; smaller Microsoft chunks improved these particular cases without
+establishing a vendor or strategy winner.
+
+Custom live lifecycle checks covered personal-library refusal, complete/subtree
+reads, budget refusal without partial source, metadata retag, failed replacement
+retaining active source, successful replacement, stale references and purge.
+Microsoft checks covered managed worker publication, wrong-agent refusal,
+complete provider text, old-source visibility during replacement, concurrent user
+metadata, stale-reference refusal, cached-result reuse without resubmission, and
+deleting a library while remote processing was active. The frozen revision-1
+Microsoft recipe also successfully reprocessed without changing its stored recipe.
+
+After confirming complete Microsoft deletion (zero documents, chunks and blobs),
+a real saved workflow result was deliberately reintroduced under that deleted
+scope. The scope was absent from the job's explicit ID list. Blob discovery and
+scheduled reconciliation removed it in **130.9 seconds**, again leaving zero
+rows/blobs and no library. This is a live fault-injection result, not proof of all
+natural race timings. The chat cap was restored, the temporary authorization job
+and unused fallback environment were removed, and superseded preliminary libraries
+were deleted through the normal API. The corrected isolated demo remains running.
+
+Final validation: **752 full-suite tests passed**, followed by **27 focused
+reconciliation/lifecycle tests** for the discovery addition. Ruff lint/format,
+Bicep compilation, reference-privacy checks and `git diff --check` passed. Fourteen
+existing TestClient deprecation warnings remain. Model provider counters are
+preserved separately from estimates and unavailable usage in the receipt.

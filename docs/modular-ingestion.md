@@ -1,9 +1,9 @@
 # Modular ingestion vertical slice
 
-2026-10-29. Implements the first local slice of the
-[assessment](consults/2026-10-29-modular-ingestion-assessment.md).
-No Azure deployment, live ingestion, agent-model evaluation or scale measurement
-was performed for this change. Existing scale-probe work is outside this branch.
+2026-10-29. Implements and cloud-validates a narrow vertical slice of the
+[assessment](consults/2026-10-29-modular-ingestion-assessment.md). The worker and
+Microsoft workflow run in dedicated Azure resources. Existing scale-probe resources
+were not used or changed. See E61 for bounded live evidence and remaining gaps.
 
 ## Available compositions
 
@@ -128,10 +128,10 @@ Metadata/cleanup RU, hosting allocation, billed charges and index readiness are
 also unavailable. Full-read/chunk and `sourceTextTokensEstimate` counts are tokenizer estimates; actual
 model usage continues to come from provider counters. No dollar costs are inferred.
 
-## Offline cloud preparation
+## Isolated cloud hosting
 
 - `infra/worker.Dockerfile` builds the existing Python queue worker as a non-root
-  process. The image was not built or pushed in this session.
+  process. The validated image was built from a committed revision and deployed by digest.
 - `infra/modular-validation-hosting.bicep` creates an isolated registry and Container Apps
   environment, with managed-identity image pulls.
 - `infra/modular-worker.bicep` prepares one warm Container App with managed
@@ -148,13 +148,18 @@ model usage continues to come from provider counters. No dollar costs are inferr
   Logic Apps Standard host, requiring HTTPS/Entra and the worker's client and
   principal IDs. Its schema follows the
   [App Service auth settings reference](https://learn.microsoft.com/en-us/azure/templates/microsoft.web/sites/config-authsettingsv2).
+  Standard Logic Apps requires `AllowAnonymous` at EasyAuth so its runtime can
+  enforce the Entra trigger policy. SAS triggers must be disabled. Live checks
+  accepted the worker, rejected missing/invalid/wrong-audience tokens with 401, and
+  rejected a different managed identity with the same audience with 403.
   It does not implement hosted FastAPI authentication. `AUTH_MODE=dev` remains
   local-only and hosted API Entra support remains Phase 5.
 
-Use an isolated environment/database/queue for any live validation while scale
-measurements are running. No live account, credential, quota or provider check
-was attempted here; this is deliberate isolation, not a claim that access failed.
-Fleet access, if later needed, must use nervus.
+Use isolated accounts, databases, queues, identities and model deployments for validation.
+The live slice uses a warm worker/data services in one region and the workflow in
+another because the first region had no Workflow Standard quota. This is a timing
+confound. The mandatory real-text canary passed before ingestion. Fleet access,
+if later needed, must use nervus.
 
 Keep packages, runtime parameters, connection bindings, source snapshots and raw
 telemetry outside the repository. The builder accepts either an output workflow
@@ -194,32 +199,40 @@ The bridge submits the trusted job and polls its immutable result for up to five
 minutes per delivery. A stored result avoids resubmission. Ambiguous HTTP failures
 or overlapping submissions can repeat remote work before the result exists;
 exactly-once billing is not promised. A bad/partial result never publishes.
-Remote failure details, cancellation, long-running jobs beyond delivery/lock
-budgets and provider-directed backoff still need live integration work.
+Initial runtime failure was visible as failed documents after queue retries; normal
+replacement recovered them after the deployment fix. The generated `Response` action
+secures inputs only: Azure rejects secured outputs on this action. Remote failure
+details, cancellation, long-running jobs beyond delivery/lock budgets and
+provider-directed backoff still need broader live integration work.
 
 A workflow can write artifacts after deletion/purge or after the controller's
-final timeout. Schedule the provided managed-identity reconciliation enqueue
-command for **both retained experiment member IDs, including deleted members**
+final timeout. Schedule the provided managed-identity reconciliation enqueue command with Blob
+scope discovery. It finds top-level canonical library UUID prefixes, including
+artifacts written after a library was purged. Retain explicit member IDs as well
 while remote runs may finish:
 
 ```sh
-python -m fli.reconcile --library-id "$CUSTOM_LIBRARY_ID" --library-id "$MICROSOFT_LIBRARY_ID"
+python -m fli.reconcile --discover-blob-scopes --library-id "$CUSTOM_LIBRARY_ID" --library-id "$MICROSOFT_LIBRARY_ID"
 ```
 
 The existing worker handles `reconcileLibrary`: it purges missing/deleted scopes,
 cleans obsolete generation artifacts and resumes pending jobs with complete
-results. It never reopens a terminally failed document. Scheduling is not deployed
-by this slice. Retiring that schedule requires confirming no remote execution
+results. It never reopens a terminally failed document. `infra/modular-reconciliation.bicep` deploys the two-minute schedule; repeated
+executions succeeded live. Discovery covers later demo creations without editing
+the schedule; the workflow has no Cosmos role, so any late provider output is under
+a discoverable Blob library prefix. The worker still queries one library at a time.
+Discovery requires Blob-list access and its endpoint in addition to queue-send access.
+Sweep duration at large library counts remains unmeasured. Retiring that schedule requires confirming no remote execution
 can still write. This is necessary cleanup, not a new ingestion source.
 
-Before deployment, the remaining exact gates are: select isolated resources and
-immutable image; build/push the image; verify managed-identity data/registry roles;
-provision/bind a shared workflow host, connections and Entra audience/principal;
-verify actual model revisions and regional quota; test a token-only invocation
-without SAS (the Standard trigger/authentication interaction is untested); wire
-reconciliation scheduling; validate concurrent/late workflow completion and
-cross-instance consistency. The Bicep and package builder compile/materialize
-locally; that does not prove those Azure runtime gates.
+The isolated deployment verified image pulls, managed-identity data roles, model
+versions with auto-upgrade disabled, workflow package mounting, managed connections,
+positive/negative trigger authentication and reconciliation executions.
+`infra/shared-workflow-connections.bicep` binds Document Intelligence and grants
+workflow access only to the isolated Blob/DI/OpenAI services, with no Cosmos role.
+New deployments must repeat these checks; a successful Bicep compilation alone is
+not runtime evidence. Multi-replica publication races, cancellation and long remote
+runs remain outside this cloud acceptance slice.
 
 No new container policy is needed. If live validation creates any new
 account/container, the repository's real-text canary is mandatory before use.
@@ -243,8 +256,14 @@ Add common `sourceFacts`/regions to cases. `quality-review.json` leaves relevanc
 citation and task judgments unreviewed until assessed against those common source
 facts. It never substitutes provider chunk IDs, latency or exact-vector canary
 recall for answer quality. Existing agent usage includes actual cached/reasoning
-token details when available, tool/model rounds and budgets. No real-model replay
-or reviewed quality score was produced here.
+token details when available, tool/model rounds and budgets. Functional smoke replay uses two public DOCX assessments, two source-fact cases and
+alternating repeated runs. The small corpus does not establish a quality winner.
+Use `--measurement-mode functional-smoke` when index readiness is not confirmed;
+this records that limitation and does not waive the default steady-state gate.
+Several tiny libraries scanned all their rows, so their timings are not reported
+as indexed steady-state benchmarks. The smoke run also records a temporary chat
+throughput-cap increase to reduce throttling; latency across that change is not
+comparable.
 
 ## Validation and remaining milestones
 
@@ -258,13 +277,13 @@ is compiled locally and the builder was run against the exact pinned template.
 Planning estimates remain judgments: first local slice 3–5 engineering days;
 cloud-validated comparisons about 10–20 days total; broader format/structural and
 visual coverage about 20–35 days total, depending on corpus and quota. This slice
-is not completion of all three strategies at feature parity. Next milestones are
-live hosting/workflow validation, representative matched ingestion and reviewed
-agent replay, then PDF/native structural adapters, typed generated summaries and
+is not completion of all three strategies at feature parity. Next milestones are representative labeled corpora and broader concurrency/format
+validation, then PDF/native structural adapters, typed generated summaries and
 summary discovery. Distributed dashboards, operator intervention accounting,
 remote per-attempt usage/cancellation and full visual parity remain open.
 
-The Streamlit pages were updated in code; interactive browser QA remains unrun.
+Streamlit AppTest rendered Admin and Performance with live isolated inventory and
+no exceptions. Interactive browser/visual QA remains unrun.
 
 ## Cloud review correction: overlap units
 
@@ -275,5 +294,8 @@ is characters, whereas the Python overlap limit is tokens. Recipe revision 2 and
 processing retains 5,000 tokens / 200 characters. New controlled pairs use
 500-token targets and zero overlap on both sides. Existing recipes stay immutable;
 the UI corrects legacy labels and replay rejects the old controlled recipes.
+The shared workflow explicitly retains revision-1 execution semantics for frozen
+older libraries (their token-named field still means characters); unknown workflow
+versions cannot satisfy the publication version check.
 Retokenized Microsoft output can exceed its nominal target slightly; actual
 distributions are recorded rather than asserting an exact token ceiling.

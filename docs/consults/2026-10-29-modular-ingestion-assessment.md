@@ -2,6 +2,12 @@
 
 2026-10-29. Status: assessment and implementation handoff; no application or infrastructure changes made by this assessment.
 
+**Implementation correction (E61):** the earlier “5,000/200” shorthand means
+5,000 tokens with **200 characters** of overlap in Microsoft's `ChunkText` action.
+It does not mean 200 tokens. The implementation now records both units explicitly
+and uses zero overlap on both sides of the controlled comparison. See the
+[runbook](../modular-ingestion.md#cloud-review-correction-overlap-units).
+
 ## Purpose and agreed scope
 
 Make ingestion components selectable per library in one demo so the team can evaluate quality, operational convenience, latency and cost without rebuilding the demo for each strategy. This is an evaluation architecture, not a decision to adopt Microsoft Document Indexer or retain custom processing.
