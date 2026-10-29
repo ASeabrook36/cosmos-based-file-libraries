@@ -39,12 +39,12 @@ Dashes mark things we have not checked in the current setup. The comparison clai
 
 ## This is measured, not assumed
 
-The design reuses earlier measurements of the same Cosmos features on live Azure. It tested a container holding 2,000 people's personal content, which is close to an organization full of personal agents. The highlights:
+The design reuses earlier measurements of the same Cosmos features on live Azure. They used a container of about 600,000 public abstracts divided among 2,003 simulated owners, which resembles an organization full of personal agents. Those tests named the owner in a filter rather than routing by partition key, so this project re-measures the routed path itself. The highlights:
 
-- **Giving each owner its own vector index made searches cheaper and faster.** Expensive searches (the 95th percentile) cost 54–69 units instead of 407–1,063, and took about 100–130 ms instead of 143–295 ms. Accuracy dropped by under 0.2 percentage points.
-- **The cost of doing it wrong was measured too.** Searching without naming the owner cost about 220 times more, and searching several owners in one combined query cost about 300 times more. The design avoids both by construction.
+- **Giving each owner its own vector index made searches cheaper and faster.** On a scoring rule that weights query types by assumed traffic, it scored 54–69 units instead of 407–1,063, and 97–127 ms instead of 143–295 ms. These are decision scores from one build of each layout, not observed percentiles. Accuracy dropped by under 0.2 percentage points.
+- **The cost of doing it wrong was measured too.** Searching without naming the owner scanned the whole container, about 300 times the cost on real data, and the bill grows with everyone's content, not one library's. Searching several values in one combined query cost about 320 times more. The design avoids both by construction.
 - **The storage format matters.** Storing vectors at half precision cut storage by 46% with no measurable loss of accuracy. The chosen compression method lost no documents in very small libraries, where the alternative missed some.
-- **Cosmos costs are small.** About $23 to load a million searchable pieces (roughly 30,000–50,000 documents), about $2–3 a month to store them, and under two cents per thousand searches. AI model costs for embeddings and image descriptions are separate and will be larger.
+- **Cosmos costs are small.** About $36 to load a million searchable pieces at this project's measured write cost (roughly 30,000–50,000 documents), about $2–3 a month to store them, and under two cents per thousand searches. AI model costs for embeddings and image descriptions are separate and will be larger.
 
 `evidence.md` has every number with its source and how solid it is.
 
@@ -63,6 +63,6 @@ The design reuses earlier measurements of the same Cosmos features on live Azure
 
 - **This exact combination of Cosmos settings has been built and passed its canary at small scale.** Large libraries, multi-partition behavior and production operations remain unmeasured.
 - **The settings were tested on public reference text, not workplace documents.** Live retrieval checks also used published research papers. A workplace corpus and its task quality remain unevaluated.
-- **The chosen compression method is a Microsoft preview feature.** A generally available alternative exists at slightly lower accuracy.
+- **Two features the design uses are Microsoft previews.** Per-library vector indexes (sharded DiskANN) and the chosen compression method (spherical quantization) are public preview. The compression method has a generally available alternative at slightly lower accuracy; per-library indexes do not.
 - **Very large deployments (millions of searchable pieces spread over many servers) are untested.** The design should behave the same at that size, but nobody has measured it.
 - **Microsoft's documentation asks users of this partitioning and vector-search combination to contact the Cosmos team.** That is a step before production.

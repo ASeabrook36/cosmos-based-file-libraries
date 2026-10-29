@@ -1,5 +1,7 @@
 # Build plan
 
+**Evidence update, 2026-10-28 (E57, E58):** the source measurements this plan relied on were corrected against their own records. None of them routed by partition key, and sharded DiskANN is public preview. Phase 4 gains two measurements of the claim that a search's cost does not grow with the number of libraries: hybrid cost as the container grows, and `QuantizedFlat` scoping at many libraries.
+
 **Experimental update, 2026-10-28:** the opt-in [structured retrieval lab](structure-lab.md)
 has passed three real-text index canaries and a small live structural retrieval
 demonstration. It compares shared and separate summary containers without changing
@@ -192,7 +194,10 @@ Images were moved out of Phase 3 on 2026-10-23 so that metadata and lifecycle co
   - On a realistic large library with about 2–5% image rows, measure `contentKinds: ["image"]` recall@k against vector-only exact search (`VectorDistance(..., true, ...)`), plus RU, latency, result-slot duplication and the observed index type (N11, N16). Keep `filterPriority` at its default unless those measurements justify a change.
   - Wait for the index before measuring search cost (E25).
   - Measure the cross-partition library list at 1,000+ libraries, and `refresh_library` (which reads every document record after each ingest) during a bulk load into one library (review finding 4).
-  - Measure hybrid search cost (`SEARCH_MODE=hybrid`) on the same libraries before and after loading the 1,000: its full-text statistics span the container, so it may grow with the number of libraries (E27). `full_text_score_scope="Local"` limits those statistics to the query's partition-key values, but from Python it cannot yet be combined with a partition-keyed hybrid query that ranks (E56); re-test it if a newer SDK can.
+  - **Hybrid cost as the container grows** (`capacity/untested-at-scale.md` §5; E27, E56). Use the shape that ranks from Python: library in `WHERE`, no partition key. Pick five libraries of different sizes and 20 real questions with different answers, and measure each search's RU, HTTP responses and the partition-key ranges contacted (`x-ms-documentdb-partitionkeyrangeid`), at three container sizes: 1 library, 100, and 1,000+ (the scale corpus). Then repeat on the provisioned two-partition container from §1's test. If an SDK release can combine a partition key with a ranked hybrid query, add `full_text_score_scope="Local"`. Check ranking first (different questions, different results; the canary's `hybrid_ranks` rule) and wait for the vector index (E25).
+    - *Graded Measured.* **Flat** if each library's median RU at 1,000+ libraries is within 20% of its median at one library, and within the spread of three repeat runs; **grows** otherwise, with RU against library count and total chunks reported. **Fans out** if a search contacts more partition-key ranges than hold the library. One physical partition can only grade the first; the two-partition run grades the second. If hybrid grows or fans out, it stays a non-default setting (it is already) and the README says so.
+  - **`QuantizedFlat` scoping at many libraries** (`capacity/untested-at-scale.md` §6). A risk to the "cost does not grow with the number of libraries" claim, not a finding: the source project saw an index-served `QuantizedFlat` search cost about 5,450 RU whatever its scope on a container without a shard key (E57), while Phase 0 saw a `/libraryId`-sharded `QuantizedFlat` search on one library cost 15 RU (E12). Choose ten small libraries, 1,000–5,000 vectors each (Microsoft scans below 1,000), with 20 real questions each. Measure vector-only search RU, retrieved document count, latency and the reported index (`x-ms-cosmos-index-utilization`): once with the ten alone in the container and again after loading the 1,000+ libraries and three large shared libraries. Also run each question with `VectorDistance(…, true, …)` for recall.
+    - *Graded Measured.* **Scoped** if, for each library, median RU and retrieved document count stay within 20% and three-run spread after the container grows, the index report names the `/libraryId` shard, and recall@10 against exact search stays at 0.95 or above. **Not scoped** if RU or documents read grow with the container's total content; then the README's per-library cost claim is withdrawn and the design question goes to Microsoft (N6) before production. A partial result (scoped at one size, not another) is reported as such, not rounded either way.
 - **Routing telemetry (enhancement 3):** `library_search` and `search_usage` events, the usage endpoint, the saved Log Analytics query, and `GET …/routing-report`. Show it in the demo app.
 
 **Exit check**
@@ -200,6 +205,7 @@ Images were moved out of Phase 3 on 2026-10-23 so that metadata and lifecycle co
 - The report shows more than 200 libraries in one container.
 - Per-search cost on a given library is the same, within run-to-run variation, before and after the 1,000 were added.
 - The report states the vector index type Cosmos used on small and large libraries.
+- The report grades hybrid cost as flat or grows, and fan-out as observed or not (one physical partition, then two), and grades small-library `QuantizedFlat` searches as scoped or not, by the criteria above. Either grade is an acceptable exit; a missing grade is not.
 
 ## Phase 5: Toward production
 
@@ -276,7 +282,8 @@ Use material you are allowed to use, such as public company reports, public stat
 | Throttling during demo-day uploads on serverless | Load the demo corpus beforehand, or run the demo on a provisioned account |
 | A library searched straight after upload scans until the index engages, about 6 minutes in Phase 0 (E25) | Results stay correct; only cost rises. Load demo libraries well before the demo. Measure the lag in a populated container in Phase 4 |
 | DiskANN does not engage on large libraries, or costs more than expected (N11) | Phase 4 measures it. `QuantizedFlat` at 15 RU on a 1,500-chunk library is already acceptable for small libraries |
-| float16 turns out to be unsupported (N10) | float32 in a new container, rebuilt from stored text (E16). Phase 0 measured float16 working |
+| float16 stops working on an account (E17; N10: float16 itself is generally available, E58) | float32 in a new container, rebuilt from stored text (E16), or a new account. Phase 0 measured float16 working |
+| Sharded DiskANN changes or is withdrawn before GA (N5, E58) | A new container rebuilt from stored text (E16). Without a shard key, library searches become filtered searches over the partition's index, which E2 found much more expensive; ask Microsoft first |
 | Azure OpenAI quota (embedding tokens per minute) slows bulk loads | Batch, back off on 429, request more quota |
 | Image description cost | The skip rules and per-document cap in `spec.md` §7.5 |
 

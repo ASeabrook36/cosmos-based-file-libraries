@@ -594,17 +594,17 @@ The image, page, batch, context and concurrency values are current implementatio
 
 ## 11. Capacity and cost
 
-**Demo:** a serverless account. It costs nothing when idle. A serverless container in the source measurements topped out near 1,785 RU/s, about 22 chunk writes per second, shared between ingestion and searches.
+**Demo:** a serverless account. It costs nothing when idle. A serverless container in the source measurements topped out near 1,785 RU/s on documents without a text field; separately, loading with two writers sustained about 22 chunks per second (E10, two different probes). That capacity is shared between ingestion and searches.
 
 **Production:** provisioned autoscale. Two reasons: serverless's ceiling cannot be raised, so a large admin upload would slow every agent's searches in the organization for its duration; and serverless carries no SLA. Autoscale bills each hour at the highest throughput used, with a floor of 10% of the configured maximum. Starting points to tune: `chunks` 4,000 RU/s maximum, `documents` and `libraries` 1,000 each. A serverless account converts to provisioned one way only, so the demo account can be promoted. The full argument, the sizing guidance and when to switch are in `capacity/provisioned-throughput.md`; what is untested at the high end is in `capacity/untested-at-scale.md`.
 
-**Measured unit costs** (serverless at about $0.25 per million RU; see `evidence.md`). "Source" is the earlier project: float32 vectors, 600,000 chunks on one physical partition. "Phase 0" is this project's canary: this exact configuration, one 1,500-chunk library.
+**Measured unit costs** (serverless at about $0.25 per million RU; see `evidence.md`). "Source" is the earlier project: float32 vectors, whole abstracts as chunks, one physical partition, queries never routed by partition key (E57). "Phase 0" is this project's canary: this exact configuration, one 1,500-chunk library.
 
 | Item | Figure |
 |---|---|
-| Storage | Source: about 17.9 GB per million chunks at float32. float16 cut storage by 46%, so about 9.7 GB per million |
+| Storage | Source: about 17.9 GB per million chunks at float32 and 9.62 GB at float16, measured (E7, E11) |
 | Writing | Phase 0: about 144 RU per chunk at float16, full-text index included, so about $36 per million chunks. Source: 91 RU at float32 |
-| Searching | Phase 0: about 15 RU per vector search on a 1,500-chunk library once the index engages, 114 RU before; Phase 1: 8–16 RU per vector search on a 5,535-chunk library; 128–191 RU per hybrid search when it actually ranks (Phase 0's 4 RU hybrid searches were unranked, E27). Source: about 7 RU typical, 54–69 RU at p95, on libraries up to 100,000 chunks |
+| Searching | Phase 0: about 15 RU per vector search on a 1,500-chunk library once the index engages, 114 RU before; Phase 1: 8–16 RU per vector search on a 5,535-chunk library; 128–191 RU per hybrid search when it actually ranks (Phase 0's 4 RU hybrid searches were unranked, E27). Source: about 4–22 RU at the median and 7–27 RU at p95 per one-owner, one-type search, from the smallest slices to the largest (E3); the earlier 54–69 RU figure is a mix-weighted decision score, not a p95 (E2) |
 
 Azure OpenAI calls (embeddings, image descriptions, proposals) are billed separately and will likely exceed the Cosmos cost.
 

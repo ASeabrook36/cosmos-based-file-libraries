@@ -9,7 +9,7 @@ Each one prevents a failure that was measured, not imagined.
 **Queries**
 
 1. **Every vector or hybrid query has `SELECT TOP n`.** Reject query construction without it. (Cosmos may read far more than needed otherwise.)
-2. **Every query on `chunks` filters `c.libraryId = @libraryId` by equality on exactly one value.** Never `IN`, `OR` or a join across libraries. Several libraries means several queries. (E4: an `IN` list across shard values cost about 300× more. E5: omitting the value cost about 220× more.) A query ordered by `RANK` (hybrid or full-text) is never sent with a partition key: it comes back unranked, silently (E27). `partition_key_for` in `src/fli/query.py` decides the routing.
+2. **Every query on `chunks` filters `c.libraryId = @libraryId` by equality on exactly one value.** Never `IN`, `OR` or a join across libraries. Several libraries means several queries. (E4: an `IN` list across shard values cost about 320× more. E5: omitting the value scanned the whole container, about 300× more on real data, and that cost grows with every library's data.) A query ordered by `RANK` (hybrid or full-text) is never sent with a partition key: it comes back unranked, silently (E27). `partition_key_for` in `src/fli/query.py` decides the routing.
 3. **The library id in any agent retrieval (search, discovery or complete read) always comes from the URL path the platform called, never from agent-supplied tool arguments.**
 4. **Query vectors for the float16 index are converted before use:** round each value to float16, set values with magnitude below 2⁻¹⁴ to 0, and declare `{'dataType': 'float16'}` in `VectorDistance`. Never declare `float32` against this index: it silently turns an indexed search into a full scan (E8). `src/fli/query.py` implements the conversion and the check.
 5. **Never select `c.embedding`.**
@@ -22,7 +22,7 @@ Each one prevents a failure that was measured, not imagined.
 
 **Cosmos configuration**
 
-9. **Container definitions live only in `cosmos/*.json`.** Every queried field must be in `includedPaths`. Partition-key and shard-key paths are always included. Never add `/id/?`: Cosmos accepts it and then fails the container create silently (E15).
+9. **Container definitions live only in `cosmos/*.json`.** Every queried field must be in `includedPaths`. Partition-key and shard-key paths are always included. Never add `/id/?`: Cosmos accepts it with HTTP 202 and then fails the create on the asynchronous operation, which tooling that ignores it sees only as a timeout (E15).
 10. **Vector settings are permanent** (E16). Changing dimensions, data type, quantizer, `indexingSearchListSize` or shard key means a new container and a rebuild, never an edit. Keep chunk text and original files so a rebuild is always possible.
 11. **Run `scripts/canary.py` against every newly created account or container before using it** (E17).
 

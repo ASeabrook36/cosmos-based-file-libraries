@@ -24,7 +24,7 @@ Sources: [Provisioned throughput and serverless compared](https://learn.microsof
 
 ## What this project measured on serverless · Measured
 
-- **The ceiling in practice:** one serverless container topped out near **1,785 RU/s**, about 36% of the documented figure, and reached it with about two concurrent writers (E10).
+- **The ceiling in practice:** in the source project, a serverless container topped out near **1,785 RU/s**, about 36% of the documented figure, on documents without a text field, with four or more writers (903 RU/s with one). A separate load with two writers sustained about 22 chunks per second; the two came from different probes and are not one measurement (E10).
 - **Writes:** about **144 RU per chunk** at float16 with the full-text index (E10, Phase 0). Two writers sustained 26.7 chunks per second; eight exhausted the SDK's retries within about 100 writes.
 - **Searches:** about 15 RU per vector search on a 1,500-chunk library (E8, E12); 8–16 RU on a 5,535-chunk library (Phase 1); 29.87 RU for a demo search with neighbours (Phase 2). Filtered searches cost 4–15 RU (Phase 3).
 - **Hybrid searches** cost 128–191 RU when correctly routed (E27). They are not the default.
@@ -35,7 +35,7 @@ Request charges per operation do not depend on the capacity mode, so these figur
 
 ### The whole organization shares one ceiling
 
-A serverless container stays on one physical partition until it holds 50 GB, about 5 million chunks (E11). Until then, every library in the organization shares that partition's capacity: measured near 1,785 RU/s, documented at most 5,000.
+A serverless container stays on one physical partition until it holds 50 GB, about 5 million chunks at the source's 9.62 GB per million (E11; whole abstracts as chunks). Until then, every library in the organization shares that partition's capacity: measured near 1,785 RU/s, documented at most 5,000.
 
 At 15–40 RU per search on `chunks`, that is roughly **45–330 searches per second for the entire organization**, before any uploads. An organization of a few thousand people with modest use fits comfortably. A large organization at peak may not, and nothing can be bought to raise it.
 
@@ -87,7 +87,7 @@ Two illustrations, at Microsoft's example prices, for one organization. Each sea
 - *Serverless:* about $36.
 - *Provisioned:* at a 10,000 RU/s maximum the load takes about 4 hours and adds roughly $5 for those hours. Embedding quota, not Cosmos, sets the actual pace (E29).
 
-Storage is billed the same in both modes, about 9.7 GB per million chunks (E11).
+Storage is billed the same in both modes, about 9.6 GB per million chunks at float16 (E11).
 
 Steady production use can also take reserved-capacity discounts, which serverless cannot.
 
