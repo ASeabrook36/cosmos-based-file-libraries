@@ -506,6 +506,10 @@ reuse and reports recoverable partial uploads without duplicate documents. Point
 control records in `documents` use `experiment:<UUID>` partitions; they contain
 IDs/digests/fingerprints rather than user metadata or text. Tombstones prevent
 creation/upload retries resurrecting deleted pair members or documents.
+Both member profiles are frozen in the experiment record at first creation, so
+resuming a partial pair cannot pick up changed runtime settings. Python workers
+refuse a configured model revision that differs from the generation snapshot;
+remote results must report the snapshotted workflow and model revisions.
 
 The complete-strategy custom slice supports Markdown ATX and DOCX Heading-style ancestry and exact extracted source
 blocks; other formats fail explicitly. Selected reads accept `nodeIds` with an

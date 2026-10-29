@@ -112,6 +112,7 @@ def validate_microsoft(output: dict, work: dict, source: bytes, dimensions: int)
     """Validate the complete result before any writes. Never trust workflow row scope."""
     if (
         output.get("schema") != "fli.indexer-result.v1"
+        or output.get("workflowVersion") != work["profile"].get("workflowVersion")
         or digest(output.get("job")) != digest(work)
         or hashlib.sha256(source).hexdigest() != work["sourceSha256"]
         or output.get("embedding") != work["profile"]["embedding"]
@@ -202,6 +203,7 @@ def result_plan(result: ProviderResult, work: dict, document: dict, count) -> di
 def validate_layout_extraction(output: dict, work: dict, source: bytes) -> dict:
     if (
         output.get("schema") != "fli.indexer-extraction.v1"
+        or output.get("workflowVersion") != work["profile"].get("workflowVersion")
         or output.get("job") != work
         or hashlib.sha256(source).hexdigest() != work["sourceSha256"]
     ):

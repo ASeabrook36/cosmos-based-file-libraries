@@ -178,6 +178,7 @@ class Worker:
     image_asset_max_per_document: int = 1000
     vision_concurrency: int = 2
     microsoft: IngestionProvider | None = None
+    embedding_model_revision: str | None = None
 
     async def handle(self, message: Message) -> None:
         kind = message.get("type")
@@ -325,6 +326,10 @@ class Worker:
                 unavailableCounters=["metadataRU", "cleanupRU", "hostingCost", "indexReadinessMs"],
             )
         recipe = work["profile"]
+        expected_revision = recipe["embedding"].get("modelRevision")
+        if recipe["provider"] == "python" and expected_revision and expected_revision != self.embedding_model_revision:
+            await self._fail(library_id, document_id, generation, "embedding_model_revision_mismatch")
+            return
         stages = {
             "extractionMs": 0,
             "chunkingMs": 0,

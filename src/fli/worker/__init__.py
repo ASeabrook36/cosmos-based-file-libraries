@@ -219,6 +219,7 @@ async def run(settings: Settings, stopping: asyncio.Event) -> None:
             image_max_per_document=settings.image_max_per_document,
             image_asset_max_per_document=settings.image_asset_max_per_document,
             vision_concurrency=settings.vision_concurrency,
+            embedding_model_revision=settings.aoai_embedding_model_revision,
         )
 
         if settings.microsoft_workflow_endpoint:

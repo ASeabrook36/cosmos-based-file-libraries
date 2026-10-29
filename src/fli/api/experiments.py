@@ -6,6 +6,7 @@ No cross-library chunk queries or new Cosmos container/index policy are introduc
 
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 from typing import Annotated, Literal
@@ -72,6 +73,13 @@ async def create_pair(body: PairCreate, request: Request):
     experiment_id = str(body.experimentId)
     identity = body.model_dump(mode="json")
     store = request.app.state.documents
+    settings = request.app.state.settings
+    recipes = {}
+    for key, profile_id in [("custom", "custom-structured-v1"), ("microsoft", "microsoft-indexer-layout-v1")]:
+        recipe = profile(profile_id, controlled=body.component is not None)
+        recipe["codeRevision"] = settings.ingestion_code_revision
+        recipe["embedding"]["modelRevision"] = settings.aoai_embedding_model_revision
+        recipes[key] = recipe
     manifest = {
         "id": "experiment",
         "libraryId": ledger_partition(experiment_id),
@@ -79,6 +87,7 @@ async def create_pair(body: PairCreate, request: Request):
         "creationFingerprint": digest(identity),
         "comparison": body.comparison,
         "component": body.component,
+        "profiles": recipes,
         "createdAt": now(),
         "members": {
             key: {"libraryId": stable_id(experiment_id, key), "profileId": value, "state": "creating"}
@@ -88,7 +97,7 @@ async def create_pair(body: PairCreate, request: Request):
             "retrieval": "same API and vector policy; record search mode, budgets and model revision at replay",
             "extraction": "prebuilt-layout both; same pinned workflow and DI API"
             if body.component
-            else "native Markdown versus prebuilt-layout; not aligned",
+            else "native Markdown/DOCX versus prebuilt-layout; not aligned",
             "chunking": "500/50 both" if body.component else "custom 500/50; Microsoft 5000/200",
             "attribution": "section/sentence versus token-window boundaries; hierarchy, proposals and visuals disabled"
             if body.component
@@ -117,9 +126,9 @@ async def create_pair(body: PairCreate, request: Request):
             library_id,
         )
         lib.update(experimentId=experiment_id, comparisonMember=key)
-        lib["ingestionProfile"] = profile(member["profileId"], controlled=body.component is not None)
-        lib["ingestionProfile"]["codeRevision"] = request.app.state.settings.ingestion_code_revision
-        lib["ingestionProfile"]["embedding"]["modelRevision"] = request.app.state.settings.aoai_embedding_model_revision
+        if "profiles" not in current:
+            raise ApiError(409, "experiment_profile_unavailable", "legacy incomplete pair has no frozen profiles")
+        lib["ingestionProfile"] = copy.deepcopy(current["profiles"][key])
         try:
             await request.app.state.libraries.create(lib)
         except Conflict:

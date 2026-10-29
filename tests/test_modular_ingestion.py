@@ -37,6 +37,7 @@ class MicrosoftFake:
 def output(work, source=SOURCE):
     return {
         "schema": "fli.indexer-result.v1",
+        "workflowVersion": work["profile"]["workflowVersion"],
         "job": copy.deepcopy(work),
         "embedding": copy.deepcopy(work["profile"]["embedding"]),
         "sourceBase64": base64.b64encode(source).decode(),
@@ -78,6 +79,7 @@ def setup(profile_id="current-v1"):
         Chunker(ApproxTokenizer()),
         microsoft=MicrosoftFake(),
         stale_read_pause=0,
+        embedding_model_revision="test-revision",
     )
     return client, services, lib, worker
 
@@ -402,3 +404,24 @@ def test_bridge_allows_only_a_noncredential_api_version_query():
     MicrosoftWorkflow("https://workflow.example.invalid/invoke?api-version=2022-05-01", None, None, None)
     with pytest.raises(ValueError):
         MicrosoftWorkflow("https://workflow.example.invalid/invoke?api-version=2022-05-01&sig=secret", None, None, None)
+
+
+async def test_python_refuses_model_revision_drift_before_embedding():
+    client, s, lib, worker = setup("custom-structured-v1")
+    doc_id = upload(client, lib)
+    worker.embedding_model_revision = "different-runtime-revision"
+    await drain(s, worker)
+    document = await s.documents.get(lib, doc_id)
+    assert document["statusDetail"] == "embedding_model_revision_mismatch"
+    assert document["activeGeneration"] is None
+    assert worker.embedder.calls == 0
+
+
+def test_provider_workflow_revision_must_match_frozen_recipe():
+    recipe = profile("microsoft-indexer-layout-v1")
+    recipe["embedding"]["modelRevision"] = "test-revision"
+    work = job("lib", "doc", 1, {"blobPath": "original", "sha256": hashlib.sha256(SOURCE).hexdigest()}, recipe, 0)
+    payload = output(work)
+    payload["workflowVersion"] = "unexpected-workflow"
+    with pytest.raises(ValueError, match="binding mismatch"):
+        validate_microsoft(payload, work, SOURCE, 3)

@@ -62,7 +62,8 @@ defaulting to `current-v1`. Existing endpoints and permission checks apply.
 ```
 
 For a controlled pair use `comparison: controlled-component` and
-`component: chunk-boundaries`. Both IDs and creation states are returned even
+`component: chunk-boundaries`. Both profiles are frozen in the control record at the first request. A retry after
+a configuration change keeps those original profiles. Both IDs and creation states are returned even
 when only one library was created. Repeat the same request to resume. Reusing an
 experiment ID for different settings returns `409 idempotency_conflict`.
 
@@ -131,6 +132,8 @@ model usage continues to come from provider counters. No dollar costs are inferr
 
 - `infra/worker.Dockerfile` builds the existing Python queue worker as a non-root
   process. The image was not built or pushed in this session.
+- `infra/modular-validation-hosting.bicep` creates an isolated registry and Container Apps
+  environment, with managed-identity image pulls.
 - `infra/modular-worker.bicep` prepares one warm Container App with managed
   identity, no ingress and bounded lanes/writes. It takes explicit existing
   service endpoints, database/queue and immutable image digest. It creates no
@@ -172,7 +175,11 @@ Runtime JSON has `parameters` and `connections`, as in the existing
 The package needs no Cosmos connection. Model revision must identify the actual
 model behind the deployment, not echo an unverified job claim. Reuse the isolated
 host/storage/connection provisioning from the runbook, with the new authentication
-module applied **before** enabling this workflow.
+module applied **before** enabling this workflow. Set `disableTriggerSasAuth=true`
+on the dedicated host so SAS cannot invoke triggers. This host property is
+[documented by the Microsoft Logic Apps team](https://techcommunity.microsoft.com/blog/integrationsonazureblog/trigger-workflows-in-standard-logic-apps-with-easy-auth/3207378/replies/4219276/).
+Configure the dedicated Entra audience to issue v2 access tokens, matching the
+authentication module issuer. Require live positive and negative authentication checks.
 
 Worker/API settings:
 

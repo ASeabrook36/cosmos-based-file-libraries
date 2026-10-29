@@ -27,7 +27,7 @@ the required providers. Before creating WS1, inspect actual regional usage with:
 
 ```sh
 az rest --method get --url \
-  "https://management.azure.com/subscriptions/$SUBSCRIPTION/providers/Microsoft.Web/locations/$HOST_LOCATION/usages?api-version=2023-12-01" \
+  "https://management.azure.com/subscriptions/$SUBSCRIPTION/providers/Microsoft.Web/locations/$HOST_LOCATION/usages?api-version=2025-05-01" \
   > "$LAB_WORK/web-usage-private.json"
 ```
 

@@ -63,6 +63,10 @@ param chatSku string = 'GlobalStandard'
 @description('Chat capacity in thousands of tokens per minute.')
 param chatCapacity int = 50
 
+@description('Pin model versions during controlled measurements; the default preserves normal deployment behavior.')
+@allowed(['OnceNewDefaultVersionAvailable', 'OnceCurrentVersionExpired', 'NoAutoUpgrade'])
+param modelVersionUpgradeOption string = 'OnceNewDefaultVersionAvailable'
+
 param tags object = {
   application: 'file-library-index'
 }
@@ -208,6 +212,7 @@ resource embeddingDeployment 'Microsoft.CognitiveServices/accounts/deployments@2
     capacity: embeddingCapacity
   }
   properties: {
+    versionUpgradeOption: modelVersionUpgradeOption
     model: {
       format: 'OpenAI'
       name: 'text-embedding-3-large'
@@ -224,6 +229,7 @@ resource chatDeployment 'Microsoft.CognitiveServices/accounts/deployments@2024-1
     capacity: chatCapacity
   }
   properties: {
+    versionUpgradeOption: modelVersionUpgradeOption
     model: {
       format: 'OpenAI'
       name: chatModelName

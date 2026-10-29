@@ -210,3 +210,26 @@ async def test_complete_pair_has_a_shared_office_source_format():
     assert all(doc["status"] == "ready" for doc in docs)
     assert docs[0]["sha256"] == docs[1]["sha256"]
     assert docs[0]["structure"] and docs[1]["structure"] is None
+
+
+async def test_partial_pair_keeps_original_profiles_across_configuration_change(monkeypatch):
+    from dataclasses import replace
+
+    client, s = api(AOAI_EMBEDDING_MODEL_REVISION="original-model", FLI_CODE_REVISION="original-code")
+    real = s.libraries.create
+
+    async def flaky(record):
+        if record["comparisonMember"] == "microsoft":
+            raise RuntimeError("unavailable")
+        return await real(record)
+
+    monkeypatch.setattr(s.libraries, "create", flaky)
+    _, body = create(client)
+    client.app.state.settings = replace(
+        client.app.state.settings, aoai_embedding_model_revision="changed-model", ingestion_code_revision="changed-code"
+    )
+    monkeypatch.setattr(s.libraries, "create", real)
+    resumed = client.post("/v1/experiments", json=body).json()
+    for member in resumed["members"].values():
+        assert member["ingestionProfile"]["embedding"]["modelRevision"] == "original-model"
+        assert member["ingestionProfile"]["codeRevision"] == "original-code"

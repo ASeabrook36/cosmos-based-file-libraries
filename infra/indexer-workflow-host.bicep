@@ -7,6 +7,8 @@ param storageLocation string = resourceGroup().location
 param operatorPrincipalId string
 param packageBlobName string
 param createHost bool = false
+@description('For the authenticated shared bridge: disable trigger SAS before mounting the request workflow.')
+param disableTriggerSasAuth bool = false
 
 resource identity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
   name: '${hostName}-host'
@@ -97,6 +99,11 @@ resource host 'Microsoft.Web/sites@2023-12-01' = if (createHost) {
   properties: {
     serverFarmId: plan!.id
     httpsOnly: true
+    // Documented by the Logic Apps team; absent from the generated Web schema.
+    #disable-next-line BCP037
+    logicAppsAccessControlConfiguration: disableTriggerSasAuth ? {
+      triggers: { sasAuthenticationPolicy: { State: 'Disabled' } }
+    } : {}
     siteConfig: {
       alwaysOn: true
       use32BitWorkerProcess: false
