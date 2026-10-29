@@ -1,5 +1,7 @@
 # Build plan
 
+**Modularity handoff, 2026-10-29:** the agreed evaluation design adds library-level profiles for current ingestion, custom granular document processing and adapted Microsoft Document Indexer, plus paired custom/Microsoft library creation. See the [modular ingestion assessment and local-session prompt](consults/2026-10-29-modular-ingestion-assessment.md) for integration boundaries, cloud hosting, comparison controls, scope and acceptance criteria. This is a design handoff; the three-profile UI and runtime are not yet implemented. It does not select an ingestion winner or establish quality/cost superiority.
+
 **Evidence update, 2026-10-28 (E57, E58):** the source measurements this plan relied on were corrected against their own records. None of them routed by partition key, and sharded DiskANN is public preview. Phase 4 gains two measurements of the claim that a search's cost does not grow with the number of libraries: hybrid cost as the container grows, and `QuantizedFlat` scoping at many libraries.
 
 **Experimental update, 2026-10-28:** the opt-in [structured retrieval lab](structure-lab.md)
