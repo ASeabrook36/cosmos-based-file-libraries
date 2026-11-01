@@ -334,3 +334,36 @@ is still local; only ingestion workers and the Microsoft workflow are hosted. Th
 test chat cap was 200k tokens/minute and is restored to 50k; the 64k diagnostic was
 not rerun under that restored cap. Larger-turn throughput behavior remains untested
 there. Existing scale resources and the old account's source data are unchanged.
+
+## Controlled answering-model and context comparison
+
+[E63](evidence.md) and the
+[100-turn record](../records/model-context-comparison-20261101.json) separate the
+answering-model comparison from context capacity. Both mini and GPT-6.1 Sol use the
+optional Responses adapter with the same questions, tools, medium reasoning label
+and 8k output cap. The normal demo stays on its existing mini Chat Completions path;
+an eight-turn bridge measures that transport plus reasoning-continuity difference.
+The optional `comparison` extra installs the tested SDK range.
+
+At 24k, across all five original configurations, core task completion was 16/20 for
+mini and 18/20 for Sol; task, source-support and citation checks all passed in 5/20
+and 16/20 respectively. On the matched Microsoft subset, both models completed
+8/8 tasks at each of 100k and 200k with no budget refusals. Sol passed all three
+checks in 16/16 larger-context turns; mini did in 2/16, primarily because of source
+attribution and unsupported additions. These defects do not mean mini failed to
+answer 14/16 core tasks. All 32 turns received the decisive evidence.
+
+Direct complete-source reads subsequently returned stored extracted text from all
+eight library roles, including the later-date clause in all five assessment
+configurations. This is capability evidence, not a ranking or original-format
+fidelity guarantee. The largest measured model input was 81,769 tokens; a configured
+200k allowance did not create a 200k input. Larger workloads and an adequate-context
+current/custom answering comparison remain open. Do not select a provider using
+the earlier 24k diagnostic alone. Use adequate context to test evidence delivery,
+then assess cost and behavior under tighter budgets as a separate experiment.
+
+Provider-reported usage, estimated evidence tokens, partial retrieval RU and
+unavailable billing counters remain separate in the record. All source/runtime
+snapshots stayed unchanged. Three temporary model deployments were deleted and
+the original deployment versions/capacity/upgrade settings verified unchanged;
+scale resources were untouched. No default model or context setting was changed.

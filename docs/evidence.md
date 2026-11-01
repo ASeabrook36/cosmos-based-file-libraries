@@ -1066,3 +1066,127 @@ visual QA. Remaining work includes reliable claim/citation attribution and
 retrieval of unresolved conditions, current-profile table/visual fidelity, broader
 formats and long documents, production hosting/authentication and the earlier
 remote-race/scale obligations. No general source-grounded-answer guarantee is claimed.
+
+### E63. Controlled answering-model and larger-context comparison · Measured
+
+E62 left two separate questions: whether the answering model was limiting source
+use, and whether the 24k diagnostic budget was suppressing evidence that the tools
+could supply. The existing replay now supports an optional Azure Responses
+adapter, preserving in-memory reasoning continuity with `store=false` and
+`truncation=disabled`. It rejects incomplete/unsupported responses before executing
+their tools and retains available failed-call counters. Existing Chat Completions
+behavior remains the demo default. No ingestion, permissions, lifecycle, query or
+index settings changed for this comparison.
+
+The [record](../records/model-context-comparison-20261101.json) contains **100
+completed, assistant-reviewed turns** at runtime revision `fde38d2`. Four public
+DOCX files and all eight library/source/tool snapshots stayed unchanged throughout.
+GPT-5-mini `2025-08-07` and GPT-6.1 Sol `2026-09-29` both used Responses for the
+model comparison, with medium reasoning, an 8,000-token output cap and three maximum
+attempts. Versions were pinned with auto-upgrade disabled. Temporary deployments
+had 200k tokens/minute caps; that throughput setting is distinct from context size.
+Runs were serial and model order reversed on repeat two. Equal effort labels and
+throughput caps do not establish equal compute. Provider caches and actual
+GlobalStandard inference regions were uncontrolled. The tested SDK was OpenAI
+3.37.0, available through the optional `comparison` extra.
+
+The initial 68 turns comprise eight mini Chat Completions bridge turns, 40 original
+model-comparison turns across all five configurations, 12 held-out form-comparison
+turns, and eight mini-only 64k Microsoft turns. After those finished, a separate
+32-turn sweep used both models at 100k and 200k on both Microsoft configurations.
+Only context allowance changed from the corresponding model/profile's 24k cells;
+questions, instructions, tools, per-call read defaults, source generations, search
+mode and output cap stayed fixed. The private driver's hash and frozen runtime
+hashes are retained in the record. No expected source facts were sent to answering
+models. The complete Microsoft strategy still uses 5,000-token chunks / 200
+characters of overlap; the controlled Microsoft member uses 500-token targets /
+zero overlap, matching the controlled custom settings from E61.
+
+For the original tasks at 24k, mini completed 16/20 and Sol 18/20. Task completion,
+source support and citation review all passed in 5/20 and 16/20 respectively.
+The matched Microsoft subset gives a clearer context comparison:
+
+| Context allowance | Mini core tasks | Mini all three checks | Sol core tasks | Sol all three checks |
+| --- | ---: | ---: | ---: | ---: |
+| 24k, Responses | 5/8 | 1/8 | 6/8 | 5/8 |
+| 64k, Responses | 7/8 | 1/8 | Not run | Not run |
+| 100k, Responses | 8/8 | 1/8 | 8/8 | 8/8 |
+| 200k, Responses | 8/8 | 1/8 | 8/8 | 8/8 |
+
+Each cell has two questions × two Microsoft configurations × two repeats.
+All **32 larger-context turns received the decisive evidence and completed the
+core task, with zero tool or terminal adapter budget refusals**. At each larger
+budget, Sol passed all three checks in 4/4 turns per Microsoft configuration;
+mini passed 1/4 complete-strategy and 0/4 controlled-component turns. Mini's
+remaining defects include attributing source-1's later-date rule to source-2,
+unsupported additions, and quotation fidelity. These can invalidate strict
+source/citation review without making the core requested answer incorrect.
+
+Tool navigation still produced **15 failed attempts across 14/32 turns**: twelve
+`source_scope_unavailable` selected reads (two mini, ten Sol), and three
+`document_not_found` scoped searches (mini). Failed request arguments were not
+retained, so the precise invalid document selector is unknown. Eleven affected
+turns retrieved successfully afterward; three Sol turns already had sufficient
+evidence before their final failed read. Zero budget refusals is not error-free
+tool use, and these location/selection problems remain follow-up work.
+
+The eight-turn mini transport bridge completed 4/8 tasks with Chat Completions and
+5/8 with Responses; all-three passes were 0/8 and 1/8. This measures API mapping
+plus reasoning continuity and ran in stages with uncontrolled cache/time effects;
+it does not isolate a wire-protocol benefit. Held-out form comparisons completed
+6/6 tasks per model, with all-three passes of 4/6 mini and 6/6 Sol. Current-profile
+extraction lost empty-cell relationships: qualified answers about received text
+can pass without verifying the original form geometry. Larger context cannot
+restore missing structure or native pixels.
+
+Direct complete reads after all model runs returned both stored extracted files
+in every library role, including source-1's decisive later-date clause in all five
+assessment profiles. These checks establish availability through the tool, not
+ranking recall or original-document visual fidelity. They also expose payload
+differences: complete custom's two-file evidence JSON estimates 92,900 tokens,
+versus complete Microsoft's 20,086, for roughly 106k body characters each. Custom
+has 627 stored sections versus Microsoft's two; structure/provenance serialization
+adds overhead. These are tokenizer estimates for the direct response, not measured
+model input, and cannot be treated as a provider cost comparison.
+That custom response cannot fit a 100k conversation allowance alongside the existing
+prompt and answer reserve. An all-profile capability comparison needs enough shared
+capacity for it, or a separately tested response-compaction change. Both Microsoft
+full-read representations reconstruct two sections despite their different search
+chunk sizes, so successful full reads do not demonstrate chunk-retrieval parity.
+Include tasks requiring selective retrieval as well as complete-document synthesis.
+
+The maximum measured input across the experiment was **81,769 tokens**. At a 200k
+allowance, maximum inputs were about 51k for each model. The experiment therefore
+does not show that 200k is necessary or better than 100k, and does not exercise
+genuinely 200k/500k document loads. No 500k run was performed. Only Microsoft members
+received the larger-context answering follow-up; direct reads of other profiles
+do not replace matched adequate-context model runs. The earlier 24k diagnostics
+must not be used to select an ingestion winner. Next, test representative longer
+and multi-file tasks across all strategies with adequate shared context; measure
+constrained-budget efficiency separately.
+
+Review packages omitted model labels, but coordination exposed some stage context.
+These are source-based assistant judgments, not blinded human validation,
+statistical accuracy estimates or exhaustive citation audits. A pure safe refusal
+has null support/citation judgments, not automatic passes. The record distinguishes
+task completion from factual support and attribution, including minor meaningful
+changes to direct quotations. Group summaries overlap; do not sum them as separate
+turns.
+
+Provider-reported input/output/cache/reasoning usage, observed timings and known
+retrieval RU are retained. Missing charges keep total RU unavailable while retaining
+the known subtotal. Source/evidence token counts and pending-reasoning reservations
+are estimates. Two Sol 100k rate-limit waits totaled 6,005.5 ms; both recovered.
+Usage excludes preflight/smoke calls and unreported failed-call counters; direct
+capability checks are separate. Azure billed currency cost, ingestion connector
+usage and allocated hosting/workflow costs remain unavailable. No cost/latency
+winner is inferred.
+
+All three temporary model deployments, including an unused candidate, were removed.
+The original deployment names, models/versions, SKU/capacity and upgrade settings
+matched their pre-experiment receipt; the original mini cap remains 50k tokens/minute.
+The normal demo model/transport and scaling resources were unchanged. Larger-context
+Responses runs were not repeated under the original demo cap. Final local validation:
+**844 tests passed**, 14 existing TestClient deprecation warnings; Ruff and diff/privacy
+checks passed. Broader corpus/format/visual validation, the remaining selector issues,
+production hosting/authentication and remote-race obligations remain open.

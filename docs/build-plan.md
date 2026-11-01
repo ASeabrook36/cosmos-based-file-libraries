@@ -1,5 +1,24 @@
 # Build plan
 
+**Controlled model/context comparison, 2026-11-01 (E63):** 100 Azure replay turns
+and 844 local tests completed on the isolated branch/resources. Both answering
+models used Responses for the matched model comparison; mini's existing Chat
+Completions path was tested in a separate bridge. At 100k and 200k allowances, both
+mini and GPT-6.1 Sol delivered the decisive evidence and completed all eight matched
+Microsoft tasks per model/budget, without budget refusals. Sol passed task,
+source-support and citation review in 16/16 larger-context turns; mini did so in
+2/16, despite completing all core tasks. Tight context was therefore confounding
+the earlier retrieval diagnosis, while attribution remains a separate model issue.
+These are narrow assistant-reviewed cases, not an ingestion-provider winner.
+The maximum measured input was 81,769 tokens, so 200k/500k document loads remain
+untested. Current/custom still need matched adequate-context answering runs before
+a strategy conclusion. Three temporary model deployments were removed; original
+deployment settings and the normal demo remain unchanged. See the
+[comparison record](../records/model-context-comparison-20261101.json) and E63.
+Next: representative longer/multi-file tasks across all profiles with enough
+context to assess evidence delivery, then separately measure constrained-budget
+efficiency. Extend the existing replay and measurement paths.
+
 **Agent recovery follow-up, 2026-11-01 (E62):** the existing adapter now reserves
 retrieval headroom, retries whole passages within the remaining budget, recovers
 from oversized reads without claiming completeness, and guards metadata-only

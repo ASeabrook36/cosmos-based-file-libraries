@@ -61,6 +61,10 @@ two-question timing benchmark.
 
 ## Controlled answering-model follow-up
 
+Install the optional `comparison` extra for the tested Responses SDK, for example
+`pip install -e '.[comparison]'`. The ordinary demo transport remains compatible
+with its existing dependency range. Cloud replay used OpenAI SDK 3.37.0.
+
 `scripts.compare_agent_models` reuses this replay harness with a private model and
 library configuration and fresh private output directory. It runs eight repeated
 mini Chat Completions bridge turns, then 52 Responses turns comparing mini and a
@@ -75,3 +79,44 @@ reasoning-continuity effect; it is not a wire-protocol-only comparison. Provider
 cache state and actual inference region remain uncontrolled. Report measured
 reasoning/cache usage and quota waits separately; equal reasoning labels or token
 rate caps do not establish equal compute or latency. Raw captures remain private.
+
+The completed follow-up added 32 turns at 100,000 and 200,000 total-context
+allowances: each budget × both models × both Microsoft configurations × two
+independent repeats × the two original questions. This was a separate serial
+driver around the same `replay`, `default_chat_factory`, `snapshot` and
+`code_hashes` functions, after the 68-turn schedule finished. Its SHA-256 and the
+parent controls hash are in the
+[sanitized record](../../../records/model-context-comparison-20261101.json);
+the private driver retains environment bindings and is not a repository entry
+point. To reproduce, retain the same private configuration and frozen original
+case pack, loop over that matrix with fresh output directories, reverse model
+order on repeat two, and enforce the same global/per-run snapshots. Do not change
+tools, prompts, per-call read defaults, output reserve or source generations when
+changing the conversation allowance. No expected source facts enter model prompts.
+
+Record the allowance separately from maximum provider-reported input/total tokens.
+The 100-turn experiment peaked at 81,769 input tokens; 200k was an allowance, not
+a genuinely 200k input test. No 500k workload was run. A separate direct complete
+read with a 100k evidence allowance followed all model runs and did not warm their
+sources. Its token counts estimate serialized evidence JSON, not model input.
+
+Review task completion, decisive evidence delivery, factual support and citation
+attribution separately. A correct core answer can fail a quotation/source check;
+a safe refusal has null support/citation scores, not automatic passes. Review
+packages omitted model labels, but reviewer coordination exposed some stage
+context; report these as assistant judgments, not blinded human validation.
+
+For the next ingestion comparison, run all three strategies and both controlled
+members with adequate shared context on representative longer/multi-file tasks.
+Use the constrained-budget runs to assess efficiency separately. The larger-context
+follow-up here covers only the two Microsoft configurations and cannot establish
+a custom/Microsoft winner. Lost original table-cell/visual information also cannot
+be restored by increasing context.
+
+Capacity must include response overhead: the direct custom two-file read estimates
+92,900 evidence-JSON tokens across 627 sections, versus 20,086 across two Microsoft
+sections. A 100k conversation allowance cannot fit the custom response plus the
+existing prompt and answer reserve. Choose sufficient shared capacity for the
+comparison; evaluate response compaction separately. Both Microsoft variants
+reconstruct two full-read sections despite different search chunk sizes, so include
+selective-retrieval tasks alongside full-document synthesis to test chunk behavior.
