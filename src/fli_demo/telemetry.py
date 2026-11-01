@@ -24,13 +24,18 @@ def metrics(turn: Turn) -> dict[str, Any]:
                 "completionTokens": usage.get("completion_tokens"),
                 "totalTokens": usage.get("total_tokens"),
                 "cachedPromptTokens": (usage.get("prompt_tokens_details") or {}).get("cached_tokens"),
+                "cacheWriteTokens": (usage.get("prompt_tokens_details") or {}).get("cache_write_tokens"),
                 "reasoningTokens": (usage.get("completion_tokens_details") or {}).get("reasoning_tokens"),
                 "totalMs": timing.get("totalMs"),
                 "providerMs": timing.get("providerMs"),
                 "rateLimitWaitMs": timing.get("rateLimitWaitMs"),
                 "rateLimitRetries": timing.get("rateLimitRetries"),
+                "responseModel": timing.get("responseModel"),
+                "api": timing.get("api"),
+                "responseStatus": timing.get("responseStatus"),
+                "contextCarryoverTokensEstimate": timing.get("contextCarryoverTokensEstimate"),
                 "finishReason": timing.get("finishReason")
-                if timing.get("finishReason") in {"stop", "length", "tool_calls", "content_filter"}
+                if timing.get("finishReason") in {"stop", "length", "tool_calls", "content_filter", "refusal"}
                 else None,
             }
         )

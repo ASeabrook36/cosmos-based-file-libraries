@@ -219,6 +219,54 @@ def test_replay_preserves_completed_turns_and_marks_failed_attempt_usage_unavail
     assert "provider error" not in json.dumps(status)
 
 
+def test_replay_retains_reported_failed_call_usage_without_exception_payload(tmp_path, monkeypatch):
+    from fli_demo.responses import ResponsesProtocolError
+
+    failure = ResponsesProtocolError(
+        "private source fragment must not be captured",
+        {
+            "prompt_tokens": 120,
+            "completion_tokens": 80,
+            "completion_tokens_details": {"reasoning_tokens": 60, "source_text": "private source"},
+            "raw_body": "private source",
+        },
+        {"providerMs": 150.5, "rateLimitRetries": 0, "raw_body": "private source"},
+    )
+
+    def run(chat, index, agent, history, question, **kwargs):
+        if question == "fails":
+            raise failure
+        return SimpleNamespace(answer="answer", searches=[], messages=[])
+
+    monkeypatch.setattr(evaluation, "run_turn", run)
+    monkeypatch.setattr(evaluation, "metrics", lambda _: {"totalTokens": 12})
+    with pytest.raises(ResponsesProtocolError) as caught:
+        evaluation.replay(
+            Index(), object(), {"libraryIds": ["custom"]}, [{"case": "one", "questions": ["works", "fails"]}], tmp_path
+        )
+    assert caught.value is failure
+    status = json.loads((tmp_path / "run-status.json").read_text())
+    assert status["completedTurns"] == 1
+    assert status["failedAttempt"]["usage"] == {
+        "prompt_tokens": 120,
+        "completion_tokens": 80,
+        "completion_tokens_details": {"reasoning_tokens": 60},
+    }
+    assert status["failedAttempt"]["timing"] == {"providerMs": 150.5, "rateLimitRetries": 0}
+    assert status["failedAttempt"]["usageAvailability"] == "provider_reported"
+    assert "final_provider_call_only" in status["failedAttempt"]["scope"]
+    assert "private source" not in json.dumps(status)
+    assert len(json.loads((tmp_path / "results.json").read_text())) == 1
+
+
+def test_missing_protocol_usage_remains_unavailable():
+    from fli_demo.responses import ResponsesProtocolError
+
+    receipt = evaluation.failed_attempt_receipt(ResponsesProtocolError("failure", {}, {"providerMs": 10}))
+    assert receipt["usage"] is None and receipt["usageAvailability"] == "unavailable"
+    assert receipt["timing"] == {"providerMs": 10}
+
+
 def test_interrupted_replay_preserves_completed_turns_and_reraises_interrupt(tmp_path, monkeypatch):
     interrupt = KeyboardInterrupt("private interruption detail")
 

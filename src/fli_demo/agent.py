@@ -642,10 +642,12 @@ Answer:
         return len(tokenizer.encode(json.dumps({"messages": messages, "tools": tools}))) + images * image_tokens
 
     accounted_local = accounted_prompt = None
+    carryover_tokens_estimate = 0
 
     def context_size():
         current = local_size()
-        return current if accounted_prompt is None else accounted_prompt + max(0, current - accounted_local)
+        visible = current if accounted_prompt is None else accounted_prompt + max(0, current - accounted_local)
+        return visible + carryover_tokens_estimate
 
     supplied_images = set()
     progress = EvidenceProgress()
@@ -660,6 +662,9 @@ Answer:
             return finish(answer, searches, messages + [{"role": "assistant", "content": answer}])
         sent_local = local_size()
         reply = chat(messages, tools)
+        carryover_tokens_estimate = reply.timing.get("contextCarryoverTokensEstimate", 0)
+        if type(carryover_tokens_estimate) is not int or carryover_tokens_estimate < 0:
+            raise ValueError("invalid context carryover estimate")
         prompt_tokens = reply.usage.get("prompt_tokens")
         if type(prompt_tokens) is int and prompt_tokens > 0:
             accounted_local, accounted_prompt = sent_local, prompt_tokens
@@ -1114,6 +1119,7 @@ def azure_chat(
     client: Any | None = None,
     max_completion_tokens: int = 8_000,
     max_attempts: int = 3,
+    reasoning_effort: str | None = None,
     sleep: Callable[[float], None] = time.sleep,
 ) -> Chat:
     """Signed-in Azure chat with bounded output and provider-directed rate-limit retries.
@@ -1139,6 +1145,8 @@ def azure_chat(
 
     def chat(messages: list[dict[str, Any]], tools: list[dict[str, Any]]) -> Reply:
         kwargs: dict[str, Any] = {"tools": tools} if tools else {}
+        if reasoning_effort is not None:
+            kwargs["reasoning_effort"] = reasoning_effort
         started = time.perf_counter()
         provider_ms = wait_ms = 0.0
         retries = 0

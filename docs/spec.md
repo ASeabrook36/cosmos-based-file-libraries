@@ -386,6 +386,16 @@ images retain their existing evidence roles. These guards do not establish
 semantic correctness or exhaustive coverage; details and limits are in
 [agent-retrieval.md](agent-retrieval.md).
 
+An opt-in Azure Responses transport supports controlled answering-model evaluation;
+the normal demo retains Chat Completions. Both model arms use the same explicit
+reasoning effort, output cap, tool mapping and source budget. Provider conversation
+storage and automatic truncation are disabled. Opaque reasoning is held only in
+memory and reused while its exact originating message prefix remains present.
+New reasoning carryover is reserved as an estimate until the next measured input
+usage replaces it; measured usage is never inflated with that estimate. A separate
+mini-model bridge measures the API and reasoning-continuity change before model
+and context effects are compared. Equal effort labels do not mean equal computation.
+
 The complete contract, examples, integration mapping, compatibility, tests and rollout limits are in [document-retrieval.md](document-retrieval.md). The implementation and a live four-paper smoke check passed; broad answer-quality evaluation remains outstanding (E34, E35).
 
 ### 6.7 Stored image/caption retrieval

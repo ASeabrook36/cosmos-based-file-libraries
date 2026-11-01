@@ -58,3 +58,20 @@ follow-up work; do not imply that an unrun configuration passed. The held-out pa
 uses its own matched source corpus and fresh sessions. Do not combine disjoint
 corpora in a library or call the expanded corpus a repeat of the original
 two-question timing benchmark.
+
+## Controlled answering-model follow-up
+
+`scripts.compare_agent_models` reuses this replay harness with a private model and
+library configuration and fresh private output directory. It runs eight repeated
+mini Chat Completions bridge turns, then 52 Responses turns comparing mini and a
+stronger model at 24k, then eight mini-only Responses turns at 64k. The bridge and
+context subsets use both Microsoft configurations; the main comparison uses all
+five original configurations plus the three held-out complete strategies.
+
+Both model arms use medium reasoning, an 8,000-token output cap, identical prompts,
+tools and source snapshots. Model order reverses on the second repeat. Source and
+code hashes are checked globally and per run. The bridge measures the API plus
+reasoning-continuity effect; it is not a wire-protocol-only comparison. Provider
+cache state and actual inference region remain uncontrolled. Report measured
+reasoning/cache usage and quota waits separately; equal reasoning labels or token
+rate caps do not establish equal compute or latency. Raw captures remain private.

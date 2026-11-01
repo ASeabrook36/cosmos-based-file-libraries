@@ -17,6 +17,7 @@ from pathlib import Path
 from fli_demo.agent import azure_chat, run_turn
 from fli_demo.client import IndexClient
 from fli_demo.registry import Registry
+from fli_demo.responses import ResponsesProtocolError
 from fli_demo.telemetry import metrics
 
 
@@ -41,6 +42,43 @@ def prepare_output(output):
     with (output / "run-status.json").open("x") as handle:
         json.dump({"status": "running", "completedTurns": 0}, handle)
     return output
+
+
+def failed_attempt_receipt(error):
+    """Keep known provider counters, never an exception body or source payload.
+
+    A protocol failure occurs after a provider response. These counters describe
+    that last call, not earlier successful calls within the unfinished turn.
+    Network errors and interrupts do not establish any missing usage counters.
+    """
+    if not isinstance(error, ResponsesProtocolError):
+        return None
+    usage = {}
+    for key in ("prompt_tokens", "completion_tokens", "total_tokens"):
+        value = error.usage.get(key)
+        if isinstance(value, (int, float)) and not isinstance(value, bool):
+            usage[key] = value
+    for key in ("prompt_tokens_details", "completion_tokens_details"):
+        values = error.usage.get(key)
+        if isinstance(values, dict):
+            usage[key] = {
+                name: value
+                for name, value in values.items()
+                if name.endswith("_tokens") and isinstance(value, (int, float)) and not isinstance(value, bool)
+            }
+    timing = {
+        key: value
+        for key, value in error.timing.items()
+        if key in {"totalMs", "providerMs", "rateLimitWaitMs", "rateLimitRetries"}
+        and isinstance(value, (int, float))
+        and not isinstance(value, bool)
+    }
+    return {
+        "scope": "final_provider_call_only; earlier calls in unfinished turn are not included",
+        "usage": usage or None,
+        "timing": timing or None,
+        "usageAvailability": "provider_reported" if usage else "unavailable",
+    }
 
 
 def snapshot(index, agent):
@@ -157,15 +195,20 @@ def replay(index, chat, agent, cases, output, budget=48000):
             )
     except (Exception, KeyboardInterrupt) as error:
         interrupted = isinstance(error, KeyboardInterrupt)
+        failed_attempt = failed_attempt_receipt(error)
         (output / "run-status.json").write_text(
             json.dumps(
                 {
                     "status": "interrupted" if interrupted else "failed",
                     "completedTurns": len(results),
                     "errorType": type(error).__name__,
-                    "usage": "Completed turns only; interrupted-attempt usage is unavailable."
+                    "usage": "Completed-turn usage is retained separately. Known last failed-call counters are in "
+                    "failedAttempt; other unfinished-turn usage is unavailable."
+                    if failed_attempt
+                    else "Completed turns only; interrupted-attempt usage is unavailable."
                     if interrupted
                     else "Completed turns only; failed-attempt usage is unavailable.",
+                    "failedAttempt": failed_attempt,
                 },
                 indent=2,
             )

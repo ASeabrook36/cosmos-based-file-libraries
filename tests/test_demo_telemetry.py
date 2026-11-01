@@ -52,6 +52,21 @@ def test_usage_is_cumulative_and_unknown_counts_are_not_reported_as_zero():
     assert metrics(turn)["totalTokens"] is None
 
 
+def test_explicit_reasoning_effort_is_opt_in_for_chat_completions():
+    requests = []
+
+    def create(**kwargs):
+        requests.append(kwargs)
+        return SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content="ok", tool_calls=[]))])
+
+    client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)))
+    azure_chat("endpoint", "deployment", client=client)([], [])
+    azure_chat("endpoint", "deployment", client=client, reasoning_effort="medium")([], [])
+    assert "reasoning_effort" not in requests[0]
+    assert requests[1]["reasoning_effort"] == "medium"
+    assert requests[0]["max_completion_tokens"] == requests[1]["max_completion_tokens"] == 8000
+
+
 def test_metrics_exclude_source_content_and_environment_identifiers():
     trace = SearchTrace(
         "private-tool",
