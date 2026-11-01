@@ -1,5 +1,16 @@
 # Build plan
 
+**Next-work roadmap, 2026-11-01:** follow the
+[retrieval foundations roadmap](consults/2026-11-01-retrieval-foundations-roadmap.md).
+Freeze a representative benchmark and reconcile ongoing scale measurements first;
+then test routing/index correctness, vector granularity and justified container
+layouts. Compact evidence and source-selector improvements can proceed in parallel.
+Integrate finalists before the custom/Microsoft ownership decision and smaller-model
+or constrained-context tuning. This supersedes the earlier ordering that preferred
+Microsoft orchestration as the next integration candidate; it does not select a
+provider winner or close production gates. Keep experiments on separate branches
+and isolated resources, extending the existing lab, measurements and agent replay.
+
 **Controlled model/context comparison, 2026-11-01 (E63):** 100 Azure replay turns
 and 844 local tests completed on the isolated branch/resources. Both answering
 models used Responses for the matched model comparison; mini's existing Chat
@@ -15,9 +26,9 @@ untested. Current/custom still need matched adequate-context answering runs befo
 a strategy conclusion. Three temporary model deployments were removed; original
 deployment settings and the normal demo remain unchanged. See the
 [comparison record](../records/model-context-comparison-20261101.json) and E63.
-Next: representative longer/multi-file tasks across all profiles with enough
-context to assess evidence delivery, then separately measure constrained-budget
-efficiency. Extend the existing replay and measurement paths.
+The roadmap above orders representative longer/multi-file comparisons across all
+profiles with enough context to assess evidence delivery, foundation experiments,
+and the later constrained-budget efficiency work.
 
 **Agent recovery follow-up, 2026-11-01 (E62):** the existing adapter now reserves
 retrieval headroom, retries whole passages within the remaining budget, recovers

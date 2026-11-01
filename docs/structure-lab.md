@@ -1,5 +1,11 @@
 # Structured retrieval: executable Cosmos experiment
 
+**Next work, 2026-11-01:** the
+[retrieval foundations roadmap](consults/2026-11-01-retrieval-foundations-roadmap.md)
+supersedes the experiment ordering in "Next build steps and acceptance" below.
+Use this lab for controlled representation and layout tests, then integrate
+supported improvements through the existing authorized API and agent replay.
+
 This opt-in lab tests a common document representation in two Cosmos layouts.
 It does not change the API, worker or compact REST contract. The initial live
 results are in [the sanitized experiment record](../records/structure-lab-20261028.json).
