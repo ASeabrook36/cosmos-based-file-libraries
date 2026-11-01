@@ -155,14 +155,17 @@ def replay(index, chat, agent, cases, output, budget=48000):
             raise RuntimeError(
                 "source versions, metadata or tool context changed during replay; comparison is confounded"
             )
-    except Exception as error:
+    except (Exception, KeyboardInterrupt) as error:
+        interrupted = isinstance(error, KeyboardInterrupt)
         (output / "run-status.json").write_text(
             json.dumps(
                 {
-                    "status": "failed",
+                    "status": "interrupted" if interrupted else "failed",
                     "completedTurns": len(results),
                     "errorType": type(error).__name__,
-                    "usage": "Completed turns only; failed-attempt usage is unavailable.",
+                    "usage": "Completed turns only; interrupted-attempt usage is unavailable."
+                    if interrupted
+                    else "Completed turns only; failed-attempt usage is unavailable.",
                 },
                 indent=2,
             )
@@ -278,31 +281,31 @@ def replay_pair(
         "runs": [],
     }
     root = prepare_output(root)
-    pair_agent = {**agent, "libraryIds": list(libraries.values())}
-    before_context = snapshot(index, pair_agent)
-    (root / "source-snapshot.json").write_text(json.dumps(before_context, indent=2) + "\n")
-    (root / "cases.json").write_text(json.dumps(cases, indent=2) + "\n")
-    (root / "quality-review.json").write_text(
-        json.dumps(
-            [
-                {
-                    "case": case["case"],
-                    "sourceFacts": case.get("sourceFacts"),
-                    "successCriteria": case.get("successCriteria"),
-                    "reviewStatus": "unreviewed",
-                    "sourceEvidenceRecall": None,
-                    "citationCorrectness": None,
-                    "taskSuccess": None,
-                    "notes": "Review against common source facts/regions, not chunk IDs.",
-                }
-                for case in cases
-            ],
-            indent=2,
-        )
-        + "\n"
-    )
-    (root / "comparison.json").write_text(json.dumps(metadata, indent=2) + "\n")
     try:
+        pair_agent = {**agent, "libraryIds": list(libraries.values())}
+        before_context = snapshot(index, pair_agent)
+        (root / "source-snapshot.json").write_text(json.dumps(before_context, indent=2) + "\n")
+        (root / "cases.json").write_text(json.dumps(cases, indent=2) + "\n")
+        (root / "quality-review.json").write_text(
+            json.dumps(
+                [
+                    {
+                        "case": case["case"],
+                        "sourceFacts": case.get("sourceFacts"),
+                        "successCriteria": case.get("successCriteria"),
+                        "reviewStatus": "unreviewed",
+                        "sourceEvidenceRecall": None,
+                        "citationCorrectness": None,
+                        "taskSuccess": None,
+                        "notes": "Review against common source facts/regions, not chunk IDs.",
+                    }
+                    for case in cases
+                ],
+                indent=2,
+            )
+            + "\n"
+        )
+        (root / "comparison.json").write_text(json.dumps(metadata, indent=2) + "\n")
         for repeat in range(repeats):
             order = ["custom", "microsoft"] if repeat % 2 == 0 else ["microsoft", "custom"]
             for member in order:
@@ -323,10 +326,14 @@ def replay_pair(
         (root / "comparison.json").write_text(json.dumps(metadata, indent=2) + "\n")
         if not metadata["sourceUnchanged"]:
             raise RuntimeError("pair inventory or tool context changed across runs; comparison is confounded")
-    except Exception as error:
+    except (Exception, KeyboardInterrupt) as error:
         (root / "run-status.json").write_text(
             json.dumps(
-                {"status": "failed", "completedRuns": len(metadata["runs"]), "errorType": type(error).__name__},
+                {
+                    "status": "interrupted" if isinstance(error, KeyboardInterrupt) else "failed",
+                    "completedRuns": len(metadata["runs"]),
+                    "errorType": type(error).__name__,
+                },
                 indent=2,
             )
             + "\n"

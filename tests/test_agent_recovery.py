@@ -137,6 +137,53 @@ def test_search_budget_refusal_reduces_whole_passage_count_and_accounts_for_ever
     assert json.loads(content)["results"][0]["text"] == "Original supporting passage."
 
 
+def test_first_large_search_leaves_room_for_the_second_requested_file():
+    class LargePassageIndex(RecoveryIndex):
+        def discover_documents(self, *args, **kwargs):
+            return envelope(
+                {"mode": "catalogue", "documents": [{"documentId": d, "fileName": d + ".docx"} for d in ("a", "b")]}
+            )
+
+        def search(self, library, agent, query, **args):
+            self.requests.append(("search", library, agent, args))
+            document = args["document"]["documentId"]
+            return envelope(
+                {
+                    "disposition": "results",
+                    "results": [
+                        {
+                            "documentId": document,
+                            "fileName": document + ".docx",
+                            "location": {"paragraph": i + 1},
+                            "text": ("Alpha source fact. " * 350) if document == "a" else ("Beta source fact. " * 700),
+                        }
+                        for i in range(8 if document == "a" else 1)
+                    ],
+                }
+            )
+
+    index = LargePassageIndex()
+    chat = scripted(
+        Reply(None, [ToolCall("f", "find_documents_library_reports", "{}")]),
+        Reply(
+            None, [ToolCall("a", "search_library_reports", '{"query":"first condition","document":{"documentId":"a"}}')]
+        ),
+        Reply(
+            None,
+            [ToolCall("b", "search_library_reports", '{"query":"second condition","document":{"documentId":"b"}}')],
+        ),
+        Reply("Both source conditions are supported."),
+    )
+    turn = run_turn(chat, index, AGENT, [], "Compare both files.", context_token_budget=24000)
+    replies = [json.loads(m["content"]) for m in turn.messages if m["role"] == "tool"]
+    assert 0 < len(replies[1]["results"]) < 8
+    assert source_documents(replies[1]) == {"a"} and source_documents(replies[2]) == {"b"}
+    assert all(r["text"] == "Alpha source fact. " * 350 for r in replies[1]["results"])
+    assert replies[2]["results"][0]["text"] == "Beta source fact. " * 700
+    assert turn.answer == "Both source conditions are supported." and len(turn.model_calls) == 4
+    assert len(index.requests) == 2 and all(r[1:3] == ("bound", "owner") for r in index.requests)
+
+
 def test_oversized_whole_file_batch_recovers_both_scoped_sources_without_claiming_complete_reads():
     index = RecoveryIndex()
     chat = scripted(

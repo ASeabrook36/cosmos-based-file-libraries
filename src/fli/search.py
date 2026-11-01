@@ -132,9 +132,12 @@ class CosmosChunkReader:
     async def neighbors(
         self, library_id: str, document_id: str, generation: int, indexes: Sequence[int], cost: QueryCost
     ) -> list[Record]:
+        if not indexes:
+            return []
         names = [f"@i{n}" for n in range(len(indexes))]
         sql = (
-            "SELECT c.chunkIndex, c.text FROM c WHERE c.libraryId = @libraryId AND c.documentId = @documentId"
+            f"SELECT TOP {len(indexes)} c.chunkIndex, c.text, c.location, c.heading FROM c "
+            "WHERE c.libraryId = @libraryId AND c.documentId = @documentId"
             f" AND c.generation = @generation AND c.contentKind = 'text' AND c.chunkIndex IN ({', '.join(names)})"
         )
         params = [
@@ -454,13 +457,24 @@ class Searcher:
         fetched = await asyncio.gather(
             *(self.chunks.neighbors(library_id, d, g, sorted(wanted[(d, g)]), cost) for d, g in keys)
         )
-        by_document: dict[str, dict[int, str]] = {
-            d: {n["chunkIndex"]: n["text"] for n in rows} for (d, _), rows in zip(keys, fetched, strict=True)
+        by_document: dict[tuple[str, int], dict[int, Record]] = {
+            key: {
+                n["chunkIndex"]: {
+                    "chunkIndex": n["chunkIndex"],
+                    "text": n["text"],
+                    # A neighbor's source extent can differ from the ranked hit's.
+                    # Omit unavailable provenance so legacy consumers keep the warning.
+                    **({"location": n["location"]} if n.get("location") else {}),
+                    **({"heading": n["heading"]} if n.get("heading") else {}),
+                }
+                for n in rows
+            }
+            for key, rows in zip(keys, fetched, strict=True)
         }
         out: dict[tuple[str, int], list[Record]] = {}
         for c in kept:
-            texts = by_document.get(c["documentId"], {})
+            neighbors = by_document.get((c["documentId"], c["generation"]), {})
             out[(c["documentId"], c["chunkIndex"])] = [
-                {"chunkIndex": i, "text": texts[i]} for i in (c["chunkIndex"] - 1, c["chunkIndex"] + 1) if i in texts
+                neighbors[i] for i in (c["chunkIndex"] - 1, c["chunkIndex"] + 1) if i in neighbors
             ]
         return out

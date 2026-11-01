@@ -536,6 +536,9 @@ Retrieval:
   query the information needed in natural language without repeating filenames or web operators.
   Mixed text/image is default. Apply metadata or text-only filters only for actual user constraints;
   guessed topic tags can exclude the answer. Do not keep repeating text-only searches for a visual task.
+  Split compound factual questions into their separate facts and conditions. If a condition remains
+  unresolved, narrow the search to that condition and check other identified sources before declaring
+  it absent or ambiguous. Receiving a passage from a file does not establish coverage of its relevant facts.
 - read_documents: full for explicit whole-file tasks/global synthesis; selected for focused source
   regions (evidenceIds, sectionIds, pages/slides/paragraphs); outline for paged source section handles.
   For research synthesis in a long report, inspect its outline to locate relevant themes and studies.
@@ -572,6 +575,12 @@ Answer:
   facilitation or workflow do not isolate the effect of adding context or persistent memory.
   Distinguish direct support for the user's hypothesis from related evidence; say when a comparator,
   sample or effect is unknown rather than filling it in. Keep the headline as qualified as the evidence.
+- Never invent a missing source-specific rule, deadline or calculation, even as a tentative or reasonable
+  interpretation. Report what the source establishes and which requested condition remains unresolved.
+  Do not strengthen a source's judgment; distinguish your own inference explicitly. Keep the answer
+  focused on the requested facts rather than adding unsupported implementation advice or trade-offs.
+  Cite each neighboring passage's own returned location. If a neighbor has no source location, cite
+  only its filename; never borrow the ranked hit's paragraph, page, character span or section reference.
 - Explain why each selected visual helps and what it does not establish. Do not promise export quality
   beyond stored crops or verified reuse rights. Never add unrequested offers instead of deliverables.
 - File descriptions and outline headings are discovery metadata, never evidence for substantive claims.
@@ -698,7 +707,16 @@ Answer:
             ):
                 content, images = _run_documents(call, index, agent, owners, names, searches, clock, remaining)
             else:
-                content, images = _run_search(call, index, agent, owners, names, searches, clock, remaining, tokenizer)
+                source_received = any(
+                    source_documents(payload) or inspected_documents(payload)
+                    for payload in (json.loads(m["content"]) for m in messages if m["role"] == "tool")
+                )
+                # Leave room to check another file/condition before the first search
+                # consumes the turn. Whole passages are still the indivisible unit.
+                search_budget = remaining if source_received else min(remaining, max(6000, remaining // 2))
+                content, images = _run_search(
+                    call, index, agent, owners, names, searches, clock, search_budget, tokenizer
+                )
             payload = compact_refusal(json.loads(content))
             # A budget refusal is not a permission to expand scope: recover only within
             # the returned authorized document snapshots, and never advertise a full read.

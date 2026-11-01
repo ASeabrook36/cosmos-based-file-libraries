@@ -409,3 +409,26 @@ def test_neighbor_citations_do_not_invent_the_parent_hits_page():
     assert row["citation"] == "report.pdf (page 4)"
     assert row["neighbors"][0]["citation"] == "report.pdf"
     assert "do_not_inherit_hit_location" in row["neighbors"][0]["locationStatus"]
+
+
+def test_neighbor_citations_use_their_own_page_and_heading_when_returned():
+    evidence, _ = project(
+        {
+            "results": [
+                {
+                    "fileName": "report.pdf",
+                    "location": {"page": 4},
+                    "heading": "Question",
+                    "text": "Main passage.",
+                    "neighbors": [
+                        {"chunkIndex": 12, "text": "Actual answer.", "location": {"page": 5}, "heading": "Answer"}
+                    ],
+                }
+            ]
+        }
+    )
+    hit = evidence["results"][0]
+    neighbor = hit["neighbors"][0]
+    assert hit["citation"] == "report.pdf (page 4)"
+    assert neighbor["citation"] == "report.pdf (page 5)" and neighbor["heading"] == "Answer"
+    assert neighbor["text"] == "Actual answer." and "locationStatus" not in neighbor

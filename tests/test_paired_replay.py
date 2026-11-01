@@ -219,6 +219,98 @@ def test_replay_preserves_completed_turns_and_marks_failed_attempt_usage_unavail
     assert "provider error" not in json.dumps(status)
 
 
+def test_interrupted_replay_preserves_completed_turns_and_reraises_interrupt(tmp_path, monkeypatch):
+    interrupt = KeyboardInterrupt("private interruption detail")
+
+    def run(chat, index, agent, history, question, **kwargs):
+        if question == "interrupt":
+            raise interrupt
+        return SimpleNamespace(answer="completed answer", searches=[], messages=[])
+
+    monkeypatch.setattr(evaluation, "run_turn", run)
+    monkeypatch.setattr(evaluation, "metrics", lambda _: {"totalTokens": 12})
+    cases = [{"case": "one", "questions": ["works", "interrupt"]}]
+    with pytest.raises(KeyboardInterrupt) as caught:
+        evaluation.replay(Index(), object(), {"libraryIds": ["custom"]}, cases, tmp_path)
+
+    assert caught.value is interrupt
+    results = json.loads((tmp_path / "results.json").read_text())
+    assert len(results) == 1
+    assert results[0]["answer"] == "completed answer" and results[0]["metrics"]["totalTokens"] == 12
+    assert json.loads((tmp_path / "cases.json").read_text()) == cases
+    assert (tmp_path / "source-snapshot.json").exists()
+    assert not (tmp_path / "snapshot-check.json").exists()
+    status = json.loads((tmp_path / "run-status.json").read_text())
+    assert status["status"] == "interrupted" and status["errorType"] == "KeyboardInterrupt"
+    assert status["completedTurns"] == 1 and "unavailable" in status["usage"]
+    assert "private interruption detail" not in json.dumps(status)
+
+
+def test_interrupted_pair_preserves_completed_member_and_partial_next_member(tmp_path, monkeypatch):
+    interrupt = KeyboardInterrupt("private interruption detail")
+    calls = []
+
+    def run(chat, index, agent, history, question, **kwargs):
+        member = agent["libraryIds"][0]
+        calls.append((member, question))
+        if member == "microsoft" and question == "second":
+            raise interrupt
+        return SimpleNamespace(answer="completed answer", searches=[], messages=[])
+
+    monkeypatch.setattr(evaluation, "run_turn", run)
+    monkeypatch.setattr(evaluation, "metrics", lambda _: {"totalTokens": 12})
+    with pytest.raises(KeyboardInterrupt) as caught:
+        evaluation.replay_pair(
+            Index(),
+            object,
+            {},
+            "exp",
+            [{"case": "one", "questions": ["first", "second"]}],
+            tmp_path,
+            repeats=2,
+            index_ready=True,
+            run_controls=CONTROLS,
+        )
+
+    assert caught.value is interrupt
+    assert calls == [("custom", "first"), ("custom", "second"), ("microsoft", "first"), ("microsoft", "second")]
+    comparison = json.loads((tmp_path / "comparison.json").read_text())
+    assert comparison["runs"] == [{"repeat": 1, "member": "custom", "order": 1}]
+    parent_status = json.loads((tmp_path / "run-status.json").read_text())
+    assert parent_status == {"status": "interrupted", "completedRuns": 1, "errorType": "KeyboardInterrupt"}
+    assert json.loads((tmp_path / "run-1-custom/run-status.json").read_text())["status"] == "complete"
+    assert len(json.loads((tmp_path / "run-1-custom/results.json").read_text())) == 2
+    child_status = json.loads((tmp_path / "run-1-microsoft/run-status.json").read_text())
+    assert child_status["status"] == "interrupted" and child_status["completedTurns"] == 1
+    assert len(json.loads((tmp_path / "run-1-microsoft/results.json").read_text())) == 1
+    assert not (tmp_path / "run-2-microsoft").exists()
+
+
+def test_pair_interrupted_during_initial_snapshot_is_not_left_running(tmp_path):
+    index = Index()
+    get_library = index.get_library
+    calls = 0
+
+    def interrupt_snapshot(library):
+        nonlocal calls
+        calls += 1
+        # The first two reads validate equivalent library context before claiming output.
+        if calls == 3:
+            raise KeyboardInterrupt
+        return get_library(library)
+
+    index.get_library = interrupt_snapshot
+    with pytest.raises(KeyboardInterrupt):
+        evaluation.replay_pair(index, object, {}, "exp", [], tmp_path, index_ready=True, run_controls=CONTROLS)
+
+    assert json.loads((tmp_path / "run-status.json").read_text()) == {
+        "status": "interrupted",
+        "completedRuns": 0,
+        "errorType": "KeyboardInterrupt",
+    }
+    assert not (tmp_path / "source-snapshot.json").exists()
+
+
 def test_replay_freezes_cases_and_strips_attachment_credentials_from_tool_replies(tmp_path, monkeypatch):
     reply = {"mode": "evidence_search", "results": [{"image": {"url": "private-url", "expiresAt": "later"}}]}
     monkeypatch.setattr(

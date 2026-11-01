@@ -105,9 +105,12 @@ class FakeChunkReader:
 
     async def neighbors(self, library_id, document_id, generation, indexes, cost):
         return [
-            {"chunkIndex": c["chunkIndex"], "text": c["text"]}
+            {k: c[k] for k in ("chunkIndex", "text", "location", "heading") if k in c}
             for (lib, doc, _), c in self.chunks.items.items()
-            if (lib, doc) == (library_id, document_id) and c["generation"] == generation and c["chunkIndex"] in indexes
+            if (lib, doc) == (library_id, document_id)
+            and c["generation"] == generation
+            and c["chunkIndex"] in indexes
+            and c.get("contentKind", "text") == "text"
         ]
 
 

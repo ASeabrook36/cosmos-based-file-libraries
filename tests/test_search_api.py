@@ -106,6 +106,41 @@ async def test_the_cosmos_reader_routes_vector_queries_by_partition_and_hybrid_q
     assert container.calls == [["L"], None]  # evidence.md E27
 
 
+async def test_cosmos_neighbors_project_own_provenance_with_full_partition_and_generation_scope():
+    from fli.query import check_query
+    from fli.search import CosmosChunkReader, QueryCost
+
+    record = {"chunkIndex": 6, "text": "Answer on another page.", "location": {"page": 5}, "heading": "Answer"}
+    cost = QueryCost()
+
+    class Container:
+        def query_items(self, sql, **kwargs):
+            check_query(sql)
+            assert sql.startswith("SELECT TOP 2 c.chunkIndex, c.text, c.location, c.heading FROM c ")
+            assert "c.libraryId = @libraryId AND c.documentId = @documentId" in sql
+            assert "c.generation = @generation AND c.contentKind = 'text'" in sql
+            assert "c.chunkIndex IN (@i0, @i1)" in sql
+            assert "embedding" not in sql and "O'Brien" not in sql
+            assert kwargs["partition_key"] == ["library", "O'Brien"]
+            assert kwargs["raw_response_hook"] is cost
+            assert {p["name"]: p["value"] for p in kwargs["parameters"]} == {
+                "@libraryId": "library",
+                "@documentId": "O'Brien",
+                "@generation": 3,
+                "@i0": 4,
+                "@i1": 6,
+            }
+
+            async def rows():
+                yield record
+
+            return rows()
+
+    reader = CosmosChunkReader(Container())
+    assert await reader.neighbors("library", "O'Brien", 3, [4, 6], cost) == [record]
+    assert await reader.neighbors("library", "O'Brien", 3, [], cost) == []
+
+
 async def test_deleted_documents_vanish_before_the_purge_runs(ctx):
     client, s, worker = ctx
     lib, doc_id = await library_with_document(client, s, worker)
@@ -140,6 +175,72 @@ async def test_neighbours_come_from_the_same_document_and_generation(ctx):
     [result] = search(client, lib, includeNeighbors=True).json()["results"]
     assert [n["chunkIndex"] for n in result["neighbors"]] == [0, 2]
     assert search(client, lib).json()["results"][0]["neighbors"] is None
+
+
+async def test_neighbor_citations_use_stored_extents_and_exclude_other_source_snapshots(ctx):
+    client, s, worker = ctx
+    lib, doc_id = await library_with_document(client, s, worker)
+    originals = {}
+    for index, paragraph, text in [
+        (0, 7, "Previous source words."),
+        (1, 9, "Question?"),
+        (2, 10, "The source answer."),
+    ]:
+        chunk = dict(s.chunks.items[(lib, doc_id, f"{doc_id}:1:{index}")])
+        chunk.update(text=text, location={"paragraph": paragraph}, heading=f"Heading {paragraph}")
+        s.chunks.items[(lib, doc_id, chunk["id"])] = chunk
+        originals[index] = chunk
+    # Each decoy has the same neighbor index but is outside the selected snapshot.
+    for other_lib, other_doc, generation in [
+        ("other-library", doc_id, 1),
+        (lib, "other-document", 1),
+        (lib, doc_id, 2),
+    ]:
+        await s.chunks.upsert(
+            {
+                **originals[2],
+                "id": f"{other_doc}:{generation}:2",
+                "libraryId": other_lib,
+                "documentId": other_doc,
+                "generation": generation,
+                "text": "Wrong source.",
+                "location": {"paragraph": 999},
+            }
+        )
+    s.reader.order = [f"{doc_id}:1:1"]
+    body = {"query": "answer", "top": 1, "includeNeighbors": True, "document": {"documentId": doc_id}}
+    raw = client.post(f"/v1/libraries/{lib}/search", headers=AGENT, json=body).json()["results"][0]
+    assert raw["location"] == {"paragraph": 9}
+    assert raw["neighbors"] == [
+        {
+            "chunkIndex": i,
+            "text": originals[i]["text"],
+            "location": originals[i]["location"],
+            "heading": originals[i]["heading"],
+        }
+        for i in (0, 2)
+    ]
+    compact = client.post(f"/v1/libraries/{lib}/search", params={"view": "compact"}, headers=AGENT, json=body).json()[
+        "evidence"
+    ]["results"][0]
+    assert compact["citation"] == "q4.md (paragraph 9)"
+    assert [n["citation"] for n in compact["neighbors"]] == ["q4.md (paragraph 7)", "q4.md (paragraph 10)"]
+    assert [n["heading"] for n in compact["neighbors"]] == ["Heading 7", "Heading 10"]
+    assert all("locationStatus" not in n for n in compact["neighbors"])
+    assert "embedding" not in json.dumps(raw)
+
+    # Legacy rows may lack usable provenance. Preserve their words without borrowing
+    # the hit's paragraph or heading; the compact contract must retain its warning.
+    legacy = dict(originals[0])
+    legacy.update(location=None, heading=None)
+    s.chunks.items[(lib, doc_id, legacy["id"])] = legacy
+    compact = client.post(f"/v1/libraries/{lib}/search", params={"view": "compact"}, headers=AGENT, json=body).json()[
+        "evidence"
+    ]["results"][0]
+    before = compact["neighbors"][0]
+    assert before["text"] == originals[0]["text"] and before["citation"] == "q4.md"
+    assert "location" not in before and "heading" not in before
+    assert "do_not_inherit_hit_location" in before["locationStatus"]
 
 
 async def test_a_personal_library_answers_only_its_agent(ctx):
