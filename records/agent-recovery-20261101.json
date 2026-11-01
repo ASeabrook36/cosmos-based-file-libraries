@@ -1,0 +1,1871 @@
+{
+  "schema": "fli.agent-recovery-validation.v1",
+  "date": "2026-11-01",
+  "scope": "four public DOCX sources; assistant-reviewed functional replay, not a general accuracy/latency/cost benchmark",
+  "models": {
+    "chat": "gpt-5-mini:2025-08-07",
+    "embedding": "text-embedding-3-large:1",
+    "dimensions": 3072,
+    "autoUpgrade": false
+  },
+  "contextTokenBudget": 24000,
+  "revisions": {
+    "baselineAdapter": "bd34e78",
+    "mainFixedAdapter": "aa5c7fa",
+    "ingestionWorker": "53ffe2c",
+    "reconciliation": "fde7061"
+  },
+  "corpora": {
+    "assessments-current": {
+      "documents": [
+        {
+          "file": "source-1.docx",
+          "sha256": "b191349dc18aca3b074b56b50e940390a049687d5de03a306b601ad496bf9f78",
+          "ready": true,
+          "chunks": 37,
+          "estimatedChunkTokens": 16000,
+          "estimatedChunkTokensMin": 78,
+          "estimatedChunkTokensMax": 485
+        },
+        {
+          "file": "source-2.docx",
+          "sha256": "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e",
+          "ready": true,
+          "chunks": 8,
+          "estimatedChunkTokens": 3503,
+          "estimatedChunkTokensMin": 215,
+          "estimatedChunkTokensMax": 482
+        }
+      ],
+      "measuredEmbeddingTokens": 19503,
+      "measuredChunkWriteRU": 7208.9400000000005
+    },
+    "assessments-complete-strategy-custom": {
+      "documents": [
+        {
+          "file": "source-1.docx",
+          "sha256": "b191349dc18aca3b074b56b50e940390a049687d5de03a306b601ad496bf9f78",
+          "ready": true,
+          "chunks": 317,
+          "estimatedChunkTokens": 15878,
+          "estimatedChunkTokensMin": 2,
+          "estimatedChunkTokensMax": 185
+        },
+        {
+          "file": "source-2.docx",
+          "sha256": "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e",
+          "ready": true,
+          "chunks": 54,
+          "estimatedChunkTokens": 3539,
+          "estimatedChunkTokensMin": 6,
+          "estimatedChunkTokensMax": 160
+        }
+      ],
+      "measuredEmbeddingTokens": 19417,
+      "measuredChunkWriteRU": 29660.29
+    },
+    "assessments-complete-strategy-microsoft": {
+      "documents": [
+        {
+          "file": "source-1.docx",
+          "sha256": "b191349dc18aca3b074b56b50e940390a049687d5de03a306b601ad496bf9f78",
+          "ready": true,
+          "chunks": 4,
+          "estimatedChunkTokens": 15253,
+          "estimatedChunkTokensMin": 253,
+          "estimatedChunkTokensMax": 5001
+        },
+        {
+          "file": "source-2.docx",
+          "sha256": "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e",
+          "ready": true,
+          "chunks": 1,
+          "estimatedChunkTokens": 3432,
+          "estimatedChunkTokensMin": 3432,
+          "estimatedChunkTokensMax": 3432
+        }
+      ],
+      "measuredEmbeddingTokens": null,
+      "measuredChunkWriteRU": 3451.42
+    },
+    "assessments-controlled-component-custom": {
+      "documents": [
+        {
+          "file": "source-1.docx",
+          "sha256": "b191349dc18aca3b074b56b50e940390a049687d5de03a306b601ad496bf9f78",
+          "ready": true,
+          "chunks": 33,
+          "estimatedChunkTokens": 15047,
+          "estimatedChunkTokensMin": 170,
+          "estimatedChunkTokensMax": 482
+        },
+        {
+          "file": "source-2.docx",
+          "sha256": "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e",
+          "ready": true,
+          "chunks": 8,
+          "estimatedChunkTokens": 3417,
+          "estimatedChunkTokensMin": 170,
+          "estimatedChunkTokensMax": 483
+        }
+      ],
+      "measuredEmbeddingTokens": 18464,
+      "measuredChunkWriteRU": 6676.719999999999
+    },
+    "assessments-controlled-component-microsoft": {
+      "documents": [
+        {
+          "file": "source-1.docx",
+          "sha256": "b191349dc18aca3b074b56b50e940390a049687d5de03a306b601ad496bf9f78",
+          "ready": true,
+          "chunks": 31,
+          "estimatedChunkTokens": 15102,
+          "estimatedChunkTokensMin": 103,
+          "estimatedChunkTokensMax": 501
+        },
+        {
+          "file": "source-2.docx",
+          "sha256": "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e",
+          "ready": true,
+          "chunks": 7,
+          "estimatedChunkTokens": 3432,
+          "estimatedChunkTokensMin": 433,
+          "estimatedChunkTokensMax": 500
+        }
+      ],
+      "measuredEmbeddingTokens": null,
+      "measuredChunkWriteRU": 6421.540000000001
+    },
+    "heldout-current": {
+      "documents": [
+        {
+          "file": "heldout-deposit-questionnaire.docx",
+          "sha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+          "ready": true,
+          "chunks": 3,
+          "estimatedChunkTokens": 652,
+          "estimatedChunkTokensMin": 35,
+          "estimatedChunkTokensMax": 442
+        },
+        {
+          "file": "heldout-planning-form.docx",
+          "sha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+          "ready": true,
+          "chunks": 2,
+          "estimatedChunkTokens": 552,
+          "estimatedChunkTokensMin": 195,
+          "estimatedChunkTokensMax": 357
+        }
+      ],
+      "measuredEmbeddingTokens": 1204,
+      "measuredChunkWriteRU": 575.01
+    },
+    "heldout-complete-strategy-custom": {
+      "documents": [
+        {
+          "file": "heldout-deposit-questionnaire.docx",
+          "sha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+          "ready": true,
+          "chunks": 48,
+          "estimatedChunkTokens": 1001,
+          "estimatedChunkTokensMin": 7,
+          "estimatedChunkTokensMax": 103
+        },
+        {
+          "file": "heldout-planning-form.docx",
+          "sha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+          "ready": true,
+          "chunks": 5,
+          "estimatedChunkTokens": 645,
+          "estimatedChunkTokensMin": 22,
+          "estimatedChunkTokensMax": 327
+        }
+      ],
+      "measuredEmbeddingTokens": 1646,
+      "measuredChunkWriteRU": 3864.14
+    },
+    "heldout-complete-strategy-microsoft": {
+      "documents": [
+        {
+          "file": "heldout-deposit-questionnaire.docx",
+          "sha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+          "ready": true,
+          "chunks": 1,
+          "estimatedChunkTokens": 1023,
+          "estimatedChunkTokensMin": 1023,
+          "estimatedChunkTokensMax": 1023
+        },
+        {
+          "file": "heldout-planning-form.docx",
+          "sha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+          "ready": true,
+          "chunks": 1,
+          "estimatedChunkTokens": 842,
+          "estimatedChunkTokensMin": 842,
+          "estimatedChunkTokensMax": 842
+        }
+      ],
+      "measuredEmbeddingTokens": null,
+      "measuredChunkWriteRU": 419.23
+    }
+  },
+  "replays": {
+    "baseline/complete-strategy/run-1-custom": {
+      "status": "complete",
+      "turns": 2,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 118788,
+      "measuredCompletionTokens": 6895,
+      "measuredCachedPromptTokens": 79232,
+      "measuredReasoningTokens": 2880,
+      "modelCalls": 18,
+      "modelToolReplies": 16,
+      "retrievalAttempts": 16,
+      "retrievalErrors": 3,
+      "knownRetrievalRU": 159.31,
+      "retrievalRUComplete": false,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 2,
+        "passes": 1,
+        "failures": 1,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "deadline",
+          "turn": 1,
+          "taskSuccess": false,
+          "sourceSupport": true,
+          "citationReview": true,
+          "issues": [
+            "Only source-2 body delivered. Correctly reports expiry, but declines the later-of-advice-or-evacuation rule that source-1 explicitly supplies. Qualified source-2 absence is not successful completion of the requested calculation."
+          ]
+        },
+        {
+          "case": "compare-options",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": false,
+          "citationReview": false,
+          "issues": [
+            "Core requested comparison is covered with relevant original bodies from both files. Additional characterization of capacity pressures as manageable/an acceptable trade-off is stronger than the source text.",
+            "Some precise citations point to the ranked hit while the supporting detail is in an adjacent passage: source-2 ministerial flexibility is attributed to charStart 7096-7969 (the negative-impact paragraph); source-1 financial pressure is attributed to charStart 8458-8777, which states operational pressure only. The relevant neighboring source text was delivered, but these precise locations do not establish those claims."
+          ]
+        }
+      ]
+    },
+    "baseline/complete-strategy/run-1-microsoft": {
+      "status": "complete",
+      "turns": 2,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 173813,
+      "measuredCompletionTokens": 8856,
+      "measuredCachedPromptTokens": 117632,
+      "measuredReasoningTokens": 4736,
+      "modelCalls": 21,
+      "modelToolReplies": 20,
+      "retrievalAttempts": 20,
+      "retrievalErrors": 3,
+      "knownRetrievalRU": 210.45,
+      "retrievalRUComplete": false,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 2,
+        "passes": 0,
+        "failures": 2,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "deadline",
+          "turn": 1,
+          "taskSuccess": false,
+          "sourceSupport": true,
+          "citationReview": true,
+          "issues": [
+            "Only source-2 original body delivered. Expiry is correct, but the answer calls the calculation ambiguous instead of retrieving the explicit later-of rule in source-1. Source-2 citations support its narrower quoted statements."
+          ]
+        },
+        {
+          "case": "compare-options",
+          "turn": 1,
+          "taskSuccess": false,
+          "sourceSupport": true,
+          "citationReview": true,
+          "issues": [
+            "Comparison uses only source-2 original body; source-1 retrieval remains unfinished and the answer explicitly offers to retrieve the already-requested second assessment later. Its narrower RIA claims are supported, but the both-assessment deliverable fails."
+          ]
+        }
+      ]
+    },
+    "baseline/controlled-component/run-1-custom": {
+      "status": "complete",
+      "turns": 2,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 173380,
+      "measuredCompletionTokens": 8028,
+      "measuredCachedPromptTokens": 122496,
+      "measuredReasoningTokens": 3968,
+      "modelCalls": 17,
+      "modelToolReplies": 15,
+      "retrievalAttempts": 15,
+      "retrievalErrors": 3,
+      "knownRetrievalRU": 157.52,
+      "retrievalRUComplete": false,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 2,
+        "passes": 1,
+        "failures": 1,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "deadline",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": true,
+          "citationReview": true,
+          "issues": []
+        },
+        {
+          "case": "compare-options",
+          "turn": 1,
+          "taskSuccess": false,
+          "sourceSupport": true,
+          "citationReview": true,
+          "issues": [
+            "Only source-1 original body was delivered and cited. Answer acknowledges source-2 was not retrieved and asks for permission to make another attempt; this does not complete the requested both-assessment comparison. Source-1 descriptions of the trade-offs are supported."
+          ]
+        }
+      ]
+    },
+    "baseline/controlled-component/run-1-microsoft": {
+      "status": "complete",
+      "turns": 2,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 159306,
+      "measuredCompletionTokens": 8306,
+      "measuredCachedPromptTokens": 99584,
+      "measuredReasoningTokens": 4480,
+      "modelCalls": 18,
+      "modelToolReplies": 17,
+      "retrievalAttempts": 17,
+      "retrievalErrors": 4,
+      "knownRetrievalRU": 150.38,
+      "retrievalRUComplete": false,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 2,
+        "passes": 0,
+        "failures": 2,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "deadline",
+          "turn": 1,
+          "taskSuccess": false,
+          "sourceSupport": false,
+          "citationReview": true,
+          "issues": [
+            "Source-2 original passages plus unrelated source-1 body were delivered; no delivered source-1 later-date rule. Answer gives the expiry but incorrectly treats the differing-date calculation as unresolved across the assessments instead of retrieving the relevant source-1 opening. Its narrower source-2 quotations are accurate."
+          ]
+        },
+        {
+          "case": "compare-options",
+          "turn": 1,
+          "taskSuccess": false,
+          "sourceSupport": true,
+          "citationReview": true,
+          "issues": [
+            "Only source-1 original body was delivered; source-2 is expressly omitted and routine retrieval is deferred to user permission. The sunset is mentioned without its exact date. The narrower source-1 account is supported, but this does not satisfy the requested both-assessment comparison."
+          ]
+        }
+      ]
+    },
+    "baseline/current-1": {
+      "status": "complete",
+      "turns": 2,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 102954,
+      "measuredCompletionTokens": 6558,
+      "measuredCachedPromptTokens": 64000,
+      "measuredReasoningTokens": 3264,
+      "modelCalls": 11,
+      "modelToolReplies": 9,
+      "retrievalAttempts": 9,
+      "retrievalErrors": 2,
+      "knownRetrievalRU": 88.45,
+      "retrievalRUComplete": false,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 2,
+        "passes": 1,
+        "failures": 1,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "deadline",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": true,
+          "citationReview": false,
+          "issues": [
+            "The expiry and later-of calculation are correctly supported by delivered source-1 original text. However, the answer also cites source-2 for the later-of rule and calls its wording the same formulation; source-2 does not specify that tie-breaker. Returned current-profile paragraph locators are coarse, and were faithfully reproduced."
+          ]
+        },
+        {
+          "case": "compare-options",
+          "turn": 1,
+          "taskSuccess": false,
+          "sourceSupport": false,
+          "citationReview": false,
+          "issues": [
+            "Only source-1 original body was delivered. The answer repeatedly treats source-2 generated catalogue description as substantive evidence and presents a both-file comparison despite that missing body. It also adds an unsupported pre-crisis planning-cost advantage to doing nothing."
+          ]
+        }
+      ]
+    },
+    "context-diagnostic/complete-microsoft": {
+      "status": "complete",
+      "turns": 1,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 68066,
+      "measuredCompletionTokens": 2128,
+      "measuredCachedPromptTokens": 12160,
+      "measuredReasoningTokens": 1280,
+      "modelCalls": 5,
+      "modelToolReplies": 4,
+      "retrievalAttempts": 4,
+      "retrievalErrors": 0,
+      "knownRetrievalRU": 41.92,
+      "retrievalRUComplete": true,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 1,
+        "passes": 1,
+        "failures": 0,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "deadline",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": true,
+          "citationReview": false,
+          "issues": [
+            "Unreplicated 64000-token budget diagnostic with the same question and source pack, not a matched quality comparison or evidence of repeatability. The final model call reports 51134 prompt tokens; the source-1 opening chunk containing whichever is later was actually delivered, and the primary expiry/calculation answer is correct.",
+            "Primary quoted facts use the correct delivered evidence identifiers. An ancillary statement says source-2 gives the same rule in plain form, but source-2 omits the later-of tie-breaker. The answer should distinguish its general six-month wording from the more specific source-1 calculation."
+          ]
+        }
+      ]
+    },
+    "expanded/complete-strategy/run-1-custom": {
+      "status": "complete",
+      "turns": 9,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 181928,
+      "measuredCompletionTokens": 17639,
+      "measuredCachedPromptTokens": 124928,
+      "measuredReasoningTokens": 9024,
+      "modelCalls": 39,
+      "modelToolReplies": 28,
+      "retrievalAttempts": 30,
+      "retrievalErrors": 7,
+      "knownRetrievalRU": 282.69,
+      "retrievalRUComplete": false,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 9,
+        "passes": 8,
+        "failures": 1,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "cost-distinction",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": []
+        },
+        {
+          "case": "counts-versus-forecasts",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": []
+        },
+        {
+          "case": "missing-register-total",
+          "turn": 1,
+          "taskSuccess": false,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": [
+            "Correct core absence answer is substantially derailed into source-image extraction, a generated slide/bar chart and an unsolicited image-generation offer.",
+            "False/unsupported statement that 10,339 is the single numeric value present in the source; source also contains prevention costs and other quantities.",
+            "Question uses figure to mean number, but answer-repair appears to interpret it as a request for an image."
+          ]
+        },
+        {
+          "case": "child-participation",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": []
+        },
+        {
+          "case": "both-file-monitoring",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": []
+        },
+        {
+          "case": "eligibility-false-premise",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": [
+            "Minor quotation-fidelity issue in the first Key source excerpts item: wording inside quotation marks differs from paragraph 7 although its meaning is supported.",
+            "Unrequested closing offers add noise; no material factual failure identified."
+          ]
+        },
+        {
+          "case": "catalogue-only",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": []
+        },
+        {
+          "case": "consultation-followup",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": []
+        },
+        {
+          "case": "consultation-followup",
+          "turn": 2,
+          "taskSuccess": true,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": [
+            "Minor citation precision: proposal quotation appears in an adjacent delivered source paragraph rather than the quoted paragraph-11 location itself."
+          ]
+        }
+      ]
+    },
+    "expanded/complete-strategy/run-1-microsoft": {
+      "status": "complete",
+      "turns": 9,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 186263,
+      "measuredCompletionTokens": 17030,
+      "measuredCachedPromptTokens": 104448,
+      "measuredReasoningTokens": 10432,
+      "modelCalls": 36,
+      "modelToolReplies": 26,
+      "retrievalAttempts": 33,
+      "retrievalErrors": 5,
+      "knownRetrievalRU": 207.88,
+      "retrievalRUComplete": false,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 9,
+        "passes": 8,
+        "failures": 1,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "cost-distinction",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": []
+        },
+        {
+          "case": "counts-versus-forecasts",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": []
+        },
+        {
+          "case": "missing-register-total",
+          "turn": 1,
+          "taskSuccess": false,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": [
+            "Numeric figure was misread as a visual deliverable: response starts I corrected the missing visual deliverable, generates two ASCII visuals, and demands an unrequested next-step choice.",
+            "Overstates visual absence across supplied files; source-1 full read was refused and provider visual coverage is unavailable."
+          ]
+        },
+        {
+          "case": "child-participation",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": []
+        },
+        {
+          "case": "both-file-monitoring",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": []
+        },
+        {
+          "case": "eligibility-false-premise",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": [
+            "Minor quotation-fidelity issue and unrequested closing offer; no material factual failure identified."
+          ]
+        },
+        {
+          "case": "catalogue-only",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": []
+        },
+        {
+          "case": "consultation-followup",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": []
+        },
+        {
+          "case": "consultation-followup",
+          "turn": 2,
+          "taskSuccess": true,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": []
+        }
+      ]
+    },
+    "expanded/current": {
+      "status": "complete",
+      "turns": 9,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 257198,
+      "measuredCompletionTokens": 19274,
+      "measuredCachedPromptTokens": 144640,
+      "measuredReasoningTokens": 11264,
+      "modelCalls": 42,
+      "modelToolReplies": 33,
+      "retrievalAttempts": 45,
+      "retrievalErrors": 8,
+      "knownRetrievalRU": 361.02,
+      "retrievalRUComplete": false,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 9,
+        "passes": 8,
+        "failures": 1,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "cost-distinction",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": []
+        },
+        {
+          "case": "counts-versus-forecasts",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": [
+            "Citation precision is limited by the current provider coarse paragraph-3 location; the answer does not explain this extraction granularity."
+          ]
+        },
+        {
+          "case": "missing-register-total",
+          "turn": 1,
+          "taskSuccess": false,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": [
+            "Same deterministic numeric-figure ambiguity: response invents Figure 1/Figure 2 visual deliverables and asks for a choice between image generation and external research.",
+            "Conflates no stored extracted images with no original source figures; this is not necessary to answer the question."
+          ]
+        },
+        {
+          "case": "child-participation",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": [
+            "Citation precision is limited by the current provider coarse paragraph-429 location."
+          ]
+        },
+        {
+          "case": "both-file-monitoring",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": []
+        },
+        {
+          "case": "eligibility-false-premise",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": [
+            "Coarse citation precision; unrequested closing offers.",
+            "The answer adds local-authority discretion without distinguishing it as an inference from described decision-making duties."
+          ]
+        },
+        {
+          "case": "catalogue-only",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": []
+        },
+        {
+          "case": "consultation-followup",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": [
+            "Citation precision is limited by the current provider coarse paragraph-3 location."
+          ]
+        },
+        {
+          "case": "consultation-followup",
+          "turn": 2,
+          "taskSuccess": true,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": [
+            "Citation precision is limited by the current provider coarse paragraph-3 location."
+          ]
+        }
+      ]
+    },
+    "fixed/complete-strategy/run-1-custom": {
+      "status": "complete",
+      "turns": 2,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 46670,
+      "measuredCompletionTokens": 4687,
+      "measuredCachedPromptTokens": 16512,
+      "measuredReasoningTokens": 2048,
+      "modelCalls": 7,
+      "modelToolReplies": 6,
+      "retrievalAttempts": 6,
+      "retrievalErrors": 0,
+      "knownRetrievalRU": 92.88,
+      "retrievalRUComplete": true,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 2,
+        "passes": 2,
+        "failures": 0,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "deadline",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": true,
+          "citationReview": true,
+          "issues": []
+        },
+        {
+          "case": "compare-options",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": false,
+          "citationReview": false,
+          "issues": [
+            "All core requested trade-offs are covered using relevant original body from both files. However, source-1 capacity pressure is called manageable without source support.",
+            "Repeated source-2 para29 char4919-4928 citations point to the short Option1 heading, while substantive benefits came from an unlocated neighbor. Source-1 financial pressure/planning is similarly assigned to para64 char8458-8777 although that span only states operational pressure; supporting financial detail was in a neighbor. Several other neighbor-derived details are assigned precise hit locations."
+          ]
+        }
+      ]
+    },
+    "fixed/complete-strategy/run-1-microsoft": {
+      "status": "complete",
+      "turns": 2,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 85036,
+      "measuredCompletionTokens": 6614,
+      "measuredCachedPromptTokens": 39296,
+      "measuredReasoningTokens": 2816,
+      "modelCalls": 12,
+      "modelToolReplies": 10,
+      "retrievalAttempts": 17,
+      "retrievalErrors": 2,
+      "knownRetrievalRU": 168.85,
+      "retrievalRUComplete": false,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 2,
+        "passes": 1,
+        "failures": 1,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "deadline",
+          "turn": 1,
+          "taskSuccess": false,
+          "sourceSupport": false,
+          "citationReview": false,
+          "issues": [
+            "Retrieved source-2 and irrelevant source-1 CRIA body, but not source-1 opening containing the later-of rule. Answer incorrectly suggests counting from the earlier event as a reasonable interpretation, despite the explicit later-date rule in the source corpus.",
+            "Page14 citations are inferred from a footer in a large passage; delivered location metadata is empty and does not place the cited claims on that page."
+          ]
+        },
+        {
+          "case": "compare-options",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": true,
+          "citationReview": false,
+          "issues": [
+            "Core comparison is supported by full source-2 body and relevant source-1 children-impact passages, with both files cited. One uncertainty citation quotes source-2 lacking data for total people while discussing future arrivals; that quoted sentence actually concerns Common Housing Register totals. Future-arrival uncertainty is supported elsewhere in delivered source-2 and source-1, but this particular quotation misuses context."
+          ]
+        }
+      ]
+    },
+    "fixed/complete-strategy/run-2-custom": {
+      "status": "complete",
+      "turns": 2,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 47595,
+      "measuredCompletionTokens": 5235,
+      "measuredCachedPromptTokens": 30848,
+      "measuredReasoningTokens": 2688,
+      "modelCalls": 8,
+      "modelToolReplies": 6,
+      "retrievalAttempts": 6,
+      "retrievalErrors": 0,
+      "knownRetrievalRU": 99.94,
+      "retrievalRUComplete": true,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 2,
+        "passes": 1,
+        "failures": 1,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "deadline",
+          "turn": 1,
+          "taskSuccess": false,
+          "sourceSupport": false,
+          "citationReview": false,
+          "issues": [
+            "Only source-2 body delivered. Answer incorrectly infers an earlier/first-event trigger from the phrase first being made, instead of the explicit later-of rule in source-1. Quoted RIA wording does not support that interpretation."
+          ]
+        },
+        {
+          "case": "compare-options",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": true,
+          "citationReview": false,
+          "issues": [
+            "Both relevant original bodies and all required practical trade-offs are covered. Several precise citations inherit the ranked-hit location for neighboring text: source-2 negative impacts are assigned para37 (the flexibility/positive-impact paragraph), and administrative benefits are assigned para32 (the disadvantages paragraph). Source-1 financial pressure also inherits the operational-only para64 location."
+          ]
+        }
+      ]
+    },
+    "fixed/complete-strategy/run-2-microsoft": {
+      "status": "complete",
+      "turns": 2,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 108587,
+      "measuredCompletionTokens": 7548,
+      "measuredCachedPromptTokens": 37760,
+      "measuredReasoningTokens": 4032,
+      "modelCalls": 12,
+      "modelToolReplies": 10,
+      "retrievalAttempts": 24,
+      "retrievalErrors": 1,
+      "knownRetrievalRU": 253.18,
+      "retrievalRUComplete": false,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 2,
+        "passes": 1,
+        "failures": 1,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "deadline",
+          "turn": 1,
+          "taskSuccess": false,
+          "sourceSupport": false,
+          "citationReview": false,
+          "issues": [
+            "Source-1 delivery is irrelevant CRIA content, not the opening containing the later-of rule. Answer leaves the calculation ambiguous and cites source-1 for repeated six-month wording that was not present in its delivered body."
+          ]
+        },
+        {
+          "case": "compare-options",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": true,
+          "citationReview": true,
+          "issues": [
+            "Relevant original body from both files supports the standing-waiver versus expiry/urgent-regulations comparison and applicant/local-authority consequences. Audit rubric clarification: omitting the exact sunset day/month/year does not fail this qualitative comparison question; the exact date is a required deliverable in the deadline case. Previous date-only failure is corrected; raw run and source/citation judgments are unchanged."
+          ]
+        }
+      ]
+    },
+    "fixed/controlled-component/run-1-custom": {
+      "status": "complete",
+      "turns": 2,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 116088,
+      "measuredCompletionTokens": 3850,
+      "measuredCachedPromptTokens": 53888,
+      "measuredReasoningTokens": 2240,
+      "modelCalls": 11,
+      "modelToolReplies": 10,
+      "retrievalAttempts": 22,
+      "retrievalErrors": 2,
+      "knownRetrievalRU": 262.77,
+      "retrievalRUComplete": false,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 2,
+        "passes": 1,
+        "failures": 1,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "deadline",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": true,
+          "citationReview": false,
+          "issues": [
+            "Audit correction after checking original delivery: answer attributes the A6-month time limit quotation to source-2 chunk5, but that quoted sentence is in delivered neighbor chunk4; chunk5 contains the later case-specific deadline/engagement text. Task and source support remain true; original raw replay is unchanged."
+          ]
+        },
+        {
+          "case": "compare-options",
+          "turn": 1,
+          "taskSuccess": false,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": [
+            "No substantive answer: context-budget guard stops synthesis. Only source-2 original body was delivered, repeatedly, before subsequent tool replies were withheld. Refusal is truthful but does not complete the comparison."
+          ]
+        }
+      ]
+    },
+    "fixed/controlled-component/run-1-microsoft": {
+      "status": "complete",
+      "turns": 2,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 53196,
+      "measuredCompletionTokens": 5008,
+      "measuredCachedPromptTokens": 34432,
+      "measuredReasoningTokens": 2048,
+      "modelCalls": 12,
+      "modelToolReplies": 10,
+      "retrievalAttempts": 14,
+      "retrievalErrors": 3,
+      "knownRetrievalRU": 116.65,
+      "retrievalRUComplete": false,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 2,
+        "passes": 2,
+        "failures": 0,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "deadline",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": true,
+          "citationReview": true,
+          "issues": []
+        },
+        {
+          "case": "compare-options",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": true,
+          "citationReview": true,
+          "issues": []
+        }
+      ]
+    },
+    "fixed/controlled-component/run-2-custom": {
+      "status": "complete",
+      "turns": 2,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 52464,
+      "measuredCompletionTokens": 5895,
+      "measuredCachedPromptTokens": 36224,
+      "measuredReasoningTokens": 2048,
+      "modelCalls": 11,
+      "modelToolReplies": 9,
+      "retrievalAttempts": 13,
+      "retrievalErrors": 3,
+      "knownRetrievalRU": 112.31,
+      "retrievalRUComplete": false,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 2,
+        "passes": 2,
+        "failures": 0,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "deadline",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": true,
+          "citationReview": true,
+          "issues": []
+        },
+        {
+          "case": "compare-options",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": true,
+          "citationReview": true,
+          "issues": []
+        }
+      ]
+    },
+    "fixed/controlled-component/run-2-microsoft": {
+      "status": "complete",
+      "turns": 2,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 58453,
+      "measuredCompletionTokens": 6682,
+      "measuredCachedPromptTokens": 33024,
+      "measuredReasoningTokens": 3904,
+      "modelCalls": 10,
+      "modelToolReplies": 8,
+      "retrievalAttempts": 14,
+      "retrievalErrors": 2,
+      "knownRetrievalRU": 131.25,
+      "retrievalRUComplete": false,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 2,
+        "passes": 1,
+        "failures": 1,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "deadline",
+          "turn": 1,
+          "taskSuccess": false,
+          "sourceSupport": false,
+          "citationReview": false,
+          "issues": [
+            "Delivered source-1 body does not include the relevant later-of sentence. Answer incorrectly calls the date rule ambiguous and proposes an earlier/first-applicable trigger, including an unsupported assertion about what many operational documents use. Source-2 citations support the quoted six-month wording, not that invented calculation."
+          ]
+        },
+        {
+          "case": "compare-options",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": true,
+          "citationReview": true,
+          "issues": []
+        }
+      ]
+    },
+    "fixed/current-1": {
+      "status": "complete",
+      "turns": 2,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 46386,
+      "measuredCompletionTokens": 4834,
+      "measuredCachedPromptTokens": 24320,
+      "measuredReasoningTokens": 1984,
+      "modelCalls": 8,
+      "modelToolReplies": 6,
+      "retrievalAttempts": 11,
+      "retrievalErrors": 0,
+      "knownRetrievalRU": 130.54,
+      "retrievalRUComplete": true,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 2,
+        "passes": 2,
+        "failures": 0,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "deadline",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": true,
+          "citationReview": false,
+          "issues": [
+            "Correct expiry and later-of rule are grounded in delivered source-1 text. However, the answer says source-2 gives the same rule and cites it for the later-of clause; source-2 lacks that tie-breaker. Returned current-profile paragraph locators remain coarse."
+          ]
+        },
+        {
+          "case": "compare-options",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": true,
+          "citationReview": true,
+          "issues": []
+        }
+      ]
+    },
+    "fixed/current-2": {
+      "status": "complete",
+      "turns": 2,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 50344,
+      "measuredCompletionTokens": 5296,
+      "measuredCachedPromptTokens": 22656,
+      "measuredReasoningTokens": 2368,
+      "modelCalls": 7,
+      "modelToolReplies": 7,
+      "retrievalAttempts": 14,
+      "retrievalErrors": 0,
+      "knownRetrievalRU": 170.55,
+      "retrievalRUComplete": true,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 2,
+        "passes": 2,
+        "failures": 0,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "deadline",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": true,
+          "citationReview": false,
+          "issues": [
+            "Correct expiry and later-of rule are supported by delivered source-1 text, but answer falsely attributes the explicit later-of quotation to both assessments; source-2 does not contain that clause."
+          ]
+        },
+        {
+          "case": "compare-options",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": true,
+          "citationReview": false,
+          "issues": [
+            "All core requested facts use relevant originals from both files. Several precise paragraph references are not supplied by delivered evidence: source-2 paragraphs1-2/5 and source-1 paragraph120 are invoked despite the delivered supporting chunks using coarse paragraph3 locations. The answer should cite only returned locations or filename and identifiable source wording."
+          ]
+        }
+      ]
+    },
+    "followup/complete-strategy-custom": {
+      "status": "complete",
+      "turns": 3,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 65848,
+      "measuredCompletionTokens": 7124,
+      "measuredCachedPromptTokens": 34688,
+      "measuredReasoningTokens": 2432,
+      "modelCalls": 11,
+      "modelToolReplies": 9,
+      "retrievalAttempts": 10,
+      "retrievalErrors": 1,
+      "knownRetrievalRU": 155.83,
+      "retrievalRUComplete": false,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 3,
+        "passes": 3,
+        "failures": 0,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "deadline",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": true,
+          "citationReview": true,
+          "issues": []
+        },
+        {
+          "case": "compare-options",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": true,
+          "citationReview": false,
+          "issues": [
+            "All requested trade-offs are supported by relevant original text from both files. Many previously missing neighbor locations are now used correctly, including source-2 para30 benefits and para76 emergency regulations. However, the answer repeatedly labels source-1 char8458-8777 as paragraphs64-65 although that span is only paragraph64, and uses that wellbeing/pressure passage for an HRT-refusal claim it does not establish. Paragraph65 is delivered separately at char8777-9438."
+          ]
+        },
+        {
+          "case": "missing-register-total",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": []
+        }
+      ]
+    },
+    "followup/complete-strategy-microsoft": {
+      "status": "complete",
+      "turns": 3,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 165117,
+      "measuredCompletionTokens": 8860,
+      "measuredCachedPromptTokens": 111488,
+      "measuredReasoningTokens": 4800,
+      "modelCalls": 19,
+      "modelToolReplies": 17,
+      "retrievalAttempts": 40,
+      "retrievalErrors": 2,
+      "knownRetrievalRU": 416.08,
+      "retrievalRUComplete": false,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 3,
+        "passes": 2,
+        "failures": 1,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "deadline",
+          "turn": 1,
+          "taskSuccess": false,
+          "sourceSupport": false,
+          "citationReview": false,
+          "issues": [
+            "Source-1 delivery is again an irrelevant large CRIA passage, not the opening with the explicit later-of rule. The answer no longer invents an earlier-event operational rule, but still wrongly says the assessments provide no tie-breaker and misattributes a source-2 six-month quotation to source-1. Retrieval attempts after the large passages hit budget limits."
+          ]
+        },
+        {
+          "case": "compare-options",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": true,
+          "citationReview": true,
+          "issues": []
+        },
+        {
+          "case": "missing-register-total",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": []
+        }
+      ]
+    },
+    "followup/controlled-component-custom": {
+      "status": "complete",
+      "turns": 2,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 71633,
+      "measuredCompletionTokens": 6721,
+      "measuredCachedPromptTokens": 50944,
+      "measuredReasoningTokens": 3328,
+      "modelCalls": 12,
+      "modelToolReplies": 10,
+      "retrievalAttempts": 16,
+      "retrievalErrors": 2,
+      "knownRetrievalRU": 144.61,
+      "retrievalRUComplete": false,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 2,
+        "passes": 2,
+        "failures": 0,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "deadline",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": true,
+          "citationReview": true,
+          "issues": []
+        },
+        {
+          "case": "compare-options",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": false,
+          "citationReview": false,
+          "issues": [
+            "All requested practical trade-offs are covered with relevant originals from both files. However, the final comparison adds an unestablished cost-avoidance advantage to doing nothing, rather than preserving the assessment distinction between similar service costs and extra emergency-regulation costs.",
+            "Fiscal findings and inability-to-forecast statements are repeatedly attributed to both assessments/source-1 chunk5, while that delivered source-1 passage concerns prevention, general future trends and monitoring, not the specific RIA fiscal statements. Source-2 supports those fiscal statements; the added source-1 attribution is not established by its cited passage."
+          ]
+        }
+      ]
+    },
+    "followup/controlled-component-microsoft": {
+      "status": "complete",
+      "turns": 2,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 80602,
+      "measuredCompletionTokens": 7825,
+      "measuredCachedPromptTokens": 52352,
+      "measuredReasoningTokens": 3712,
+      "modelCalls": 14,
+      "modelToolReplies": 12,
+      "retrievalAttempts": 18,
+      "retrievalErrors": 3,
+      "knownRetrievalRU": 156.52,
+      "retrievalRUComplete": false,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 2,
+        "passes": 1,
+        "failures": 1,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "deadline",
+          "turn": 1,
+          "taskSuccess": false,
+          "sourceSupport": true,
+          "citationReview": false,
+          "issues": [
+            "The answer correctly reports expiry and quoted source-2 six-month wording, without inventing an earlier rule. It still does not answer the differing-date calculation because relevant source-1 opening was never delivered; later-date rule is missed. It also cites source-1 for expiry despite its delivered body lacking that expiry statement."
+          ]
+        },
+        {
+          "case": "compare-options",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": true,
+          "citationReview": false,
+          "issues": [
+            "All requested practical effects are grounded in original bodies from both files. Some chunk citations are too broad: source-2 chunk1 is cited for operational-planning benefits and the concluding catalogue of increased-demand/less-tailoring risks, although those supporting details are in delivered chunk2. Both chunks are available; the specific reference mapping is inaccurate."
+          ]
+        }
+      ]
+    },
+    "followup/current": {
+      "status": "complete",
+      "turns": 3,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 77027,
+      "measuredCompletionTokens": 5374,
+      "measuredCachedPromptTokens": 41984,
+      "measuredReasoningTokens": 2432,
+      "modelCalls": 13,
+      "modelToolReplies": 10,
+      "retrievalAttempts": 16,
+      "retrievalErrors": 1,
+      "knownRetrievalRU": 159.31,
+      "retrievalRUComplete": false,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 3,
+        "passes": 3,
+        "failures": 0,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "deadline",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": true,
+          "citationReview": false,
+          "issues": [
+            "Expiry and later-of calculation are correctly supported by delivered source-1 body. However, the answer again says source-2 contains the same formulation; that file does not contain the later-of tie-breaker. Current-profile paragraph locations remain coarse."
+          ]
+        },
+        {
+          "case": "compare-options",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": false,
+          "citationReview": false,
+          "issues": [
+            "Core requested comparison is supported by relevant original bodies from both files. However, conclusion characterizes future additional demand/cost as likely modest despite source uncertainty and no quantified forecast.",
+            "Several source-2 paragraph4-6 citations are not delivered source locations; supporting current-profile chunks carry coarse paragraph3 locations. The new source-1 neighbor paragraph120 is correctly available, but the model still invents some other precise paragraph references."
+          ]
+        },
+        {
+          "case": "missing-register-total",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": null,
+          "citationReview": null,
+          "issues": []
+        }
+      ]
+    },
+    "followup/heldout-current": {
+      "status": "complete",
+      "turns": 1,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 54152,
+      "measuredCompletionTokens": 3790,
+      "measuredCachedPromptTokens": 34048,
+      "measuredReasoningTokens": 2368,
+      "modelCalls": 8,
+      "modelToolReplies": 7,
+      "retrievalAttempts": 7,
+      "retrievalErrors": 1,
+      "knownRetrievalRU": 43.58,
+      "retrievalRUComplete": false,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 1,
+        "passes": 1,
+        "failures": 0,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "heldout-form-comparison",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": "partial",
+          "citationReview": null,
+          "issues": [
+            "Current extraction drops blank cells and column geometry. The final answer mostly limits absence to stored text, but calling the tick-box column blank in the layout exceeds what this flattened source receipt can independently establish; full original blankness cannot be assessed from delivered current-provider evidence.",
+            "Image inspection was requested, but nativeImageDelivery.supplied=[] and withheld contains the planning image with reason remaining_context_budget. The answer still says stored page image/description shows footer details, without disclosing withheld native input. Only generated_image_description supports this additional unrequested website/phone assertion; qualify it as a generated report or omit it. This is not a false source fact\u2014the original image confirms the footer\u2014but visual verification by the answering model is unestablished."
+          ]
+        }
+      ]
+    },
+    "followup/heldout-custom": {
+      "status": "complete",
+      "turns": 1,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 71030,
+      "measuredCompletionTokens": 3234,
+      "measuredCachedPromptTokens": 59136,
+      "measuredReasoningTokens": 1280,
+      "modelCalls": 8,
+      "modelToolReplies": 7,
+      "retrievalAttempts": 7,
+      "retrievalErrors": 2,
+      "knownRetrievalRU": 54.59,
+      "retrievalRUComplete": false,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 1,
+        "passes": 1,
+        "failures": 0,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "heldout-form-comparison",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": "pass",
+          "citationReview": null,
+          "issues": []
+        }
+      ]
+    },
+    "followup/heldout-microsoft": {
+      "status": "complete",
+      "turns": 1,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 17202,
+      "measuredCompletionTokens": 2102,
+      "measuredCachedPromptTokens": 8832,
+      "measuredReasoningTokens": 960,
+      "modelCalls": 4,
+      "modelToolReplies": 3,
+      "retrievalAttempts": 3,
+      "retrievalErrors": 1,
+      "knownRetrievalRU": 12.81,
+      "retrievalRUComplete": false,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 1,
+        "passes": 1,
+        "failures": 0,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "heldout-form-comparison",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": "pass",
+          "citationReview": null,
+          "issues": []
+        }
+      ]
+    },
+    "heldout/complete-strategy/run-1-custom": {
+      "status": "complete",
+      "turns": 3,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 62011,
+      "measuredCompletionTokens": 6000,
+      "measuredCachedPromptTokens": 17024,
+      "measuredReasoningTokens": 3648,
+      "modelCalls": 10,
+      "modelToolReplies": 8,
+      "retrievalAttempts": 8,
+      "retrievalErrors": 0,
+      "knownRetrievalRU": 82.48,
+      "retrievalRUComplete": true,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 3,
+        "passes": 3,
+        "failures": 0,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "heldout-planning-deadline",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": "pass",
+          "citationReview": null,
+          "issues": []
+        },
+        {
+          "case": "heldout-target-matrix",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": "pass",
+          "citationReview": null,
+          "issues": []
+        },
+        {
+          "case": "heldout-form-comparison",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": "pass",
+          "citationReview": null,
+          "issues": []
+        }
+      ]
+    },
+    "heldout/complete-strategy/run-1-microsoft": {
+      "status": "complete",
+      "turns": 3,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 38875,
+      "measuredCompletionTokens": 4556,
+      "measuredCachedPromptTokens": 24960,
+      "measuredReasoningTokens": 2368,
+      "modelCalls": 10,
+      "modelToolReplies": 7,
+      "retrievalAttempts": 7,
+      "retrievalErrors": 1,
+      "knownRetrievalRU": 40.96,
+      "retrievalRUComplete": false,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 3,
+        "passes": 3,
+        "failures": 0,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "heldout-planning-deadline",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": "pass",
+          "citationReview": null,
+          "issues": []
+        },
+        {
+          "case": "heldout-target-matrix",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": "pass",
+          "citationReview": null,
+          "issues": []
+        },
+        {
+          "case": "heldout-form-comparison",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": "pass",
+          "citationReview": null,
+          "issues": []
+        }
+      ]
+    },
+    "heldout/current": {
+      "status": "complete",
+      "turns": 3,
+      "sourceAndToolContextUnchanged": true,
+      "measuredPromptTokens": 61119,
+      "measuredCompletionTokens": 4405,
+      "measuredCachedPromptTokens": 40448,
+      "measuredReasoningTokens": 2368,
+      "modelCalls": 13,
+      "modelToolReplies": 10,
+      "retrievalAttempts": 10,
+      "retrievalErrors": 1,
+      "knownRetrievalRU": 59.34,
+      "retrievalRUComplete": false,
+      "rateLimitRetries": 0,
+      "measuredRateLimitWaitMs": 0.0,
+      "taskReview": {
+        "reviewedTurns": 3,
+        "passes": 3,
+        "failures": 0,
+        "meaning": "requested-task completion; citation/source precision caveats are reviewed separately"
+      },
+      "cases": [
+        {
+          "case": "heldout-planning-deadline",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": "pass",
+          "citationReview": null,
+          "issues": []
+        },
+        {
+          "case": "heldout-target-matrix",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": "partial",
+          "citationReview": null,
+          "issues": [
+            "Current-provider extraction drops empty cells and column positions. Correct listed options and a limited absence-of-shown-selections answer do not validate preservation of the original blank matrix. The answer does not explicitly explain this extraction loss."
+          ]
+        },
+        {
+          "case": "heldout-form-comparison",
+          "turn": 1,
+          "taskSuccess": true,
+          "sourceSupport": "partial",
+          "citationReview": null,
+          "issues": [
+            "The current-provider extraction contains labels but omits empty table cells. Complete blankness/column fidelity cannot be assessed from delivered text, despite the underlying fixture being blank. The answer mostly limits conclusions to stored text, but its summary says the file contains blank response fields without explicitly disclosing extraction loss.",
+            "The extra claim that the embedded page image shows a website/general-enquiries number is based on generated_image_description; nativeImageDelivery supplied no image. The citation names the image description, but wording should say the generated description reports those details, or omit this unrequested visual assertion. This does not change correctness of the requested fields, benefits, or council-versus-respondent distinction."
+          ]
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "Assistant source-based review, not independent human assessment or exhaustive claim/citation audit.",
+    "Original tasks repeat twice for the fixed adapter and once for the baseline; small unequal sample sizes preclude a general accuracy estimate.",
+    "Main replay used two overlapping lanes; prompt caches were uncontrolled. Latency and cost-efficiency comparisons are invalid.",
+    "The canary established this account, not steady-state index readiness of each small application library.",
+    "Controlled-component replay covers original two cases only; expanded and held-out packs cover three complete strategies.",
+    "Source delivery is not proof of source relevance, correct interpretation or precise citation.",
+    "Current profile can lose empty table cells; generated image descriptions do not prove native visual inspection."
+  ],
+  "unavailable": [
+    "usage for failed/interrupted model attempts without provider counters",
+    "query embedding usage not included in agent turn metrics",
+    "Microsoft connector embedding tokens/requests/retries/throttles",
+    "Document Intelligence page usage",
+    "Logic Apps billed actions",
+    "allocated hosting cost",
+    "metadata/cleanup RU not included in recorded operation charges",
+    "actual GlobalStandard inference region",
+    "upload-to-index-readiness time"
+  ],
+  "cloudRecovery": {
+    "trigger": "Original isolated account reproduced Cosmos HTTP500 converting stored float16 policy; ordinary chunk queries also failed. Cause remains unknown.",
+    "originalPolicyChanged": false,
+    "scaleEnvironmentTouched": false,
+    "originalDataRetained": true,
+    "newIsolatedResources": [
+      "Cosmos account with identical three container definitions",
+      "private Blob container",
+      "session queue",
+      "warm managed-identity worker",
+      "scheduled reconciliation job",
+      "additional workflow bound to the separate source container on the existing isolated host"
+    ],
+    "canary": {
+      "passed": true,
+      "checksPassed": 12,
+      "cleanedUp": true,
+      "realChunks": 1500,
+      "sameCorpusAsOriginal": true,
+      "indexWaitSeconds": 338,
+      "load": {
+        "chunks": 1500,
+        "documents": 2,
+        "seconds": 72.9,
+        "chunksPerSecond": 20.6,
+        "chunkRequestCharge": 215103.1,
+        "ruPerChunk": 143.5,
+        "documentRequestCharge": 8.8,
+        "concurrentWrites": 2,
+        "throttledRetries": 0
+      },
+      "vectorRecallAt10": 1.0,
+      "vectorMedianRU": 15.16,
+      "vectorQueries": 20,
+      "hybridQueries": 20,
+      "distinctHybridRankings": 20
+    },
+    "authentication": {
+      "authorizedManagedWorker": "real Microsoft ingestion succeeded",
+      "denials": {
+        "anonymous": 401,
+        "invalid-token": 401,
+        "wrong-audience": 401
+      },
+      "differentPrincipal": {
+        "jobStatus": "Succeeded",
+        "observations": [],
+        "assertion": "Configured a different managed identity and requested the expected workflow audience; job asserted HTTP401or403. Printed token-claim booleans and exact status were unavailable.",
+        "tokenClaimLogAvailable": false
+      },
+      "policy": "unchanged worker-only Entra policy; trigger SAS disabled",
+      "originalWorkflowDefinitionUnchanged": true
+    },
+    "chatCap": {
+      "at": "2026-11-01T17:39:49.281419+00:00",
+      "tokensPerMinute": 50000,
+      "model": "gpt-5-mini:2025-08-07",
+      "autoUpgrade": false,
+      "oldReplayArtifactsModified": false,
+      "duringReplayTokensPerMinute": 200000
+    }
+  },
+  "diagnosticBeforeRecovery": {
+    "qualityUse": "excluded; infrastructure-invalid",
+    "completedTurns": 3,
+    "interruptedAttemptUsage": "unavailable",
+    "heldoutIngestion": "partly failed in original account; reproduced in new isolated resources without deleting the original"
+  },
+  "microsoftCompleteSourceCheck": {
+    "complete": true,
+    "laterDateClausePresent": true,
+    "bodyCharacters": 87591,
+    "requestCharge": 4.56,
+    "meaning": "extraction contains the rule; failing24k agent answer is not evidence of source absence"
+  },
+  "defaultBudgetDiagnosticControls": {
+    "revision": "6a9966d",
+    "contextTokenBudget": 64000,
+    "comparison": "single unreplicated Microsoft deadline diagnostic at demo default; not matched to24k runs",
+    "model": "gpt-5-mini:2025-08-07",
+    "questionAndSources": "unchanged; no source-fact hints added"
+  },
+  "liveNeighborProvenance": {
+    "neighborCount": 16,
+    "ownLocationCount": 16,
+    "differentFromHitLocationCount": 16,
+    "knownRequestCharge": 20.33,
+    "codeRevision": "6a9966d",
+    "result": "actual stored neighbor locations delivered; no inherited hit location"
+  },
+  "localValidation": {
+    "revision": "6a9966d",
+    "fullSuite": 809,
+    "knownWarnings": 14,
+    "lint": "passed",
+    "format": "passed",
+    "bicepWorkerAndReconciliation": "compiled and deployed",
+    "ui": "existing admin/agent/performance pages rendered without exceptions;8 libraries and4 creation choices; not interactive visual QA"
+  },
+  "followup": {
+    "adapterAndApiRevision": "6a9966da47c4dcebc864e41d4888f74e54b4ac82",
+    "model": "gpt-5-mini:2025-08-07",
+    "contextTokenBudget": 24000,
+    "sourceBytesAndMetadata": "same frozen libraries as main replay; snapshots saved before and after every run",
+    "changes": [
+      "numeric figure intent",
+      "initial search evidence headroom",
+      "own neighbor source locations",
+      "narrow unresolved conditions; no invented source rules; qualified inferences"
+    ],
+    "chatTokensPerMinute": 200000,
+    "backgroundLoad": "one serial lane after main replay finished; reconciliation everytwo minutes; no latency comparison",
+    "judgment": "source-based assistant review required, not lexical indicators or a broad accuracy estimate"
+  },
+  "qualityJudgmentSemantics": {
+    "taskSuccess": "Boolean requested-task completion from assistant review of actual delivered source evidence; not overall accuracy.",
+    "sourceSupport": "Boolean or pass/partial/fail where explicitly scored; null means no separate structured rating, not absent evidence or an unreviewed task.",
+    "citationReview": "Boolean where explicitly scored; null means qualitative/private review was not reduced to a binary rating. Case issues retain caveats.",
+    "rubricAudit": "Compare-options requires expiry concept, not an exact date; deadline requires exact date and later-of rule. Raw replay artifacts remain unchanged after review corrections."
+  },
+  "ingestionCounterScope": "Published per-document processing metrics; not a full bill or accounting of failed/prior attempts and independently reported enrichment work."
+}

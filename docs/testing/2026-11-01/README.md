@@ -46,7 +46,7 @@ captures document records (including tags/descriptions/versions), library settin
 agent instructions and tool definitions before and after replay. Any change makes
 the comparison confounded. This includes baseline and follow-up runs, not just
 paired runs. Preserve interrupted directories: `run-status.json` records failure
-and completed turns, while failed-attempt model usage remains unavailable unless
+and completed turns (including explicit `interrupted` status for `KeyboardInterrupt`), while failed-attempt model usage remains unavailable unless
 separately measured. Attachment URLs and expiry credentials are removed from tool
 captures as well as traces. Snapshots and raw answers remain private review material.
 

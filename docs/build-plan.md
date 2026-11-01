@@ -1,15 +1,23 @@
 # Build plan
 
-**Agent recovery follow-up, 2026-11-01:** budget-aware whole-passage retries,
-snapshot-preserving read recovery and structural source-grounding guards are
-implemented in the existing demo adapter. Expanded replay snapshots and source-fact
-cases cover the original assessments plus two held-out forms. Local validation:
-779 full-suite tests passed, followed by 38 focused recovery/replay tests including
-additional safety cases. Cloud validation is in progress; the original isolated
-account reproduced E17's float16 policy-conversion failure, so a fresh isolated
-account must pass the mandatory canary before evaluation continues. This is not
-an ingestion strategy win or a production-readiness claim. See E62 and the
-[adapter contract](agent-retrieval.md).
+**Agent recovery follow-up, 2026-11-01 (E62):** the existing adapter now reserves
+retrieval headroom, retries whole passages within the remaining budget, recovers
+from oversized reads without claiming completeness, and guards metadata-only
+answers. Neighbor passages carry their own stored citation locations. Numeric
+“figure” requests and interrupted replay receipts are corrected. **809 local tests
+and 83 cloud replay turns** completed; all source/context snapshots stayed unchanged.
+The final targeted 24k run completed 8/10 original tasks, all three numeric-figure
+cases and all three held-out comparisons. Both Microsoft deadline cases still
+missed relevant source evidence; model-added judgments/citation attribution remain
+unreliable in some answers. A single separate 64k Microsoft diagnostic recovered
+the rule, with an attribution caveat. This is not general answer-quality signoff.
+
+The original isolated account reproduced E17's float16 service failure. An identical
+fresh account passed all 12 canary checks; separate storage, queue, worker and
+reconciliation scopes keep the recovered demo isolated. Scaling resources and old
+source data were retained. The test chat cap was restored. See the
+[validation record](../records/agent-recovery-20261101.json), E62 and the
+[adapter contract](agent-retrieval.md) for usage, controls and remaining limits.
 
 **Implementation and cloud review, 2026-10-29 (E60–E61):** the modular-ingestion
 vertical slice extends the existing API, worker, demo, measurements and replay.

@@ -51,6 +51,17 @@ retains its own charge and latency trace. Passage text is never clipped to fit.
 Malformed document selectors are rejected rather than discarded; a nonblank
 scalar document ID can be repaired to the equivalent object selector.
 
+Before any original text or native image has arrived, the first passage response
+is limited to half the remaining evidence space or 6,000 tokens, whichever is
+larger, never exceeding the remaining space. This leaves room for another file or unresolved condition
+without excluding the current 5,000-token Microsoft passages. Later searches can
+use the full remaining budget. The answer reserve and whole-passage rule remain.
+Neighbor retrieval now returns each neighbor's stored location and heading,
+additively in raw and compact responses. A neighbor's citation uses that location;
+legacy neighbors without one retain the explicit warning against inheriting the
+ranked hit's location. The scoped query remains bound to one library, document and
+generation and never selects embeddings.
+
 After an oversized document read, the adapter may recover passages from up to
 four returned authorized document snapshots, using the current question and at
 most two requests per file (2 then 1 passage). Recovery respects both the remaining
@@ -73,9 +84,16 @@ four files), a partial source set cannot pass as a complete comparison. This is 
 mechanical, heuristic evidence gate: it does not certify relevance, accurate
 citations, correct claims or exhaustive absence.
 
+The answering instructions require targeted searches for unresolved parts of a
+compound question and prohibit inventing missing source rules or calculations,
+even as tentative interpretations. Numeric uses of “figure” do not by themselves
+request an image. These instructions reduce specific observed mistakes; live
+replay still found inaccurate attributions and unsupported judgments despite
+delivered original evidence. See E62 for the measured limits.
+
 ## Deployment and validation
 
-API and consuming adapter/tool definitions need refreshing; worker/storage/index policy changes and re-ingestion are unnecessary for compatible stored artifacts. Missing old manifests/provenance may explicitly require reprocessing that document. No bulk migration, container/vector change, embedding change, cap/quota increase or production logging change is part of this work.
+API and consuming adapter/tool definitions need refreshing; worker/storage/index policy changes and re-ingestion are unnecessary for compatible stored artifacts. Missing old manifests/provenance may explicitly require reprocessing that document. The November validation separately recovered an isolated account after E17's service failure; that operational recovery and temporary test throughput increase are not requirements of the adapter change. Production logging and vector policies are unchanged.
 
 The 50-image semantic-description cap was **not the principal cause** of the observed agent failure. Relevant evidence and useful figures were already stored/indexed. The cap-independent fixes are mode separation, scoped evidence retrieval, source expansion, direct inspection of known images, progress/follow-up handling and answer deliverables. Access to retained images beyond a configured cap is an additional capability; uncapped production semantic ingestion does not remove the other requirements.
 

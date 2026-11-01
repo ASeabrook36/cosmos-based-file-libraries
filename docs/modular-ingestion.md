@@ -299,3 +299,38 @@ older libraries (their token-named field still means characters); unknown workfl
 versions cannot satisfy the publication version check.
 Retokenized Microsoft output can exceed its nominal target slightly; actual
 distributions are recorded rather than asserting an exact token ceiling.
+
+## November agent validation and isolated recovery
+
+The follow-up in [E62](evidence.md) and the
+[validation record](../records/agent-recovery-20261101.json) preserves the three
+versioned ingestion profiles and the matched-pair action. It changes the agent's
+evidence budgeting, recovery and citation provenance. Initial searches reserve
+space for another source/condition; read recovery never claims complete coverage.
+The final 24k original-case follow-up completed 8/10 tasks, with source/citation
+defects remaining. A single complete-Microsoft deadline run succeeded at the demo's
+64k default with an attribution caveat; it is not a matched comparison. The larger
+5,000-token Microsoft recipe exposes different context costs from the smaller
+custom/current and 500-token controlled recipes; smaller chunks alone did not
+eliminate retrieval-planning failures. Overlap remains explicitly tokens versus
+characters as specified above.
+
+The original isolated Cosmos account developed E17's float16 policy-conversion
+error. Recovery used a fresh account with identical container policies, a passed
+real-text canary, a separate Blob container/session queue and a separate worker and
+reconciliation job. The worker/reconciliation Bicep templates now accept an optional
+`blobContainer` parameter (default `files`). When using another container, bind its
+Microsoft workflow's `SourceContainer` parameter to the same value; do not point a
+worker at a different container while leaving the workflow on `files`. The live
+recovery added a separate workflow definition/binding on the existing isolated
+host, preserving the original workflow and auth policy. This protects old sources
+from reconciliation in the new account. Never share a source container between
+independent account/reconciliation scopes without an explicit ownership plan.
+
+Eight recovered libraries retain two matched assessment documents across all five
+configurations and two held-out forms across the three complete strategies. Runtime
+addresses, receipts, registry and launch settings remain private. API/demo hosting
+is still local; only ingestion workers and the Microsoft workflow are hosted. The
+test chat cap was 200k tokens/minute and is restored to 50k; the 64k diagnostic was
+not rerun under that restored cap. Larger-turn throughput behavior remains untested
+there. Existing scale resources and the old account's source data are unchanged.

@@ -969,34 +969,100 @@ Bicep compilation, reference-privacy checks and `git diff --check` passed. Fourt
 existing TestClient deprecation warnings remain. Model provider counters are
 preserved separately from estimates and unavailable usage in the receipt.
 
-### E62. Agent budget recovery and source grounding · Local validation; cloud replay pending
+### E62. Agent budget recovery and source grounding safeguards · Measured
 
-E61 exposed complete Microsoft chunks being refused by the compact evidence
-budget before the adapter could select whole passages. Repeated failed reads
-consumed context, and ordinary comparisons could use catalogue descriptions as
-substantive evidence. The existing adapter now passes its remaining search budget,
-retries smaller whole-passage result sets without widening scope, and recovers
-bounded passages from authorized snapshots after an oversized read. All attempts
-retain charge/latency traces, and full/selected completeness remains false after
-fallback. Normal and terminal answers enforce source grounding and context limits.
-The grounding check is structural and heuristic, not a semantic citation judge.
+E61 exposed oversized compact search responses being mistaken for empty evidence,
+repeated failed reads consuming context, and ordinary comparisons using catalogue
+descriptions as substantive support. The existing adapter now passes evidence
+budgets to search, retains headroom for another file/condition on initial searches,
+and retries fewer whole passages without widening scope. Oversized reads recover
+bounded passages from the same authorized snapshots; full/selected completeness
+stays false. Every attempt retains its charge/latency trace. Normal and terminal
+answers enforce context and structural source-delivery guards. Catalogue requests
+and actually supplied native-image evidence keep their existing roles.
 
-The replay harness now preserves fresh output directories, complete source/metadata
-and tool-context snapshots, source-fact case definitions and explicit failed-run
-status. Lexical and body-delivery indicators do not claim semantic success. The
-[expanded pack](testing/2026-11-01/README.md) adds eight cases over the original
-assessments and three cases over two held-out public forms. No gold facts enter
-answering-model input. Local validation passed **779 full-suite tests**, then
-**38 focused recovery/replay tests**, including additional zero-revision,
-permission/stale-error and terminal-budget regressions. Ruff, reference-privacy
-checks and both configurable-container hosting templates passed validation.
+Live review identified two further mechanical failures. Numeric uses of “figure”
+were triggering unwanted visual-repair loops; the intent check now requires visual
+context. Neighbors previously had text but no locations, so the model sometimes
+borrowed a ranked heading's tiny character span for a neighbor's substantive claim.
+The existing scoped query now returns each neighbor's stored location and heading.
+A final live probe returned 16/16 neighbors with their own distinct locations.
+Legacy missing-location warnings remain. No embeddings, index policy, ingestion
+recipe, permission rules or lifecycle fences changed.
 
-The first live diagnostic was interrupted as invalid evaluation evidence: the
-existing isolated Cosmos account returned HTTP 500 converting its stored float16
-policy, including for ordinary scoped chunk queries. Catalogue and complete stored
-source reads still worked; new ingestion partly failed. This reproduces E17's
-observable failure mode, without establishing its cause. Original policies and
-scaling resources were left unchanged. A new isolated account with identical
-container definitions, separate source container and session queue is undergoing
-the mandatory real-text canary. Subsequent live results will be recorded separately
-from this failed diagnostic; no successful cloud quality result is claimed yet.
+The first cloud diagnostic was excluded from quality comparisons: the original
+isolated account returned HTTP 500 converting its stored float16 policy, even for
+ordinary scoped chunk queries. Catalogue and complete stored-source reads still
+worked; new ingestion partly failed. This reproduces E17's observable failure
+mode without establishing its cause. A fresh isolated account with identical
+container definitions passed all 12 mandatory real-text canary checks: 1,500
+chunks, index engagement after 338 seconds, vector recall@10 of 1.0, median indexed
+vector charge 15.16 RU, and 20 distinct hybrid rankings. Canary data was removed.
+Separate file-container, session-queue, worker and reconciliation scopes protect
+old data. The additional Microsoft workflow uses the separate file container;
+the original workflow definition and worker-only authentication policy are unchanged.
+Real managed-worker ingestion and denial checks passed. The different-principal
+job asserted a 401/403 response, but its exact status/claim log was unavailable;
+the record does not turn that into a measured 403. Scaling resources were untouched.
+
+The existing replay harness was extended, rather than replaced. It freezes source
+metadata, versions, agent/library/tool context and cases; refuses nonempty output
+directories; preserves partial runs and explicit interruption status; and removes
+attachment credentials. Lexical/body-delivery indicators remain distinct from
+semantic judgments. The four public DOCX sources comprise the original two
+assessments and two short held-out forms. All 16 copies were ready across eight
+libraries. Fixed model/version, source bytes, questions and a 24,000-token budget
+were used for the main comparisons. Two replay lanes overlapped; caches and actual
+GlobalStandard inference region were uncontrolled. Small application libraries
+were functional checks, not independently established steady-state cost tests.
+
+The record is [agent-recovery-20261101.json](../records/agent-recovery-20261101.json).
+The first 66 turns used baseline adapter `bd34e78` and fixed adapter `aa5c7fa`:
+
+| Source-based assistant review | Original adapter | Initial fixed adapter |
+| --- | ---: | ---: |
+| Original two tasks, five configurations | 3/10 completed | 15/20 completed |
+| Those turns also passing source-support and citation checks | 1/10 | 8/20 |
+| Expanded factual/catalogue/follow-up tasks, three complete strategies | — | 24/27 completed |
+| Held-out form/table tasks, three complete strategies | — | 9/9 completed |
+
+Review corrections are retained privately: one comparison was rescored because
+its exact expiry date was not a required deliverable (the expiry concept was), and
+one neighbor-citation defect was added after inspecting the raw receipt. Raw runs
+were not altered. These counts are narrow assistant judgments, not blinded human
+assessment, exhaustive citation audits, statistical accuracy estimates or a
+strategy/provider winner. The three expanded failures were the numeric-“figure”
+issue. Two current-profile held-out answers had limited source support because
+empty table cells were not preserved; an extra footer claim also relied on a
+generated description without delivered native pixels.
+
+The final follow-up uses adapter/API `6a9966d`, with initial-search headroom,
+neighbor provenance and tighter source-rule instructions. Sixteen further 24k
+turns completed: **8/10 original tasks**, **3/3 numeric-figure cases** (zero visual
+repair calls), and **3/3 held-out comparisons**. Only **3/10** original-task turns
+also passed strict source/citation review. Both Microsoft deadline answers missed
+the source-1 opening rule; relevant-source retrieval is not guaranteed by receiving
+some body text from a file. They avoided the earlier invented date rule, but still
+overstated source absence or attribution. Direct complete-source inspection proved
+the rule is present in the Microsoft extraction. A separate, unreplicated run at
+the demo's 64k default delivered it and answered the requested calculation correctly;
+its final reported prompt was 51,134 tokens and it retained a source-2 attribution
+caveat. It is not pooled with the matched 24k comparison. Larger context alone is
+not a demonstrated general fix.
+
+All **83 completed turns** retained unchanged source/tool snapshots. Model prompt,
+completion, cached/reasoning usage and reported waits, plus known retrieval RU,
+are recorded separately from estimated source/chunk tokens and unavailable counters.
+No dollar costs are inferred. The isolated chat cap was 200k tokens/minute during
+these runs and was restored to 50k afterward; the 64k diagnostic was not repeated
+under the restored cap. Ingestion/workflow billing and hosting allocations remain
+unavailable. Failed/interrupted attempt usage is not inferred from completed turns.
+
+Final local validation: **809 tests passed**, Ruff lint/format, Bicep compilation,
+reference-privacy and diff checks passed; 14 existing TestClient deprecation warnings
+remain. The existing demo's admin, agent and measurement pages rendered without
+exceptions with eight libraries and four creation choices. This is not interactive
+visual QA. Remaining work includes reliable claim/citation attribution and
+retrieval of unresolved conditions, current-profile table/visual fidelity, broader
+formats and long documents, production hosting/authentication and the earlier
+remote-race/scale obligations. No general source-grounded-answer guarantee is claimed.

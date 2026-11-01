@@ -374,7 +374,9 @@ The demo adopts `/tools`, keeps bounded reference hints across turns for server-
 
 The reference adapter passes remaining evidence budget to search and retries budget
 refusals with fewer whole passages and no neighbors, retaining scope and accounting
-for each request. Oversized reads may recover bounded passages from the same
+for each request. Initial search responses reserve room for further evidence;
+neighbor citations use each neighbor's own stored location where available.
+Oversized reads may recover bounded passages from the same
 authorized snapshots without marking the original full/selected read complete.
 Refusal metadata may be compacted; delivered original source bodies remain intact.
 Both normal and terminal synthesis enforce the context reserve and a structural
