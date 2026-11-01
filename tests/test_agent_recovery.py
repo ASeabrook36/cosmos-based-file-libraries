@@ -138,10 +138,36 @@ def test_metadata_only_substantive_answer_is_blocked_even_at_terminal_round():
     assert "did not receive" in turn.answer
 
 
-def test_catalogue_question_can_be_answered_from_metadata_without_body_recovery():
+@pytest.mark.parametrize(
+    "question",
+    [
+        "List the files.",
+        "Please list the files.",
+        "Can you list the files?",
+        "Could you please list all attached documents?",
+        "Show me the available documents.",
+        "Please show the files.",
+    ],
+)
+def test_catalogue_question_can_be_answered_from_metadata_without_body_recovery(question):
     chat = scripted(Reply(None, [ToolCall("f", "find_documents_library_reports", "{}")]), Reply("d.docx"))
-    turn = run_turn(chat, RecoveryIndex(), AGENT, [], "List the files.")
+    turn = run_turn(chat, RecoveryIndex(), AGENT, [], question)
     assert turn.answer == "d.docx" and len(turn.model_calls) == 2
+
+
+@pytest.mark.parametrize(
+    "question",
+    [
+        "Please list findings in the documents.",
+        "Which documents explain why costs grow?",
+        "Can you list the files and summarize their conclusions?",
+    ],
+)
+def test_polite_or_inventory_wording_does_not_exempt_substantive_claims(question):
+    chat = scripted(Reply(None, [ToolCall("f", "find_documents_library_reports", "{}")]), Reply("A billion saved."))
+    turn = run_turn(chat, RecoveryIndex(), AGENT, [], question, max_rounds=1)
+    assert "A billion saved" not in turn.answer
+    assert "did not receive" in turn.answer
 
 
 def test_catalogue_question_with_explicit_summary_exclusion_remains_metadata_only():

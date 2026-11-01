@@ -340,9 +340,16 @@ def inspected_documents(payload):
 def metadata_question(question):
     # Explicit exclusions do not turn an inventory request into a synthesis task.
     intent = re.sub(r"\b(?:do not|don't)\s+summari[sz]e\b[^.!?]*", "", question, flags=re.I)
+    intent = re.sub(
+        r"^\s*(?:please\s*,?\s+)?(?:(?:can|could|would|will)\s+you\s+(?:please\s+)?)?",
+        "",
+        intent,
+        flags=re.I,
+    )
     return bool(
         re.search(
-            r"^\s*(?:list\s+(?:(?:the|every|all|each)\s+)?(?:(?:source|available|attached)\s+)?(?:files?|documents?)|"
+            r"^\s*(?:(?:list|show(?:\s+me)?)\s+(?:(?:the|every|all|each)\s+)?"
+            r"(?:(?:source|available|attached)\s+)?(?:files?|documents?)|"
             r"which (?:files|documents)|what (?:files|documents)|how many (?:files|documents)|"
             r"who (?:wrote|authored)|what (?:tags|authors|metadata))\b",
             intent,
