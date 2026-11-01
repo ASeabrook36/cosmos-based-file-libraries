@@ -1,5 +1,16 @@
 # Build plan
 
+**Agent recovery follow-up, 2026-11-01:** budget-aware whole-passage retries,
+snapshot-preserving read recovery and structural source-grounding guards are
+implemented in the existing demo adapter. Expanded replay snapshots and source-fact
+cases cover the original assessments plus two held-out forms. Local validation:
+779 full-suite tests passed, followed by 38 focused recovery/replay tests including
+additional safety cases. Cloud validation is in progress; the original isolated
+account reproduced E17's float16 policy-conversion failure, so a fresh isolated
+account must pass the mandatory canary before evaluation continues. This is not
+an ingestion strategy win or a production-readiness claim. See E62 and the
+[adapter contract](agent-retrieval.md).
+
 **Implementation and cloud review, 2026-10-29 (E60–E61):** the modular-ingestion
 vertical slice extends the existing API, worker, demo, measurements and replay.
 Three profiles and matched creation are implemented. Dedicated Azure services

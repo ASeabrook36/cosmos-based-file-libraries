@@ -1,0 +1,345 @@
+[
+  {
+    "case": "deadline",
+    "question": "Using the assessments, when does the temporary general crisis provision expire, and how is the six-month application deadline calculated when advice and evacuation begin on different dates? Cite the evidence.",
+    "sourceFacts": [
+      {
+        "source": "source-1.docx",
+        "facts": [
+          "30 March 2027",
+          "6 months from first HMG advice or first evacuation day, whichever is later"
+        ],
+        "fixtureParagraphsZeroBased": [
+          28,
+          30
+        ]
+      }
+    ],
+    "successCriteria": [
+      "State expiry on 30 March 2027 and six months from the later of first advice / first evacuation day. Cite original source-1 text for later-date rule.",
+      "Do not claim the rule is absent after reading only source-2."
+    ],
+    "indicators": {
+      "answerPatterns": [
+        "30\\s+March\\s+2027",
+        "\\blater\\b",
+        "(six|6)[ -]months?"
+      ],
+      "requiredSourceFiles": [
+        "source-1.docx"
+      ]
+    }
+  },
+  {
+    "case": "compare-options",
+    "question": "Compare making the general crisis waiver permanent with doing nothing, using both assessments. Explain the practical consequences for applicants and local authorities and cite each file.",
+    "sourceFacts": [
+      {
+        "source": "source-2.docx",
+        "facts": [
+          "permanent standing waiver avoids urgent crisis-specific regulations",
+          "do nothing sunsets 30 March 2027",
+          "delay, uncertainty, inconsistent decisions and homelessness risks"
+        ],
+        "fixtureParagraphsZeroBased": [
+          10,
+          26,
+          38,
+          73
+        ]
+      },
+      {
+        "source": "source-1.docx",
+        "facts": [
+          "Permanent general crisis provision proposed to replace repeated urgent crisis-specific amendments.",
+          "Earlier intervention, planning and fewer delays may help eligible applicants and local authorities; increased demand can still cause short-term operational pressure."
+        ],
+        "fixtureParagraphsZeroBased": [
+          32,
+          40,
+          63,
+          75
+        ]
+      }
+    ],
+    "successCriteria": [
+      "Use original body evidence from both files, citing each. Compare standing framework and timely assistance with sunset and crisis-specific urgent regulations.",
+      "Cover applicant uncertainty/delay and local-authority planning/capacity pressure. A catalogue description is insufficient evidence."
+    ],
+    "indicators": {
+      "answerPatterns": [
+        "permanent",
+        "(urgent|emergency|crisis.by.crisis)",
+        "(delay|uncertainty|inconsisten)"
+      ],
+      "requiredSourceFiles": [
+        "source-1.docx",
+        "source-2.docx"
+      ]
+    }
+  },
+  {
+    "case": "cost-distinction",
+    "question": "In source-2.docx, does “no direct Welsh Government budget financial implications” mean the proposal has no costs? Explain the distinction and give the two reported per-applicant prevention-duty costs, with citations.",
+    "sourceFacts": [
+      {
+        "source": "source-2.docx",
+        "fixtureParagraphsZeroBased": [
+          49,
+          57
+        ],
+        "facts": [
+          "No direct Welsh Government budget financial implications; additional local authority costs likely if returnees apply.",
+          "£1,320.31 per applicant; £1,716 including staff on-costs."
+        ]
+      }
+    ],
+    "successCriteria": [
+      "Distinguish central-government statement from local-authority costs. Report both amounts and their different coverage; do not infer a total policy cost."
+    ],
+    "indicators": {
+      "answerPatterns": [
+        "1,?320\\.31",
+        "1,?716",
+        "local authorit"
+      ],
+      "requiredSourceFiles": [
+        "source-2.docx"
+      ]
+    }
+  },
+  {
+    "case": "counts-versus-forecasts",
+    "question": "According to source-2.docx, how many people were in temporary accommodation on 30 June 2026, and exactly how many future crisis returnees are forecast to seek help? Keep observed counts and forecasts distinct and cite the source.",
+    "sourceFacts": [
+      {
+        "source": "source-2.docx",
+        "fixtureParagraphsZeroBased": [
+          51,
+          65
+        ],
+        "facts": [
+          "10,339 individuals housed in temporary accommodation on 30 June 2026.",
+          "The number who may return to Wales in future crises cannot be forecast in this assessment."
+        ]
+      }
+    ],
+    "successCriteria": [
+      "Report 10,339 with observation date and population. Explicitly say future-returnee number cannot be forecast; never use 10,339 as a returnee forecast."
+    ],
+    "indicators": {
+      "answerPatterns": [
+        "10,?339",
+        "30\\s+June\\s+2026",
+        "(cannot|can.not|unable|not able|no .*forecast|not .*forecast)"
+      ],
+      "requiredSourceFiles": [
+        "source-2.docx"
+      ]
+    }
+  },
+  {
+    "case": "missing-register-total",
+    "question": "What exact total does source-2.docx give for people or households on the Common Housing Registers? Cite the evidence for whether that figure is available.",
+    "sourceFacts": [
+      {
+        "source": "source-2.docx",
+        "fixtureParagraphsZeroBased": [
+          61
+        ],
+        "facts": [
+          "Available data cannot provide total people/households on Common Housing Registers or estimate total social housing demand."
+        ]
+      }
+    ],
+    "successCriteria": [
+      "Explicitly report unavailable data and cite the relevant source body. Do not substitute temporary-accommodation population or fabricate a number."
+    ],
+    "indicators": {
+      "answerPatterns": [
+        "(unavailable|not available|no .*data|do not have|does not (give|provide)|not provided|no exact|not give|not specify)"
+      ],
+      "requiredSourceFiles": [
+        "source-2.docx"
+      ]
+    }
+  },
+  {
+    "case": "child-participation",
+    "question": "What direct participatory work with children and young people was undertaken for this proposal, and why? Use source-1.docx rather than inferring the answer from the document title.",
+    "sourceFacts": [
+      {
+        "source": "source-1.docx",
+        "fixtureParagraphsZeroBased": [
+          461,
+          516
+        ],
+        "facts": [
+          "No direct participatory work with children/young people undertaken.",
+          "Future crisis returnees cannot be identified or engaged in advance. Existing research, official data, local authorities and consultation inform the assessment."
+        ]
+      }
+    ],
+    "successCriteria": [
+      "State no direct participation and explain the future-unidentifiable-group reason. Do not equate local authority engagement with direct child participation."
+    ],
+    "indicators": {
+      "answerPatterns": [
+        "no direct",
+        "(advance|future)",
+        "(identif|engag)"
+      ],
+      "requiredSourceFiles": [
+        "source-1.docx"
+      ]
+    }
+  },
+  {
+    "case": "both-file-monitoring",
+    "question": "Using both assessments, explain who will monitor adverse impacts after implementation and which organisations can report problems. Cite original text from each file.",
+    "sourceFacts": [
+      {
+        "source": "source-1.docx",
+        "fixtureParagraphsZeroBased": [
+          404,
+          521
+        ],
+        "facts": [
+          "Welsh Government officials monitor adverse impacts reported by local authorities or Third Sector organisations."
+        ]
+      },
+      {
+        "source": "source-2.docx",
+        "fixtureParagraphsZeroBased": [
+          101
+        ],
+        "facts": [
+          "Welsh Government officials monitor adverse impacts reported by local authorities or Third Sector organisations; necessary adjustments considered."
+        ]
+      }
+    ],
+    "successCriteria": [
+      "Use body evidence from both files for Welsh Government officials, local authorities and Third Sector reporters. Do not invent a fixed annual review frequency."
+    ],
+    "indicators": {
+      "answerPatterns": [
+        "Welsh Government",
+        "local authorit",
+        "third[ -]sector"
+      ],
+      "requiredSourceFiles": [
+        "source-1.docx",
+        "source-2.docx"
+      ]
+    }
+  },
+  {
+    "case": "eligibility-false-premise",
+    "question": "These assessments mean every person arriving from overseas automatically gets housing assistance, correct? Explain what the waiver actually changes and the eligibility limits, with source citations.",
+    "sourceFacts": [
+      {
+        "source": "source-1.docx",
+        "fixtureParagraphsZeroBased": [
+          30
+        ],
+        "facts": [
+          "Eligible British nationals/family members and specified leave-to-remain classes, no NRPF or ongoing maintenance undertaking, crisis advice/evacuation trigger, six-month window."
+        ]
+      },
+      {
+        "source": "source-2.docx",
+        "fixtureParagraphsZeroBased": [
+          24,
+          81
+        ],
+        "facts": [
+          "Waiver removes habitual-residence barrier only in defined crisis circumstances for otherwise eligible applicants; it is not unconditional entitlement."
+        ]
+      }
+    ],
+    "successCriteria": [
+      "Reject universal/automatic entitlement. Explain habitual residence, otherwise eligible classes, specified trigger and conditions. At least one source may support the answer; both-file reading not mandatory."
+    ],
+    "indicators": {
+      "answerPatterns": [
+        "habitual residen",
+        "(not (every|all|automatic)|no[,.;:]|does not .*automatic|not correct|not quite)"
+      ],
+      "requiredSourceFiles": [
+        "source-1.docx",
+        "source-2.docx"
+      ],
+      "minimumSourceFiles": 1
+    }
+  },
+  {
+    "case": "catalogue-only",
+    "question": "List every file tagged corpus=matched-docx in this library and say whether each is readable. Do not summarize their contents.",
+    "sourceFacts": [],
+    "successCriteria": [
+      "Enumerate source-1.docx and source-2.docx using catalogue metadata with the exact tag; each ready/readable. Follow paging if needed. Source-body evidence is not required or requested."
+    ],
+    "indicators": {
+      "answerPatterns": [
+        "source-1\\.docx",
+        "source-2\\.docx",
+        "(readable|ready)"
+      ],
+      "requiredSourceFiles": [],
+      "evidenceRequirement": "catalogue",
+      "expectedFiles": [
+        "source-1.docx",
+        "source-2.docx"
+      ]
+    }
+  },
+  {
+    "case": "consultation-followup",
+    "sourceFacts": [
+      {
+        "source": "source-2.docx",
+        "fixtureParagraphsZeroBased": [
+          10,
+          12,
+          59
+        ],
+        "facts": [
+          "12-week consultation September to December 2026; local authority engagement October 2026.",
+          "Temporary provision expires 30 March 2027; permanent framework is the proposal, not automatically established by consultation ending."
+        ]
+      }
+    ],
+    "successCriteria": [
+      "Turn 1 gives 12 weeks, September–December 2026 and local authority engagement October 2026, with source support.",
+      "Turn 2 distinguishes consultation closing from expiry/current temporary position and proposed permanence, revalidating evidence references rather than treating prior assistant answer as source."
+    ],
+    "indicators": {
+      "perTurn": [
+        {
+          "answerPatterns": [
+            "(12|twelve)[ -]week",
+            "September",
+            "December",
+            "October"
+          ],
+          "requiredSourceFiles": [
+            "source-2.docx"
+          ]
+        },
+        {
+          "answerPatterns": [
+            "30\\s+March\\s+2027",
+            "(propos|not automatic|not .*automatic)"
+          ],
+          "requiredSourceFiles": [
+            "source-2.docx"
+          ]
+        }
+      ]
+    },
+    "questions": [
+      "In source-2.docx, when is consultation taking place, how long does it last, and when are local authorities being engaged? Cite the assessment.",
+      "Does that mean the temporary provision ends when consultation closes and the permanent waiver automatically starts then? Explain the dates and proposal status, citing the source."
+    ]
+  }
+]

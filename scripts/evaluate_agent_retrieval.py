@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 from dataclasses import asdict
 from pathlib import Path
 
@@ -28,55 +29,149 @@ def capture(value):
     return value
 
 
-def replay(index, chat, agent, cases, output, budget=48000):
+def prepare_output(output):
+    """Claim a fresh private directory; a failed/partial run is never silently reused."""
     output = Path(output).expanduser().resolve()
     if output.is_relative_to(Path(__file__).resolve().parents[1]):
         raise ValueError("evaluation output must be outside the repository")
     output.mkdir(parents=True, exist_ok=True)
-    results = []
-    before = {lib: index.list_documents(lib) for lib in agent["libraryIds"]}
-    for case in cases:
-        # Cases are independent by default. Questions within a case deliberately share context.
-        history, ledger = [], []
-        for number, question in enumerate(case.get("questions") or [case["question"]], 1):
-            turn = run_turn(chat, index, agent, history, question, context_token_budget=budget, evidence_ledger=ledger)
-            row = {
-                "case": case["case"],
-                "turn": number,
-                "question": question,
-                "answer": turn.answer,
-                "metrics": metrics(turn),
-                "traces": capture([asdict(t) for t in turn.searches]),
-                "toolReplies": [json.loads(m["content"]) for m in turn.messages if m["role"] == "tool"],
-            }
-            results.append(row)
-            (output / "results.json").write_text(json.dumps(results, indent=2, ensure_ascii=False) + "\n")
-            history.extend([{"role": "user", "content": question}, {"role": "assistant", "content": turn.answer}])
-            print(f"{case['case']} turn {number}: captured", flush=True)
-    after = {lib: index.list_documents(lib) for lib in agent["libraryIds"]}
+    if any(output.iterdir()):
+        raise ValueError("evaluation output must be empty; preserve existing run artifacts")
+    # Exclusive create also protects two runners racing for the same empty directory.
+    with (output / "run-status.json").open("x") as handle:
+        json.dump({"status": "running", "completedTurns": 0}, handle)
+    return output
 
-    def versions(rows):
-        return sorted(
-            (
-                lib,
-                d["id"],
-                d.get("activeGeneration"),
-                d.get("contentRevision"),
-                (d.get("fullText") or {}).get("sha256"),
-                (d.get("imageAssets") or {}).get("sha256"),
-                d.get("sha256"),
-                (d.get("ingestionJob") or {}).get("executionId"),
-            )
-            for lib, docs in rows.items()
-            for d in docs
-        )
 
-    unchanged = versions(before) == versions(after)
-    (output / "snapshot-check.json").write_text(
-        json.dumps({"unchanged": unchanged, "before": versions(before), "after": versions(after)}, indent=2) + "\n"
+def snapshot(index, agent):
+    """Freeze catalogue metadata and model-facing context as well as source versions."""
+    return capture(
+        {
+            "agent": agent,
+            "libraries": {
+                lib: {
+                    "library": index.get_library(lib),
+                    "documents": sorted(index.list_documents(lib), key=lambda d: d["id"]),
+                    "tools": index.tools(lib, agent.get("id", "")) if hasattr(index, "tools") else None,
+                }
+                for lib in agent["libraryIds"]
+            },
+        }
     )
-    if not unchanged:
-        raise RuntimeError("source versions changed during replay; comparison is confounded")
+
+
+def indicators(case, number, answer, replies):
+    """Lexical and delivery receipts only: these are not semantic correctness judgments."""
+    spec = case.get("indicators") or {}
+    if spec.get("perTurn"):
+        spec = spec["perTurn"][number - 1]
+    original_files, catalogue_files = set(), set()
+
+    def body(row, file_name):
+        if (
+            file_name
+            and row.get("text")
+            and row.get("contentKind", "text") == "text"
+            and row.get("textSource", "extracted_source_text") == "extracted_source_text"
+        ):
+            original_files.add(file_name)
+
+    for reply in replies:
+        if reply.get("mode") == "catalogue":
+            catalogue_files.update(d["fileName"] for d in reply.get("documents", []) if d.get("fileName"))
+        # Discovery descriptions and outline headings do not count as original body.
+        recovered = reply.get("automaticRecovery") == "document_scoped_passages"
+        if reply.get("mode") in {"catalogue", "semantic_candidates", "outline", "inspect"} and not recovered:
+            continue
+        refused = reply.get("disposition") == "budget_exceeded"
+        if refused and not recovered:
+            continue
+        for result in reply.get("results") or []:
+            name = result.get("fileName") or (result.get("citation") or {}).get("fileName")
+            body(result, name)
+            for neighbor in result.get("neighbors") or []:
+                body(neighbor, name)
+        for document in ([] if refused else reply.get("documents")) or []:
+            for section in document.get("sections") or []:
+                body(section, document.get("fileName"))
+    expected = spec.get("requiredSourceFiles") or []
+    minimum = spec.get("minimumSourceFiles", len(expected))
+    return {
+        "judgment": "lexical_and_delivery_indicators_only",
+        "answerPatterns": [
+            {"pattern": p, "present": bool(re.search(p, answer, re.I))} for p in spec.get("answerPatterns", [])
+        ],
+        "originalBodyFilesDelivered": sorted(original_files),
+        "requiredSourceFiles": expected,
+        "minimumSourceFiles": minimum,
+        "requiredBodyDeliveryObserved": len(original_files.intersection(expected)) >= minimum if expected else None,
+        "sourceFileNameMentioned": {name: name.lower() in answer.lower() for name in expected},
+        "catalogueFilesDelivered": sorted(catalogue_files),
+        "expectedCatalogueFilesObserved": set(spec["expectedFiles"]).issubset(catalogue_files)
+        if spec.get("evidenceRequirement") == "catalogue"
+        else None,
+        "citationCorrectness": None,
+        "taskSuccess": None,
+        "notes": "Word/file-name matches and delivered body text do not establish relevance, citation correctness, "
+        "complete coverage, exhaustive absence, or task success. Review against source facts.",
+    }
+
+
+def replay(index, chat, agent, cases, output, budget=48000):
+    output = prepare_output(output)
+    results = []
+    try:
+        before = snapshot(index, agent)
+        (output / "source-snapshot.json").write_text(json.dumps(before, indent=2) + "\n")
+        (output / "cases.json").write_text(json.dumps(cases, indent=2) + "\n")
+        for case in cases:
+            # Cases are independent by default. Questions within a case deliberately share context.
+            history, ledger = [], []
+            for number, question in enumerate(case.get("questions") or [case["question"]], 1):
+                turn = run_turn(
+                    chat, index, agent, history, question, context_token_budget=budget, evidence_ledger=ledger
+                )
+                replies = capture([json.loads(m["content"]) for m in turn.messages if m["role"] == "tool"])
+                row = {
+                    "case": case["case"],
+                    "turn": number,
+                    "question": question,
+                    "answer": turn.answer,
+                    "metrics": metrics(turn),
+                    "traces": capture([asdict(t) for t in turn.searches]),
+                    "toolReplies": replies,
+                    "indicators": indicators(case, number, turn.answer, replies),
+                }
+                results.append(row)
+                (output / "results.json").write_text(json.dumps(results, indent=2, ensure_ascii=False) + "\n")
+                history.extend([{"role": "user", "content": question}, {"role": "assistant", "content": turn.answer}])
+                print(f"{case['case']} turn {number}: captured", flush=True)
+        after = snapshot(index, agent)
+        unchanged = before == after
+        (output / "snapshot-check.json").write_text(
+            json.dumps({"unchanged": unchanged, "before": before, "after": after}, indent=2) + "\n"
+        )
+        if not unchanged:
+            raise RuntimeError(
+                "source versions, metadata or tool context changed during replay; comparison is confounded"
+            )
+    except Exception as error:
+        (output / "run-status.json").write_text(
+            json.dumps(
+                {
+                    "status": "failed",
+                    "completedTurns": len(results),
+                    "errorType": type(error).__name__,
+                    "usage": "Completed turns only; failed-attempt usage is unavailable.",
+                },
+                indent=2,
+            )
+            + "\n"
+        )
+        raise
+    (output / "run-status.json").write_text(
+        json.dumps({"status": "complete", "completedTurns": len(results), "budget": budget}, indent=2) + "\n"
+    )
     return results
 
 
@@ -129,6 +224,7 @@ def replay_pair(
             (
                 d["sourceId"],
                 d.get("sha256"),
+                d.get("fileName"),
                 ("initial", d["sourceMetadataFingerprint"])
                 if d.get("metadataVersion", 0) == 0 and d.get("sourceMetadataFingerprint")
                 else (
@@ -181,13 +277,18 @@ def replay_pair(
         "usage": "measured per turn; hosting cost and unavailable provider counters are not inferred",
         "runs": [],
     }
-    root.mkdir(parents=True, exist_ok=True)
+    root = prepare_output(root)
+    pair_agent = {**agent, "libraryIds": list(libraries.values())}
+    before_context = snapshot(index, pair_agent)
+    (root / "source-snapshot.json").write_text(json.dumps(before_context, indent=2) + "\n")
+    (root / "cases.json").write_text(json.dumps(cases, indent=2) + "\n")
     (root / "quality-review.json").write_text(
         json.dumps(
             [
                 {
                     "case": case["case"],
                     "sourceFacts": case.get("sourceFacts"),
+                    "successCriteria": case.get("successCriteria"),
                     "reviewStatus": "unreviewed",
                     "sourceEvidenceRecall": None,
                     "citationCorrectness": None,
@@ -201,20 +302,39 @@ def replay_pair(
         + "\n"
     )
     (root / "comparison.json").write_text(json.dumps(metadata, indent=2) + "\n")
-    for repeat in range(repeats):
-        order = ["custom", "microsoft"] if repeat % 2 == 0 else ["microsoft", "custom"]
-        for member in order:
-            lib = libraries[member]
-            # Same name/description/instructions. Profile labels never enter the model context.
-            single = {**agent, "libraryIds": [lib]}
-            replay(index, chat_factory(), single, cases, root / f"run-{repeat + 1}-{member}", budget)
-            metadata["runs"].append({"repeat": repeat + 1, "member": member, "order": len(metadata["runs"]) + 1})
-            (root / "comparison.json").write_text(json.dumps(metadata, indent=2) + "\n")
-    final = {k: index.list_documents(lib) for k, lib in libraries.items()}
-    metadata["sourceUnchanged"] = snapshots == final
-    (root / "comparison.json").write_text(json.dumps(metadata, indent=2) + "\n")
-    if not metadata["sourceUnchanged"]:
-        raise RuntimeError("pair inventory changed across runs; comparison is confounded")
+    try:
+        for repeat in range(repeats):
+            order = ["custom", "microsoft"] if repeat % 2 == 0 else ["microsoft", "custom"]
+            for member in order:
+                lib = libraries[member]
+                # Same name/description/instructions. Profile labels never enter the model context.
+                single = {**agent, "libraryIds": [lib]}
+                replay(index, chat_factory(), single, cases, root / f"run-{repeat + 1}-{member}", budget)
+                metadata["runs"].append({"repeat": repeat + 1, "member": member, "order": len(metadata["runs"]) + 1})
+                (root / "comparison.json").write_text(json.dumps(metadata, indent=2) + "\n")
+        after_context = snapshot(index, pair_agent)
+        metadata["sourceUnchanged"] = before_context == after_context
+        (root / "snapshot-check.json").write_text(
+            json.dumps(
+                {"unchanged": metadata["sourceUnchanged"], "before": before_context, "after": after_context}, indent=2
+            )
+            + "\n"
+        )
+        (root / "comparison.json").write_text(json.dumps(metadata, indent=2) + "\n")
+        if not metadata["sourceUnchanged"]:
+            raise RuntimeError("pair inventory or tool context changed across runs; comparison is confounded")
+    except Exception as error:
+        (root / "run-status.json").write_text(
+            json.dumps(
+                {"status": "failed", "completedRuns": len(metadata["runs"]), "errorType": type(error).__name__},
+                indent=2,
+            )
+            + "\n"
+        )
+        raise
+    (root / "run-status.json").write_text(
+        json.dumps({"status": "complete", "completedRuns": len(metadata["runs"])}, indent=2) + "\n"
+    )
     return metadata
 
 

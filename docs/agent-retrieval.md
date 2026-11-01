@@ -43,9 +43,35 @@ Only the leading search image is previewed automatically, preserving protection 
 
 A per-turn extent ledger distinguishes repeated evidence from expanded source text. Two consecutive retrievals without new extents produce actionable recovery guidance, without terminating complex research or relaxing filters. New native inputs count as progress. Overall context and twelve-round bounds remain. This is a signal to change strategy, not a semantic guarantee that every new topic or figure is useful.
 
+The adapter passes its remaining evidence budget to compact search. An oversized
+response is a budget refusal, not an empty search. It retries at most four whole-
+passage requests (8, 4, 2, then 1 result), dropping neighbors on retries while
+retaining the bound library, caller, document snapshot and filters. Every request
+retains its own charge and latency trace. Passage text is never clipped to fit.
+Malformed document selectors are rejected rather than discarded; a nonblank
+scalar document ID can be repaired to the equivalent object selector.
+
+After an oversized document read, the adapter may recover passages from up to
+four returned authorized document snapshots, using the current question and at
+most two requests per file (2 then 1 passage). Recovery respects both the remaining
+context and an explicit read budget. The original read remains incomplete, with
+false full/selected completeness flags; recovered passages cannot establish
+whole-file coverage. Permission, stale-reference and missing-source errors do not
+trigger this fallback. Refusal metadata is compacted without discarding previously
+delivered source bodies, and terminal synthesis checks the context reserve too.
+
 A bounded in-memory session ledger retains up to 32 document reference entries, with at most eight section/passage/image handles of each kind per entry. It stores source references, not a previous assistant answer as evidence. Follow-ups receive these hints and must revalidate through authorized tools; no cached source text is injected as current evidence. No conversation content is written to the index.
 
 The answerer must address conditional interpretations, correct mistaken premises, verify statistical context and distinguish conceptual/attitudinal evidence from causal productivity claims. It should deliver useful plural visuals immediately. A bounded repair step detects missing requested image placements, unreturned image IDs and research answers without original body evidence. It uses the existing answering model/tools, at most twice within the unchanged round/context bound, and reports those model calls as `answer_repair`. It is not a relevance judge, a universal intent classifier, or a guarantee against unsupported conclusions. Extra calls/tokens are included in the measured cost; cheaper incomplete answers do not pass.
+
+Substantive answers following discovery also require delivered original source
+text or supplied native-image evidence. Catalogue descriptions and outline headings
+alone trigger bounded recovery and, if it fails, an explicit limitation on both
+normal and terminal answer paths. Pure catalogue questions remain answerable from
+metadata. For explicit both/each-file requests over a small identified set (up to
+four files), a partial source set cannot pass as a complete comparison. This is a
+mechanical, heuristic evidence gate: it does not certify relevance, accurate
+citations, correct claims or exhaustive absence.
 
 ## Deployment and validation
 
@@ -53,4 +79,4 @@ API and consuming adapter/tool definitions need refreshing; worker/storage/index
 
 The 50-image semantic-description cap was **not the principal cause** of the observed agent failure. Relevant evidence and useful figures were already stored/indexed. The cap-independent fixes are mode separation, scoped evidence retrieval, source expansion, direct inspection of known images, progress/follow-up handling and answer deliverables. Access to retained images beyond a configured cap is an additional capability; uncapped production semantic ingestion does not remove the other requirements.
 
-Run local tests, then `python -m scripts.evaluate_agent_retrieval --help` for opt-in real-model replay. Use existing frozen sources, the same deployment, budget and question order; supply credentials externally. Captures must be outside the repository. The harness saves each completed turn and verifies active generations/revisions/artifact hashes stayed unchanged. Review/sanitize before publication. Mechanism checks and single small-corpus replays are not broad recall, causal speed/cost benchmarks or blanket answer-quality signoff.
+Run local tests, then `python -m scripts.evaluate_agent_retrieval --help` for opt-in real-model replay. Use existing frozen sources, the same deployment, budget and question order; supply credentials externally. Captures must be outside the repository. The harness refuses nonempty output directories, saves case definitions and each completed turn, and verifies document metadata, source versions, library/agent settings and tool context stayed unchanged. It removes attachment credentials from captures. Lexical matches and delivered-source indicators are explicitly separate from semantic task/citation judgments; failed-attempt usage remains unavailable where it was not returned. The [expanded case pack](testing/2026-11-01/README.md) covers factual distinctions, unavailable data, both-file evidence, metadata-only requests and follow-ups; a separate held-out pack adds blank forms and table relationships. Review/sanitize before publication. Mechanism checks and single small-corpus replays are not broad recall, causal speed/cost benchmarks or blanket answer-quality signoff.

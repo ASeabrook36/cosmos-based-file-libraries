@@ -322,7 +322,7 @@ def test_demo_text_only_model_still_receives_description_and_image_link():
     )
     turn = run_turn(chat, index, AGENT, [], "Find the chart", image_inputs=False)
     assert not any(isinstance(m.get("content"), list) for m in turn.messages)
-    assert '"imageId": "image-1"' in chat.seen[1][0][-1]["content"]
+    assert json.loads(chat.seen[1][0][-1]["content"])["results"][0]["imageId"] == "image-1"
     assert turn.searches[0].images
 
 

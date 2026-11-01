@@ -1,0 +1,89 @@
+[
+  {
+    "case": "heldout-planning-deadline",
+    "question": "What submission deadline is printed on heldout-planning-form.docx, and can a respondent submit anonymously? Report the date printed on the form rather than treating it as a current deadline, and cite the original evidence.",
+    "sourceFacts": [
+      {
+        "source": "heldout-planning-form.docx",
+        "fixtureParagraphsZeroBased": [6],
+        "fixtureTableRowsZeroBased": [{"table": 0, "rows": [4]}],
+        "facts": [
+          "The Please return by row prints: 5:00pm on Tuesday 11th June 2024.",
+          "We cannot accept anonymous responses. Please ensure you provide name and contact details."
+        ]
+      }
+    ],
+    "successCriteria": [
+      "Report 5:00pm on Tuesday 11 June 2024 as the printed historical deadline, with table evidence.",
+      "Explain that anonymous responses are not accepted and name/contact details are requested, with original paragraph evidence. Do not misidentify council contact details as a respondent's details."
+    ],
+    "indicators": {
+      "answerPatterns": ["5(?::00)?\\s*p\\.?m\\.?", "11(?:th)?\\s+June\\s+2024", "anonym", "(name|contact)"],
+      "requiredSourceFiles": ["heldout-planning-form.docx"]
+    }
+  },
+  {
+    "case": "heldout-target-matrix",
+    "question": "In heldout-deposit-questionnaire.docx, which years and percentage options appear in the table headed 'Targets for the minimum proportion (%) of drinks containers collected for reuse'? Does that table specify an adopted percentage for each year or contain completed choices? Cite its evidence and distinguish proposed options from adopted targets.",
+    "sourceFacts": [
+      {
+        "source": "heldout-deposit-questionnaire.docx",
+        "fixtureParagraphsZeroBased": [9],
+        "fixtureTableRowsZeroBased": [{"table": 0, "rows": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}],
+        "facts": [
+          "Paragraph 9 asks whether reuse targets should be set for DMOs in 2031, 2035, and 2040; it is a consultation question.",
+          "Table 0 row 1 has three target-year columns: 2031, 2035, 2040.",
+          "Table 0 rows 2-7 list percentage options: 5%, 10%, 20%, 30%, 40%, 50%. Rows 8-9 offer Other (free text) and Don't know.",
+          "Every year-choice intersection in rows 2-9 is blank or non-breaking whitespace. No chosen or adopted percentage-per-year mapping appears in this table."
+        ]
+      }
+    ],
+    "successCriteria": [
+      "List all three years and all six percentage options, plus Other/free text and Don't know.",
+      "Explain that the table is an uncompleted consultation choice matrix. Do not map successive percentages onto successive years, treat all options as targets, or claim adopted policy.",
+      "Support the table-specific absence of selections with the complete relevant matrix. If provider extraction loses empty cells or column relationships, state that limitation instead of presenting an unsupported complete-table read."
+    ],
+    "indicators": {
+      "answerPatterns": ["2031", "2035", "2040", "5\\s*%", "10\\s*%", "20\\s*%", "30\\s*%", "40\\s*%", "50\\s*%", "(blank|uncompleted|unfilled|not (chosen|selected)|no .*select)"],
+      "requiredSourceFiles": ["heldout-deposit-questionnaire.docx"]
+    }
+  },
+  {
+    "case": "heldout-form-comparison",
+    "question": "Compare these two forms using original source evidence. What personal/contact fields does heldout-planning-form.docx request, and what five community-benefit options does heldout-deposit-questionnaire.docx offer? Are respondent details filled in, or community-benefit choices ticked, in their text/table cells? Cite each file and distinguish blank response fields from the council's printed contact details.",
+    "sourceFacts": [
+      {
+        "source": "heldout-planning-form.docx",
+        "fixtureParagraphsZeroBased": [5, 6],
+        "fixtureTableRowsZeroBased": [{"table": 0, "rows": [2, 6, 8, 10, 12, 14, 16, 18, 20, 22]}],
+        "facts": [
+          "Personal Details and Agent's Details (if applicable) are column headings. The field labels are Title, First Name, Last Name, Organisation (if applicable), Address, Post Code, Telephone Number, and E-mail Address.",
+          "Respondent/agent response cells in those rows are blank or non-breaking whitespace; there is no completed respondent identity or contact entry in those cells.",
+          "The printed return address belongs to Planning Policy, Shropshire Council; it is not a respondent's answer. The form requires name and contact details and asks agents to provide client name and organisation if applicable."
+        ]
+      },
+      {
+        "source": "heldout-deposit-questionnaire.docx",
+        "fixtureParagraphsZeroBased": [47, 48],
+        "fixtureTableRowsZeroBased": [{"table": 2, "rows": [0, 1, 2, 3, 4, 5]}],
+        "facts": [
+          "Support community events where large numbers of containers are collected, and deposits are claimed (such as organised litter picks).",
+          "Create local jobs and training opportunities.",
+          "Run educational workshops for schools and communities.",
+          "Integrate the DRS with other projects that support a circular economy.",
+          "Arrange local groups to visit DRS facilities such as washing facilities.",
+          "The Tick box and Comment cells for all five community-benefit rows are blank or non-breaking whitespace; no community-benefit choice or comment is completed there."
+        ]
+      }
+    ],
+    "successCriteria": [
+      "Cover all eight planning field labels and all five community-benefit options, with relevant original evidence from both files.",
+      "Identify the specified response cells as blank. Do not infer respondent identity from the council stationery or return address; do not claim the questionnaire records support for every listed benefit.",
+      "Limit absence conclusions to the inspected fields/tables. If extraction does not preserve cell emptiness, disclose that limitation rather than claiming complete source coverage."
+    ],
+    "indicators": {
+      "answerPatterns": ["(first name|last name)", "(e.mail|email)", "(litter|community events)", "(jobs|employment)", "(workshops|educational)", "circular economy", "(washing|visit)", "(blank|unfilled|uncompleted)"],
+      "requiredSourceFiles": ["heldout-planning-form.docx", "heldout-deposit-questionnaire.docx"]
+    }
+  }
+]

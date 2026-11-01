@@ -11,6 +11,7 @@ param registryServer string
 param cosmosEndpoint string
 param cosmosDatabase string = 'fli'
 param blobAccountUrl string
+param blobContainer string = 'files'
 param servicebusNamespace string
 param servicebusQueue string = 'ingest'
 param aoaiEndpoint string
@@ -51,6 +52,7 @@ resource worker 'Microsoft.App/containerApps@2024-03-01' = {
           { name: 'COSMOS_ENDPOINT', value: cosmosEndpoint }
           { name: 'COSMOS_DATABASE', value: cosmosDatabase }
           { name: 'BLOB_ACCOUNT_URL', value: blobAccountUrl }
+          { name: 'BLOB_CONTAINER', value: blobContainer }
           { name: 'SERVICEBUS_NAMESPACE', value: servicebusNamespace }
           { name: 'SERVICEBUS_QUEUE', value: servicebusQueue }
           { name: 'AOAI_ENDPOINT', value: aoaiEndpoint }

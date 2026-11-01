@@ -968,3 +968,35 @@ reconciliation/lifecycle tests** for the discovery addition. Ruff lint/format,
 Bicep compilation, reference-privacy checks and `git diff --check` passed. Fourteen
 existing TestClient deprecation warnings remain. Model provider counters are
 preserved separately from estimates and unavailable usage in the receipt.
+
+### E62. Agent budget recovery and source grounding · Local validation; cloud replay pending
+
+E61 exposed complete Microsoft chunks being refused by the compact evidence
+budget before the adapter could select whole passages. Repeated failed reads
+consumed context, and ordinary comparisons could use catalogue descriptions as
+substantive evidence. The existing adapter now passes its remaining search budget,
+retries smaller whole-passage result sets without widening scope, and recovers
+bounded passages from authorized snapshots after an oversized read. All attempts
+retain charge/latency traces, and full/selected completeness remains false after
+fallback. Normal and terminal answers enforce source grounding and context limits.
+The grounding check is structural and heuristic, not a semantic citation judge.
+
+The replay harness now preserves fresh output directories, complete source/metadata
+and tool-context snapshots, source-fact case definitions and explicit failed-run
+status. Lexical and body-delivery indicators do not claim semantic success. The
+[expanded pack](testing/2026-11-01/README.md) adds eight cases over the original
+assessments and three cases over two held-out public forms. No gold facts enter
+answering-model input. Local validation passed **779 full-suite tests**, then
+**38 focused recovery/replay tests**, including additional zero-revision,
+permission/stale-error and terminal-budget regressions. Ruff, reference-privacy
+checks and both configurable-container hosting templates passed validation.
+
+The first live diagnostic was interrupted as invalid evaluation evidence: the
+existing isolated Cosmos account returned HTTP 500 converting its stored float16
+policy, including for ordinary scoped chunk queries. Catalogue and complete stored
+source reads still worked; new ingestion partly failed. This reproduces E17's
+observable failure mode, without establishing its cause. Original policies and
+scaling resources were left unchanged. A new isolated account with identical
+container definitions, separate source container and session queue is undergoing
+the mandatory real-text canary. Subsequent live results will be recorded separately
+from this failed diagnostic; no successful cloud quality result is claimed yet.

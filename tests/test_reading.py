@@ -573,7 +573,10 @@ async def test_parallel_full_read_calls_share_the_remaining_turn_budget(ctx):
         chat, index, {"id": "agent", "libraryIds": [lib]}, [], "Read both documents.", context_token_budget=20000
     )
     assert len(seen_budgets) == 2 and seen_budgets[1] < seen_budgets[0]
-    assert [t.complete for t in turn.searches] == [True, False]
+    assert [t.complete for t in turn.searches if t.operation == "read"] == [True, False]
+    # The refused full read may recover bounded passages, with its own measured trace.
+    recovery = [t for t in turn.searches if t.operation == "search"]
+    assert 1 <= len(recovery) <= 2 and all(t.request_charge is not None for t in recovery)
 
 
 async def test_obviously_oversized_canonical_read_does_not_download_text(ctx, monkeypatch):

@@ -19,6 +19,8 @@ class IndexError_(RuntimeError):  # noqa: N801 — avoids shadowing the builtin 
 
 
 class IndexClient:
+    supports_search_options = True
+
     def __init__(self, base_url: str, api_key: str, *, http: httpx.Client | None = None):
         self.http = http or httpx.Client(base_url=base_url, timeout=120)
         self.http.headers["Authorization"] = f"Bearer {api_key}"
@@ -170,10 +172,12 @@ class IndexClient:
         filters: dict[str, Any] | None = None,
         distinct_documents: bool = False,
         document: dict[str, Any] | None = None,
+        include_neighbors: bool = True,
+        max_evidence_tokens: int | None = None,
     ) -> dict[str, Any]:
         """The library id is the path's, the agent id the header's: never a model-supplied argument."""
-        body: dict[str, Any] = {"query": query, "top": top, "includeNeighbors": True}
-        if document:
+        body: dict[str, Any] = {"query": query, "top": top, "includeNeighbors": include_neighbors}
+        if document is not None:
             body["document"] = document
         if filters:
             body["filters"] = filters
@@ -182,7 +186,7 @@ class IndexClient:
         return self._call(
             "POST",
             f"/v1/libraries/{library_id}/search",
-            params={"view": "compact"},
+            params={"view": "compact", **({"maxEvidenceTokens": max_evidence_tokens} if max_evidence_tokens else {})},
             json=body,
             headers={"X-Agent-Id": agent_id},
         )

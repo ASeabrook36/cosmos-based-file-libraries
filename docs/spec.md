@@ -372,6 +372,18 @@ New enriched extraction snapshots interleave figures after the last text section
 
 The demo adopts `/tools`, keeps bounded reference hints across turns for server-revalidated follow-ups, passes full reads without its passage character cap, keeps all tool evidence during a turn, and applies a configurable total context budget (default 64,000, with an answer reserve). It requests the supported compact REST envelope (§6.8), keeping original source text, provenance, captions, completeness, size hints and notes. Signed links, geometry and telemetry stay in platform-held attachments/metadata. Compact reads budget only evidence text; raw reads retain their existing conservative envelope budget. The demo also checks its actual model context and passes selected native images independently of UI display. Context accounting uses the last provider-reported `usage.prompt_tokens` plus local estimates for messages added since, retaining the answer reserve. New/unreported images use `DEMO_IMAGE_TOKENS` (default 8,192). It shows operation, completeness and estimated tokens alongside RU and latency. Generated per-document descriptions (when proposals run) identify subject/purpose from opening text and are labelled as discovery hints. They are never substitutes for reading the file.
 
+The reference adapter passes remaining evidence budget to search and retries budget
+refusals with fewer whole passages and no neighbors, retaining scope and accounting
+for each request. Oversized reads may recover bounded passages from the same
+authorized snapshots without marking the original full/selected read complete.
+Refusal metadata may be compacted; delivered original source bodies remain intact.
+Both normal and terminal synthesis enforce the context reserve and a structural
+grounding gate against metadata-only substantive answers and explicit small
+multi-file comparisons missing a source. Catalogue questions and supplied native
+images retain their existing evidence roles. These guards do not establish
+semantic correctness or exhaustive coverage; details and limits are in
+[agent-retrieval.md](agent-retrieval.md).
+
 The complete contract, examples, integration mapping, compatibility, tests and rollout limits are in [document-retrieval.md](document-retrieval.md). The implementation and a live four-paper smoke check passed; broad answer-quality evaluation remains outstanding (E34, E35).
 
 ### 6.7 Stored image/caption retrieval

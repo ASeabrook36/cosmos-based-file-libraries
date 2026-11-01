@@ -300,6 +300,123 @@ def update_delivery(messages, image_id, status, call_id):
         return
 
 
+def source_documents(payload):
+    """Only delivered original body text counts as source evidence."""
+    found = set()
+    if payload.get("mode") in {"catalogue", "semantic_candidates", "outline"} and not payload.get("automaticRecovery"):
+        return found
+    rows = list(payload.get("results") or []) + list(payload.get("pageSections") or [])
+    if payload.get("disposition") == "budget_exceeded":
+        rows = list(payload.get("results") or []) if payload.get("automaticRecovery") else []
+    else:
+        for doc in payload.get("documents") or []:
+            rows.extend({**section, "documentId": doc.get("documentId")} for section in doc.get("sections") or [])
+    rows += [
+        {**neighbor, "documentId": row.get("documentId"), "fileName": row.get("fileName")}
+        for row in rows
+        for neighbor in row.get("neighbors") or []
+    ]
+    for row in rows:
+        if (
+            row.get("text")
+            and row.get("contentKind", "text") == "text"
+            and row.get("textSource", "extracted_source_text") == "extracted_source_text"
+        ):
+            found.add(row.get("documentId") or row.get("fileName") or row.get("file") or "source")
+    return found
+
+
+def inspected_documents(payload):
+    """Actual native image inputs are source evidence; display candidates alone are not."""
+    delivery = payload.get("nativeImageDelivery") or {}
+    inspected = set(delivery.get("supplied") or []) | set(delivery.get("alreadySupplied") or [])
+    return {
+        row.get("documentId") or row.get("fileName") or "source image"
+        for row in evidence_rows(payload)
+        if row.get("imageId") in inspected
+    }
+
+
+def metadata_question(question):
+    # Explicit exclusions do not turn an inventory request into a synthesis task.
+    intent = re.sub(r"\b(?:do not|don't)\s+summari[sz]e\b[^.!?]*", "", question, flags=re.I)
+    return bool(
+        re.search(
+            r"^\s*(?:list\s+(?:(?:the|every|all|each)\s+)?(?:(?:source|available|attached)\s+)?(?:files?|documents?)|"
+            r"which (?:files|documents)|what (?:files|documents)|how many (?:files|documents)|"
+            r"who (?:wrote|authored)|what (?:tags|authors|metadata))\b",
+            intent,
+            re.I,
+        )
+    ) and not re.search(r"\b(compare|explain|summari[sz]e|why|findings|conclusions)\b", intent, re.I)
+
+
+def grounding_state(question, messages):
+    metadata, body, identified = False, set(), set()
+    for message in messages:
+        if message["role"] != "tool":
+            continue
+        payload = json.loads(message["content"])
+        metadata |= bool(payload.get("documents"))
+        identified.update(d["documentId"] for d in payload.get("documents") or [] if d.get("documentId"))
+        body.update(source_documents(payload))
+        body.update(inspected_documents(payload))
+    # Names, inventories and recorded metadata can be answered from catalogue evidence.
+    needs_source = metadata and not metadata_question(question)
+    # A broad catalogue can include unrelated files; do not silently require all of it.
+    # For an explicit both/each-file request and a small identified set, demand evidence
+    # from each file rather than treating one passage as a grounded multi-file answer.
+    required = (
+        identified
+        if needs_source
+        and 1 < len(identified) <= 4
+        and re.search(
+            r"\b(?:both|each|every)\s+(?:(?:of\s+)?(?:the|these|those)\s+)?"
+            r"(?:files?|documents?|reports?|assessments?|sources?)\b",
+            question,
+            re.I,
+        )
+        else set()
+    )
+    return needs_source, body, required - body
+
+
+def acknowledges_source_limit(answer):
+    """Avoid another expensive repair for an explicit inability; the final gate still applies."""
+    return bool(
+        re.search(
+            r"\b(?:cannot|can't|could not|unable|not been read|not read|not retrieved|insufficient)\b", answer, re.I
+        )
+    )
+
+
+def compact_refusal(payload):
+    """Keep refusal scope/recovery controls; repeated metadata must not crowd out source text."""
+    if payload.get("disposition") != "budget_exceeded":
+        return payload
+    keep = {
+        "documentId",
+        "fileName",
+        "generation",
+        "contentRevision",
+        "documentTokens",
+        "complete",
+        "selectionComplete",
+        "documentComplete",
+        "readable",
+        "status",
+        "scope",
+    }
+    return {
+        **payload,
+        "documents": [{k: v for k, v in doc.items() if k in keep} for doc in payload.get("documents") or []],
+        "notes": list(payload.get("notes") or [])
+        + ["No source body delivered by this read; use scoped passage search for the requested facts."],
+        "nextAction": "Search the requested information within each document. A selected read may still expand "
+        "an entire oversized section; do not retry that selection with a budget above the remaining context.",
+    }
+
+
 def answer_issues(question, answer, messages, traces):
     """Bounded repair for mechanically detectable omissions; no model judge or canned facts.
 
@@ -326,7 +443,7 @@ def answer_issues(question, answer, messages, traces):
         issues.append(
             "The user requested plural visuals; select multiple relevant figures, or explain why only one is supported."
         )
-    if re.search(r"\b(research|statistics|studies|statistical)\b", question, re.I):
+    if not metadata_question(question) and re.search(r"\b(research|statistics|studies|statistical)\b", question, re.I):
         body = False
         for m in messages:
             if m["role"] != "tool":
@@ -348,6 +465,19 @@ def answer_issues(question, answer, messages, traces):
                 "not only generated image descriptions. "
                 "Expand the relevant source regions before making quantitative or causal claims."
             )
+    needs_source, body, missing = grounding_state(question, messages)
+    if needs_source and not body and not acknowledges_source_limit(answer):
+        issues.append(
+            "No original source body has been received. Catalogue descriptions and outline headings only locate files; "
+            "they cannot support the requested substantive answer. Search passages within the identified files now. "
+            "If source retrieval is impossible, give an explicit limitation without inferring the answer from metadata."
+        )
+    elif missing and not acknowledges_source_limit(answer):
+        issues.append(
+            "The requested multi-file answer is missing original source passages from "
+            f"{len(missing)} identified file(s). Search within each missing file before comparing their contents. "
+            "Otherwise disclose the incomplete comparison without inferring findings from catalogue descriptions."
+        )
     return issues
 
 
@@ -382,6 +512,7 @@ Retrieval:
 - find_documents: catalogue for names/metadata and ALL matching files (page until hasMore=false,
   account for unreadable files); semantic_candidates for vague file selection, never exhaustive.
 - search_library: multiple passages/images per file. For an identified file set document selector;
+  document must be an object such as {"documentId":"returned-id"}, never an ID string.
   query the information needed in natural language without repeating filenames or web operators.
   Mixed text/image is default. Apply metadata or text-only filters only for actual user constraints;
   guessed topic tags can exclude the answer. Do not keep repeating text-only searches for a visual task.
@@ -392,6 +523,7 @@ Retrieval:
   position does not require a full read. Freely combine complete reads with passage searches of other files
   without routine user confirmation. More context can impair attention; choose by requested coverage.
   Whole-file completeness requires complete=true WITH content; selected/outline is not a full read.
+  A single oversized outline section cannot be made smaller by selecting its ID. Use document-scoped passage search.
   After budget refusal change scope or disclose the limit; never retry the same oversized request.
 - inspect_images: selected returned imageIds across formats, or identified PDF pages including beyond
   the semantic cap. Returns stored captions and original source context, without new analysis/writes.
@@ -422,6 +554,9 @@ Answer:
   sample or effect is unknown rather than filling it in. Keep the headline as qualified as the evidence.
 - Explain why each selected visual helps and what it does not establish. Do not promise export quality
   beyond stored crops or verified reuse rights. Never add unrequested offers instead of deliverables.
+- File descriptions and outline headings are discovery metadata, never evidence for substantive claims.
+  For comparisons involving both/each file, obtain original body passages from each file. Metadata-only
+  reads and failed reads do not count. Do not infer conclusions, numbers or findings from file descriptions.
 - Generated descriptions can misread values. Original body text, generated descriptions, visible image
   text, source captions and your interpretation are distinct. Only image.caption is a source caption;
   adjacent_inferred means exact nearby source words with uncertain attachment: qualify it as nearby.
@@ -445,6 +580,22 @@ Answer:
     messages.append({"role": "user", "content": question})
     searches: list[SearchTrace] = []
     names = library_names or {}
+
+    def grounded_answer(answer):
+        needs_source, body, missing = grounding_state(question, messages)
+        if needs_source and not body:
+            return (
+                "I could identify source files but did not receive their original body text within this turn's "
+                "retrieval limits. Their catalogue descriptions and outlines do not establish the requested facts, "
+                "so I cannot give a source-grounded answer or claim complete coverage."
+            )
+        if missing:
+            return (
+                "I received original source text for only part of the identified file set. "
+                f"Source retrieval for {len(missing)} file(s) remains incomplete, so I cannot give a reliable "
+                "comparison across the requested files or claim complete coverage."
+            )
+        return answer
 
     tokenizer = default_tokenizer()
     if context_token_budget < 12_000 or max_rounds < 1 or type(image_tokens) is not int or image_tokens < 1:
@@ -470,7 +621,7 @@ Answer:
     supplied_images = set()
     progress = EvidenceProgress()
     answer_repairs = 0
-    for _ in range(max_rounds):
+    for round_index in range(max_rounds):
         if context_size() + 8_000 > context_token_budget:
             answer = (
                 "The conversation exceeds the configured model context budget. "
@@ -488,7 +639,7 @@ Answer:
         )
         if not reply.tool_calls:
             issues = answer_issues(question, reply.content or "", messages, searches)
-            if issues and answer_repairs < 2:
+            if issues and answer_repairs < 2 and round_index + 1 < max_rounds:
                 answer_repairs += 1
                 model_calls[-1]["purpose"] = "answer_repair"
                 messages.extend(
@@ -505,7 +656,8 @@ Answer:
                     ]
                 )
                 continue
-            return finish(reply.content or "", searches, messages + [{"role": "assistant", "content": reply.content}])
+            answer = grounded_answer(reply.content or "")
+            return finish(answer, searches, messages + [{"role": "assistant", "content": answer}])
         messages.append(
             {
                 "role": "assistant",
@@ -519,7 +671,7 @@ Answer:
         pending_images = []
         for call in reply.tool_calls:
             used = context_size()
-            remaining = max(0, context_token_budget - used - 10_000)  # answer + tool envelope margin
+            remaining = max(0, context_token_budget - used - 8_512)  # answer + tool envelope margin
             trace_start = len(searches)
             if call.name.startswith(
                 ("find_documents_library_", "read_documents_library_", "get_images_library_", "inspect_images_library_")
@@ -527,6 +679,63 @@ Answer:
                 content, images = _run_documents(call, index, agent, owners, names, searches, clock, remaining)
             else:
                 content, images = _run_search(call, index, agent, owners, names, searches, clock, remaining, tokenizer)
+            payload = compact_refusal(json.loads(content))
+            # A budget refusal is not a permission to expand scope: recover only within
+            # the returned authorized document snapshots, and never advertise a full read.
+            if call.name.startswith("read_documents_library_") and payload.get("disposition") == "budget_exceeded":
+                search_name = next(
+                    (
+                        name
+                        for name, lib in owners.items()
+                        if lib == owners[call.name] and name.startswith("search_library_")
+                    ),
+                    None,
+                )
+                docs = payload.get("documents") or []
+                available = max(0, remaining - len(tokenizer.encode(json.dumps(payload))) - 512)
+                requested = json.loads(call.arguments or "{}").get("maxTokens")
+                if type(requested) is int:
+                    available = min(available, requested)
+                if search_name and docs and available > 512:
+                    recovered = []
+                    for doc in docs[:4]:
+                        scope = {
+                            k: doc[k] for k in ("documentId", "generation", "contentRevision") if doc.get(k) is not None
+                        }
+                        if not scope.get("documentId"):
+                            continue
+                        recovery_call = ToolCall(
+                            call.id, search_name, json.dumps({"query": question, "document": scope})
+                        )
+                        recovered_content, _ = _run_search(
+                            recovery_call,
+                            index,
+                            agent,
+                            owners,
+                            names,
+                            searches,
+                            clock,
+                            available // min(len(docs), 4),
+                            tokenizer,
+                            top=2,
+                            include_neighbors=False,
+                        )
+                        recovered_payload = json.loads(recovered_content)
+                        recovered.extend(recovered_payload.get("results") or [])
+                        payload["notes"].extend(recovered_payload.get("notes") or [])
+                    payload.update(
+                        results=recovered,
+                        automaticRecovery="document_scoped_passages",
+                        complete=False,
+                        documentComplete=False,
+                        selectionComplete=False,
+                    )
+                    payload["nextAction"] = (
+                        "Use the recovered source passages for supported facts. The original full/selected "
+                        "read remains incomplete. Search missing topics within each file; "
+                        "do not claim whole-file coverage or ask permission for routine retrieval."
+                    )
+            content = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
             if len(tokenizer.encode(content)) > remaining:
                 images = []
                 original = json.loads(content)
@@ -542,13 +751,17 @@ Answer:
                         "message": "No content delivered. Narrow the selection or disclose incomplete coverage.",
                     }
                 )
-                if searches and searches[-1].tool_name == call.name:
-                    searches[-1].complete = False
-                    searches[-1].notes.append(
-                        "Tool content withheld because the remaining model context budget was exceeded."
-                    )
+                for trace in searches[trace_start:]:
+                    trace.complete = False if trace.operation == "read" else trace.complete
+                    trace.result_count = 0
+                    trace.citations = []
+                    trace.notes.append("Tool content withheld because the remaining model context budget was exceeded.")
             payload = json.loads(content)
-            trace = searches[-1] if len(searches) > trace_start else None
+            trace = (
+                (searches[-1] if call.name.startswith("search_library_") else searches[trace_start])
+                if len(searches) > trace_start
+                else None
+            )
             if trace is not None:
                 progress.observe(payload, owners.get(call.name), trace)
                 remember_sources(evidence_ledger, owners.get(call.name), payload)
@@ -571,7 +784,7 @@ Answer:
                 if images
                 else None,
             }
-            content = json.dumps(payload, ensure_ascii=False)
+            content = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
             messages.append(
                 {
                     "role": "tool",
@@ -642,17 +855,28 @@ Answer:
             "never claim exhaustive coverage.",
         }
     )
+    if context_size() + 8_000 > context_token_budget:
+        answer = grounded_answer(
+            "The remaining model context budget is insufficient to synthesize an answer. "
+            "Source retrieval is incomplete for this turn."
+        )
+        return finish(answer, searches, messages + [{"role": "assistant", "content": answer}])
     final = chat(messages, [])
     model_calls.append({"usage": final.usage, "timing": final.timing, "purpose": "answer"})
-    return finish(final.content or "", searches, messages + [{"role": "assistant", "content": final.content}])
+    answer = grounded_answer(final.content or "")
+    return finish(answer, searches, messages + [{"role": "assistant", "content": answer}])
 
 
-def _run_search(call, index, agent, owners, names, searches, clock, remaining=None, tokenizer=None):
+def _run_search(
+    call, index, agent, owners, names, searches, clock, remaining=None, tokenizer=None, *, top=8, include_neighbors=True
+):
     library_id = owners.get(call.name)
     if library_id is None:
         return json.dumps({"error": f"unknown tool {call.name}"}), []
     try:
         arguments = json.loads(call.arguments or "{}")
+        if not isinstance(arguments, dict):
+            raise ValueError("tool arguments must be a JSON object")
         query = arguments["query"]
         if not isinstance(query, str) or not query.strip():
             raise ValueError("query must be a nonblank string")
@@ -665,7 +889,24 @@ def _run_search(call, index, agent, owners, names, searches, clock, remaining=No
     filters = {k: arguments[k] for k in FILTER_ARGUMENTS if arguments.get(k) not in (None, [], {})}
     started = clock()
     try:
-        options = {"document": arguments["document"]} if arguments.get("document") else {}
+        document = arguments.get("document")
+        # A common model schema error has an unambiguous, scope-preserving repair.
+        # The API still validates the ID, permission and any snapshot controls.
+        if isinstance(document, str) and document.strip():
+            document = {"documentId": document}
+        if document is not None and (
+            not isinstance(document, dict)
+            or not isinstance(document.get("documentId"), str)
+            or not document["documentId"].strip()
+        ):
+            raise ValueError("document must be an object with a nonblank documentId; do not drop the requested scope")
+        options = {"document": document} if document is not None else {}
+        if top != 8 or getattr(index, "supports_search_options", False):
+            options["top"] = top
+        if getattr(index, "supports_search_options", False):
+            options.update(include_neighbors=include_neighbors)
+            if remaining is not None:
+                options["max_evidence_tokens"] = max(1, min(200_000, remaining))
         response = index.search(library_id, agent["id"], query, filters=filters or None, **options)
     except Exception as exc:  # the index's refusals (403, 404, 400) go back to the model and to the trace
         searches.append(
@@ -677,10 +918,10 @@ def _run_search(call, index, agent, owners, names, searches, clock, remaining=No
     envelope = evidence_response(response)
     payload = envelope["evidence"]
     response = {**payload, **envelope["metadata"]}
-    matched = len(payload.get("results") or [])
+    matched = len(payload.get("results") or []) or (payload.get("coverage") or {}).get("resultCount", 0)
     payload.setdefault("results", [])
     payload.setdefault("notes", [])
-    payload.update(passagesMatched=matched, passagesDelivered=matched, contextLimited=False)
+    payload.update(passagesMatched=matched, passagesDelivered=len(payload["results"]), contextLimited=False)
     if remaining is not None and tokenizer is not None:
         base_notes = list(payload["notes"])
         while len(tokenizer.encode(json.dumps(payload, ensure_ascii=False))) > remaining and payload["results"]:
@@ -711,6 +952,23 @@ def _run_search(call, index, agent, owners, names, searches, clock, remaining=No
             notes=payload["notes"], images=images,
         )
     )  # fmt: skip
+    if not shown and top > 1 and payload.get("disposition") in {"budget_exceeded", "context_limited"}:
+        searches[-1].notes.append(
+            "Budget recovery retries fewer whole passages without neighbors; scope and filters retained."
+        )
+        return _run_search(
+            call,
+            index,
+            agent,
+            owners,
+            names,
+            searches,
+            clock,
+            remaining,
+            tokenizer,
+            top=top // 2,
+            include_neighbors=False,
+        )
     # Preserve overall rank for automatic previews: never promote a later image over text.
     first_id = shown[0].get("imageId") if shown else None
     previews = images_from_payload({"results": [a for a in attachments if a["imageId"] == first_id]})

@@ -7,6 +7,7 @@ param managedIdentityClientId string
 param image string
 param registryServer string
 param blobAccountUrl string
+param blobContainer string = 'files'
 param servicebusNamespace string
 param servicebusQueue string = 'ingest'
 @minLength(1)
@@ -37,6 +38,7 @@ resource reconciliation 'Microsoft.App/jobs@2024-03-01' = {
           { name: 'AUTH_MODE', value: 'entra' }
           { name: 'AZURE_CLIENT_ID', value: managedIdentityClientId }
           { name: 'BLOB_ACCOUNT_URL', value: blobAccountUrl }
+          { name: 'BLOB_CONTAINER', value: blobContainer }
           { name: 'SERVICEBUS_NAMESPACE', value: servicebusNamespace }
           { name: 'SERVICEBUS_QUEUE', value: servicebusQueue }
         ]
