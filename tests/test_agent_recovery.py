@@ -1,15 +1,47 @@
 """Regression cases from the isolated large-chunk and metadata-only replays."""
 
 import json
+from types import SimpleNamespace
 
 import pytest
 
 from fli.chunking import default_tokenizer
-from fli_demo.agent import Reply, ToolCall, _run_search, grounding_state, run_turn, source_documents
+from fli_demo.agent import Reply, ToolCall, _run_search, answer_issues, grounding_state, run_turn, source_documents
 from fli_demo.client import IndexError_
 from tests.test_demo import scripted, tool
 
 AGENT = {"id": "owner", "libraryIds": ["bound"]}
+
+
+@pytest.mark.parametrize(
+    "question",
+    [
+        "What exact total does source-2.docx give for people or households on the Common Housing Registers? "
+        "Cite the evidence for whether that figure is available.",
+        "Explain the financial figures in the report.",
+        "Show me the financial figures.",
+        "Figure out the application deadline.",
+    ],
+)
+def test_numeric_figure_wording_does_not_request_visual_repair(question):
+    assert answer_issues(question, "The requested fact is unavailable.", [], []) == []
+
+
+@pytest.mark.parametrize(
+    "question", ["Show useful figures.", "Find relevant figures.", "Explain Figure 2.", "Show images."]
+)
+def test_explicit_figure_or_image_request_still_requires_visual_delivery(question):
+    issues = answer_issues(question, "Here is the explanation.", [], [])
+    assert any("requested visual material" in issue for issue in issues)
+
+
+@pytest.mark.parametrize(
+    "question", ["Show useful figures.", "Illustrate the comparison using figures.", "Show images."]
+)
+def test_plural_visual_requests_still_require_multiple_relevant_images(question):
+    traces = [SimpleNamespace(images=[{"imageId": "first"}, {"imageId": "second"}])]
+    issues = answer_issues(question, "![First](fli-image:first)", [], traces)
+    assert any("plural visuals" in issue for issue in issues)
 
 
 def envelope(evidence, charge=1):

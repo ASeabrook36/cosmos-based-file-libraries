@@ -437,10 +437,23 @@ def answer_issues(question, answer, messages, traces):
         issues.append(
             "The draft references images not returned in this turn. Retrieve current images or remove those references."
         )
-    wants_images = re.search(
-        r"\b(images?|pictures?|figures?|charts?|diagrams?|maps?|visuals?|visually)\b", question, re.I
+    # A figure can be a number. Require visual intent before requesting an image;
+    # otherwise an absent statistic can trigger irrelevant visual-repair loops.
+    figure_request = re.search(
+        r"\bfigures?\s+\d+\b|"
+        r"\b(?:show|find|display|retrieve|include|provide|present|illustrate)\s+"
+        r"(?:(?:me|us|some|the|a|an|all|both|these|those|relevant|useful|multiple|several|supporting|"
+        r"source|original|available|selected|appropriate|related)\s+){0,6}figures?\b|"
+        r"\billustrate\b[^.!?]{0,100}\b(?:with|using)\s+(?:relevant\s+)?figures?\b",
+        question,
+        re.I,
     )
-    plural = re.search(r"\b(images|pictures|figures|charts|diagrams|maps|visuals)\b", question, re.I)
+    wants_images = figure_request or re.search(
+        r"\b(images?|pictures?|charts?|diagrams?|maps?|visuals?|visually)\b", question, re.I
+    )
+    plural = re.search(r"\b(images|pictures|charts|diagrams|maps|visuals)\b", question, re.I) or (
+        figure_request and re.search(r"\bfigures\b", question, re.I)
+    )
     if wants_images and not displayed:
         issues.append(
             "The user requested visual material, but the draft shows no returned image. "
