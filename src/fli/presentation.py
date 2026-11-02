@@ -14,8 +14,11 @@ from fastapi import Query
 from pydantic import BaseModel, Field
 
 from fli.chunking import default_tokenizer
+from fli.reference_format import ENVELOPE, pack
+from fli.selector_hints import add_hints
 
-ResponseView = Annotated[Literal["raw", "compact"], Query()]
+ResponseView = Annotated[Literal["raw", "compact", "references"], Query()]
+SelectorMode = Annotated[Literal["legacy", "handles"], Query()]
 EvidenceBudget = Annotated[int | None, Query(ge=1, le=200_000)]
 DEFAULT_EVIDENCE_TOKENS = 32_000
 IMAGE_EVIDENCE_FIELDS = ("kind", "caption", "captionStatus", "captionAssociation")
@@ -36,7 +39,7 @@ OPERATIONAL = {
 class CompactResponse(BaseModel):
     """Opt-in response envelope; raw responses retain their existing operation shape."""
 
-    contract: Literal["fli.compact.v1"]
+    contract: Literal["fli.compact.v1", "fli.references.v1"]
     evidence: dict[str, Any] = Field(description="Untrusted source evidence safe to serialize as model tool text.")
     attachments: list[dict[str, Any]] = Field(description="Platform-only images keyed by imageId, with expiring links.")
     metadata: dict[str, Any] = Field(description="Platform-only usage, telemetryId and evidence text-token budget.")
@@ -123,10 +126,17 @@ def project(response):
     return evidence, list(attachments.values())
 
 
-def compact_response(response, max_tokens=DEFAULT_EVIDENCE_TOKENS, include_content=True):
+def compact_response(
+    response, max_tokens=DEFAULT_EVIDENCE_TOKENS, include_content=True, *, view="compact", selectors="legacy"
+):
+    if view not in {"compact", "references"} or selectors not in {"legacy", "handles"}:
+        raise ValueError("unsupported evidence presentation")
     evidence, attachments = project(response)
+    if selectors == "handles":
+        evidence = add_hints(evidence)
+    encode = pack if view == "references" else lambda value: value
     tokenizer = default_tokenizer()
-    required = len(tokenizer.encode(evidence_json(evidence)))
+    required = len(tokenizer.encode(evidence_json(encode(evidence))))
     fits = required <= max_tokens
     if not include_content or not fits:
         original = evidence
@@ -190,14 +200,21 @@ def compact_response(response, max_tokens=DEFAULT_EVIDENCE_TOKENS, include_conte
         "tokenizer": tokenizer.name,
         "maxTokens": max_tokens,
         "requiredTokens": required,
-        "returnedTokens": len(tokenizer.encode(evidence_json(evidence))),
+        "returnedTokens": len(tokenizer.encode(evidence_json(encode(evidence)))),
         "fits": fits,
         "nativeImageTokensIncluded": False,
     }
-    return {"contract": "fli.compact.v1", "evidence": evidence, "attachments": attachments, "metadata": metadata}
+    return {
+        "contract": ENVELOPE if view == "references" else "fli.compact.v1",
+        "evidence": encode(evidence),
+        "attachments": attachments,
+        "metadata": metadata,
+    }
 
 
-async def respond(response, view, max_tokens=None):
+async def respond(response, view, max_tokens=None, selectors="legacy"):
     if view == "raw":
-        return response
-    return await asyncio.to_thread(compact_response, response, max_tokens or DEFAULT_EVIDENCE_TOKENS)
+        return add_hints(response) if selectors == "handles" else response
+    return await asyncio.to_thread(
+        compact_response, response, max_tokens or DEFAULT_EVIDENCE_TOKENS, view=view, selectors=selectors
+    )

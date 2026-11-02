@@ -20,6 +20,8 @@ from typing import Any, Protocol
 from fli.chunking import default_tokenizer
 from fli.http import parse_retry_after
 from fli.presentation import compact_response, project
+from fli.reference_format import ENVELOPE, expanded, model_messages, pack
+from fli.selector_hints import error_details
 
 log = logging.getLogger("fli_demo.agent")
 
@@ -150,8 +152,8 @@ def compact(results: Mapping[str, Any]) -> dict[str, Any]:
 def evidence_response(response):
     # IndexClient always requests the supported envelope. Raw test doubles and older
     # in-process consumers use the same service presenter, never a demo projection.
-    if response.get("contract") == "fli.compact.v1":
-        return response
+    if response.get("contract") in {"fli.compact.v1", ENVELOPE}:
+        return {**response, "evidence": expanded(response["evidence"])}
     return compact_response(response, max_tokens=200_000)
 
 
@@ -630,6 +632,9 @@ Answer:
     if context_token_budget < 12_000 or max_rounds < 1 or type(image_tokens) is not int or image_tokens < 1:
         raise ValueError("context_token_budget must be at least 12000; max_rounds and image_tokens must be positive")
 
+    def wire_messages():
+        return model_messages(messages) if getattr(index, "evidence_view", "compact") == "references" else messages
+
     def local_size():
         # Reserve for new visuals until the provider reports their actual prompt use.
         images = sum(
@@ -639,7 +644,7 @@ Answer:
             for part in m["content"]
             if part.get("type") == "image_url"
         )
-        return len(tokenizer.encode(json.dumps({"messages": messages, "tools": tools}))) + images * image_tokens
+        return len(tokenizer.encode(json.dumps({"messages": wire_messages(), "tools": tools}))) + images * image_tokens
 
     accounted_local = accounted_prompt = None
     carryover_tokens_estimate = 0
@@ -661,7 +666,7 @@ Answer:
             )
             return finish(answer, searches, messages + [{"role": "assistant", "content": answer}])
         sent_local = local_size()
-        reply = chat(messages, tools)
+        reply = chat(wire_messages(), tools)
         carryover_tokens_estimate = reply.timing.get("contextCarryoverTokensEstimate", 0)
         if type(carryover_tokens_estimate) is not int or carryover_tokens_estimate < 0:
             raise ValueError("invalid context carryover estimate")
@@ -735,7 +740,18 @@ Answer:
                     None,
                 )
                 docs = payload.get("documents") or []
-                available = max(0, remaining - len(tokenizer.encode(json.dumps(payload))) - 512)
+                available = max(
+                    0,
+                    remaining
+                    - len(
+                        tokenizer.encode(
+                            json.dumps(
+                                pack(payload) if getattr(index, "evidence_view", "compact") == "references" else payload
+                            )
+                        )
+                    )
+                    - 512,
+                )
                 requested = json.loads(call.arguments or "{}").get("maxTokens")
                 if type(requested) is int:
                     available = min(available, requested)
@@ -779,7 +795,12 @@ Answer:
                         "do not claim whole-file coverage or ask permission for routine retrieval."
                     )
             content = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
-            if len(tokenizer.encode(content)) > remaining:
+            budget_content = (
+                json.dumps(pack(payload), ensure_ascii=False, separators=(",", ":"))
+                if getattr(index, "evidence_view", "compact") == "references"
+                else content
+            )
+            if len(tokenizer.encode(budget_content)) > remaining:
                 images = []
                 original = json.loads(content)
                 content = json.dumps(
@@ -904,7 +925,7 @@ Answer:
             "Source retrieval is incomplete for this turn."
         )
         return finish(answer, searches, messages + [{"role": "assistant", "content": answer}])
-    final = chat(messages, [])
+    final = chat(wire_messages(), [])
     model_calls.append({"usage": final.usage, "timing": final.timing, "purpose": "answer"})
     answer = grounded_answer(final.content or "")
     return finish(answer, searches, messages + [{"role": "assistant", "content": answer}])
@@ -936,6 +957,8 @@ def _run_search(
         # A common model schema error has an unambiguous, scope-preserving repair.
         # The API still validates the ID, permission and any snapshot controls.
         if isinstance(document, str) and document.strip():
+            if getattr(index, "selector_mode", "legacy") == "handles":
+                raise ValueError("copy a returned snapshot-bound documentSelector object")
             document = {"documentId": document}
         if document is not None and (
             not isinstance(document, dict)
@@ -956,7 +979,9 @@ def _run_search(
             SearchTrace(call.name, library_id, names.get(library_id, library_id), query, (clock() - started) * 1000,
                         None, 0, None, [], error=str(exc), filters=filters)
         )  # fmt: skip
-        return json.dumps({"error": str(exc)}), []
+        return json.dumps(
+            error_details(exc) if getattr(index, "selector_mode", "legacy") == "handles" else {"error": str(exc)}
+        ), []
     latency = (clock() - started) * 1000
     envelope = evidence_response(response)
     payload = envelope["evidence"]
@@ -967,7 +992,18 @@ def _run_search(
     payload.update(passagesMatched=matched, passagesDelivered=len(payload["results"]), contextLimited=False)
     if remaining is not None and tokenizer is not None:
         base_notes = list(payload["notes"])
-        while len(tokenizer.encode(json.dumps(payload, ensure_ascii=False))) > remaining and payload["results"]:
+        while (
+            len(
+                tokenizer.encode(
+                    json.dumps(
+                        pack(payload) if getattr(index, "evidence_view", "compact") == "references" else payload,
+                        ensure_ascii=False,
+                    )
+                )
+            )
+            > remaining
+            and payload["results"]
+        ):
             payload["results"].pop()  # least relevant first; full reads never use this path
             delivered = len(payload["results"])
             payload.update(passagesDelivered=delivered, contextLimited=True)
@@ -1071,7 +1107,11 @@ def _run_documents(call, index, agent, owners, names, searches, clock, remaining
                 complete=False,
             )
         )
-        return json.dumps({"error": str(exc), "complete": False}), []
+        return json.dumps(
+            error_details(exc)
+            if getattr(index, "selector_mode", "legacy") == "handles"
+            else {"error": str(exc), "complete": False}
+        ), []
     envelope = evidence_response(response)
     payload = envelope["evidence"]
     response = {**payload, **envelope["metadata"]}

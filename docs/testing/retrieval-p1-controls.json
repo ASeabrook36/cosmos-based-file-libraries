@@ -1,0 +1,15 @@
+{
+  "schema": "fli.p1.plan.v1",
+  "baseCommit": "a449dc01e5acde6391bfc1aa50ca07670d54097d",
+  "cases": ["r0-01", "r0-11", "r0-17"],
+  "split": "development",
+  "cells": ["baseline", "format-only", "selectors-only"],
+  "repeats": 2,
+  "repeatOrder": "forward then reverse",
+  "contextAllowancePerRun": 200000,
+  "model": {"model": "gpt-6.1-sol", "version": "2026-09-29", "transport": "responses", "reasoningEffort": "medium", "maxOutputTokens": 8000, "maxAttempts": 3, "store": false, "automaticTruncation": false},
+  "efficiencyTarget": {"relativeReduction": 0.2, "measure": "serialized evidence tokens and separately provider input tokens", "qualityTolerance": "zero observed source-delivery, task-completion, factual-support or citation regression"},
+  "selectorsTarget": "Avoid unsupported source expansion using explicit capabilities, retaining stale-source rejection and all-or-nothing scope.",
+  "heldoutExecuted": false,
+  "interpretation": "Small paired functional pilot, not statistical equivalence, steady-state latency or architecture selection. Record rate waits/cache/usage gaps."
+}

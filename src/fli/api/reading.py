@@ -14,9 +14,10 @@ from fli.errors import ApiError
 from fli.metrics import record as record_metric
 from fli.page_images import read_page_images
 from fli.permissions import check_search_allowed
-from fli.presentation import CompactResponse, EvidenceBudget, ResponseView, respond
+from fli.presentation import CompactResponse, EvidenceBudget, ResponseView, SelectorMode, respond
 from fli.reading import DEFAULT_READ_TOKENS, MAX_READ_TOKENS, manifest, read_documents, render_catalog
 from fli.search import QueryCost, SearchRequest
+from fli.selector_hints import tool_hints
 from fli.tool import tool_definitions
 
 router = APIRouter(prefix="/v1/libraries/{library_id}", dependencies=[Depends(require_caller)])
@@ -96,6 +97,7 @@ async def images(
     request: Request,
     x_agent_id: Annotated[str | None, Header()] = None,
     view: ResponseView = "raw",
+    selectors: SelectorMode = "legacy",
     maxEvidenceTokens: EvidenceBudget = None,
 ):
     response = await read_page_images(
@@ -110,7 +112,7 @@ async def images(
         content_revision=body.contentRevision,
     )
 
-    return await respond(response, view, maxEvidenceTokens)
+    return await respond(response, view, maxEvidenceTokens, selectors)
 
 
 @router.get("/tools")
@@ -118,10 +120,12 @@ async def get_tools(
     library_id: str,
     request: Request,
     x_agent_id: Annotated[str | None, Header()] = None,
+    selectors: SelectorMode = "legacy",
 ) -> dict[str, Any]:
     library = await request.app.state.libraries.get(library_id)
     check_search_allowed(library_id, library, x_agent_id)
-    return {"tools": tool_definitions(library)}
+    definitions = tool_definitions(library)
+    return {"tools": tool_hints(definitions) if selectors == "handles" else definitions}
 
 
 @router.post("/documents:discover", response_model=CompactResponse | dict[str, Any])
@@ -131,6 +135,7 @@ async def discover(
     request: Request,
     x_agent_id: Annotated[str | None, Header()] = None,
     view: ResponseView = "raw",
+    selectors: SelectorMode = "legacy",
     maxEvidenceTokens: EvidenceBudget = None,
 ) -> dict[str, Any]:
     if body.mode == "semantic_candidates":
@@ -175,7 +180,7 @@ async def discover(
             "exhaustive": False,
             "nextAction": "Search evidence within a selected document using document selector.",
         }
-        return await respond(response, view, maxEvidenceTokens)
+        return await respond(response, view, maxEvidenceTokens, selectors)
     if body.query is not None:
         raise ApiError(400, "invalid_request", "query requires mode=semantic_candidates")
     started = time.perf_counter()
@@ -226,7 +231,7 @@ async def discover(
         },
     }
 
-    return await respond(response, view, maxEvidenceTokens)
+    return await respond(response, view, maxEvidenceTokens, selectors)
 
 
 @router.post("/documents:read", response_model=CompactResponse | dict[str, Any])
@@ -236,6 +241,7 @@ async def read(
     request: Request,
     x_agent_id: Annotated[str | None, Header()] = None,
     view: ResponseView = "raw",
+    selectors: SelectorMode = "legacy",
     maxEvidenceTokens: EvidenceBudget = None,
 ) -> dict[str, Any]:
     return await read_documents(
@@ -244,13 +250,12 @@ async def read(
         library_id,
         x_agent_id,
         [(s.documentId, s.generation) for s in body.documents],
-        min(body.maxTokens, maxEvidenceTokens)
-        if view == "compact" and maxEvidenceTokens is not None
-        else body.maxTokens,
+        min(body.maxTokens, maxEvidenceTokens) if view != "raw" and maxEvidenceTokens is not None else body.maxTokens,
         body.includeText,
         mode=body.mode,
         scopes={s.documentId: s.model_dump(exclude_none=True, exclude_defaults=True) for s in body.documents},
         after_section=body.afterSection,
         section_limit=body.sectionLimit,
         view=view,
+        selectors=selectors,
     )

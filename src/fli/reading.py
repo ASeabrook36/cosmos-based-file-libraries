@@ -23,7 +23,9 @@ from fli.metrics import record as record_metric
 from fli.permissions import check_search_allowed
 from fli.presentation import compact_response
 from fli.query import RenderedQuery, SearchFilters, metadata_clauses
+from fli.reference_format import expanded
 from fli.search import QueryCost, Searcher
+from fli.selector_hints import add_hints
 from fli.store import Record
 
 log = logging.getLogger("fli.reading")
@@ -266,6 +268,7 @@ async def read_documents(
     after_section: int = 0,
     section_limit: int = 100,
     view: str = "raw",
+    selectors: str = "legacy",
 ) -> Record:
     started = time.perf_counter()
     cost = QueryCost()
@@ -359,7 +362,7 @@ async def read_documents(
             contentReturned=False,
             **response["usage"],
         )
-        return response
+        return add_hints(response) if selectors == "handles" else response
 
     for doc in records:
         document_id, generation = doc["id"], doc["activeGeneration"]
@@ -413,7 +416,7 @@ async def read_documents(
             public["image"] = await searcher.image(library_id, document_id, generation, section)
             public_sections.append(public)
         item = {**manifest(doc), "representation": representation, "sections": public_sections}
-        if view == "compact":
+        if view != "raw":
             item["documentTokens"] = (doc.get("fullText") or {}).get("tokenCount")
             item["documentTokenTokenizer"] = (doc.get("fullText") or {}).get("tokenizer")
         if assets is not None:
@@ -510,12 +513,17 @@ async def read_documents(
         "usage": {"requestCharge": round(cost.request_charge, 2), "totalMs": elapsed},
         "nextAction": None,
     }
-    if view == "compact":
-        result = await asyncio.to_thread(compact_response, response, max_tokens, include_text)
+    if view != "raw":
+        result = await asyncio.to_thread(
+            compact_response, response, max_tokens, include_text, view=view, selectors=selectors
+        )
         tokens = result["metadata"]["budget"]["requiredTokens"]
         fits = result["metadata"]["budget"]["fits"]
-        response = {**result["evidence"], "usage": result["metadata"]["usage"]}
+        response = {**expanded(result["evidence"]), "usage": result["metadata"]["usage"]}
     else:
+        if selectors == "handles":
+            response = add_hints(response)
+            items = response["documents"]
         # Count the complete envelope once off the event loop. A small allowance covers the
         # estimate's own digits and final latency value without repeatedly tokenizing files.
         response["estimatedTokens"] = await asyncio.to_thread(
@@ -565,4 +573,4 @@ async def read_documents(
         contentReturned=include_text and fits,
         **response["usage"],
     )
-    return result if view == "compact" else response
+    return result if view != "raw" else response

@@ -21,7 +21,18 @@ class IndexError_(RuntimeError):  # noqa: N801 — avoids shadowing the builtin 
 class IndexClient:
     supports_search_options = True
 
-    def __init__(self, base_url: str, api_key: str, *, http: httpx.Client | None = None):
+    def __init__(
+        self,
+        base_url: str,
+        api_key: str,
+        *,
+        http: httpx.Client | None = None,
+        evidence_view="compact",
+        selector_mode="legacy",
+    ):
+        if evidence_view not in {"compact", "references"} or selector_mode not in {"legacy", "handles"}:
+            raise ValueError("unsupported retrieval presentation")
+        self.evidence_view, self.selector_mode = evidence_view, selector_mode
         self.http = http or httpx.Client(base_url=base_url, timeout=120)
         self.http.headers["Authorization"] = f"Bearer {api_key}"
 
@@ -117,13 +128,18 @@ class IndexClient:
         return self._call("GET", f"/v1/libraries/{library_id}/tool")
 
     def tools(self, library_id: str, agent_id: str) -> list[dict[str, Any]]:
-        return self._call("GET", f"/v1/libraries/{library_id}/tools", headers={"X-Agent-Id": agent_id})["tools"]
+        return self._call(
+            "GET",
+            f"/v1/libraries/{library_id}/tools",
+            params={"selectors": self.selector_mode},
+            headers={"X-Agent-Id": agent_id},
+        )["tools"]
 
     def discover_documents(self, library_id: str, agent_id: str, **selectors: Any) -> dict[str, Any]:
         return self._call(
             "POST",
             f"/v1/libraries/{library_id}/documents:discover",
-            params={"view": "compact"},
+            params={"view": self.evidence_view, "selectors": self.selector_mode},
             json=selectors,
             headers={"X-Agent-Id": agent_id},
         )
@@ -132,7 +148,7 @@ class IndexClient:
         return self._call(
             "POST",
             f"/v1/libraries/{library_id}/documents:read",
-            params={"view": "compact"},
+            params={"view": self.evidence_view, "selectors": self.selector_mode},
             json=selection,
             headers={"X-Agent-Id": agent_id},
         )
@@ -141,7 +157,7 @@ class IndexClient:
         return self._call(
             "POST",
             f"/v1/libraries/{library_id}/documents:images",
-            params={"view": "compact"},
+            params={"view": self.evidence_view, "selectors": self.selector_mode},
             json=selection,
             headers={"X-Agent-Id": agent_id},
         )
@@ -186,7 +202,11 @@ class IndexClient:
         return self._call(
             "POST",
             f"/v1/libraries/{library_id}/search",
-            params={"view": "compact", **({"maxEvidenceTokens": max_evidence_tokens} if max_evidence_tokens else {})},
+            params={
+                "view": self.evidence_view,
+                "selectors": self.selector_mode,
+                **({"maxEvidenceTokens": max_evidence_tokens} if max_evidence_tokens else {}),
+            },
             json=body,
             headers={"X-Agent-Id": agent_id},
         )
