@@ -96,5 +96,10 @@
     "Four DOCX sources; no catalogue enumeration task or image evaluation.",
     "Consumed held-out results cannot be treated as unseen confirmation after tuning."
   ],
-  "coordinatorDecision": "Accept bounded no-regression/usability evidence; retain selector opt-in and unchanged defaults. Efficiency threshold failed; no R3 comparison."
+  "coordinatorDecision": "User accepts 18.8542783% input reduction as meaningful, with observed no-regression and usability benefits. Advance selectors to consuming-agent integration; original 20% numerical gate remains false but does not disqualify adoption. No runtime default or architecture change in this decision record.",
+  "userAcceptance": {
+    "meaningfulEfficiencyBenefitAccepted": true,
+    "originalThresholdDoesNotDisqualify": true,
+    "rawMeasurementsAndFrozenGatesUnchanged": true
+  }
 }

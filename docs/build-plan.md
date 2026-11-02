@@ -4,8 +4,9 @@
 [coordinator result](retrieval-i1.md) records 13 live lifecycle gates passed
 before all 64 reserved held-out turns. Both cells retain reviewed source and
 answer quality; selector handles avoid four recovered scope errors. Provider
-input falls 18.8542783%, below the frozen 20% target. Keep selectors opt-in and
-retain current compact defaults, representation and physical policies. No R3
+input falls 18.8542783%, below the frozen 20% target. The user accepts this as
+a meaningful improvement and advances selectors to consuming-agent integration.
+Runtime defaults, representation and physical policies are currently unchanged. No R3
 comparison follows. The held-out set is now consumed; production authentication,
 broker redelivery, broader concurrency/scale and controlled cost/latency remain
 open. The merged suite passes 1,089 tests; isolated cleanup and R0/P1 preservation

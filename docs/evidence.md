@@ -1424,3 +1424,13 @@ The [review](../records/retrieval-i1-review-20261102.json),
 [cleanup](../records/retrieval-i1-cleanup-20261102.json) receipts retain sanitized
 counts and hashes. All source bodies, answers, credentials and environment
 identifiers remain outside Git.
+
+### E66 adoption decision after user review
+
+The user accepts the measured 18.8542783% input saving as a noticeable improvement.
+Together with fewer unsupported expansions and no observed quality loss, this
+advances selector handles to consuming-agent integration. The frozen numerical
+20% gate remains unmet in the original scorecard; it does not disqualify adoption.
+This supersedes the earlier efficiency-based recommendation to retain opt-in
+status indefinitely. No runtime default, measurement or architecture changes in
+this decision update.

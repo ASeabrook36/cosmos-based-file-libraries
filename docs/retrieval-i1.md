@@ -9,9 +9,11 @@ measurement or answering. Its SHA-256 is
 **Completed, 2026-11-02 (E66):** all 13 live lifecycle gates passed before the
 64 held-out answering turns. Source/answer quality and selector usability passed
 their frozen gates. Provider input fell **18.8542783%**, below the required 20%;
-the efficiency gate failed. Retain selector handles as an experimental opt-in
-with bounded usability evidence. Keep current compact defaults, representation
-and physical policies. No R3 comparison or default promotion follows from I1.
+the original numerical gate was not met. The user accepts the measured saving
+as a meaningful efficiency improvement, alongside the usability benefit and
+observed quality preservation. Selectors advance to integration; the 20% target
+does not disqualify them. Runtime defaults, representation and physical policies
+are unchanged by this decision record.
 
 ## Comparison and acceptance
 
@@ -236,9 +238,12 @@ not authorization to reset that ledger or run the held-out tasks again.
 
 ## Next integration decision and open gates
 
-Retain selector handles as an independently selectable usability improvement;
-keep the production/default behavior unchanged because the declared efficiency
-target was not met. Existing evidence does not justify a new representation or
+Following user review, accept selector handles as a meaningful efficiency and
+usability improvement and advance them to consuming-agent integration. Preserve
+the original 20% comparison result as measurement history, not a veto on adoption.
+The next implementation step is to enable handles in the normal agent adapter,
+validate compatibility and lifecycle behavior, and retain an explicit fallback.
+This decision record itself changes no runtime default. Existing evidence does not justify a new representation or
 container comparison, so R3 remains unstarted. A later foundation or evidence-
 format candidate still needs its own justified comparison and the roadmap's
 full four-cell integration confirmation.
