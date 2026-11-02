@@ -80,6 +80,59 @@ class Cache(dict):
         save(self.path, self)
 
 
+class VectorCache:
+    """Append-only vector checkpoints avoid rewriting the entire corpus each batch.
+
+    SQLite transactions preserve completed batches on interruption. Keys already
+    bind the endpoint/deployment/model revision/text; values are binary doubles,
+    never rounded on cache read or write. This cache is private and single-writer.
+    """
+
+    def __init__(self, path: Path):
+        import sqlite3
+
+        self.path = path
+        self.connection = sqlite3.connect(path)
+        path.chmod(0o600)
+        self.connection.execute("CREATE TABLE IF NOT EXISTS vectors (key TEXT PRIMARY KEY, value BLOB NOT NULL)")
+
+    def __contains__(self, key):
+        return self.connection.execute("SELECT 1 FROM vectors WHERE key=?", (key,)).fetchone() is not None
+
+    def __len__(self):
+        return self.connection.execute("SELECT COUNT(*) FROM vectors").fetchone()[0]
+
+    def __getitem__(self, key):
+        import struct
+
+        row = self.connection.execute("SELECT value FROM vectors WHERE key=?", (key,)).fetchone()
+        if row is None:
+            raise KeyError(key)
+        blob = row[0]
+        if len(blob) != 3072 * 8:
+            raise ValueError("cached vector dimensions changed")
+        values = list(struct.unpack("<3072d", blob))
+        if not all(math.isfinite(value) for value in values):
+            raise ValueError("cached vector contains nonfinite values")
+        return values
+
+    def put_batch(self, values):
+        import struct
+
+        with self.connection:
+            for key, vector in values.items():
+                if len(vector) != 3072 or not all(math.isfinite(value) for value in vector):
+                    raise ValueError("cached vector is invalid")
+                blob = struct.pack("<3072d", *vector)
+                old = self.connection.execute("SELECT value FROM vectors WHERE key=?", (key,)).fetchone()
+                if old and old[0] != blob:
+                    raise ValueError("immutable vector cache conflict")
+                self.connection.execute("INSERT OR IGNORE INTO vectors VALUES (?, ?)", (key, blob))
+
+    def close(self):
+        self.connection.close()
+
+
 def load_manifest(path: Path) -> tuple[dict, list[dict]]:
     manifest = json.loads(path.read_text())
     documents = []
@@ -364,9 +417,13 @@ async def evaluate(artifact: dict, containers: dict, repeats: int, hybrid: bool 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    parser.add_argument("command", choices=("freeze", "load", "evaluate", "read", "cleanup"))
+    parser.add_argument(
+        "command", choices=("freeze", "load", "evaluate", "read", "cleanup", "r2-local", "r2-embed", "r2-evaluate")
+    )
     parser.add_argument("--work-dir", required=True, type=Path)
     parser.add_argument("--manifest", type=Path)
+    parser.add_argument("--source-dir", type=Path, help="Private frozen R0 originals for the controlled DOCX adapter")
+    parser.add_argument("--deployment-receipt", type=Path, help="Private management-plane embedding deployment receipt")
     parser.add_argument("--model-revision", default="initial", help="bump when a deployment's underlying model changes")
     parser.add_argument("--artifact")
     parser.add_argument("--canary-records", type=Path)
@@ -376,6 +433,11 @@ def main() -> int:
     parser.add_argument("--nodes", nargs="+", default=["n0"])
     parser.add_argument("--max-tokens", type=int, default=32000)
     args = parser.parse_args()
+    if args.command.startswith("r2-"):
+        from scripts.retrieval_r2 import run
+
+        run(args)
+        return 0
     directory = private_directory(args.work_dir)
     if args.command == "freeze":
         if not args.manifest:
