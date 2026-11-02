@@ -446,6 +446,64 @@ def percentile(values: list[float], fraction: float) -> float | None:
     return round(sorted(values)[max(0, math.ceil(len(values) * fraction) - 1)], 2) if values else None
 
 
+def range_audit(args: argparse.Namespace) -> dict:
+    """Positive outside-range contacts remain evidence when other telemetry is missing."""
+    controls, _ = frozen(args.state, reanalysis=True)
+    raw = args.state / "measurements.jsonl"
+    rows = [json.loads(line) for line in raw.read_text().splitlines()]
+    before = read(args.state / "placement-before.json")
+    after = read(args.state / "placement-after.json")
+    inventory_path = private_path(args.range_inventory)
+    inventory = read(inventory_path)
+    if inventory.get("targetFingerprint") != controls["targetFingerprint"]:
+        raise ValueError("range inventory belongs to another container incarnation")
+    if inventory.get("afterPerformanceWindow") is not True or inventory.get("rangeCount") != len(inventory["ranges"]):
+        raise ValueError("expected a complete post-window feed-range inventory")
+    known = set(before["knownRanges"])
+    verified = before["rangeComplete"] and before == after
+    profiles = {}
+    for kind in ("prefix", "no-prefix", "hybrid"):
+        selected = [row for row in rows if row["kind"] == kind]
+        outside, backend_ranges, backend_rows, statuses = 0, set(), [], Counter()
+        for call in selected:
+            responses = [response for attempt in call["attempts"] for response in attempt["rawResponses"]]
+            statuses.update(response["status"] for response in responses)
+            backend = [r for r in responses if r["status"] == 200 and r["retrieved"] is not None]
+            ranges = {r["range"] for r in backend if r["range"] is not None}
+            backend_ranges.update(ranges)
+            backend_rows.extend(backend)
+            outside += bool(ranges - known)
+        profiles[kind] = {
+            "calls": len(selected),
+            "callsWithObservedBackendContactOutsideVerifiedLibraryRanges": outside if verified else None,
+            "observedContactsOutsideVerifiedScope": bool(outside) if verified else None,
+            "observedSuccessfulBackendRangeCount": len(backend_ranges),
+            "visibleHttpStatusCounts": dict(statuses),
+            "allVisibleSuccessfulDataResponsesHaveRange": bool(backend_rows)
+            and all(row["range"] is not None for row in backend_rows),
+        }
+    result = {
+        "schema": "fli.retrieval-r1-range-audit.v1",
+        "rawMeasurementsSha256": digest(raw.read_bytes()),
+        "targetFingerprint": controls["targetFingerprint"],
+        "placementBeforeSha256": digest((args.state / "placement-before.json").read_bytes()),
+        "placementAfterMatches": before == after,
+        "physicalRangeInventorySha256": digest(inventory_path.read_bytes()),
+        "libraryRangeCount": len(known) if verified else None,
+        "allDocumentCensusRangesKnown": verified,
+        "containerFeedRangeCount": inventory["rangeCount"],
+        "containerRangeInventoryAfterPerformanceWindow": True,
+        "profiles": profiles,
+        "scope": "Visible successful HTTP 200 backend responses with query metrics; initial HTTP 400 "
+        "query-plan fallback responses are recorded separately. Positive contacts outside proven placement "
+        "establish fan-out despite incomplete overall telemetry; zero observed contacts alone do not prove absence.",
+    }
+    if args.out.exists():
+        raise ValueError("range audit requires a fresh output")
+    save(args.out, result)
+    return result
+
+
 def report(args: argparse.Namespace) -> dict:
     reanalysis = getattr(args, "command", "report") == "reanalyse"
     controls, inputs = frozen(args.state, reanalysis=True) if reanalysis else frozen(args.state)
@@ -639,18 +697,24 @@ def report(args: argparse.Namespace) -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    parser.add_argument("command", choices=("prepare", "load", "measure", "report", "reanalyse"))
+    parser.add_argument("command", choices=("prepare", "load", "measure", "report", "reanalyse", "range-audit"))
     parser.add_argument("--state", type=private_path, required=True)
     parser.add_argument("--capture", type=Path)
     parser.add_argument("--canary", type=Path)
     parser.add_argument("--minutes", type=float, default=20)
     parser.add_argument("--out", type=Path)
+    parser.add_argument("--range-inventory", type=Path, help="private post-window read_feed_ranges receipt")
     args = parser.parse_args()
     args.state.mkdir(mode=0o700, parents=True, exist_ok=True)
     if args.command == "prepare":
         if not args.capture or not args.canary:
             parser.error("prepare requires --capture and --canary")
         prepare(args)
+        return
+    if args.command == "range-audit":
+        if not args.range_inventory or not args.out:
+            parser.error("range-audit requires --range-inventory and --out")
+        range_audit(args)
         return
     if args.command in {"report", "reanalyse"}:
         if not args.out:

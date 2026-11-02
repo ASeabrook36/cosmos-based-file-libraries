@@ -208,3 +208,45 @@ def test_changed_code_remains_blocked_for_execution_but_allows_named_read_only_r
     save(tmp_path / "inputs.json", {"private": "changed"})
     with pytest.raises(ValueError, match="inputs changed"):
         r1.frozen(tmp_path, reanalysis=True)
+
+
+def test_positive_fanout_survives_missing_plan_response_ranges(tmp_path, monkeypatch):
+    import json
+
+    import scripts.retrieval_r1 as r1
+
+    monkeypatch.setattr(r1, "frozen", lambda *_args, **_kwargs: ({"targetFingerprint": "fixture-target"}, {}))
+    placement = {"rangeComplete": True, "knownRanges": ["private-range-a"]}
+    for suffix in ("before", "after"):
+        save(tmp_path / f"placement-{suffix}.json", placement)
+    inventory = tmp_path / "inventory.json"
+    save(
+        inventory,
+        {
+            "targetFingerprint": "fixture-target",
+            "afterPerformanceWindow": True,
+            "rangeCount": 2,
+            "ranges": [{"opaque": 1}, {"opaque": 2}],
+        },
+    )
+    call = {
+        "kind": "hybrid",
+        "attempts": [
+            {
+                "rawResponses": [
+                    {"status": 400, "range": None, "retrieved": None},
+                    {"status": 200, "range": "private-range-a", "retrieved": 50},
+                    {"status": 200, "range": "private-range-b", "retrieved": 0},
+                ]
+            }
+        ],
+    }
+    (tmp_path / "measurements.jsonl").write_text(json.dumps(call) + "\n")
+    out = tmp_path / "range-audit.json"
+    result = r1.range_audit(SimpleNamespace(state=tmp_path, range_inventory=inventory, out=out))
+    assert result["profiles"]["hybrid"]["observedContactsOutsideVerifiedScope"]
+    assert result["profiles"]["hybrid"]["callsWithObservedBackendContactOutsideVerifiedLibraryRanges"] == 1
+    assert result["profiles"]["hybrid"]["visibleHttpStatusCounts"] == {400: 1, 200: 2}
+    assert "private-range" not in out.read_text()
+    with pytest.raises(ValueError, match="fresh output"):
+        r1.range_audit(SimpleNamespace(state=tmp_path, range_inventory=inventory, out=out))
