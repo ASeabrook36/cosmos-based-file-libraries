@@ -1,0 +1,678 @@
+{
+  "schema": "fli.retrieval-r0.manifest.v1",
+  "benchmark": "retrieval-r0-v1",
+  "baseCommit": "9738236ce9cb3e5d08624f6dd14f8714be51c0cc",
+  "frozenOn": "2026-11-01",
+  "documents": [
+    {
+      "id": "d01",
+      "fileName": "source-1.docx",
+      "sha256": "b191349dc18aca3b074b56b50e940390a049687d5de03a306b601ad496bf9f78",
+      "sizeBytes": 83381,
+      "split": "development",
+      "fileType": "docx",
+      "regression": true,
+      "provenance": {
+        "title": "Draft integrated impact assessment",
+        "publisher": "Welsh Government",
+        "url": "https://www.gov.wales/allocation-housing-and-homelessness-wales-eligibility-amendment-regulations-2026",
+        "sourceForm": "original DOCX bytes, renamed only",
+        "acquiredOn": "2026-11-01",
+        "downloadUrl": "https://www.gov.wales/sites/default/files/consultations/2026-09/draft-integrated-impact-assessment.docx"
+      },
+      "metadata": {
+        "author": "Welsh Government",
+        "tags": [
+          {
+            "key": "corpus",
+            "value": "retrieval-r0"
+          },
+          {
+            "key": "split",
+            "value": "development"
+          },
+          {
+            "key": "topic",
+            "value": "housing"
+          },
+          {
+            "key": "regression",
+            "value": "prior-docx"
+          }
+        ]
+      },
+      "sourceStructure": {
+        "topLevelParagraphs": 509,
+        "tables": 14,
+        "tableRows": 14
+      },
+      "expectedInitialGeneration": 1
+    },
+    {
+      "id": "d02",
+      "fileName": "source-2.docx",
+      "sha256": "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e",
+      "sizeBytes": 42067,
+      "split": "development",
+      "fileType": "docx",
+      "regression": true,
+      "provenance": {
+        "title": "Draft regulatory impact assessment",
+        "publisher": "Welsh Government",
+        "url": "https://www.gov.wales/allocation-housing-and-homelessness-wales-eligibility-amendment-regulations-2026",
+        "sourceForm": "original DOCX bytes, renamed only",
+        "acquiredOn": "2026-11-01",
+        "downloadUrl": "https://www.gov.wales/sites/default/files/consultations/2026-09/draft-regulatory-impact-assessment_0.docx"
+      },
+      "metadata": {
+        "author": "Welsh Government",
+        "tags": [
+          {
+            "key": "corpus",
+            "value": "retrieval-r0"
+          },
+          {
+            "key": "split",
+            "value": "development"
+          },
+          {
+            "key": "topic",
+            "value": "housing"
+          },
+          {
+            "key": "regression",
+            "value": "prior-docx"
+          }
+        ]
+      },
+      "sourceStructure": {
+        "topLevelParagraphs": 104,
+        "tables": 0,
+        "tableRows": 0
+      },
+      "expectedInitialGeneration": 1
+    },
+    {
+      "id": "d03",
+      "fileName": "heldout-planning-form.docx",
+      "sha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+      "sizeBytes": 109589,
+      "split": "development",
+      "fileType": "docx",
+      "regression": true,
+      "provenance": {
+        "title": "Part A consultation response form",
+        "publisher": "Shropshire Council",
+        "url": "https://getinvolved.shropshire.gov.uk/consultations/draft-shropshire-local-plan",
+        "sourceForm": "original DOCX bytes, renamed only",
+        "acquiredOn": "2026-11-01",
+        "downloadUrl": "https://getinvolved.shropshire.gov.uk/media/udrp5zme/part-a-consultation-response-form.docx"
+      },
+      "metadata": {
+        "author": "Shropshire Council",
+        "tags": [
+          {
+            "key": "corpus",
+            "value": "retrieval-r0"
+          },
+          {
+            "key": "split",
+            "value": "development"
+          },
+          {
+            "key": "topic",
+            "value": "planning"
+          },
+          {
+            "key": "regression",
+            "value": "prior-docx"
+          }
+        ]
+      },
+      "sourceStructure": {
+        "topLevelParagraphs": 7,
+        "tables": 1,
+        "tableRows": 23
+      },
+      "expectedInitialGeneration": 1
+    },
+    {
+      "id": "d04",
+      "fileName": "heldout-deposit-questionnaire.docx",
+      "sha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+      "sizeBytes": 25314,
+      "split": "development",
+      "fileType": "docx",
+      "regression": true,
+      "provenance": {
+        "title": "Youth friendly deposit return scheme response form",
+        "publisher": "Welsh Government",
+        "url": "https://www.gov.wales/delivering-deposit-return-scheme-drinks-containers-wales",
+        "sourceForm": "original DOCX bytes, renamed only",
+        "acquiredOn": "2026-11-01",
+        "downloadUrl": "https://www.gov.wales/sites/default/files/consultations/2025-08/youth-friendly-response-form-delivering-deposit-return-scheme-drinks-containers-wales.docx"
+      },
+      "metadata": {
+        "author": "Welsh Government",
+        "tags": [
+          {
+            "key": "corpus",
+            "value": "retrieval-r0"
+          },
+          {
+            "key": "split",
+            "value": "development"
+          },
+          {
+            "key": "topic",
+            "value": "deposit"
+          },
+          {
+            "key": "regression",
+            "value": "prior-docx"
+          }
+        ]
+      },
+      "sourceStructure": {
+        "topLevelParagraphs": 59,
+        "tables": 3,
+        "tableRows": 19
+      },
+      "expectedInitialGeneration": 1
+    },
+    {
+      "id": "d05",
+      "fileName": "taxi-responses.docx",
+      "sha256": "6d630d556448c43197bcd820241c996141e166592c140cac094de5b8014a83b1",
+      "sizeBytes": 1572543,
+      "split": "development",
+      "fileType": "docx",
+      "regression": false,
+      "provenance": {
+        "title": "Taxi and Private Hire Vehicle (Wales) Bill: Annex B compilation of consultation responses",
+        "publisher": "Welsh Government",
+        "url": "https://www.gov.wales/taxi-and-private-hire-vehicle-wales-bill-white-paper",
+        "sourceForm": "original DOCX bytes, renamed only",
+        "acquiredOn": "2026-11-01",
+        "downloadUrl": "https://www.gov.wales/sites/default/files/consultations/2023-10/taxi-bill-summary-responses-annex-b-compilation-responses-v1.docx"
+      },
+      "metadata": {
+        "author": "Welsh Government",
+        "tags": [
+          {
+            "key": "corpus",
+            "value": "retrieval-r0"
+          },
+          {
+            "key": "split",
+            "value": "development"
+          },
+          {
+            "key": "topic",
+            "value": "transport"
+          },
+          {
+            "key": "regression",
+            "value": "r0-new"
+          }
+        ]
+      },
+      "sourceStructure": {
+        "topLevelParagraphs": 10278,
+        "tables": 2625,
+        "tableRows": 5285
+      },
+      "expectedInitialGeneration": 1
+    },
+    {
+      "id": "d06",
+      "fileName": "ea-policy.docx",
+      "sha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+      "sizeBytes": 163923,
+      "split": "development",
+      "fileType": "docx",
+      "regression": false,
+      "provenance": {
+        "title": "Environment Agency enforcement and sanctions policy",
+        "publisher": "Environment Agency",
+        "url": "https://consult.environment-agency.gov.uk/environment-and-business/enforcement-and-sanctions-policy-consultation/supporting_documents/esp-main-document-for-consultation-10-august-2026docx-1",
+        "sourceForm": "original DOCX bytes, renamed only",
+        "acquiredOn": "2026-11-01",
+        "downloadUrl": "https://consult.environment-agency.gov.uk/environment-and-business/enforcement-and-sanctions-policy-consultation/supporting_documents/esp-main-document-for-consultation-10-august-2026docx-1"
+      },
+      "metadata": {
+        "author": "Environment Agency",
+        "tags": [
+          {
+            "key": "corpus",
+            "value": "retrieval-r0"
+          },
+          {
+            "key": "split",
+            "value": "development"
+          },
+          {
+            "key": "topic",
+            "value": "enforcement"
+          },
+          {
+            "key": "regression",
+            "value": "r0-new"
+          }
+        ]
+      },
+      "sourceStructure": {
+        "topLevelParagraphs": 687,
+        "tables": 0,
+        "tableRows": 0
+      },
+      "expectedInitialGeneration": 1
+    },
+    {
+      "id": "d07",
+      "fileName": "ea-annex-1.docx",
+      "sha256": "b44961e2ca8a6f17304aca249e540e2a01527ac5609034d2efccff24c0ede50f",
+      "sizeBytes": 109121,
+      "split": "development",
+      "fileType": "docx",
+      "regression": false,
+      "provenance": {
+        "title": "Annex 1: RES Act civil sanctions",
+        "publisher": "Environment Agency",
+        "url": "https://consult.environment-agency.gov.uk/environment-and-business/enforcement-and-sanctions-policy-consultation/supporting_documents/esp-annex-1-for-consultation-10-august-2026docx-1",
+        "sourceForm": "original DOCX bytes, renamed only",
+        "acquiredOn": "2026-11-01",
+        "downloadUrl": "https://consult.environment-agency.gov.uk/environment-and-business/enforcement-and-sanctions-policy-consultation/supporting_documents/esp-annex-1-for-consultation-10-august-2026docx-1"
+      },
+      "metadata": {
+        "author": "Environment Agency",
+        "tags": [
+          {
+            "key": "corpus",
+            "value": "retrieval-r0"
+          },
+          {
+            "key": "split",
+            "value": "development"
+          },
+          {
+            "key": "topic",
+            "value": "enforcement"
+          },
+          {
+            "key": "regression",
+            "value": "r0-new"
+          }
+        ]
+      },
+      "sourceStructure": {
+        "topLevelParagraphs": 261,
+        "tables": 0,
+        "tableRows": 0
+      },
+      "expectedInitialGeneration": 1
+    },
+    {
+      "id": "d08",
+      "fileName": "ea-consultation.docx",
+      "sha256": "d75d314e01abf6f15bd46672b376d7664c32c1a2f4c371b71b1ad1bb6f377317",
+      "sizeBytes": 244697,
+      "split": "development",
+      "fileType": "docx",
+      "regression": false,
+      "provenance": {
+        "title": "Consultation on changes to the enforcement and sanctions policy",
+        "publisher": "Environment Agency",
+        "url": "https://consult.environment-agency.gov.uk/environment-and-business/enforcement-and-sanctions-policy-consultation/supporting_documents/esp-consultation-document_docx",
+        "sourceForm": "original DOCX bytes, renamed only",
+        "acquiredOn": "2026-11-01",
+        "downloadUrl": "https://consult.environment-agency.gov.uk/environment-and-business/enforcement-and-sanctions-policy-consultation/supporting_documents/esp-consultation-document_docx"
+      },
+      "metadata": {
+        "author": "Environment Agency",
+        "tags": [
+          {
+            "key": "corpus",
+            "value": "retrieval-r0"
+          },
+          {
+            "key": "split",
+            "value": "development"
+          },
+          {
+            "key": "topic",
+            "value": "enforcement"
+          },
+          {
+            "key": "regression",
+            "value": "r0-new"
+          }
+        ]
+      },
+      "sourceStructure": {
+        "topLevelParagraphs": 615,
+        "tables": 1,
+        "tableRows": 7
+      },
+      "expectedInitialGeneration": 1
+    },
+    {
+      "id": "d09",
+      "fileName": "ea-annex-3.docx",
+      "sha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+      "sizeBytes": 74391,
+      "split": "heldout",
+      "fileType": "docx",
+      "regression": false,
+      "provenance": {
+        "title": "Annex 3: Mercury enforcement",
+        "publisher": "Environment Agency",
+        "url": "https://consult.environment-agency.gov.uk/environment-and-business/enforcement-and-sanctions-policy-consultation/supporting_documents/esp-annex-3-for-consultation-10-august-2026docx",
+        "sourceForm": "original DOCX bytes, renamed only",
+        "acquiredOn": "2026-11-01",
+        "downloadUrl": "https://consult.environment-agency.gov.uk/environment-and-business/enforcement-and-sanctions-policy-consultation/supporting_documents/esp-annex-3-for-consultation-10-august-2026docx"
+      },
+      "metadata": {
+        "author": "Environment Agency",
+        "tags": [
+          {
+            "key": "corpus",
+            "value": "retrieval-r0"
+          },
+          {
+            "key": "split",
+            "value": "heldout"
+          },
+          {
+            "key": "topic",
+            "value": "mercury"
+          },
+          {
+            "key": "regression",
+            "value": "r0-new"
+          }
+        ]
+      },
+      "sourceStructure": {
+        "topLevelParagraphs": 79,
+        "tables": 0,
+        "tableRows": 0
+      },
+      "expectedInitialGeneration": 1
+    },
+    {
+      "id": "d10",
+      "fileName": "ea-annex-4.docx",
+      "sha256": "0101732b2e4397b8a164e9d0184fea2afcee16d3c166ad175cfc983fdbf2057f",
+      "sizeBytes": 63762,
+      "split": "heldout",
+      "fileType": "docx",
+      "regression": false,
+      "provenance": {
+        "title": "Annex 4: Environment Act enforcement",
+        "publisher": "Environment Agency",
+        "url": "https://consult.environment-agency.gov.uk/environment-and-business/enforcement-and-sanctions-policy-consultation/supporting_documents/esp-annex-4-for-consultation-10-august-2026docx",
+        "sourceForm": "original DOCX bytes, renamed only",
+        "acquiredOn": "2026-11-01",
+        "downloadUrl": "https://consult.environment-agency.gov.uk/environment-and-business/enforcement-and-sanctions-policy-consultation/supporting_documents/esp-annex-4-for-consultation-10-august-2026docx"
+      },
+      "metadata": {
+        "author": "Environment Agency",
+        "tags": [
+          {
+            "key": "corpus",
+            "value": "retrieval-r0"
+          },
+          {
+            "key": "split",
+            "value": "heldout"
+          },
+          {
+            "key": "topic",
+            "value": "waste"
+          },
+          {
+            "key": "regression",
+            "value": "r0-new"
+          }
+        ]
+      },
+      "sourceStructure": {
+        "topLevelParagraphs": 252,
+        "tables": 3,
+        "tableRows": 22
+      },
+      "expectedInitialGeneration": 1
+    },
+    {
+      "id": "d11",
+      "fileName": "ea-annex-5.docx",
+      "sha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+      "sizeBytes": 60720,
+      "split": "heldout",
+      "fileType": "docx",
+      "regression": false,
+      "provenance": {
+        "title": "Annex 5: Water company enforcement",
+        "publisher": "Environment Agency",
+        "url": "https://consult.environment-agency.gov.uk/environment-and-business/enforcement-and-sanctions-policy-consultation/supporting_documents/esp-annex-5-for-consultation-10-august-2026docx",
+        "sourceForm": "original DOCX bytes, renamed only",
+        "acquiredOn": "2026-11-01",
+        "downloadUrl": "https://consult.environment-agency.gov.uk/environment-and-business/enforcement-and-sanctions-policy-consultation/supporting_documents/esp-annex-5-for-consultation-10-august-2026docx"
+      },
+      "metadata": {
+        "author": "Environment Agency",
+        "tags": [
+          {
+            "key": "corpus",
+            "value": "retrieval-r0"
+          },
+          {
+            "key": "split",
+            "value": "heldout"
+          },
+          {
+            "key": "topic",
+            "value": "water"
+          },
+          {
+            "key": "regression",
+            "value": "r0-new"
+          }
+        ]
+      },
+      "sourceStructure": {
+        "topLevelParagraphs": 139,
+        "tables": 2,
+        "tableRows": 12
+      },
+      "expectedInitialGeneration": 1
+    },
+    {
+      "id": "d12",
+      "fileName": "ea-response-form.docx",
+      "sha256": "fd7c3e9350bc57b7517bc06f3cbab81869f675f8cc73070f2099921185790145",
+      "sizeBytes": 142792,
+      "split": "heldout",
+      "fileType": "docx",
+      "regression": false,
+      "provenance": {
+        "title": "Enforcement and sanctions policy consultation response form",
+        "publisher": "Environment Agency",
+        "url": "https://consult.environment-agency.gov.uk/environment-and-business/enforcement-and-sanctions-policy-consultation/supporting_documents/consultation-response-formdocx",
+        "sourceForm": "original DOCX bytes, renamed only",
+        "acquiredOn": "2026-11-01",
+        "downloadUrl": "https://consult.environment-agency.gov.uk/environment-and-business/enforcement-and-sanctions-policy-consultation/supporting_documents/consultation-response-formdocx"
+      },
+      "metadata": {
+        "author": "Environment Agency",
+        "tags": [
+          {
+            "key": "corpus",
+            "value": "retrieval-r0"
+          },
+          {
+            "key": "split",
+            "value": "heldout"
+          },
+          {
+            "key": "topic",
+            "value": "enforcement"
+          },
+          {
+            "key": "regression",
+            "value": "r0-new"
+          }
+        ]
+      },
+      "sourceStructure": {
+        "topLevelParagraphs": 375,
+        "tables": 0,
+        "tableRows": 0
+      },
+      "expectedInitialGeneration": 1
+    }
+  ],
+  "splitPolicy": {
+    "developmentDocuments": 8,
+    "heldoutDocuments": 4,
+    "developmentTasks": 32,
+    "heldoutTasks": 16,
+    "heldoutTaskFamilies": [
+      "sanction-case-classification"
+    ],
+    "priorHeldoutReclassified": "The two form files previously called heldout are now development regressions. R0 heldout is four new original EA files, never executed during R0."
+  },
+  "limitations": [
+    "Purposeful public-policy DOCX pilot, not a representative sample of every enterprise domain.",
+    "Seven documents concern one enforcement consultation; cross-document dependence limits effective sample size.",
+    "The long taxi response compilation is genuine source material with repeated respondent templates and personal names; all raw content stays private.",
+    "PDF, visuals, scanned handwriting, native Office charts, spreadsheets, email attachments and other format gaps require separate capability rows.",
+    "All metadata tags are benchmark-owned inputs applied identically; they are not inferred source claims."
+  ],
+  "baseline": {
+    "sourceIds": [
+      "d01",
+      "d02",
+      "d03",
+      "d04",
+      "d06"
+    ],
+    "caseIds": [
+      "r0-01",
+      "r0-02",
+      "r0-03",
+      "r0-11",
+      "r0-17",
+      "r0-32"
+    ],
+    "repeats": 2,
+    "profileOrder": [
+      [
+        "current",
+        "custom",
+        "microsoft"
+      ],
+      [
+        "microsoft",
+        "custom",
+        "current"
+      ]
+    ],
+    "localExtractionSourceIds": [
+      "d01",
+      "d02",
+      "d03",
+      "d04",
+      "d05",
+      "d06",
+      "d07",
+      "d08"
+    ],
+    "heldoutPolicy": "No answering replay, retrieval or extraction-performance scoring on heldout during R0; source inspection for gold authoring only."
+  },
+  "tasksSha256": "997a7090c3cca5dacef760a5d0a241eeed4f90168ae427877ec70b4e51deaab5",
+  "controls": {
+    "answeringModel": {
+      "name": "gpt-6.1-sol",
+      "revision": "2026-09-29",
+      "api": "Azure OpenAI Responses v1",
+      "reasoningEffort": "medium",
+      "maxOutputTokens": 8000,
+      "maxAttempts": 3,
+      "store": false,
+      "automaticTruncation": false
+    },
+    "context": {
+      "conversationAllowancePerRun": 200000,
+      "scope": "per task session and per comparison member, not pooled",
+      "increasePolicy": "Raise identically for all members before a new comparison or label separate context-limited task; never score a capacity refusal as index quality"
+    },
+    "strategies": [
+      "current-v1",
+      "custom-structured-v1",
+      "microsoft-indexer-layout-v1"
+    ],
+    "query": {
+      "mode": "vector",
+      "top": 8,
+      "includeNeighbors": true,
+      "embeddingModel": "text-embedding-3-large",
+      "dimensions": 3072,
+      "dataType": "float16",
+      "partitionKeyPaths": [
+        "/libraryId",
+        "/documentId"
+      ],
+      "vectorShardKey": "/libraryId",
+      "index": "diskANN",
+      "tuning": "existing defaults"
+    },
+    "chunking": {
+      "current-v1": {
+        "targetTokens": 500,
+        "overlapTokens": 50,
+        "boundaryPolicy": "section/sentence"
+      },
+      "custom-structured-v1": {
+        "targetTokens": 500,
+        "overlapTokens": 50,
+        "boundaryPolicy": "original-source blocks then section/sentence"
+      },
+      "microsoft-indexer-layout-v1": {
+        "targetTokens": 5000,
+        "overlapCharacters": 200
+      },
+      "controlledComponent": {
+        "targetTokens": 500,
+        "overlap": 0,
+        "unit": "tokens and characters both zero; same pinned layout extraction"
+      }
+    },
+    "runtimePins": "Actual profile snapshots, generation/contentRevision/metadataVersion, embedding model revision, prompt/tool/source/code hashes and SDK versions are captured in each private runtime snapshot and sanitized receipt; missing values are unavailable, never inferred.",
+    "heldoutUse": "Source-authoring inspection only in R0; no answering/extraction selection on heldout; confirm finalists once in I1.",
+    "minimumUsefulImprovement": {
+      "relativeEfficiency": 0.2,
+      "observedSourceQualityRegressionAllowed": 0,
+      "interpretation": "Provisional selection gate, not statistical equivalence; retain simpler baseline when inconclusive."
+    },
+    "measurement": {
+      "estimated": [
+        "cl100k_base source and serialized evidence tokens"
+      ],
+      "measured": [
+        "elapsed times",
+        "actual source bytes and chunk distributions",
+        "provider token counters when reported",
+        "known Cosmos RU with completeness"
+      ],
+      "unavailableUnlessReported": [
+        "billed currency",
+        "connector embedding usage",
+        "workflow actions",
+        "standing host allocation",
+        "unknown failed-call usage"
+      ]
+    }
+  }
+}

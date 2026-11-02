@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "package": "R0",
+  "date": "2026-11-01",
+  "baseCommit": "9738236ce9cb3e5d08624f6dd14f8714be51c0cc",
+  "scope": "Reusable local dependency setup and validation; no cloud operations",
+  "platform": "macOS arm64",
+  "python": "3.14.3",
+  "dependencyLock": "requirements-local.lock",
+  "dependencyLockSha256": "2efc8992e6413ffbd49c686779b406b4cd329c1f33b3d4962e6ec642b158ba67",
+  "pinnedDistributions": 92,
+  "keyVersions": {
+    "azure-cosmos": "4.17.1",
+    "openai": "3.37.0",
+    "pytest": "8.4.2",
+    "ruff": "0.17.1",
+    "tiktoken": "0.14.0"
+  },
+  "checks": {
+    "freshEnvironmentInstall": "passed",
+    "repeatedSetup": "passed",
+    "pipCheck": "passed",
+    "allPinnedVersionsMatch": "passed",
+    "editableSourceAndEnvironmentIsolation": "passed in both worktrees",
+    "secondDetachedWorktreeSetup": "passed; disposable worktree removed after validation",
+    "sharedEnvironmentSymlinkRefusal": "passed before dependency installation",
+    "shellSyntax": "passed",
+    "environmentToml": "parsed; fields checked against installed desktop app schema",
+    "lint": "passed",
+    "format": "193 files already formatted at time of setup validation",
+    "referencePrivacy": "passed; no findings"
+  },
+  "tests": {
+    "existingSuite": {
+      "command": "sh scripts/dev test -q",
+      "passed": 844,
+      "failed": 0,
+      "warnings": 14,
+      "seconds": 140.0,
+      "warningCategory": "Existing Starlette TestClient timeout deprecation",
+      "scope": "Existing suite at setup time; R0 additions require final integration checks"
+    },
+    "secondWorktreeSmoke": {
+      "command": ".venv/bin/python -m pytest -q tests/test_query.py tests/test_libraries_api.py",
+      "passed": 51,
+      "failed": 0,
+      "seconds": 0.62
+    }
+  },
+  "setupFailuresAndRecovery": [
+    "Restricted network denied dependency resolution; approved dependency-only network execution succeeded.",
+    "Initial no-build-isolation editable install lacked Hatchling's dynamic editables dependency; added and pinned editables 0.6, then repeated setup successfully."
+  ],
+  "limitations": [
+    "Other Python versions and operating systems were not tested.",
+    "The exact Codex setup/action commands ran directly; automatic worktree launcher and UI button clicks were not exercised.",
+    "This is a version snapshot, not a cross-platform hash-verified dependency lock.",
+    "Optional reuse-lab PDF-fixture generation is outside the local setup extras."
+  ]
+}

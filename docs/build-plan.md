@@ -1,5 +1,17 @@
 # Build plan
 
+**R0 complete, 2026-11-01 (E64):** [benchmark and successor handoffs](retrieval-r0.md)
+freeze 12 real DOCX sources, 48 tasks, source-relative labels, development/held-out
+split, workload scenarios and fixed Sol/200k controls. The bounded five-file,
+six-task, three-profile, two-repeat cloud baseline completed 36 turns; held-out
+remains unrun. Source-based review records current 10/12 completion/support and
+custom/Microsoft 12/12, with table fidelity, source coverage and citation scores
+separate. No architecture or provider winner is selected. Reusable local setup
+passed in two worktrees; final suite: 961 tests. Scale receipts are reconciled,
+and measurement checks tightened without new scale load. Start R1, R2 and P1 from
+the final R0 commit and their explicit dependencies/gates; the remaining scale,
+full-corpus, held-out and production claims stay open.
+
 **Next-work roadmap, 2026-11-01:** follow the
 [retrieval foundations roadmap](consults/2026-11-01-retrieval-foundations-roadmap.md).
 Freeze a representative benchmark and reconcile ongoing scale measurements first;

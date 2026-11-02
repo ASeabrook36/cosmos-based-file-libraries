@@ -2,6 +2,11 @@
 
 *Version 0.20, 2026-10-29. Modular ingestion slice (§7.9; E60–E61), with isolated cloud validation. Version 0.19, 2026-10-27. Compact REST evidence/attachments (§6.8) implemented and locally validated. Working name. Phases 0–3 passed on live Azure (`build-plan.md`). Adaptive document retrieval (§6.6) is implemented and its live smoke check passed; human answer-quality and broader routing evaluation remain pending. Images (Phase 3B, including PDF vector charts) are implemented; see `image-retrieval.md` for validation and limitations. Phases 4–5 remain to build. Every measured design choice is traced in `evidence.md`.*
 
+The [R0 evaluation contract](retrieval-r0.md) (E64) freezes representative pilot
+inputs, source-based scoring and matched diagnostic controls. It changes no
+application architecture, profile recipe, query policy, permission or lifecycle
+contract in this specification. Production and foundation gates remain open.
+
 ## 1. Scope
 
 The File Library Index (the **index**) replaces Azure AI Search as the store and search engine behind the platform's file libraries. It:

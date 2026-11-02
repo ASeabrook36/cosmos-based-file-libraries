@@ -1,0 +1,4779 @@
+[
+  {
+    "case": "r0-01",
+    "split": "development",
+    "family": "precise-fact",
+    "question": "Using the assessments, when does the temporary general crisis provision expire, and how is the six-month application deadline calculated when advice and evacuation begin on different dates? Cite the evidence.",
+    "sourceFacts": [
+      {
+        "source": "source-1.docx",
+        "sourceId": "d01",
+        "regions": [
+          {
+            "id": "d01:p28",
+            "kind": "paragraph",
+            "index": 28,
+            "sourceSha256": "b191349dc18aca3b074b56b50e940390a049687d5de03a306b601ad496bf9f78",
+            "normalizedTextSha256": "a176fb91f13005141e33bf54d87902c286d363aed9276b67338d2382f53e5120",
+            "weight": 1
+          },
+          {
+            "id": "d01:p30",
+            "kind": "paragraph",
+            "index": 30,
+            "sourceSha256": "b191349dc18aca3b074b56b50e940390a049687d5de03a306b601ad496bf9f78",
+            "normalizedTextSha256": "bbb901199a0910dc7bd5cb0f08f8629ea39ed924f51838cbdb1242a34db5c282",
+            "weight": 1
+          }
+        ],
+        "facts": [
+          "30 March 2027",
+          "6 months from first HMG advice or first evacuation day, whichever is later"
+        ]
+      }
+    ],
+    "successCriteria": [
+      "State expiry on 30 March 2027 and six months from the later of first advice / first evacuation day. Cite original source-1 text for later-date rule.",
+      "Do not claim the rule is absent after reading only source-2."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "source-1.docx"
+      ]
+    },
+    "regressionCase": "deadline"
+  },
+  {
+    "case": "r0-02",
+    "split": "development",
+    "family": "cross-file-comparison",
+    "question": "Compare making the general crisis waiver permanent with doing nothing, using both assessments. Explain the practical consequences for applicants and local authorities and cite each file.",
+    "sourceFacts": [
+      {
+        "source": "source-2.docx",
+        "sourceId": "d02",
+        "regions": [
+          {
+            "id": "d02:p10",
+            "kind": "paragraph",
+            "index": 10,
+            "sourceSha256": "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e",
+            "normalizedTextSha256": "0c7e13ee8e92e7f6ad55dd572ddac3f61c5273da7e3cc72ce9d7d75a70834f9c",
+            "weight": 1
+          },
+          {
+            "id": "d02:p26",
+            "kind": "paragraph",
+            "index": 26,
+            "sourceSha256": "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e",
+            "normalizedTextSha256": "0f09d13d8d48b469ee48b5a996137a6a8df0103df8e0265a407c7a510e459cc6",
+            "weight": 1
+          },
+          {
+            "id": "d02:p38",
+            "kind": "paragraph",
+            "index": 38,
+            "sourceSha256": "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e",
+            "normalizedTextSha256": "de31a110afdd488768f0ec5013e2e7b1ca62485188b4364b6933bf52db80b42f",
+            "weight": 1
+          },
+          {
+            "id": "d02:p73",
+            "kind": "paragraph",
+            "index": 73,
+            "sourceSha256": "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e",
+            "normalizedTextSha256": "748b7bf4297ba0781ff16ad526a7e20278cfd51f86f3f8154954a2b4f2c082be",
+            "weight": 1
+          }
+        ],
+        "facts": [
+          "permanent standing waiver avoids urgent crisis-specific regulations",
+          "do nothing sunsets 30 March 2027",
+          "delay, uncertainty, inconsistent decisions and homelessness risks"
+        ]
+      },
+      {
+        "source": "source-1.docx",
+        "sourceId": "d01",
+        "regions": [
+          {
+            "id": "d01:p32",
+            "kind": "paragraph",
+            "index": 32,
+            "sourceSha256": "b191349dc18aca3b074b56b50e940390a049687d5de03a306b601ad496bf9f78",
+            "normalizedTextSha256": "190d5f9ebe8f61e4e0df9be585ab43a28623b3c30c02959348d833794e88be42",
+            "weight": 1
+          },
+          {
+            "id": "d01:p40",
+            "kind": "paragraph",
+            "index": 40,
+            "sourceSha256": "b191349dc18aca3b074b56b50e940390a049687d5de03a306b601ad496bf9f78",
+            "normalizedTextSha256": "eea987d3aeaac4bb38755e63a3fdc80e613ae0e4bdbe3f7381200f6bd0c34b9f",
+            "weight": 1
+          },
+          {
+            "id": "d01:p63",
+            "kind": "paragraph",
+            "index": 63,
+            "sourceSha256": "b191349dc18aca3b074b56b50e940390a049687d5de03a306b601ad496bf9f78",
+            "normalizedTextSha256": "62de613f3e9ced2d72d3a8e18e059ca7f696b70f788639e57faf60f135669407",
+            "weight": 1
+          },
+          {
+            "id": "d01:p75",
+            "kind": "paragraph",
+            "index": 75,
+            "sourceSha256": "b191349dc18aca3b074b56b50e940390a049687d5de03a306b601ad496bf9f78",
+            "normalizedTextSha256": "dd1f9632c59dbc77faf5517388dc54919790f0fd7f7e361c1ccda0c433e7f9a5",
+            "weight": 1
+          }
+        ],
+        "facts": [
+          "Permanent general crisis provision proposed to replace repeated urgent crisis-specific amendments.",
+          "Earlier intervention, planning and fewer delays may help eligible applicants and local authorities; increased demand can still cause short-term operational pressure."
+        ]
+      }
+    ],
+    "successCriteria": [
+      "Use original body evidence from both files, citing each. Compare standing framework and timely assistance with sunset and crisis-specific urgent regulations.",
+      "Cover applicant uncertainty/delay and local-authority planning/capacity pressure. A catalogue description is insufficient evidence."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "source-2.docx",
+        "source-1.docx"
+      ]
+    },
+    "regressionCase": "compare-options"
+  },
+  {
+    "case": "r0-03",
+    "split": "development",
+    "family": "precise-fact",
+    "question": "In source-2.docx, does “no direct Welsh Government budget financial implications” mean the proposal has no costs? Explain the distinction and give the two reported per-applicant prevention-duty costs, with citations.",
+    "sourceFacts": [
+      {
+        "source": "source-2.docx",
+        "sourceId": "d02",
+        "regions": [
+          {
+            "id": "d02:p49",
+            "kind": "paragraph",
+            "index": 49,
+            "sourceSha256": "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e",
+            "normalizedTextSha256": "22ec65557a8305988a921393c27fcbf52e007c16cd7341ff5b5f7926f4f653cf",
+            "weight": 1
+          },
+          {
+            "id": "d02:p57",
+            "kind": "paragraph",
+            "index": 57,
+            "sourceSha256": "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e",
+            "normalizedTextSha256": "52ddd820abe6b506bec0220ed19c1a616842d795f6bacf5b0de2ce592ee391d0",
+            "weight": 1
+          }
+        ],
+        "facts": [
+          "No direct Welsh Government budget financial implications; additional local authority costs likely if returnees apply.",
+          "£1,320.31 per applicant; £1,716 including staff on-costs."
+        ]
+      }
+    ],
+    "successCriteria": [
+      "Distinguish central-government statement from local-authority costs. Report both amounts and their different coverage; do not infer a total policy cost."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "source-2.docx"
+      ]
+    },
+    "regressionCase": "cost-distinction"
+  },
+  {
+    "case": "r0-04",
+    "split": "development",
+    "family": "observed-versus-forecast",
+    "question": "According to source-2.docx, how many people were in temporary accommodation on 30 June 2026, and exactly how many future crisis returnees are forecast to seek help? Keep observed counts and forecasts distinct and cite the source.",
+    "sourceFacts": [
+      {
+        "source": "source-2.docx",
+        "sourceId": "d02",
+        "regions": [
+          {
+            "id": "d02:p51",
+            "kind": "paragraph",
+            "index": 51,
+            "sourceSha256": "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e",
+            "normalizedTextSha256": "45943fc775dae4f0a12166768aff5d3103a2d8c430fd522fb258224a50743074",
+            "weight": 1
+          },
+          {
+            "id": "d02:p65",
+            "kind": "paragraph",
+            "index": 65,
+            "sourceSha256": "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e",
+            "normalizedTextSha256": "89009cc2989e269a3223c064660398cc64588bc5b77349baacb31e81f67ecb16",
+            "weight": 1
+          }
+        ],
+        "facts": [
+          "10,339 individuals housed in temporary accommodation on 30 June 2026.",
+          "The number who may return to Wales in future crises cannot be forecast in this assessment."
+        ]
+      }
+    ],
+    "successCriteria": [
+      "Report 10,339 with observation date and population. Explicitly say future-returnee number cannot be forecast; never use 10,339 as a returnee forecast."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "source-2.docx"
+      ]
+    },
+    "regressionCase": "counts-versus-forecasts"
+  },
+  {
+    "case": "r0-05",
+    "split": "development",
+    "family": "explicit-unavailable",
+    "question": "What exact total does source-2.docx give for people or households on the Common Housing Registers? Cite the evidence for whether that figure is available.",
+    "sourceFacts": [
+      {
+        "source": "source-2.docx",
+        "sourceId": "d02",
+        "regions": [
+          {
+            "id": "d02:p61",
+            "kind": "paragraph",
+            "index": 61,
+            "sourceSha256": "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e",
+            "normalizedTextSha256": "ae24e993d7db74c8deab83a2de479d9655a584d013c38a67461116ff1e9b416e",
+            "weight": 1
+          }
+        ],
+        "facts": [
+          "Available data cannot provide total people/households on Common Housing Registers or estimate total social housing demand."
+        ]
+      }
+    ],
+    "successCriteria": [
+      "Explicitly report unavailable data and cite the relevant source body. Do not substitute temporary-accommodation population or fabricate a number."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "source-2.docx"
+      ]
+    },
+    "regressionCase": "missing-register-total"
+  },
+  {
+    "case": "r0-06",
+    "split": "development",
+    "family": "long-document-exception",
+    "question": "What direct participatory work with children and young people was undertaken for this proposal, and why? Use source-1.docx rather than inferring the answer from the document title.",
+    "sourceFacts": [
+      {
+        "source": "source-1.docx",
+        "sourceId": "d01",
+        "regions": [
+          {
+            "id": "d01:p447",
+            "kind": "paragraph",
+            "index": 447,
+            "sourceSha256": "b191349dc18aca3b074b56b50e940390a049687d5de03a306b601ad496bf9f78",
+            "normalizedTextSha256": "bbc36e670a16c0076c2ef8de9b1b73642751d07a33c2f2921a019b38f42d6171",
+            "weight": 1
+          },
+          {
+            "id": "d01:p502",
+            "kind": "paragraph",
+            "index": 502,
+            "sourceSha256": "b191349dc18aca3b074b56b50e940390a049687d5de03a306b601ad496bf9f78",
+            "normalizedTextSha256": "f27bd4e8e05265d8bc7669f2eb4a20f16046b0abef8153b08fc3d8da33ff78c8",
+            "weight": 1
+          }
+        ],
+        "facts": [
+          "No direct participatory work with children/young people undertaken.",
+          "Future crisis returnees cannot be identified or engaged in advance. Existing research, official data, local authorities and consultation inform the assessment."
+        ]
+      }
+    ],
+    "successCriteria": [
+      "State no direct participation and explain the future-unidentifiable-group reason. Do not equate local authority engagement with direct child participation."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "source-1.docx"
+      ]
+    },
+    "regressionCase": "child-participation"
+  },
+  {
+    "case": "r0-07",
+    "split": "development",
+    "family": "cross-file-comparison",
+    "question": "Using both assessments, explain who will monitor adverse impacts after implementation and which organisations can report problems. Cite original text from each file.",
+    "sourceFacts": [
+      {
+        "source": "source-1.docx",
+        "sourceId": "d01",
+        "regions": [
+          {
+            "id": "d01:p391",
+            "kind": "paragraph",
+            "index": 391,
+            "sourceSha256": "b191349dc18aca3b074b56b50e940390a049687d5de03a306b601ad496bf9f78",
+            "normalizedTextSha256": "b0bf1afc9567483cfe8c8ba00abdfebc00079da7d67215fa70a2ad92432a3035",
+            "weight": 1
+          },
+          {
+            "id": "d01:p507",
+            "kind": "paragraph",
+            "index": 507,
+            "sourceSha256": "b191349dc18aca3b074b56b50e940390a049687d5de03a306b601ad496bf9f78",
+            "normalizedTextSha256": "b7eef10dfa347157000be4fa67ef9839adc02532154a1bca8767cc427e28c3c6",
+            "weight": 1
+          }
+        ],
+        "facts": [
+          "Welsh Government officials monitor adverse impacts reported by local authorities or Third Sector organisations."
+        ]
+      },
+      {
+        "source": "source-2.docx",
+        "sourceId": "d02",
+        "regions": [
+          {
+            "id": "d02:p101",
+            "kind": "paragraph",
+            "index": 101,
+            "sourceSha256": "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e",
+            "normalizedTextSha256": "3391fb51ecbe7606f0fa0938c3fdec5b1acd2ed591b178defabc79b493d1567a",
+            "weight": 1
+          }
+        ],
+        "facts": [
+          "Welsh Government officials monitor adverse impacts reported by local authorities or Third Sector organisations; necessary adjustments considered."
+        ]
+      }
+    ],
+    "successCriteria": [
+      "Use body evidence from both files for Welsh Government officials, local authorities and Third Sector reporters. Do not invent a fixed annual review frequency."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "source-1.docx",
+        "source-2.docx"
+      ]
+    },
+    "regressionCase": "both-file-monitoring"
+  },
+  {
+    "case": "r0-08",
+    "split": "development",
+    "family": "false-premise",
+    "question": "These assessments mean every person arriving from overseas automatically gets housing assistance, correct? Explain what the waiver actually changes and the eligibility limits, with source citations.",
+    "sourceFacts": [
+      {
+        "source": "source-1.docx",
+        "sourceId": "d01",
+        "regions": [
+          {
+            "id": "d01:p30",
+            "kind": "paragraph",
+            "index": 30,
+            "sourceSha256": "b191349dc18aca3b074b56b50e940390a049687d5de03a306b601ad496bf9f78",
+            "normalizedTextSha256": "bbb901199a0910dc7bd5cb0f08f8629ea39ed924f51838cbdb1242a34db5c282",
+            "weight": 1
+          }
+        ],
+        "facts": [
+          "Eligible British nationals/family members and specified leave-to-remain classes, no NRPF or ongoing maintenance undertaking, crisis advice/evacuation trigger, six-month window."
+        ]
+      },
+      {
+        "source": "source-2.docx",
+        "sourceId": "d02",
+        "regions": [
+          {
+            "id": "d02:p24",
+            "kind": "paragraph",
+            "index": 24,
+            "sourceSha256": "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e",
+            "normalizedTextSha256": "0c847942ff3da2e3e18854ca4d8557d23d4fef04d4cce1ab2d828fd1162d1b46",
+            "weight": 1
+          },
+          {
+            "id": "d02:p81",
+            "kind": "paragraph",
+            "index": 81,
+            "sourceSha256": "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e",
+            "normalizedTextSha256": "f8e93865b5e8df7e08d14d4521e0ccbdeb2a6ebbc100c64d12fec1e942c2742b",
+            "weight": 1
+          }
+        ],
+        "facts": [
+          "Waiver removes habitual-residence barrier only in defined crisis circumstances for otherwise eligible applicants; it is not unconditional entitlement."
+        ]
+      }
+    ],
+    "successCriteria": [
+      "Reject universal/automatic entitlement. Explain habitual residence, otherwise eligible classes, specified trigger and conditions. At least one source may support the answer; both-file reading not mandatory."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "source-1.docx",
+        "source-2.docx"
+      ]
+    },
+    "regressionCase": "eligibility-false-premise"
+  },
+  {
+    "case": "r0-09",
+    "split": "development",
+    "family": "precise-fact",
+    "question": "In source-2.docx, when is consultation taking place, how long does it last, and when are local authorities being engaged? Cite the assessment.",
+    "sourceFacts": [
+      {
+        "source": "source-2.docx",
+        "sourceId": "d02",
+        "regions": [
+          {
+            "id": "d02:p59",
+            "kind": "paragraph",
+            "index": 59,
+            "sourceSha256": "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e",
+            "normalizedTextSha256": "b617731167304b4425360b9d56fe4e0b61ed61df448a2505a68390f45971b699",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "Turn 1 gives 12 weeks, September–December 2026 and local authority engagement October 2026, with source support."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "source-2.docx"
+      ]
+    },
+    "regressionCase": "consultation-followup-turn1"
+  },
+  {
+    "case": "r0-10",
+    "split": "development",
+    "family": "false-premise",
+    "question": "Does source-2.docx say its temporary provision ends at consultation closing and the permanent waiver automatically starts then? Explain the dates and proposal status, citing the source.",
+    "sourceFacts": [
+      {
+        "source": "source-2.docx",
+        "sourceId": "d02",
+        "regions": [
+          {
+            "id": "d02:p10",
+            "kind": "paragraph",
+            "index": 10,
+            "sourceSha256": "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e",
+            "normalizedTextSha256": "0c7e13ee8e92e7f6ad55dd572ddac3f61c5273da7e3cc72ce9d7d75a70834f9c",
+            "weight": 1
+          },
+          {
+            "id": "d02:p12",
+            "kind": "paragraph",
+            "index": 12,
+            "sourceSha256": "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e",
+            "normalizedTextSha256": "0e0b59cf0c567d962e5204aa4ae2c92023bcb6b5c02c0294f3a2351d72a4fbf2",
+            "weight": 1
+          },
+          {
+            "id": "d02:p59",
+            "kind": "paragraph",
+            "index": 59,
+            "sourceSha256": "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e",
+            "normalizedTextSha256": "b617731167304b4425360b9d56fe4e0b61ed61df448a2505a68390f45971b699",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "Separate consultation from statutory expiry and the proposed change; neither consultation closing nor the source itself enacts permanence."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "source-2.docx"
+      ]
+    },
+    "regressionCase": "consultation-followup-turn2",
+    "adaptation": "Independent question; original history-sharing regression remains in the prior pack."
+  },
+  {
+    "case": "r0-11",
+    "split": "development",
+    "family": "cross-file-table-comparison",
+    "question": "Compare these two forms using original source evidence. What personal/contact fields does heldout-planning-form.docx request, and what five community-benefit options does heldout-deposit-questionnaire.docx offer? Are respondent details filled in, or community-benefit choices ticked, in their text/table cells? Cite each file and distinguish blank response fields from the council's printed contact details.",
+    "sourceFacts": [
+      {
+        "source": "heldout-planning-form.docx",
+        "sourceId": "d03",
+        "regions": [
+          {
+            "id": "d03:p5",
+            "kind": "paragraph",
+            "index": 5,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "76d490b6d1db9b6c7bee8207f4c3664e15b61c5d5ce389cd33cec8f027587077",
+            "weight": 1
+          },
+          {
+            "id": "d03:p6",
+            "kind": "paragraph",
+            "index": 6,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "11f743486c89d24b3f554e70af7cb792d9579649947403e2b369d8d64fe4b6d2",
+            "weight": 1
+          },
+          {
+            "id": "d03:t0:r2:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 2,
+            "column": 0,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "9f0166ed79867d6c9f251319a2e28ef276510fbdc4413e45af6ed050ae015b03",
+            "weight": 1
+          },
+          {
+            "id": "d03:t0:r2:c2",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 2,
+            "column": 2,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "a188b4c5ab468b208f834946820df5fa5f87f8e1c31829d9793a623ea31d63fc",
+            "weight": 1
+          },
+          {
+            "id": "d03:t0:r6:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 6,
+            "column": 0,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d03:t0:r6:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 6,
+            "column": 1,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "3a886778636502faf13f7b04a94aa30d988928674e740c25320dbc45a9f58983",
+            "weight": 1
+          },
+          {
+            "id": "d03:t0:r6:c3",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 6,
+            "column": 3,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d03:t0:r6:c4",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 6,
+            "column": 4,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "45a5fc6b4c0ce2a460c90d2dd4fb5b84d0d6088f31e8fbe3a7702148b443eca9",
+            "weight": 1
+          },
+          {
+            "id": "d03:t0:r8:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 8,
+            "column": 0,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "7e8cd2056da73a7fefb6cd91f4e5d199d08d9058c517b9a2476b1b520324d674",
+            "weight": 1
+          },
+          {
+            "id": "d03:t0:r8:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 8,
+            "column": 1,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d03:t0:r8:c2",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 8,
+            "column": 2,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d03:t0:r10:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 10,
+            "column": 0,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "96ce6e6193a047260f5c32aa416d88b6e8959111f43f98457af9cc009a0907ad",
+            "weight": 1
+          },
+          {
+            "id": "d03:t0:r10:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 10,
+            "column": 1,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d03:t0:r10:c3",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 10,
+            "column": 3,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d03:t0:r10:c4",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 10,
+            "column": 4,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d03:t0:r12:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 12,
+            "column": 0,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "f55563b386a39dc3093ff86421fb665db03b571c36f17577d648da5d2a7cc245",
+            "weight": 1
+          },
+          {
+            "id": "d03:t0:r12:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 12,
+            "column": 1,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d03:t0:r12:c3",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 12,
+            "column": 3,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d03:t0:r12:c4",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 12,
+            "column": 4,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d03:t0:r14:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 14,
+            "column": 0,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "40a145b2e9e5b7affdb519827edaf4d58f40dbd67cd0e8c4c7fbb7e2a2ff95c2",
+            "weight": 1
+          },
+          {
+            "id": "d03:t0:r14:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 14,
+            "column": 1,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d03:t0:r14:c3",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 14,
+            "column": 3,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d03:t0:r14:c4",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 14,
+            "column": 4,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d03:t0:r16:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 16,
+            "column": 0,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "56ef8f20955f256423d328f65b62106005252551db25d660031887e421cb4684",
+            "weight": 1
+          },
+          {
+            "id": "d03:t0:r16:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 16,
+            "column": 1,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d03:t0:r16:c2",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 16,
+            "column": 2,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d03:t0:r18:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 18,
+            "column": 0,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "8a660f6c9c5453e5dd54324e62c3cf79e318eade673d768440496e27075ec0dc",
+            "weight": 1
+          },
+          {
+            "id": "d03:t0:r18:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 18,
+            "column": 1,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d03:t0:r18:c3",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 18,
+            "column": 3,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d03:t0:r18:c4",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 18,
+            "column": 4,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d03:t0:r20:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 20,
+            "column": 0,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "9417af9d6487c7e11a61edf9cb0be318c8fc74e54d4fa65f2029a8aced8946e4",
+            "weight": 1
+          },
+          {
+            "id": "d03:t0:r20:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 20,
+            "column": 1,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d03:t0:r20:c3",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 20,
+            "column": 3,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d03:t0:r20:c4",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 20,
+            "column": 4,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d03:t0:r22:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 22,
+            "column": 0,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "e0cf2bf1d4ab81d6cfce922d72f7f754004acaa6383ed46cb5dc0d4a6a6b2b39",
+            "weight": 1
+          },
+          {
+            "id": "d03:t0:r22:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 22,
+            "column": 1,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          }
+        ],
+        "facts": [
+          "Personal Details and Agent's Details (if applicable) are column headings. The field labels are Title, First Name, Last Name, Organisation (if applicable), Address, Post Code, Telephone Number, and E-mail Address.",
+          "Respondent/agent response cells in those rows are blank or non-breaking whitespace; there is no completed respondent identity or contact entry in those cells.",
+          "The printed return address belongs to Planning Policy, Shropshire Council; it is not a respondent's answer. The form requires name and contact details and asks agents to provide client name and organisation if applicable."
+        ],
+        "relationships": [
+          {
+            "kind": "original-table-grid",
+            "table": 0,
+            "meaning": "Row labels and column headers jointly determine cell meaning; blank response cells are not choices. Merged duplicate cells are one assertion."
+          }
+        ]
+      },
+      {
+        "source": "heldout-deposit-questionnaire.docx",
+        "sourceId": "d04",
+        "regions": [
+          {
+            "id": "d04:p47",
+            "kind": "paragraph",
+            "index": 47,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "2ea31a6c46ffbae83ce448d29adfaf1c7bf4a69382f9a3f2fad3b12fed7b698b",
+            "weight": 1
+          },
+          {
+            "id": "d04:p48",
+            "kind": "paragraph",
+            "index": 48,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e8f31f703ce709f2126285047bc2c5639e1aecc05927bc313157efe9b796426c",
+            "weight": 1
+          },
+          {
+            "id": "d04:t2:r0:c0",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 0,
+            "column": 0,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "f4020cafef24bfa9f477c651fb8b492ccb9277a7e721c2c413a4faa27df9102f",
+            "weight": 1
+          },
+          {
+            "id": "d04:t2:r0:c1",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 0,
+            "column": 1,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "1a3e800996442bdfdd34a0729281c9aa55fbea0682c7209f8ed82c7f430ff361",
+            "weight": 1
+          },
+          {
+            "id": "d04:t2:r0:c2",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 0,
+            "column": 2,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "44f5e3fbec57be75ebfb2e42caf7f5ee1542f84748a0380b6f20238c4a257e1b",
+            "weight": 1
+          },
+          {
+            "id": "d04:t2:r1:c0",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 1,
+            "column": 0,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "36ca668149496b17d9f79e657a2a1fc1d014921664ca11864dc878515cca4ee0",
+            "weight": 1
+          },
+          {
+            "id": "d04:t2:r1:c1",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 1,
+            "column": 1,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t2:r1:c2",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 1,
+            "column": 2,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t2:r2:c0",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 2,
+            "column": 0,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "05e2cb5ad2afbf8670da80c8342ebabf38454736346da8ef31459562d120cab0",
+            "weight": 1
+          },
+          {
+            "id": "d04:t2:r2:c1",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 2,
+            "column": 1,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t2:r2:c2",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 2,
+            "column": 2,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t2:r3:c0",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 3,
+            "column": 0,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "2d9fd7e46f7bd3877c1262e8a94d2e9165d5940ab3f569b6336ebe77160f327c",
+            "weight": 1
+          },
+          {
+            "id": "d04:t2:r3:c1",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 3,
+            "column": 1,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t2:r3:c2",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 3,
+            "column": 2,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t2:r4:c0",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 4,
+            "column": 0,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "f9eb6c43ba049af154dfce258514d736c99a76e9ce91ee350200d168a2c5e787",
+            "weight": 1
+          },
+          {
+            "id": "d04:t2:r4:c1",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 4,
+            "column": 1,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t2:r4:c2",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 4,
+            "column": 2,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t2:r5:c0",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 5,
+            "column": 0,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "2e5969fb97ca93a7639b13ec1e98c5ce61dcf582bbd7d3cf4b693c3d8c7e1841",
+            "weight": 1
+          },
+          {
+            "id": "d04:t2:r5:c1",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 5,
+            "column": 1,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t2:r5:c2",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 5,
+            "column": 2,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          }
+        ],
+        "facts": [
+          "Support community events where large numbers of containers are collected, and deposits are claimed (such as organised litter picks).",
+          "Create local jobs and training opportunities.",
+          "Run educational workshops for schools and communities.",
+          "Integrate the DRS with other projects that support a circular economy.",
+          "Arrange local groups to visit DRS facilities such as washing facilities.",
+          "The Tick box and Comment cells for all five community-benefit rows are blank or non-breaking whitespace; no community-benefit choice or comment is completed there."
+        ],
+        "relationships": [
+          {
+            "kind": "original-table-grid",
+            "table": 2,
+            "meaning": "Row labels and column headers jointly determine cell meaning; blank response cells are not choices. Merged duplicate cells are one assertion."
+          }
+        ]
+      }
+    ],
+    "successCriteria": [
+      "Cover all eight planning field labels and all five community-benefit options, with relevant original evidence from both files.",
+      "Identify the specified response cells as blank. Do not infer respondent identity from the council stationery or return address; do not claim the questionnaire records support for every listed benefit.",
+      "Limit absence conclusions to the inspected fields/tables. If extraction does not preserve cell emptiness, disclose that limitation rather than claiming complete source coverage."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "heldout-planning-form.docx",
+        "heldout-deposit-questionnaire.docx"
+      ]
+    },
+    "regressionCase": "heldout-form-comparison",
+    "relationshipReviewRequired": true
+  },
+  {
+    "case": "r0-12",
+    "split": "development",
+    "family": "table-choice-matrix",
+    "question": "In heldout-deposit-questionnaire.docx, which years and percentage options appear in the table headed 'Targets for the minimum proportion (%) of drinks containers collected for reuse'? Does that table specify an adopted percentage for each year or contain completed choices? Cite its evidence and distinguish proposed options from adopted targets.",
+    "sourceFacts": [
+      {
+        "source": "heldout-deposit-questionnaire.docx",
+        "sourceId": "d04",
+        "regions": [
+          {
+            "id": "d04:p9",
+            "kind": "paragraph",
+            "index": 9,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "044d25a34d3cdf3be577f8786600ffd2d92dc7ade97a41368d09cc4d2d8c4faa",
+            "weight": 1
+          },
+          {
+            "id": "d04:t0:r0:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 0,
+            "column": 0,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "9987976bf19880241b575f7e4b1c036dd4eb2e8a90a7fb7a2aca86dfa460c793",
+            "weight": 1
+          },
+          {
+            "id": "d04:t0:r0:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 0,
+            "column": 1,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "eeb8f7130e695acde04b530af42f268665544c56e6db628ba53cb91f38a697dc",
+            "weight": 1
+          },
+          {
+            "id": "d04:t0:r0:c2",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 0,
+            "column": 2,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t0:r0:c3",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 0,
+            "column": 3,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t0:r1:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 1,
+            "column": 0,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t0:r1:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 1,
+            "column": 1,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "d740238f374425d95f71dcd05dd1486800f0887790b992b74ef41fbb5c8e1167",
+            "weight": 1
+          },
+          {
+            "id": "d04:t0:r1:c2",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 1,
+            "column": 2,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "c7c1b4da9b9f745dff12aca04605cb7fb33baf4ba84c5b473b16ef1ed16f9c25",
+            "weight": 1
+          },
+          {
+            "id": "d04:t0:r1:c3",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 1,
+            "column": 3,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "df34d853f2f2f1f14b92359f695426dcefc150b3f3a886c05c045b37baa2ee99",
+            "weight": 1
+          },
+          {
+            "id": "d04:t0:r2:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 2,
+            "column": 0,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "d1ce334b6a7f364b1e97ebb9e661f6d4cf6e20aa741aba4b8f198417aea18326",
+            "weight": 1
+          },
+          {
+            "id": "d04:t0:r2:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 2,
+            "column": 1,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t0:r2:c2",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 2,
+            "column": 2,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t0:r2:c3",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 2,
+            "column": 3,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t0:r3:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 3,
+            "column": 0,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "3ccce1f4da948035fd36a399576a50a5248ddc02dd008f3c3668df57c0aa75b5",
+            "weight": 1
+          },
+          {
+            "id": "d04:t0:r3:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 3,
+            "column": 1,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t0:r3:c2",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 3,
+            "column": 2,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t0:r3:c3",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 3,
+            "column": 3,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t0:r4:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 4,
+            "column": 0,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "dc934fe30a942bca07b4c288b4b3e48aa79a717d6db2b586553cd2416dc8b9b8",
+            "weight": 1
+          },
+          {
+            "id": "d04:t0:r4:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 4,
+            "column": 1,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t0:r4:c2",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 4,
+            "column": 2,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t0:r4:c3",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 4,
+            "column": 3,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t0:r5:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 5,
+            "column": 0,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "aa57740dea175294695951dfdc3a6b799de0c698d41c96ae16c5dc47e3976b86",
+            "weight": 1
+          },
+          {
+            "id": "d04:t0:r5:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 5,
+            "column": 1,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t0:r5:c2",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 5,
+            "column": 2,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t0:r5:c3",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 5,
+            "column": 3,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t0:r6:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 6,
+            "column": 0,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "b322f5a716ebd783d166094ab1fab818ca782f1c61ab0dd2bff11af2f743bde9",
+            "weight": 1
+          },
+          {
+            "id": "d04:t0:r6:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 6,
+            "column": 1,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t0:r6:c2",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 6,
+            "column": 2,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t0:r6:c3",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 6,
+            "column": 3,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t0:r7:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 7,
+            "column": 0,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "28fdae8deae31d6eafd18b70d878f6d8a3136f267ce273777c089a42ac590438",
+            "weight": 1
+          },
+          {
+            "id": "d04:t0:r7:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 7,
+            "column": 1,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t0:r7:c2",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 7,
+            "column": 2,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t0:r7:c3",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 7,
+            "column": 3,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t0:r8:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 8,
+            "column": 0,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "2848120f8f1a722f3dcfaec83f78119f0f95af8fd7b7b6d643daa7b545cb9538",
+            "weight": 1
+          },
+          {
+            "id": "d04:t0:r8:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 8,
+            "column": 1,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t0:r8:c2",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 8,
+            "column": 2,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t0:r8:c3",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 8,
+            "column": 3,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t0:r9:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 9,
+            "column": 0,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "eef767174326c7094b996a0c6c33997b3b08681f2eb357194c55b13f11097c77",
+            "weight": 1
+          },
+          {
+            "id": "d04:t0:r9:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 9,
+            "column": 1,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t0:r9:c2",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 9,
+            "column": 2,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d04:t0:r9:c3",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 9,
+            "column": 3,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          }
+        ],
+        "facts": [
+          "Paragraph 9 asks whether reuse targets should be set for DMOs in 2031, 2035, and 2040; it is a consultation question.",
+          "Table 0 row 1 has three target-year columns: 2031, 2035, 2040.",
+          "Table 0 rows 2-7 list percentage options: 5%, 10%, 20%, 30%, 40%, 50%. Rows 8-9 offer Other (free text) and Don't know.",
+          "Every year-choice intersection in rows 2-9 is blank or non-breaking whitespace. No chosen or adopted percentage-per-year mapping appears in this table."
+        ],
+        "relationships": [
+          {
+            "kind": "original-table-grid",
+            "table": 0,
+            "meaning": "Row labels and column headers jointly determine cell meaning; blank response cells are not choices. Merged duplicate cells are one assertion."
+          }
+        ]
+      }
+    ],
+    "successCriteria": [
+      "List all three years and all six percentage options, plus Other/free text and Don't know.",
+      "Explain that the table is an uncompleted consultation choice matrix. Do not map successive percentages onto successive years, treat all options as targets, or claim adopted policy.",
+      "Support the table-specific absence of selections with the complete relevant matrix. If provider extraction loses empty cells or column relationships, state that limitation instead of presenting an unsupported complete-table read."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "heldout-deposit-questionnaire.docx"
+      ]
+    },
+    "regressionCase": "heldout-target-matrix",
+    "relationshipReviewRequired": true
+  },
+  {
+    "case": "r0-13",
+    "split": "development",
+    "family": "precise-fact",
+    "question": "What submission deadline is printed on heldout-planning-form.docx, and can a respondent submit anonymously? Report the date printed on the form rather than treating it as a current deadline, and cite the original evidence.",
+    "sourceFacts": [
+      {
+        "source": "heldout-planning-form.docx",
+        "sourceId": "d03",
+        "regions": [
+          {
+            "id": "d03:p6",
+            "kind": "paragraph",
+            "index": 6,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "11f743486c89d24b3f554e70af7cb792d9579649947403e2b369d8d64fe4b6d2",
+            "weight": 1
+          },
+          {
+            "id": "d03:t0:r4:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 4,
+            "column": 0,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "6e133c4e74cacdb8fe3d41fdbc2739a8c857eedf9d9189489aaa55a322e0f3d3",
+            "weight": 1
+          },
+          {
+            "id": "d03:t0:r4:c2",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 4,
+            "column": 2,
+            "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+            "normalizedTextSha256": "08240bb253cf69714df813192e44f4a8a697d2bce68dc14ba4310ef12b6a3073",
+            "weight": 1
+          }
+        ],
+        "facts": [
+          "The Please return by row prints: 5:00pm on Tuesday 11th June 2024.",
+          "We cannot accept anonymous responses. Please ensure you provide name and contact details."
+        ],
+        "relationships": [
+          {
+            "kind": "original-table-grid",
+            "table": 0,
+            "meaning": "Row labels and column headers jointly determine cell meaning; blank response cells are not choices. Merged duplicate cells are one assertion."
+          }
+        ]
+      }
+    ],
+    "successCriteria": [
+      "Report 5:00pm on Tuesday 11 June 2024 as the printed historical deadline, with table evidence.",
+      "Explain that anonymous responses are not accepted and name/contact details are requested, with original paragraph evidence. Do not misidentify council contact details as a respondent's details."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "heldout-planning-form.docx"
+      ]
+    },
+    "regressionCase": "heldout-planning-deadline",
+    "relationshipReviewRequired": false
+  },
+  {
+    "case": "r0-14",
+    "split": "development",
+    "family": "complete-section-read",
+    "question": "Read the complete Welsh Language section in heldout-deposit-questionnaire.docx. What is promised and what feedback is requested? Cite that section without treating an unanswered question as a respondent opinion.",
+    "sourceFacts": [
+      {
+        "source": "heldout-deposit-questionnaire.docx",
+        "sourceId": "d04",
+        "regions": [
+          {
+            "id": "d04:p50",
+            "kind": "paragraph",
+            "index": 50,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "e08fb23d30a5bda695acf14ecbb63b97d41c3ce3ba1fdefa5f55b1a91b207375",
+            "weight": 1
+          },
+          {
+            "id": "d04:p51",
+            "kind": "paragraph",
+            "index": 51,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "3e04d9bf7db729ee8f9e65d4573eedb5d11320d0ad9375b31436719e2a215c7f",
+            "weight": 1
+          },
+          {
+            "id": "d04:p52",
+            "kind": "paragraph",
+            "index": 52,
+            "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+            "normalizedTextSha256": "3d2e3f0929bbc11feee1edd03d6cd3ff4f5c5f63a1ee0588bfab7f049269c00d",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "Cover Welsh use and bilingual, clear information; distinguish the impact question from any supplied response."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "heldout-deposit-questionnaire.docx"
+      ]
+    },
+    "requiredCoverage": "all labeled original-source paragraphs in the section"
+  },
+  {
+    "case": "r0-15",
+    "split": "development",
+    "family": "long-document-exception",
+    "question": "In taxi-responses.docx, find the provision about displaying drivers' medical exemption certificates. What language and tactile features are specified? Cite the compilation and describe this as consultation material.",
+    "sourceFacts": [
+      {
+        "source": "taxi-responses.docx",
+        "sourceId": "d05",
+        "regions": [
+          {
+            "id": "d05:p276",
+            "kind": "paragraph",
+            "index": 276,
+            "sourceSha256": "6d630d556448c43197bcd820241c996141e166592c140cac094de5b8014a83b1",
+            "normalizedTextSha256": "70ba6f2ff727ae775f1dccee90753385fb233297cf1218ca953c4ffab1518ba5",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "Identify bilingual English/Welsh display and tactile E. Do not treat a compiled proposal as proof of enacted law."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "taxi-responses.docx"
+      ]
+    },
+    "contextClass": "large-document-selective"
+  },
+  {
+    "case": "r0-16",
+    "split": "development",
+    "family": "table-relationship",
+    "question": "In taxi-responses.docx, locate the vehicle-testing cost row that discusses 40,000-plus annual miles. What cost estimate and proposed frequency appear, and what objection does the response give? Keep the estimate distinct from an observed cost.",
+    "sourceFacts": [
+      {
+        "source": "taxi-responses.docx",
+        "sourceId": "d05",
+        "regions": [
+          {
+            "id": "d05:t148:r3:c0",
+            "kind": "table_cell",
+            "table": 148,
+            "row": 3,
+            "column": 0,
+            "sourceSha256": "6d630d556448c43197bcd820241c996141e166592c140cac094de5b8014a83b1",
+            "normalizedTextSha256": "5bb5e0b8becc13724c14dad6e9572396e6083103cbd8574040d86f929186450e",
+            "weight": 1
+          },
+          {
+            "id": "d05:t148:r3:c1",
+            "kind": "table_cell",
+            "table": 148,
+            "row": 3,
+            "column": 1,
+            "sourceSha256": "6d630d556448c43197bcd820241c996141e166592c140cac094de5b8014a83b1",
+            "normalizedTextSha256": "430752570adeb812c294d6628301680a9c9a07038152296e2793d02128435888",
+            "weight": 1
+          },
+          {
+            "id": "d05:t148:r3:c2",
+            "kind": "table_cell",
+            "table": 148,
+            "row": 3,
+            "column": 2,
+            "sourceSha256": "6d630d556448c43197bcd820241c996141e166592c140cac094de5b8014a83b1",
+            "normalizedTextSha256": "f62e50cc97d1aa772ab8f20d1985fd8e12abb1585dc0fc60aa2e043b7d95587c",
+            "weight": 1
+          },
+          {
+            "id": "d05:t148:r3:c3",
+            "kind": "table_cell",
+            "table": 148,
+            "row": 3,
+            "column": 3,
+            "sourceSha256": "6d630d556448c43197bcd820241c996141e166592c140cac094de5b8014a83b1",
+            "normalizedTextSha256": "f62e50cc97d1aa772ab8f20d1985fd8e12abb1585dc0fc60aa2e043b7d95587c",
+            "weight": 1
+          },
+          {
+            "id": "d05:t148:r3:c4",
+            "kind": "table_cell",
+            "table": 148,
+            "row": 3,
+            "column": 4,
+            "sourceSha256": "6d630d556448c43197bcd820241c996141e166592c140cac094de5b8014a83b1",
+            "normalizedTextSha256": "1594c880153b9ceb9592c6f1466c9e44ad6ac0c62bf282910f8ba5e18f9acbab",
+            "weight": 1
+          },
+          {
+            "id": "d05:t148:r3:c5",
+            "kind": "table_cell",
+            "table": 148,
+            "row": 3,
+            "column": 5,
+            "sourceSha256": "6d630d556448c43197bcd820241c996141e166592c140cac094de5b8014a83b1",
+            "normalizedTextSha256": "9e15472cd35a0494dd16cd194bb55f8cc893428499fb5f64e10e11fc61ff8525",
+            "weight": 1
+          }
+        ],
+        "facts": [],
+        "relationships": [
+          {
+            "kind": "original-table-grid",
+            "table": 148,
+            "meaning": "Row labels and column headers jointly determine cell meaning; blank response cells are not choices. Merged duplicate cells are one assertion."
+          }
+        ]
+      }
+    ],
+    "successCriteria": [
+      "Report estimated £50 and annual testing; explain high mileage, multiple drivers and component wear underpin the objection. Attribute to a consultation response."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "taxi-responses.docx"
+      ]
+    },
+    "relationshipReviewRequired": true,
+    "contextClass": "large-document-selective"
+  },
+  {
+    "case": "r0-17",
+    "split": "development",
+    "family": "complete-section-read",
+    "question": "Read the complete 'Enforcement and sanction regulatory principles' section in ea-policy.docx, including Growth duty. Summarize its principles and exceptions, and cite the section. Do not substitute only a few relevant search passages for the requested complete section.",
+    "sourceFacts": [
+      {
+        "source": "ea-policy.docx",
+        "sourceId": "d06",
+        "regions": [
+          {
+            "id": "d06:p80",
+            "kind": "paragraph",
+            "index": 80,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "05a43db7ca5cc2062b983c830973a890d0d3d581f7d47b895804348c6b8ce723",
+            "weight": 1
+          },
+          {
+            "id": "d06:p81",
+            "kind": "paragraph",
+            "index": 81,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "3d72e9acf0673bdd0dcda63862740d7d285fd827bd9267d24eb4cb4e73580262",
+            "weight": 1
+          },
+          {
+            "id": "d06:p83",
+            "kind": "paragraph",
+            "index": 83,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "c0590bc14840fb0f1ebe89087511ab6d7154d337cddbc55348a1e5001dd58f95",
+            "weight": 1
+          },
+          {
+            "id": "d06:p84",
+            "kind": "paragraph",
+            "index": 84,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "a80225cf92177e08817edf5b32aca1fb37ce3831d4c979952495b4f1d135e7ae",
+            "weight": 1
+          },
+          {
+            "id": "d06:p85",
+            "kind": "paragraph",
+            "index": 85,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "b070a29938189682d56f3b097e62530bd5c7fc45c9050ff8049dbb0a7f782cd8",
+            "weight": 1
+          },
+          {
+            "id": "d06:p86",
+            "kind": "paragraph",
+            "index": 86,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "d77a22bf4455d8826cafa0863446daf4349c01c35cfbd8922cab03e661552979",
+            "weight": 1
+          },
+          {
+            "id": "d06:p87",
+            "kind": "paragraph",
+            "index": 87,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "35984f6433dad7dc1177d7fd78af87190a274ecc4a32aea3b7fde34ecb97086c",
+            "weight": 1
+          },
+          {
+            "id": "d06:p88",
+            "kind": "paragraph",
+            "index": 88,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "352c19e0a329b892e4406be9d7aea82432bf7922490785feb056ffde7a3bd06e",
+            "weight": 1
+          },
+          {
+            "id": "d06:p89",
+            "kind": "paragraph",
+            "index": 89,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "0aec1da460ad1c8d09a9927c426a52c15c70507ea460f87bde7845aa69130363",
+            "weight": 1
+          },
+          {
+            "id": "d06:p91",
+            "kind": "paragraph",
+            "index": 91,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "0144f26a3e8f80a536beb50aaa9698c9d89b30b9a3179d8ad31c96d1e26568c6",
+            "weight": 1
+          },
+          {
+            "id": "d06:p92",
+            "kind": "paragraph",
+            "index": 92,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "e308b8bb80a7d7018935cb5d534b226b6b63d1c3d818e5710ca3dc734417e6fb",
+            "weight": 1
+          },
+          {
+            "id": "d06:p93",
+            "kind": "paragraph",
+            "index": 93,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "67c7874be3f19e674f1dfb707e924081267f7b4bbee2d0022eaffd4a20d9d382",
+            "weight": 1
+          },
+          {
+            "id": "d06:p94",
+            "kind": "paragraph",
+            "index": 94,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "b6477a861089857b9bd24ccd4dcff3dbd4e44bd6b210eaa26c08c72c72224e3e",
+            "weight": 1
+          },
+          {
+            "id": "d06:p95",
+            "kind": "paragraph",
+            "index": 95,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "718c13df37c4fcbae1e5200430d488b41b13cfb1e2914b1a118b51436e3734e5",
+            "weight": 1
+          },
+          {
+            "id": "d06:p96",
+            "kind": "paragraph",
+            "index": 96,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "b30d96529b62df8c7901e25f79e137d307af2d1b7c1a47fbb37f0910d162fbd9",
+            "weight": 1
+          },
+          {
+            "id": "d06:p97",
+            "kind": "paragraph",
+            "index": 97,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "41c04cd536ca78ce9e2a48c8b50d2fc2c64ed7366b1422e1593cf8552ac8fea0",
+            "weight": 1
+          },
+          {
+            "id": "d06:p98",
+            "kind": "paragraph",
+            "index": 98,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "1f9bf2c2460a2f14efe2c4a486989890c213ba19709348143d1fba521e34323a",
+            "weight": 1
+          },
+          {
+            "id": "d06:p100",
+            "kind": "paragraph",
+            "index": 100,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "3342c51a808c1193a2a6cedce6628b5770d94a59d3e806da97edeaae84c1214a",
+            "weight": 1
+          },
+          {
+            "id": "d06:p101",
+            "kind": "paragraph",
+            "index": 101,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "15fbb659a4bc96fe0114554b2d301a46e0c9afed3dd076b6661c8f404835f99f",
+            "weight": 1
+          },
+          {
+            "id": "d06:p102",
+            "kind": "paragraph",
+            "index": 102,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "b5e0c545af44f8fa97dfc7c653be7652ff6e7305fc055cdf2b620e5cbe6e2cc3",
+            "weight": 1
+          },
+          {
+            "id": "d06:p103",
+            "kind": "paragraph",
+            "index": 103,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "6d1c4ae63543741e51528c691e47777240c1cd519c1cac74121d67a8c1e11fd7",
+            "weight": 1
+          },
+          {
+            "id": "d06:p104",
+            "kind": "paragraph",
+            "index": 104,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "c47ba78e71a7291ec214bd7218d02ae24dfd66c9a7a7f4227183f384b2efeb51",
+            "weight": 1
+          },
+          {
+            "id": "d06:p105",
+            "kind": "paragraph",
+            "index": 105,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "5f663be2e339cf278fa25f70ba30d5db3ef3c9c8c574e522228c0c989bd72573",
+            "weight": 1
+          },
+          {
+            "id": "d06:p106",
+            "kind": "paragraph",
+            "index": 106,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "2e9d6976d5766397a6139efaef8cf697f96a248a82248a94e10e76159721aba5",
+            "weight": 1
+          },
+          {
+            "id": "d06:p107",
+            "kind": "paragraph",
+            "index": 107,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "fc5d4403634d6736c937940a3604cd7f9f753d41f307f55433fc486fb7c07a84",
+            "weight": 1
+          },
+          {
+            "id": "d06:p108",
+            "kind": "paragraph",
+            "index": 108,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "e9d6ec35b3038b61e80a65b306ea1323d79f1cac762e252fe753b26cfabe9261",
+            "weight": 1
+          },
+          {
+            "id": "d06:p109",
+            "kind": "paragraph",
+            "index": 109,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "f8fc2b7f53cbfbf7f2bce479fe33bde527aea80a851042328a4cfe595ff33edd",
+            "weight": 1
+          },
+          {
+            "id": "d06:p110",
+            "kind": "paragraph",
+            "index": 110,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "aec69d6da3d305ca13194dfc1581b0de32df5eddcbee5055ab4019e8e4263058",
+            "weight": 1
+          },
+          {
+            "id": "d06:p111",
+            "kind": "paragraph",
+            "index": 111,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "ce9ce33ab42e32d55c1d1b9a18783f8b9d130bc275e784a15008dca978946f27",
+            "weight": 1
+          },
+          {
+            "id": "d06:p112",
+            "kind": "paragraph",
+            "index": 112,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "a7b1d4191806b3ffa01acb1e6f1cea4b82bef0fd82c24ad6d05f745a34cf68d8",
+            "weight": 1
+          },
+          {
+            "id": "d06:p113",
+            "kind": "paragraph",
+            "index": 113,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "9921c18c17ec36043b5a8edd04fd1433704f194390b995b1d83e525eb41d1a5c",
+            "weight": 1
+          },
+          {
+            "id": "d06:p115",
+            "kind": "paragraph",
+            "index": 115,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "c975d6454c9ccfde20e8774936b215f250fac4fa289385cb045fa9f3c3fe134c",
+            "weight": 1
+          },
+          {
+            "id": "d06:p116",
+            "kind": "paragraph",
+            "index": 116,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "e8f646fc8ff381ed3a329c02e4fe1a9d769d3f7810d4b14cf84d03ff8e69835e",
+            "weight": 1
+          },
+          {
+            "id": "d06:p117",
+            "kind": "paragraph",
+            "index": 117,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "2e2ae48746511b565e81d2ba2bf918133628894afe5a9d8a2cca009797006cbf",
+            "weight": 1
+          },
+          {
+            "id": "d06:p118",
+            "kind": "paragraph",
+            "index": 118,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "574587187e777a6fd384013184a38b165a22c3f775f2c85cd29eb8dda7d80d45",
+            "weight": 1
+          },
+          {
+            "id": "d06:p119",
+            "kind": "paragraph",
+            "index": 119,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "da4dd15068174ef4d12f330e3a98681d7fd7ce9420102d93e681ddda0d8a9335",
+            "weight": 1
+          },
+          {
+            "id": "d06:p120",
+            "kind": "paragraph",
+            "index": 120,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "8cbc098561ab60a62031569c19332287d5754b4010393a21900a9f4ac6a54a08",
+            "weight": 1
+          },
+          {
+            "id": "d06:p121",
+            "kind": "paragraph",
+            "index": 121,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "a2f3e5b06fbd4eecde8826ed9e21c7ace89cd9b8c9ec13809d0acd1e5e7f897c",
+            "weight": 1
+          },
+          {
+            "id": "d06:p122",
+            "kind": "paragraph",
+            "index": 122,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "7924c86e50c890ccc45887aac681372e5153eeed3e8a344fbcf4e9d222e098cb",
+            "weight": 1
+          },
+          {
+            "id": "d06:p124",
+            "kind": "paragraph",
+            "index": 124,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "adfedc4cea1bbd41837eba51de579ab6524f8d0a106fc6ae6a42851a1d7a44a3",
+            "weight": 1
+          },
+          {
+            "id": "d06:p125",
+            "kind": "paragraph",
+            "index": 125,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "4da38349dec48d64df66bfa8883b30d5663d8cea39b88bb40984eb2368f20376",
+            "weight": 1
+          },
+          {
+            "id": "d06:p126",
+            "kind": "paragraph",
+            "index": 126,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "38b08075663c1794ca1e4c50c375269066f8c3b9cab0d3c15ddfcb1913fa03ae",
+            "weight": 1
+          },
+          {
+            "id": "d06:p127",
+            "kind": "paragraph",
+            "index": 127,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "6aad0a48bb116676615506ee9f188b49f41d83b4e18615628e71b22920bdbb20",
+            "weight": 1
+          },
+          {
+            "id": "d06:p128",
+            "kind": "paragraph",
+            "index": 128,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "61ceedcd7ba4796d6487b44d5f2206a88a2c0c48524a3e525be3f21bd57bcfc3",
+            "weight": 1
+          },
+          {
+            "id": "d06:p129",
+            "kind": "paragraph",
+            "index": 129,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "d60c3b06529228ba3c00c23999650ca9847dd485206a62046f1db568549e4565",
+            "weight": 1
+          },
+          {
+            "id": "d06:p130",
+            "kind": "paragraph",
+            "index": 130,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "8e7c3b30efada58c523edc4249038e43e24a567d1c774724bc07388b92e81e52",
+            "weight": 1
+          },
+          {
+            "id": "d06:p131",
+            "kind": "paragraph",
+            "index": 131,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "f21bbf5cd18ad26e05e09dacb4ec464ba2f98053f114fe3ca18920c219a6dc13",
+            "weight": 1
+          },
+          {
+            "id": "d06:p132",
+            "kind": "paragraph",
+            "index": 132,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "096a263ad8019177388b60ad09b9750071be6098c944b7bf1c460f66b1dac1fa",
+            "weight": 1
+          },
+          {
+            "id": "d06:p133",
+            "kind": "paragraph",
+            "index": 133,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "15c6c104f9e65a09f3c07d6d7d04aecc32be373dadc813aca791791969c5726b",
+            "weight": 1
+          },
+          {
+            "id": "d06:p134",
+            "kind": "paragraph",
+            "index": 134,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "32366c801373e5811a777b55609ee9a39d6b68afc63aec9925854139bec1b877",
+            "weight": 1
+          },
+          {
+            "id": "d06:p135",
+            "kind": "paragraph",
+            "index": 135,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "f42fb80a36b28c9d94927aaa6ded25e4699f1c8b49af17ccbe8316bbb7b600ff",
+            "weight": 1
+          },
+          {
+            "id": "d06:p137",
+            "kind": "paragraph",
+            "index": 137,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "f8187c6c40693ef2a28d1b1db53da55a49297ec66c2bd163eb5e4a164d4b96bd",
+            "weight": 1
+          },
+          {
+            "id": "d06:p138",
+            "kind": "paragraph",
+            "index": 138,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "6af0eca5a28f38a0e453c5664ca2ac904b5ce82af22c98a097dabc52c3b06276",
+            "weight": 1
+          },
+          {
+            "id": "d06:p139",
+            "kind": "paragraph",
+            "index": 139,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "7c29935eb893568ffd5cde5a5f36eaa6971fcc25209f61def058ee2e8014c658",
+            "weight": 1
+          },
+          {
+            "id": "d06:p140",
+            "kind": "paragraph",
+            "index": 140,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "ac6c74b94e74a643aeefcad64ca40f1975f6120476d62f5e27f302d0c4a79fdd",
+            "weight": 1
+          },
+          {
+            "id": "d06:p141",
+            "kind": "paragraph",
+            "index": 141,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "5dd7c402e2bc37f2106fffe28d4cff2e235c5454ca81dad78d4529b6fa281c20",
+            "weight": 1
+          },
+          {
+            "id": "d06:p142",
+            "kind": "paragraph",
+            "index": 142,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "70e957b4e2303dd70151a55b5ee5031c7625187d7d5eb23a15254487993d0773",
+            "weight": 1
+          },
+          {
+            "id": "d06:p143",
+            "kind": "paragraph",
+            "index": 143,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "3ad1dc1a06966a62e36ab2088157d22c6fd60cf55bdb34f8c0aff80f0df1514c",
+            "weight": 1
+          },
+          {
+            "id": "d06:p144",
+            "kind": "paragraph",
+            "index": 144,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "faa26bde538a1b15f98944c27913c9075a3b64f1ec65362fb1173de4d34ec3b7",
+            "weight": 1
+          },
+          {
+            "id": "d06:p145",
+            "kind": "paragraph",
+            "index": 145,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "96159e1550ca4c8b1e04a5a63c667021d5b0895d78be12480748ad6f82ec7593",
+            "weight": 1
+          },
+          {
+            "id": "d06:p146",
+            "kind": "paragraph",
+            "index": 146,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "7eddd3ddab0fd4efc06185b6242675af1c6ed0d3bbe4a9f8b55448f5af547030",
+            "weight": 1
+          },
+          {
+            "id": "d06:p147",
+            "kind": "paragraph",
+            "index": 147,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "81d20e668ac4e2e0ce14944e16a29aaf6bc2150ccaad0549b3d77adbd3ed3ab0",
+            "weight": 1
+          },
+          {
+            "id": "d06:p148",
+            "kind": "paragraph",
+            "index": 148,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "00288e91a5783cc48488d6a88c7222dc604e21619d0ae6622103d9f74949f8c5",
+            "weight": 1
+          },
+          {
+            "id": "d06:p150",
+            "kind": "paragraph",
+            "index": 150,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "b0f56e49d6ea9f9c22483ae63f46710bafb74f7a1f4a35eb61d28c5fe48f143d",
+            "weight": 1
+          },
+          {
+            "id": "d06:p151",
+            "kind": "paragraph",
+            "index": 151,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "3f5aeea945cb26e93a0f63e3f8ced42fc382c50507fed0d72688f7e8a7e624f7",
+            "weight": 1
+          },
+          {
+            "id": "d06:p154",
+            "kind": "paragraph",
+            "index": 154,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "595c7f046a12728cd651aeefceab524b10b065d6e6f42662cd8378b320ef2cfe",
+            "weight": 1
+          },
+          {
+            "id": "d06:p155",
+            "kind": "paragraph",
+            "index": 155,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "fa67d25ac32090f8c07fb74197685c9d57e2f9e759360c4900806ee0500ae567",
+            "weight": 1
+          },
+          {
+            "id": "d06:p156",
+            "kind": "paragraph",
+            "index": 156,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "19fc4557e16e33cf9b70fcd79b9c94880656ef8900553c2f07b5c344a6f18a75",
+            "weight": 1
+          },
+          {
+            "id": "d06:p157",
+            "kind": "paragraph",
+            "index": 157,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "b505b95a0baa8c9e9ffbb456e0a5d71e50e01172e3a2dc37affd1eb075db33b3",
+            "weight": 1
+          },
+          {
+            "id": "d06:p158",
+            "kind": "paragraph",
+            "index": 158,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "bde5bb205233b9bf3d4ff216dc84d3e29f48dd01f15fe7274af61d8c1efc6be8",
+            "weight": 1
+          },
+          {
+            "id": "d06:p160",
+            "kind": "paragraph",
+            "index": 160,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "a249385f32520a6e240688aee064963b8b7613044f88bfa4aad84d41024bff95",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "Cover proportionality, consistency, transparency, targeting and accountability, Code exceptions and growth-duty limitation. Source delivery must cover the entire requested section in order; selected passages alone do not satisfy this request."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "ea-policy.docx"
+      ]
+    },
+    "requiredCoverage": "all nonempty original paragraphs 80 through 160 inclusive; not the whole document"
+  },
+  {
+    "case": "r0-18",
+    "split": "development",
+    "family": "precise-fact",
+    "question": "In ea-policy.docx, which six factors are balanced when acting proportionately? Cite the original section.",
+    "sourceFacts": [
+      {
+        "source": "ea-policy.docx",
+        "sourceId": "d06",
+        "regions": [
+          {
+            "id": "d06:p91",
+            "kind": "paragraph",
+            "index": 91,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "0144f26a3e8f80a536beb50aaa9698c9d89b30b9a3179d8ad31c96d1e26568c6",
+            "weight": 1
+          },
+          {
+            "id": "d06:p92",
+            "kind": "paragraph",
+            "index": 92,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "e308b8bb80a7d7018935cb5d534b226b6b63d1c3d818e5710ca3dc734417e6fb",
+            "weight": 1
+          },
+          {
+            "id": "d06:p93",
+            "kind": "paragraph",
+            "index": 93,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "67c7874be3f19e674f1dfb707e924081267f7b4bbee2d0022eaffd4a20d9d382",
+            "weight": 1
+          },
+          {
+            "id": "d06:p94",
+            "kind": "paragraph",
+            "index": 94,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "b6477a861089857b9bd24ccd4dcff3dbd4e44bd6b210eaa26c08c72c72224e3e",
+            "weight": 1
+          },
+          {
+            "id": "d06:p95",
+            "kind": "paragraph",
+            "index": 95,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "718c13df37c4fcbae1e5200430d488b41b13cfb1e2914b1a118b51436e3734e5",
+            "weight": 1
+          },
+          {
+            "id": "d06:p96",
+            "kind": "paragraph",
+            "index": 96,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "b30d96529b62df8c7901e25f79e137d307af2d1b7c1a47fbb37f0910d162fbd9",
+            "weight": 1
+          },
+          {
+            "id": "d06:p97",
+            "kind": "paragraph",
+            "index": 97,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "41c04cd536ca78ce9e2a48c8b50d2fc2c64ed7366b1422e1593cf8552ac8fea0",
+            "weight": 1
+          },
+          {
+            "id": "d06:p98",
+            "kind": "paragraph",
+            "index": 98,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "1f9bf2c2460a2f14efe2c4a486989890c213ba19709348143d1fba521e34323a",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "Cover risk, seriousness, impacts on people/environment/business and regime integrity, enforcement cost versus benefit, and growth."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "ea-policy.docx"
+      ]
+    }
+  },
+  {
+    "case": "r0-19",
+    "split": "development",
+    "family": "long-document-exception",
+    "question": "Does ea-policy.docx treat public-interest factors as a simple majority vote? Explain how weighting works and give its approach to accidental conduct, with citations.",
+    "sourceFacts": [
+      {
+        "source": "ea-policy.docx",
+        "sourceId": "d06",
+        "regions": [
+          {
+            "id": "d06:p389",
+            "kind": "paragraph",
+            "index": 389,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "06a87ec4447e4f9aea9fb630a7b22f6a2664cfe89d5692c9a0d09d186bd7398a",
+            "weight": 1
+          },
+          {
+            "id": "d06:p390",
+            "kind": "paragraph",
+            "index": 390,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "6a5018fb3b62430a916cb85fb359705b0f5bf20072fce10b870be78f0e4ce0b6",
+            "weight": 1
+          },
+          {
+            "id": "d06:p395",
+            "kind": "paragraph",
+            "index": 395,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "6a8c84cd1652aa88a6b562e54ddb8a81febe15a47b7566ee205b4b6c0460bf2c",
+            "weight": 1
+          },
+          {
+            "id": "d06:p396",
+            "kind": "paragraph",
+            "index": 396,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "c4ccc10409378968d74dca0400a677231a812892918de11ef925934fe8755477",
+            "weight": 1
+          },
+          {
+            "id": "d06:p397",
+            "kind": "paragraph",
+            "index": 397,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "acdcb037113eb3fe45fa4093908db18d5a396a7d26cba320b380860fdb591e0d",
+            "weight": 1
+          },
+          {
+            "id": "d06:p398",
+            "kind": "paragraph",
+            "index": 398,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "eaded1f7013a11bf9d078654a1d3c58b10b9bc7cffd3dac88a4768eba0bb22cf",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "One factor can outweigh several; accidents may receive advice, warnings or lesser penalties. Avoid a guaranteed outcome."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "ea-policy.docx"
+      ]
+    }
+  },
+  {
+    "case": "r0-20",
+    "split": "development",
+    "family": "long-document-exception",
+    "question": "Does ea-policy.docx say a juvenile's first offence can never be prosecuted? Give its actual qualification and cite the source.",
+    "sourceFacts": [
+      {
+        "source": "ea-policy.docx",
+        "sourceId": "d06",
+        "regions": [
+          {
+            "id": "d06:p508",
+            "kind": "paragraph",
+            "index": 508,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "5aaded440751807d60a244936cccd5b4c0be54e06d0b0f9be2c4ff9010802fcc",
+            "weight": 1
+          },
+          {
+            "id": "d06:p510",
+            "kind": "paragraph",
+            "index": 510,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "963085268368a7be67661f11bed03ab90c4fa1c79c8eb61d00273d72160332f2",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "Preserve the normally qualification; no absolute immunity claim."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "ea-policy.docx"
+      ]
+    }
+  },
+  {
+    "case": "r0-21",
+    "split": "development",
+    "family": "precise-fact",
+    "question": "What review opportunity does ea-policy.docx give an identified victim when the Agency decides not to prosecute, and what deadline and caveat apply? Cite the text.",
+    "sourceFacts": [
+      {
+        "source": "ea-policy.docx",
+        "sourceId": "d06",
+        "regions": [
+          {
+            "id": "d06:p588",
+            "kind": "paragraph",
+            "index": 588,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "c5a71168d2cdf83af08117a9e690e00ee48b87916ce9844785b16d3943027e49",
+            "weight": 1
+          },
+          {
+            "id": "d06:p589",
+            "kind": "paragraph",
+            "index": 589,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "1cc19828ab54589fc2d05ba9bf9614333f7f0536b55d8ea1b14482772ae5f80e",
+            "weight": 1
+          },
+          {
+            "id": "d06:p591",
+            "kind": "paragraph",
+            "index": 591,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "c069614259310ee10742ef887ca02313504be7d54505cc93c6a42210dee30e3b",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "Review within 10 working days; out-of-court disposal may remove the right."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "ea-policy.docx"
+      ]
+    }
+  },
+  {
+    "case": "r0-22",
+    "split": "development",
+    "family": "complete-section-read",
+    "question": "Read the complete Representations and appeals section of ea-policy.docx. Describe the intended notice and representation sequence, including its climate-change daily-penalty exception.",
+    "sourceFacts": [
+      {
+        "source": "ea-policy.docx",
+        "sourceId": "d06",
+        "regions": [
+          {
+            "id": "d06:p572",
+            "kind": "paragraph",
+            "index": 572,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "b4b799f659afa2ecdde43347dbc72b3748a6e362afa1dd161704c6a47230dfcd",
+            "weight": 1
+          },
+          {
+            "id": "d06:p573",
+            "kind": "paragraph",
+            "index": 573,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "d8f970e2d59487787d1aae3d1a39eafd2affabf5add5adc77e86b9cd6a7495f1",
+            "weight": 1
+          },
+          {
+            "id": "d06:p574",
+            "kind": "paragraph",
+            "index": 574,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "db05af2717f64029118c8b87a73453508fcd7df1de6bd903c9e50e1068575127",
+            "weight": 1
+          },
+          {
+            "id": "d06:p575",
+            "kind": "paragraph",
+            "index": 575,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "5d034d8a63c6ab20cabd8b1c2d516d4559a75242836ad0dbb911b4e6b65d4ad0",
+            "weight": 1
+          },
+          {
+            "id": "d06:p576",
+            "kind": "paragraph",
+            "index": 576,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "089612ae195299d0363ba38cbd32c8b5e8165d46b5c064420b707d7857372b9c",
+            "weight": 1
+          },
+          {
+            "id": "d06:p577",
+            "kind": "paragraph",
+            "index": 577,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "e8772f6b915862d44475fe13bfed88091964f9c835bd1ec2e773a8de54a5dbe1",
+            "weight": 1
+          },
+          {
+            "id": "d06:p578",
+            "kind": "paragraph",
+            "index": 578,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "1d56e50248b6647df1d1fcbbc1c9801c2d4225cdc1538880e375b09b780b0f01",
+            "weight": 1
+          },
+          {
+            "id": "d06:p579",
+            "kind": "paragraph",
+            "index": 579,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "fe3bbfedcbc2edaeba8de57cd00b1947b09925520bfbcb41401dc04197e2350d",
+            "weight": 1
+          },
+          {
+            "id": "d06:p580",
+            "kind": "paragraph",
+            "index": 580,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "43e790bae5b096f17a75aaa61cd1c742e922d1238a80a5438e2761d39c0fa085",
+            "weight": 1
+          },
+          {
+            "id": "d06:p581",
+            "kind": "paragraph",
+            "index": 581,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "887c2f93c4197e822fa504a7d594c01bff0f8ede2a3124b7989c97a125be9b04",
+            "weight": 1
+          },
+          {
+            "id": "d06:p582",
+            "kind": "paragraph",
+            "index": 582,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "be54e92533fad6e8c6ef1910515a4ee37b81bf362a1847162677deb5e693f4b9",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "Cover intent, written representations, 28 days, consideration, final notice/reasons, daily-penalty timing and appeal notification."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "ea-policy.docx"
+      ]
+    },
+    "requiredCoverage": "all nonempty original paragraphs 572 through 582 inclusive"
+  },
+  {
+    "case": "r0-23",
+    "split": "development",
+    "family": "precise-fact",
+    "question": "In ea-annex-1.docx, what fixed monetary penalties apply to corporate entities and individuals, and how do the early-payment and late-payment rules work? Cite the source.",
+    "sourceFacts": [
+      {
+        "source": "ea-annex-1.docx",
+        "sourceId": "d07",
+        "regions": [
+          {
+            "id": "d07:p75",
+            "kind": "paragraph",
+            "index": 75,
+            "sourceSha256": "b44961e2ca8a6f17304aca249e540e2a01527ac5609034d2efccff24c0ede50f",
+            "normalizedTextSha256": "43ff37bf7363f756a12720beaebb240d56689e204373f35ef8f15cc90d5d3a8e",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "£300/£100; half payment within specified 28-day periods clears liability; 50% increase after 56 days from final notice."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "ea-annex-1.docx"
+      ]
+    }
+  },
+  {
+    "case": "r0-24",
+    "split": "development",
+    "family": "long-document-exception",
+    "question": "Can the Environment Agency serve a costs recovery notice with a fixed monetary penalty under ea-annex-1.docx? Explain how inability to pay affects the sanction versus recovery costs.",
+    "sourceFacts": [
+      {
+        "source": "ea-annex-1.docx",
+        "sourceId": "d07",
+        "regions": [
+          {
+            "id": "d07:p202",
+            "kind": "paragraph",
+            "index": 202,
+            "sourceSha256": "b44961e2ca8a6f17304aca249e540e2a01527ac5609034d2efccff24c0ede50f",
+            "normalizedTextSha256": "30eaa5188d64d8c012d501dfccaeac893716f6bc2ae19198589b03b3f9daa0c7",
+            "weight": 1
+          },
+          {
+            "id": "d07:p203",
+            "kind": "paragraph",
+            "index": 203,
+            "sourceSha256": "b44961e2ca8a6f17304aca249e540e2a01527ac5609034d2efccff24c0ede50f",
+            "normalizedTextSha256": "72e21cbbe990b6c042e034242d5ceb78c21bd2c3582c3abf876a88d050345b2a",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "No recovery notice with FMP; may reduce sanction rather than recovery costs to protect public funds."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "ea-annex-1.docx"
+      ]
+    }
+  },
+  {
+    "case": "r0-25",
+    "split": "development",
+    "family": "complete-section-read",
+    "question": "Read the complete Appeals against RES Act civil sanctions section in ea-annex-1.docx. List the general grounds and the qualification about additional grounds.",
+    "sourceFacts": [
+      {
+        "source": "ea-annex-1.docx",
+        "sourceId": "d07",
+        "regions": [
+          {
+            "id": "d07:p250",
+            "kind": "paragraph",
+            "index": 250,
+            "sourceSha256": "b44961e2ca8a6f17304aca249e540e2a01527ac5609034d2efccff24c0ede50f",
+            "normalizedTextSha256": "eecfe549a4fcc547be160f0489073c75197873e6a4f22bf7c7a1601fb6e9abe1",
+            "weight": 1
+          },
+          {
+            "id": "d07:p251",
+            "kind": "paragraph",
+            "index": 251,
+            "sourceSha256": "b44961e2ca8a6f17304aca249e540e2a01527ac5609034d2efccff24c0ede50f",
+            "normalizedTextSha256": "fa06dab2dd64f37a4ce40c210e48d09f5d345f7e9fc2bf5d5e00140436d82354",
+            "weight": 1
+          },
+          {
+            "id": "d07:p252",
+            "kind": "paragraph",
+            "index": 252,
+            "sourceSha256": "b44961e2ca8a6f17304aca249e540e2a01527ac5609034d2efccff24c0ede50f",
+            "normalizedTextSha256": "9b42faacdb9374c5f65c839db98583713be19150959cda99ce79d51322d3bc13",
+            "weight": 1
+          },
+          {
+            "id": "d07:p253",
+            "kind": "paragraph",
+            "index": 253,
+            "sourceSha256": "b44961e2ca8a6f17304aca249e540e2a01527ac5609034d2efccff24c0ede50f",
+            "normalizedTextSha256": "6e9791080cc758c36d1b93bd9350b600cbc549f4ae76f2fc920564f82c0e573f",
+            "weight": 1
+          },
+          {
+            "id": "d07:p254",
+            "kind": "paragraph",
+            "index": 254,
+            "sourceSha256": "b44961e2ca8a6f17304aca249e540e2a01527ac5609034d2efccff24c0ede50f",
+            "normalizedTextSha256": "89ba022f5b1bc9be73af90ff5dd20640184ad4b6190eb456d6525a0ebb92eaf5",
+            "weight": 1
+          },
+          {
+            "id": "d07:p255",
+            "kind": "paragraph",
+            "index": 255,
+            "sourceSha256": "b44961e2ca8a6f17304aca249e540e2a01527ac5609034d2efccff24c0ede50f",
+            "normalizedTextSha256": "f21f72637befb4219dee6f70b904cdb496a2bf55de8e7d541387775e7349f708",
+            "weight": 1
+          },
+          {
+            "id": "d07:p256",
+            "kind": "paragraph",
+            "index": 256,
+            "sourceSha256": "b44961e2ca8a6f17304aca249e540e2a01527ac5609034d2efccff24c0ede50f",
+            "normalizedTextSha256": "9192c20c07baa11e7d40909f357ef9496357b5c0a57210a7775eaece0791b8cd",
+            "weight": 1
+          },
+          {
+            "id": "d07:p257",
+            "kind": "paragraph",
+            "index": 257,
+            "sourceSha256": "b44961e2ca8a6f17304aca249e540e2a01527ac5609034d2efccff24c0ede50f",
+            "normalizedTextSha256": "956085c8aac5fae68f695ba79616e4148391b397543def08f506408340561ab9",
+            "weight": 1
+          },
+          {
+            "id": "d07:p259",
+            "kind": "paragraph",
+            "index": 259,
+            "sourceSha256": "b44961e2ca8a6f17304aca249e540e2a01527ac5609034d2efccff24c0ede50f",
+            "normalizedTextSha256": "5760fdebb768f47f3dea55fb9af48d74eed9caaa042115d766ff63f691480b07",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "Fact, law, reasonableness, amount and other grounds; notice can supply additional grounds."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "ea-annex-1.docx"
+      ]
+    },
+    "requiredCoverage": "all nonempty original paragraphs 250 through 259 inclusive"
+  },
+  {
+    "case": "r0-26",
+    "split": "development",
+    "family": "long-document-exception",
+    "question": "Does ea-annex-1.docx require a notice of intent before a stop notice, and how long does a stop notice remain effective? Cite the stop-notice section.",
+    "sourceFacts": [
+      {
+        "source": "ea-annex-1.docx",
+        "sourceId": "d07",
+        "regions": [
+          {
+            "id": "d07:p190",
+            "kind": "paragraph",
+            "index": 190,
+            "sourceSha256": "b44961e2ca8a6f17304aca249e540e2a01527ac5609034d2efccff24c0ede50f",
+            "normalizedTextSha256": "b13efba5129c4d72988fa2fa27d31c86ef280d92d21fff16d9a5ffbfc46a2981",
+            "weight": 1
+          },
+          {
+            "id": "d07:p198",
+            "kind": "paragraph",
+            "index": 198,
+            "sourceSha256": "b44961e2ca8a6f17304aca249e540e2a01527ac5609034d2efccff24c0ede50f",
+            "normalizedTextSha256": "1c4cd2241611d61ad92b40014a8b8efc1e89e76d7b91248dbe7929d1366bbb36",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "Immediate stop without prior intent notice; remains until required actions completed; noncompliance likely criminal."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "ea-annex-1.docx"
+      ]
+    }
+  },
+  {
+    "case": "r0-27",
+    "split": "development",
+    "family": "complete-section-read",
+    "question": "Read the complete 'What we are not consulting on' section in ea-consultation.docx and explain the exclusions without broadening them to exclude the whole consultation.",
+    "sourceFacts": [
+      {
+        "source": "ea-consultation.docx",
+        "sourceId": "d08",
+        "regions": [
+          {
+            "id": "d08:p124",
+            "kind": "paragraph",
+            "index": 124,
+            "sourceSha256": "d75d314e01abf6f15bd46672b376d7664c32c1a2f4c371b71b1ad1bb6f377317",
+            "normalizedTextSha256": "03023560c9ba80b71a17adf8083da1cc684997badf64e082a9d90af33967336e",
+            "weight": 1
+          },
+          {
+            "id": "d08:p125",
+            "kind": "paragraph",
+            "index": 125,
+            "sourceSha256": "d75d314e01abf6f15bd46672b376d7664c32c1a2f4c371b71b1ad1bb6f377317",
+            "normalizedTextSha256": "30586a929beddf5b190593e50a9450142998feb5c48e1453f9c8c401115efc41",
+            "weight": 1
+          },
+          {
+            "id": "d08:p126",
+            "kind": "paragraph",
+            "index": 126,
+            "sourceSha256": "d75d314e01abf6f15bd46672b376d7664c32c1a2f4c371b71b1ad1bb6f377317",
+            "normalizedTextSha256": "b0a0a671b2765a60af0e61553b51bbf1d3c16ec855186d293e379744ee3cf3b7",
+            "weight": 1
+          },
+          {
+            "id": "d08:p127",
+            "kind": "paragraph",
+            "index": 127,
+            "sourceSha256": "d75d314e01abf6f15bd46672b376d7664c32c1a2f4c371b71b1ad1bb6f377317",
+            "normalizedTextSha256": "15850ce9a142c72689c970713f76e67de2bc904b1976fe256a7cf5d6986a846c",
+            "weight": 1
+          },
+          {
+            "id": "d08:p128",
+            "kind": "paragraph",
+            "index": 128,
+            "sourceSha256": "d75d314e01abf6f15bd46672b376d7664c32c1a2f4c371b71b1ad1bb6f377317",
+            "normalizedTextSha256": "b2f6cd4411bdc918a069c0e98594450f65e8ad995412c510976e283c3e3495fb",
+            "weight": 1
+          },
+          {
+            "id": "d08:p129",
+            "kind": "paragraph",
+            "index": 129,
+            "sourceSha256": "d75d314e01abf6f15bd46672b376d7664c32c1a2f4c371b71b1ad1bb6f377317",
+            "normalizedTextSha256": "599d2826c166c141d3e0891bc94cd3e50f757d5392331859240f4de89d0cb9b0",
+            "weight": 1
+          },
+          {
+            "id": "d08:p130",
+            "kind": "paragraph",
+            "index": 130,
+            "sourceSha256": "d75d314e01abf6f15bd46672b376d7664c32c1a2f4c371b71b1ad1bb6f377317",
+            "normalizedTextSha256": "aa0976934974ba60d82c8a2cd27ba47b801ff4aac54abe9e4482f4adaf5b3b3b",
+            "weight": 1
+          },
+          {
+            "id": "d08:p131",
+            "kind": "paragraph",
+            "index": 131,
+            "sourceSha256": "d75d314e01abf6f15bd46672b376d7664c32c1a2f4c371b71b1ad1bb6f377317",
+            "normalizedTextSha256": "3cc8a4115e8a79881c80788a2fadb74df58aba4ad3ca73d6137fe5dee6fb9cb5",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "Exclude previously consulted Defra matters, Annex 2, structural relocation and minor consolidation changes."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "ea-consultation.docx"
+      ]
+    },
+    "requiredCoverage": "all nonempty original paragraphs 124 through 131 inclusive"
+  },
+  {
+    "case": "r0-28",
+    "split": "development",
+    "family": "precise-fact",
+    "question": "What dates, duration and exact closing time are printed in ea-consultation.docx, and when does it aim to publish its response? Treat these as this document's dates.",
+    "sourceFacts": [
+      {
+        "source": "ea-consultation.docx",
+        "sourceId": "d08",
+        "regions": [
+          {
+            "id": "d08:p583",
+            "kind": "paragraph",
+            "index": 583,
+            "sourceSha256": "d75d314e01abf6f15bd46672b376d7664c32c1a2f4c371b71b1ad1bb6f377317",
+            "normalizedTextSha256": "ecf02eb17aac71a28a13d1660939274785bbafef38aceb1c5141656e38754e08",
+            "weight": 1
+          },
+          {
+            "id": "d08:p598",
+            "kind": "paragraph",
+            "index": 598,
+            "sourceSha256": "d75d314e01abf6f15bd46672b376d7664c32c1a2f4c371b71b1ad1bb6f377317",
+            "normalizedTextSha256": "5f41120aec5342005b0e0e1073b7127d243e429e201f5c9211e50ecf49547a3b",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "Eight weeks, 10 August to 4 October 2026 at 11:59pm; response within 12 weeks and before changes."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "ea-consultation.docx"
+      ]
+    }
+  },
+  {
+    "case": "r0-29",
+    "split": "development",
+    "family": "cross-file-comparison",
+    "question": "Compare how source-2.docx and ea-consultation.docx describe consultation timing and how responses affect their decisions. Cite each file and keep the two processes separate.",
+    "sourceFacts": [
+      {
+        "source": "source-2.docx",
+        "sourceId": "d02",
+        "regions": [
+          {
+            "id": "d02:p59",
+            "kind": "paragraph",
+            "index": 59,
+            "sourceSha256": "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e",
+            "normalizedTextSha256": "b617731167304b4425360b9d56fe4e0b61ed61df448a2505a68390f45971b699",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      },
+      {
+        "source": "ea-consultation.docx",
+        "sourceId": "d08",
+        "regions": [
+          {
+            "id": "d08:p583",
+            "kind": "paragraph",
+            "index": 583,
+            "sourceSha256": "d75d314e01abf6f15bd46672b376d7664c32c1a2f4c371b71b1ad1bb6f377317",
+            "normalizedTextSha256": "ecf02eb17aac71a28a13d1660939274785bbafef38aceb1c5141656e38754e08",
+            "weight": 1
+          },
+          {
+            "id": "d08:p584",
+            "kind": "paragraph",
+            "index": 584,
+            "sourceSha256": "d75d314e01abf6f15bd46672b376d7664c32c1a2f4c371b71b1ad1bb6f377317",
+            "normalizedTextSha256": "6e209176587e94875358993437e6f72eba40f28a0f9a85539d4ce9f958311e87",
+            "weight": 1
+          },
+          {
+            "id": "d08:p598",
+            "kind": "paragraph",
+            "index": 598,
+            "sourceSha256": "d75d314e01abf6f15bd46672b376d7664c32c1a2f4c371b71b1ad1bb6f377317",
+            "normalizedTextSha256": "5f41120aec5342005b0e0e1073b7127d243e429e201f5c9211e50ecf49547a3b",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "Housing runs 12 weeks September–December with October council engagement; EA eight weeks August–October, responses considered before finalising. No automatic enactment claim."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "source-2.docx",
+        "ea-consultation.docx"
+      ]
+    }
+  },
+  {
+    "case": "r0-30",
+    "split": "development",
+    "family": "cross-file-comparison",
+    "question": "Compare ea-policy.docx's general representation process with the evidential safeguards for RES Act penalties in ea-annex-1.docx. Does a civil label alone establish the standard of proof? Cite both.",
+    "sourceFacts": [
+      {
+        "source": "ea-policy.docx",
+        "sourceId": "d06",
+        "regions": [
+          {
+            "id": "d06:p574",
+            "kind": "paragraph",
+            "index": 574,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "db05af2717f64029118c8b87a73453508fcd7df1de6bd903c9e50e1068575127",
+            "weight": 1
+          },
+          {
+            "id": "d06:p575",
+            "kind": "paragraph",
+            "index": 575,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "5d034d8a63c6ab20cabd8b1c2d516d4559a75242836ad0dbb911b4e6b65d4ad0",
+            "weight": 1
+          },
+          {
+            "id": "d06:p576",
+            "kind": "paragraph",
+            "index": 576,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "089612ae195299d0363ba38cbd32c8b5e8165d46b5c064420b707d7857372b9c",
+            "weight": 1
+          },
+          {
+            "id": "d06:p577",
+            "kind": "paragraph",
+            "index": 577,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "e8772f6b915862d44475fe13bfed88091964f9c835bd1ec2e773a8de54a5dbe1",
+            "weight": 1
+          },
+          {
+            "id": "d06:p578",
+            "kind": "paragraph",
+            "index": 578,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "1d56e50248b6647df1d1fcbbc1c9801c2d4225cdc1538880e375b09b780b0f01",
+            "weight": 1
+          },
+          {
+            "id": "d06:p579",
+            "kind": "paragraph",
+            "index": 579,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "fe3bbfedcbc2edaeba8de57cd00b1947b09925520bfbcb41401dc04197e2350d",
+            "weight": 1
+          },
+          {
+            "id": "d06:p580",
+            "kind": "paragraph",
+            "index": 580,
+            "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+            "normalizedTextSha256": "43e790bae5b096f17a75aaa61cd1c742e922d1238a80a5438e2761d39c0fa085",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      },
+      {
+        "source": "ea-annex-1.docx",
+        "sourceId": "d07",
+        "regions": [
+          {
+            "id": "d07:p49",
+            "kind": "paragraph",
+            "index": 49,
+            "sourceSha256": "b44961e2ca8a6f17304aca249e540e2a01527ac5609034d2efccff24c0ede50f",
+            "normalizedTextSha256": "1013ba7e22f7f761cf0164cc5999baf327822e0e89e70c12ab079fdb365d9dd4",
+            "weight": 1
+          },
+          {
+            "id": "d07:p50",
+            "kind": "paragraph",
+            "index": 50,
+            "sourceSha256": "b44961e2ca8a6f17304aca249e540e2a01527ac5609034d2efccff24c0ede50f",
+            "normalizedTextSha256": "63400fe5608ceeff58c4b0638a0da0be832caed2c4d841bfd92c448599ad5820",
+            "weight": 1
+          },
+          {
+            "id": "d07:p53",
+            "kind": "paragraph",
+            "index": 53,
+            "sourceSha256": "b44961e2ca8a6f17304aca249e540e2a01527ac5609034d2efccff24c0ede50f",
+            "normalizedTextSha256": "3284a56ef13ca1be1653cdd408688cbd6087b8b6039e0377d9630227bb693bd3",
+            "weight": 1
+          },
+          {
+            "id": "d07:p55",
+            "kind": "paragraph",
+            "index": 55,
+            "sourceSha256": "b44961e2ca8a6f17304aca249e540e2a01527ac5609034d2efccff24c0ede50f",
+            "normalizedTextSha256": "09407106e8e8b69ee55659d520dfab73929473282c56b7a3acd3d1926f0cff3b",
+            "weight": 1
+          },
+          {
+            "id": "d07:p56",
+            "kind": "paragraph",
+            "index": 56,
+            "sourceSha256": "b44961e2ca8a6f17304aca249e540e2a01527ac5609034d2efccff24c0ede50f",
+            "normalizedTextSha256": "51fb266aea25885617e46eeaeb7d2cfffe7806f92c6cc3222332b3c62f9bbeef",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "Distinguish procedural opportunity from proof threshold; RES Act generally beyond reasonable doubt, with stop-notice exception."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "ea-policy.docx",
+        "ea-annex-1.docx"
+      ]
+    }
+  },
+  {
+    "case": "r0-31",
+    "split": "development",
+    "family": "metadata-filtered-discovery",
+    "question": "List every development file in this library with author Environment Agency and tags corpus=retrieval-r0 and topic=enforcement. Report readiness and do not summarize body contents.",
+    "sourceFacts": [],
+    "successCriteria": [
+      "Catalogue enumeration must return ea-policy.docx, ea-annex-1.docx and ea-consultation.docx in a full-development library. Follow all pages; body text unnecessary."
+    ],
+    "indicators": {
+      "evidenceRequirement": "catalogue",
+      "expectedFiles": [
+        "ea-policy.docx",
+        "ea-annex-1.docx",
+        "ea-consultation.docx"
+      ],
+      "requiredSourceFiles": []
+    },
+    "expectedSourceIds": [
+      "d06",
+      "d07",
+      "d08"
+    ],
+    "requiredLibraryScope": "full-development"
+  },
+  {
+    "case": "r0-32",
+    "split": "development",
+    "family": "metadata-filtered-discovery",
+    "question": "List every file tagged corpus=retrieval-r0 and regression=prior-docx in this library and say whether each is readable. Do not summarize their contents.",
+    "sourceFacts": [],
+    "successCriteria": [
+      "Enumerate the four original DOCX regression files with readiness, including both forms. Follow pagination; do not infer contents from descriptions."
+    ],
+    "indicators": {
+      "evidenceRequirement": "catalogue",
+      "expectedFiles": [
+        "source-1.docx",
+        "source-2.docx",
+        "heldout-planning-form.docx",
+        "heldout-deposit-questionnaire.docx"
+      ],
+      "requiredSourceFiles": []
+    },
+    "expectedSourceIds": [
+      "d01",
+      "d02",
+      "d03",
+      "d04"
+    ],
+    "requiredLibraryScope": "baseline-or-full-development"
+  },
+  {
+    "case": "r0-33",
+    "split": "heldout",
+    "family": "precise-fact",
+    "question": "In ea-annex-3.docx, what is the maximum civil penalty and normal starting amount? When may the starting amount be lower? Cite the source without claiming all breaches receive the maximum.",
+    "sourceFacts": [
+      {
+        "source": "ea-annex-3.docx",
+        "sourceId": "d09",
+        "regions": [
+          {
+            "id": "d09:p50",
+            "kind": "paragraph",
+            "index": 50,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "b250548a06ec473f4852c4fb16e2b4f2aafe82d6df4a5b4eac246871bb93bafc",
+            "weight": 1
+          },
+          {
+            "id": "d09:p51",
+            "kind": "paragraph",
+            "index": 51,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "658945694b52594542934fff84a3a3b7812453e0dff01a7f32c5de72620e700a",
+            "weight": 1
+          },
+          {
+            "id": "d09:p52",
+            "kind": "paragraph",
+            "index": 52,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "3c259297612b85d516ed536b9340d7cc162b182972bcc4bc8337201dbd71ec7c",
+            "weight": 1
+          },
+          {
+            "id": "d09:p53",
+            "kind": "paragraph",
+            "index": 53,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "9392abdee6f67e74e054ac1a0fb1397bf73ffab3f166bb5455fc27d7270a2c30",
+            "weight": 1
+          },
+          {
+            "id": "d09:p54",
+            "kind": "paragraph",
+            "index": 54,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "e3fd4c2d720c11eddb08f96d080a5ed4d0ec9da641c73ec3ff655b3c32456177",
+            "weight": 1
+          },
+          {
+            "id": "d09:p56",
+            "kind": "paragraph",
+            "index": 56,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "e4d9b887373e44eb401ff5615d198024001eb3ab04fbf5885312d469c0526cec",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "Maximum £200,000, normally initial maximum; lower harm or unjustified notice-breach maximum can warrant less."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "ea-annex-3.docx"
+      ]
+    }
+  },
+  {
+    "case": "r0-34",
+    "split": "heldout",
+    "family": "complete-section-read",
+    "question": "Read the complete 'Additional enforcement position' subsection in ea-annex-3.docx. Explain both requirements for potentially giving advice without a civil penalty and what happens if rectification does not follow.",
+    "sourceFacts": [
+      {
+        "source": "ea-annex-3.docx",
+        "sourceId": "d09",
+        "regions": [
+          {
+            "id": "d09:p57",
+            "kind": "paragraph",
+            "index": 57,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "1c4b7562cd7e2bb7a40b2fde7986fbab78315c40d22790da2b374a6ff7fc8c74",
+            "weight": 1
+          },
+          {
+            "id": "d09:p58",
+            "kind": "paragraph",
+            "index": 58,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "6aad0a2b24573b2af06a3e001c4e3433b58e2da26e750553a8e50db9d8ca8b30",
+            "weight": 1
+          },
+          {
+            "id": "d09:p59",
+            "kind": "paragraph",
+            "index": 59,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "415802f81ba1bb99aef1d0ab40d668504da5428bd89009f131c0c30a98fb5e26",
+            "weight": 1
+          },
+          {
+            "id": "d09:p60",
+            "kind": "paragraph",
+            "index": 60,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "116317abd4ba61eecd3ac2bb34fb8304dff835438864c993a553b93bc8364651",
+            "weight": 1
+          },
+          {
+            "id": "d09:p61",
+            "kind": "paragraph",
+            "index": 61,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "265470e4e65ea0d2852d0c86c12cc9aad69669f1f25e6c22bf6cab2299a5373f",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "Advice sufficient and deterrence unnecessary jointly; unrectified breach may trigger enforcement."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "ea-annex-3.docx"
+      ]
+    },
+    "requiredCoverage": "all nonempty original paragraphs 57 through 61 inclusive"
+  },
+  {
+    "case": "r0-35",
+    "split": "heldout",
+    "family": "sanction-case-classification",
+    "question": "Using ea-annex-3.docx, assess two hypothetical mercury breaches: an administrative reporting omission without aggravating conduct, and an import breach causing serious actual harm. Which enforcement direction is normally described, and can civil and criminal penalties both apply to the same breach? Give qualified, source-based answers.",
+    "sourceFacts": [
+      {
+        "source": "ea-annex-3.docx",
+        "sourceId": "d09",
+        "regions": [
+          {
+            "id": "d09:p29",
+            "kind": "paragraph",
+            "index": 29,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "f594a8233afd02f809451411413f1334199901d99dfc0258ca237311ac2cdfa0",
+            "weight": 1
+          },
+          {
+            "id": "d09:p31",
+            "kind": "paragraph",
+            "index": 31,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "f21e94f2664aef4dddc10b97395af271173c22b081cdae267c95f809c8ff5a8d",
+            "weight": 1
+          },
+          {
+            "id": "d09:p32",
+            "kind": "paragraph",
+            "index": 32,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "48bcf29c4e77b039d7d05d428f3df276a34b00455e72c649bda34491c05307ff",
+            "weight": 1
+          },
+          {
+            "id": "d09:p33",
+            "kind": "paragraph",
+            "index": 33,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "342d0db23214ffed0548126509b68ed2324304a93ba272eb0aedc8e5369464d3",
+            "weight": 1
+          },
+          {
+            "id": "d09:p34",
+            "kind": "paragraph",
+            "index": 34,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "5934cac112cc335a61c2169add78d88b96c16edd3409e7df308fb88798074f12",
+            "weight": 1
+          },
+          {
+            "id": "d09:p35",
+            "kind": "paragraph",
+            "index": 35,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "f02b95ed0b00ce45335979782615d60879b99e788fa3b7b8fca1599589b88846",
+            "weight": 1
+          },
+          {
+            "id": "d09:p36",
+            "kind": "paragraph",
+            "index": 36,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "80db349b354a34b8a96ad18b5f760cd776fd689a2227c81df9c0a5cf7dfed374",
+            "weight": 1
+          },
+          {
+            "id": "d09:p37",
+            "kind": "paragraph",
+            "index": 37,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "4a0d52cd1614b86d174a3b5ddd02bcd9ccd06aea2583b9b57004e6b2850b8480",
+            "weight": 1
+          },
+          {
+            "id": "d09:p38",
+            "kind": "paragraph",
+            "index": 38,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "0c247f50a66e4c59c878615dc0d8a0cb5dc263aed01e1cb6beb4302f2b60bb96",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "Serious harm normally criminal; administrative prosecution reserved for reprehensible elements. Do not promise automatic civil outcome; no double path for same breach."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "ea-annex-3.docx"
+      ]
+    }
+  },
+  {
+    "case": "r0-36",
+    "split": "heldout",
+    "family": "precise-fact",
+    "question": "Under ea-annex-3.docx, what happens to a civil penalty or costs recovery notice during a First-tier Tribunal appeal? Cite the paragraph.",
+    "sourceFacts": [
+      {
+        "source": "ea-annex-3.docx",
+        "sourceId": "d09",
+        "regions": [
+          {
+            "id": "d09:p71",
+            "kind": "paragraph",
+            "index": 71,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "bc2fc86fb80064aeb285bbf1ee4e57d610b04129e4c3310b875ecb0f915d83fc",
+            "weight": 1
+          },
+          {
+            "id": "d09:p72",
+            "kind": "paragraph",
+            "index": 72,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "6ea0cdef115835ebc8db5d19b1950f1bfbf062183200e1930104b7772997c11f",
+            "weight": 1
+          },
+          {
+            "id": "d09:p78",
+            "kind": "paragraph",
+            "index": 78,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "d4ada0e7dff2bd1cc5900c735c02a4dbcb8d892fc40c3ffee5f0c20140e192f0",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "Notice suspended pending tribunal decision; do not claim the underlying breach is erased."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "ea-annex-3.docx"
+      ]
+    }
+  },
+  {
+    "case": "r0-37",
+    "split": "heldout",
+    "family": "table-relationship",
+    "question": "Using the digital-waste-tracking appeals table in ea-annex-4.docx, which listed sanction allows an appeal that the amount is unreasonable, and which allows an appeal about the nature of a requirement? Cite the table with the correct column relationships.",
+    "sourceFacts": [
+      {
+        "source": "ea-annex-4.docx",
+        "sourceId": "d10",
+        "regions": [
+          {
+            "id": "d10:t2:r0:c0",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 0,
+            "column": 0,
+            "sourceSha256": "0101732b2e4397b8a164e9d0184fea2afcee16d3c166ad175cfc983fdbf2057f",
+            "normalizedTextSha256": "ab8176cccf36dd76d309b0335a48dc323f4c903ae926e786f85dc225e306648e",
+            "weight": 1
+          },
+          {
+            "id": "d10:t2:r0:c1",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 0,
+            "column": 1,
+            "sourceSha256": "0101732b2e4397b8a164e9d0184fea2afcee16d3c166ad175cfc983fdbf2057f",
+            "normalizedTextSha256": "eea8a8c62bafcec6fb82a5b784337a9dffffcb04fceb87ea88f1ebfac106a6c0",
+            "weight": 1
+          },
+          {
+            "id": "d10:t2:r0:c2",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 0,
+            "column": 2,
+            "sourceSha256": "0101732b2e4397b8a164e9d0184fea2afcee16d3c166ad175cfc983fdbf2057f",
+            "normalizedTextSha256": "0d32d09feb8c9e48b5c341a53fabe79017f4d21be7ea2293b59e650f13702de9",
+            "weight": 1
+          },
+          {
+            "id": "d10:t2:r0:c3",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 0,
+            "column": 3,
+            "sourceSha256": "0101732b2e4397b8a164e9d0184fea2afcee16d3c166ad175cfc983fdbf2057f",
+            "normalizedTextSha256": "1549a91766ac6f90eba5ca0873cf892b216422239fb9d3c76b59e9d31796d294",
+            "weight": 1
+          },
+          {
+            "id": "d10:t2:r4:c0",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 4,
+            "column": 0,
+            "sourceSha256": "0101732b2e4397b8a164e9d0184fea2afcee16d3c166ad175cfc983fdbf2057f",
+            "normalizedTextSha256": "4fd79b85f6a66e78e7fcf86d499bae0773a477acaae06c64e06453e8ba05abe2",
+            "weight": 1
+          },
+          {
+            "id": "d10:t2:r4:c1",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 4,
+            "column": 1,
+            "sourceSha256": "0101732b2e4397b8a164e9d0184fea2afcee16d3c166ad175cfc983fdbf2057f",
+            "normalizedTextSha256": "1ea442a134b2a184bd5d40104401f2a37fbc09ccf3f4bc9da161c6099be3691d",
+            "weight": 1
+          },
+          {
+            "id": "d10:t2:r4:c2",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 4,
+            "column": 2,
+            "sourceSha256": "0101732b2e4397b8a164e9d0184fea2afcee16d3c166ad175cfc983fdbf2057f",
+            "normalizedTextSha256": "85a39ab345d672ff8ca9b9c6876f3adcacf45ee7c1e2dbd2408fd338bd55e07e",
+            "weight": 1
+          },
+          {
+            "id": "d10:t2:r4:c3",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 4,
+            "column": 3,
+            "sourceSha256": "0101732b2e4397b8a164e9d0184fea2afcee16d3c166ad175cfc983fdbf2057f",
+            "normalizedTextSha256": "1ea442a134b2a184bd5d40104401f2a37fbc09ccf3f4bc9da161c6099be3691d",
+            "weight": 1
+          },
+          {
+            "id": "d10:t2:r5:c0",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 5,
+            "column": 0,
+            "sourceSha256": "0101732b2e4397b8a164e9d0184fea2afcee16d3c166ad175cfc983fdbf2057f",
+            "normalizedTextSha256": "7e0450950981f11bc2665e75df441231ab9352281dbf28179853355a31821e21",
+            "weight": 1
+          },
+          {
+            "id": "d10:t2:r5:c1",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 5,
+            "column": 1,
+            "sourceSha256": "0101732b2e4397b8a164e9d0184fea2afcee16d3c166ad175cfc983fdbf2057f",
+            "normalizedTextSha256": "1ea442a134b2a184bd5d40104401f2a37fbc09ccf3f4bc9da161c6099be3691d",
+            "weight": 1
+          },
+          {
+            "id": "d10:t2:r5:c2",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 5,
+            "column": 2,
+            "sourceSha256": "0101732b2e4397b8a164e9d0184fea2afcee16d3c166ad175cfc983fdbf2057f",
+            "normalizedTextSha256": "1ea442a134b2a184bd5d40104401f2a37fbc09ccf3f4bc9da161c6099be3691d",
+            "weight": 1
+          },
+          {
+            "id": "d10:t2:r5:c3",
+            "kind": "table_cell",
+            "table": 2,
+            "row": 5,
+            "column": 3,
+            "sourceSha256": "0101732b2e4397b8a164e9d0184fea2afcee16d3c166ad175cfc983fdbf2057f",
+            "normalizedTextSha256": "85a39ab345d672ff8ca9b9c6876f3adcacf45ee7c1e2dbd2408fd338bd55e07e",
+            "weight": 1
+          }
+        ],
+        "facts": [],
+        "relationships": [
+          {
+            "kind": "original-table-grid",
+            "table": 2,
+            "meaning": "Row labels and column headers jointly determine cell meaning; blank response cells are not choices. Merged duplicate cells are one assertion."
+          }
+        ]
+      }
+    ],
+    "successCriteria": [
+      "Amount: VMP only. Requirement: compliance notice only. FMP neither of these grounds."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "ea-annex-4.docx"
+      ]
+    },
+    "relationshipReviewRequired": true
+  },
+  {
+    "case": "r0-38",
+    "split": "heldout",
+    "family": "cross-regime-comparison",
+    "question": "In ea-annex-4.docx, compare fixed penalties and their late-payment timing under pEPR and digital waste tracking. Does the Agency have fixed-penalty powers under DRS? Cite each relevant part.",
+    "sourceFacts": [
+      {
+        "source": "ea-annex-4.docx",
+        "sourceId": "d10",
+        "regions": [
+          {
+            "id": "d10:p62",
+            "kind": "paragraph",
+            "index": 62,
+            "sourceSha256": "0101732b2e4397b8a164e9d0184fea2afcee16d3c166ad175cfc983fdbf2057f",
+            "normalizedTextSha256": "19eec2c161f31ba07e345d4ced4784476d048373b43549ebede01b97662e0cc3",
+            "weight": 1
+          },
+          {
+            "id": "d10:p63",
+            "kind": "paragraph",
+            "index": 63,
+            "sourceSha256": "0101732b2e4397b8a164e9d0184fea2afcee16d3c166ad175cfc983fdbf2057f",
+            "normalizedTextSha256": "e0287cbccbd9642fff96234e9aaff7f5642ea6f1cc8ff8ac6edb3cd0cbb07076",
+            "weight": 1
+          },
+          {
+            "id": "d10:p202",
+            "kind": "paragraph",
+            "index": 202,
+            "sourceSha256": "0101732b2e4397b8a164e9d0184fea2afcee16d3c166ad175cfc983fdbf2057f",
+            "normalizedTextSha256": "87fd5f5de7915e84cac346f93c41adcf9a4ebfdffca7588b17cf32ecc062b9cc",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "Both £1,000; pEPR 56 days, DWT 28 days before 50% increase absent appeal; EA has no DRS FMP power."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "ea-annex-4.docx"
+      ]
+    }
+  },
+  {
+    "case": "r0-39",
+    "split": "heldout",
+    "family": "sanction-case-classification",
+    "question": "Use ea-annex-4.docx for this hypothetical: a person fails to comply with a DRS variable monetary penalty. Does the document offer another civil penalty for that noncompliance or a criminal route? State the document's enforcement option without predicting a conviction.",
+    "sourceFacts": [
+      {
+        "source": "ea-annex-4.docx",
+        "sourceId": "d10",
+        "regions": [
+          {
+            "id": "d10:p14",
+            "kind": "paragraph",
+            "index": 14,
+            "sourceSha256": "0101732b2e4397b8a164e9d0184fea2afcee16d3c166ad175cfc983fdbf2057f",
+            "normalizedTextSha256": "f1b00e9297039076676962fdaffdc641c5bc24e3c63ee045d59af40907b88ef9",
+            "weight": 1
+          },
+          {
+            "id": "d10:p15",
+            "kind": "paragraph",
+            "index": 15,
+            "sourceSha256": "0101732b2e4397b8a164e9d0184fea2afcee16d3c166ad175cfc983fdbf2057f",
+            "normalizedTextSha256": "185c4a1663b2cd82019457cf2bf9f59b5382470f45d4deef0c4c17a57b98a8a9",
+            "weight": 1
+          },
+          {
+            "id": "d10:p19",
+            "kind": "paragraph",
+            "index": 19,
+            "sourceSha256": "0101732b2e4397b8a164e9d0184fea2afcee16d3c166ad175cfc983fdbf2057f",
+            "normalizedTextSha256": "730fb47b1a6c4d82e3ad873dbb1b4e06842e156129c2953adb628dd70a16b338",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "Only prosecution is the enforcement option for that noncompliance; prosecutorial decision remains qualified."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "ea-annex-4.docx"
+      ]
+    }
+  },
+  {
+    "case": "r0-40",
+    "split": "heldout",
+    "family": "long-document-exception",
+    "question": "Does ea-annex-4.docx allow the Agency to impose a civil penalty and prosecute for the same digital-waste-tracking offence? Explain the separate associated-breach charging discussion.",
+    "sourceFacts": [
+      {
+        "source": "ea-annex-4.docx",
+        "sourceId": "d10",
+        "regions": [
+          {
+            "id": "d10:p178",
+            "kind": "paragraph",
+            "index": 178,
+            "sourceSha256": "0101732b2e4397b8a164e9d0184fea2afcee16d3c166ad175cfc983fdbf2057f",
+            "normalizedTextSha256": "72d9b5246526a0f14a773d865cc4e01983bb3e9ee194dd06668e7822d2f42ab5",
+            "weight": 1
+          },
+          {
+            "id": "d10:p179",
+            "kind": "paragraph",
+            "index": 179,
+            "sourceSha256": "0101732b2e4397b8a164e9d0184fea2afcee16d3c166ad175cfc983fdbf2057f",
+            "normalizedTextSha256": "aabc7c0b84bb63042ae67ff5151898df8f7cd9b91b8e5252048e86cbd13cd503",
+            "weight": 1
+          },
+          {
+            "id": "d10:p189",
+            "kind": "paragraph",
+            "index": 189,
+            "sourceSha256": "0101732b2e4397b8a164e9d0184fea2afcee16d3c166ad175cfc983fdbf2057f",
+            "normalizedTextSha256": "22466754199c9c9047a43a57208e0ead22cd5ef270b033a44169d11c9605281b",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "No same-offence double sanction; associated environmental offences inform charging, not permission to duplicate punishment."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "ea-annex-4.docx"
+      ]
+    }
+  },
+  {
+    "case": "r0-41",
+    "split": "heldout",
+    "family": "table-relationship",
+    "question": "Read ea-annex-5.docx's harm-versus-culpability matrix. What responses appear for harm category 2 with negligent conduct and category 3 with no or low culpability? Preserve both row and column labels.",
+    "sourceFacts": [
+      {
+        "source": "ea-annex-5.docx",
+        "sourceId": "d11",
+        "regions": [
+          {
+            "id": "d11:t0:r0:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 0,
+            "column": 0,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "127eca41da97b8740cf6239afc98d0ad6c71aa9389ce7f58fca7e3b713a88c1a",
+            "weight": 1
+          },
+          {
+            "id": "d11:t0:r0:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 0,
+            "column": 1,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "127c0afac29b442049724efc3fed0e6fee45e0820a144afdf38f46c4e3217adf",
+            "weight": 1
+          },
+          {
+            "id": "d11:t0:r1:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 1,
+            "column": 1,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "5f7df0f3bf8c6cb80d317026af8a5ab76d2484e8cbdd8319a06d6060d2d9ad18",
+            "weight": 1
+          },
+          {
+            "id": "d11:t0:r1:c2",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 1,
+            "column": 2,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "fea7c0c9678f7725f38f46ae1e8459c76623adf91772afec56248b556917d7c6",
+            "weight": 1
+          },
+          {
+            "id": "d11:t0:r1:c3",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 1,
+            "column": 3,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "dc1a999c46b5bae6eb6fbdcf0c580f6011e9cb2ddd932f90a902783fd5a0f1d8",
+            "weight": 1
+          },
+          {
+            "id": "d11:t0:r1:c4",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 1,
+            "column": 4,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "086521d3794020c68722afe3082d3948be3220d11fba85cd08454611c6cfb82d",
+            "weight": 1
+          },
+          {
+            "id": "d11:t0:r3:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 3,
+            "column": 0,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+            "weight": 1
+          },
+          {
+            "id": "d11:t0:r3:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 3,
+            "column": 1,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "d7f6f7715dbdbb6193c847578305d904f10c89a6a5e084e0515fbefba06cc3dd",
+            "weight": 1
+          },
+          {
+            "id": "d11:t0:r3:c2",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 3,
+            "column": 2,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "76efb14d35a6eee9042b1cfd2f124767366807525d600bf5fa7cd95334954ed8",
+            "weight": 1
+          },
+          {
+            "id": "d11:t0:r3:c3",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 3,
+            "column": 3,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "e3e25a61cd64bcde148e58ae319fc3e4cf9a4251f534d32abcfc938b785ec8e5",
+            "weight": 1
+          },
+          {
+            "id": "d11:t0:r3:c4",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 3,
+            "column": 4,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "e3e25a61cd64bcde148e58ae319fc3e4cf9a4251f534d32abcfc938b785ec8e5",
+            "weight": 1
+          },
+          {
+            "id": "d11:t0:r4:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 4,
+            "column": 0,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce",
+            "weight": 1
+          },
+          {
+            "id": "d11:t0:r4:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 4,
+            "column": 1,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "e3e25a61cd64bcde148e58ae319fc3e4cf9a4251f534d32abcfc938b785ec8e5",
+            "weight": 1
+          },
+          {
+            "id": "d11:t0:r4:c2",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 4,
+            "column": 2,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "e3e25a61cd64bcde148e58ae319fc3e4cf9a4251f534d32abcfc938b785ec8e5",
+            "weight": 1
+          },
+          {
+            "id": "d11:t0:r4:c3",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 4,
+            "column": 3,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "4d0097fc6627aa46dc8a66c41af9964a1c301329dbe6a7ddda4b9cce1adec1aa",
+            "weight": 1
+          },
+          {
+            "id": "d11:t0:r4:c4",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 4,
+            "column": 4,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "b68959cb93623aa5ad161835333e4a1e70d9eada3f214b035c58d34ebf74f08e",
+            "weight": 1
+          }
+        ],
+        "facts": [],
+        "relationships": [
+          {
+            "kind": "original-table-grid",
+            "table": 0,
+            "meaning": "Row labels and column headers jointly determine cell meaning; blank response cells are not choices. Merged duplicate cells are one assertion."
+          }
+        ]
+      }
+    ],
+    "successCriteria": [
+      "Category 2/negligent: civil VMP; category 3/no-low: warning or advice/guidance. These are policy indications, not guaranteed decisions."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "ea-annex-5.docx"
+      ]
+    },
+    "relationshipReviewRequired": true
+  },
+  {
+    "case": "r0-42",
+    "split": "heldout",
+    "family": "complete-section-read",
+    "question": "Read the complete Automatic penalties subsection in ea-annex-5.docx. Explain the duty, the two exceptions and the examples of mitigating exceptional circumstances.",
+    "sourceFacts": [
+      {
+        "source": "ea-annex-5.docx",
+        "sourceId": "d11",
+        "regions": [
+          {
+            "id": "d11:p71",
+            "kind": "paragraph",
+            "index": 71,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "d0fa98f4f7ca97d782e6a3eb20dfd4731d83ab7101228bb743b0aa7493b5c0af",
+            "weight": 1
+          },
+          {
+            "id": "d11:p72",
+            "kind": "paragraph",
+            "index": 72,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "9a942e2e4f6fdfa39175f7c131914eb379879137a64e4b2fd9d7139f738c7746",
+            "weight": 1
+          },
+          {
+            "id": "d11:p73",
+            "kind": "paragraph",
+            "index": 73,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "6c5ad1ec0fd3f181a299d968e90d66970666fdf2143bfd7a2c2f5558d87328c5",
+            "weight": 1
+          },
+          {
+            "id": "d11:p74",
+            "kind": "paragraph",
+            "index": 74,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "bf505361612671b1dcf5583497587431b8fb3733c30a5970cf88de8163ff0192",
+            "weight": 1
+          },
+          {
+            "id": "d11:p75",
+            "kind": "paragraph",
+            "index": 75,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "54c48caa7872e17df05f88d6b45121fef0514b61aacbf3167238a8411d6d07fc",
+            "weight": 1
+          },
+          {
+            "id": "d11:p76",
+            "kind": "paragraph",
+            "index": 76,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "e2dd7ace83ce69ba737765c273fec5f4e04d14119105e31608869d3a1ab105e3",
+            "weight": 1
+          },
+          {
+            "id": "d11:p77",
+            "kind": "paragraph",
+            "index": 77,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "ee3d877d905cdde379732313afd220f89cd30c32de20ae2a00b9255021a03f5a",
+            "weight": 1
+          },
+          {
+            "id": "d11:p78",
+            "kind": "paragraph",
+            "index": 78,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "64772e8eba94d0bb03e06d62097fedd7ff0fc1aedbeb95631a1a5250a5e0d0b4",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "Cover duty, culpability mitigation or alternative enforcement, compliant remedial plan/notice and no culpability examples."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "ea-annex-5.docx"
+      ]
+    },
+    "requiredCoverage": "all nonempty original paragraphs 71 through 78 inclusive"
+  },
+  {
+    "case": "r0-43",
+    "split": "heldout",
+    "family": "sanction-case-classification",
+    "question": "Under ea-annex-5.docx, suppose a water company's repeated breach is covered by an agreed compliance plan and the Agency is satisfied the required steps are being followed. Must the automatic penalty still be imposed in every case? Explain the qualification using original evidence.",
+    "sourceFacts": [
+      {
+        "source": "ea-annex-5.docx",
+        "sourceId": "d11",
+        "regions": [
+          {
+            "id": "d11:p72",
+            "kind": "paragraph",
+            "index": 72,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "9a942e2e4f6fdfa39175f7c131914eb379879137a64e4b2fd9d7139f738c7746",
+            "weight": 1
+          },
+          {
+            "id": "d11:p73",
+            "kind": "paragraph",
+            "index": 73,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "6c5ad1ec0fd3f181a299d968e90d66970666fdf2143bfd7a2c2f5558d87328c5",
+            "weight": 1
+          },
+          {
+            "id": "d11:p74",
+            "kind": "paragraph",
+            "index": 74,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "bf505361612671b1dcf5583497587431b8fb3733c30a5970cf88de8163ff0192",
+            "weight": 1
+          },
+          {
+            "id": "d11:p75",
+            "kind": "paragraph",
+            "index": 75,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "54c48caa7872e17df05f88d6b45121fef0514b61aacbf3167238a8411d6d07fc",
+            "weight": 1
+          },
+          {
+            "id": "d11:p76",
+            "kind": "paragraph",
+            "index": 76,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "e2dd7ace83ce69ba737765c273fec5f4e04d14119105e31608869d3a1ab105e3",
+            "weight": 1
+          },
+          {
+            "id": "d11:p77",
+            "kind": "paragraph",
+            "index": 77,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "ee3d877d905cdde379732313afd220f89cd30c32de20ae2a00b9255021a03f5a",
+            "weight": 1
+          },
+          {
+            "id": "d11:p78",
+            "kind": "paragraph",
+            "index": 78,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "64772e8eba94d0bb03e06d62097fedd7ff0fc1aedbeb95631a1a5250a5e0d0b4",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "May qualify for exceptional mitigation; not absolute exemption merely because a plan exists; agency satisfaction and stated circumstances matter."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "ea-annex-5.docx"
+      ]
+    }
+  },
+  {
+    "case": "r0-44",
+    "split": "heldout",
+    "family": "cross-file-comparison",
+    "question": "Compare ea-annex-3.docx and ea-annex-5.docx on the standard of proof for their civil penalties and their maximum variable/civil penalty figures. Keep each regime's limit attached to its file.",
+    "sourceFacts": [
+      {
+        "source": "ea-annex-3.docx",
+        "sourceId": "d09",
+        "regions": [
+          {
+            "id": "d09:p38",
+            "kind": "paragraph",
+            "index": 38,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "0c247f50a66e4c59c878615dc0d8a0cb5dc263aed01e1cb6beb4302f2b60bb96",
+            "weight": 1
+          },
+          {
+            "id": "d09:p50",
+            "kind": "paragraph",
+            "index": 50,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "b250548a06ec473f4852c4fb16e2b4f2aafe82d6df4a5b4eac246871bb93bafc",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      },
+      {
+        "source": "ea-annex-5.docx",
+        "sourceId": "d11",
+        "regions": [
+          {
+            "id": "d11:p53",
+            "kind": "paragraph",
+            "index": 53,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "af9e6e24a9649d6086e965fd9e3f8cfad6df472b517188f06d83a0988337760c",
+            "weight": 1
+          },
+          {
+            "id": "d11:p84",
+            "kind": "paragraph",
+            "index": 84,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "ae8e81be0fa5803fc59c6d7f7948bd533847faee900bc1acc397edad941638d2",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "Both balance of probabilities; mercury maximum £200,000 versus water civil VMP £500,000. Do not apply either maximum across regimes."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "ea-annex-3.docx",
+        "ea-annex-5.docx"
+      ]
+    }
+  },
+  {
+    "case": "r0-45",
+    "split": "heldout",
+    "family": "form-branching",
+    "question": "In ea-response-form.docx, if a respondent declines publication, what further explanation is requested and does the form itself guarantee secrecy? Cite the relevant form and information-use sections.",
+    "sourceFacts": [
+      {
+        "source": "ea-response-form.docx",
+        "sourceId": "d12",
+        "regions": [
+          {
+            "id": "d12:p10",
+            "kind": "paragraph",
+            "index": 10,
+            "sourceSha256": "fd7c3e9350bc57b7517bc06f3cbab81869f675f8cc73070f2099921185790145",
+            "normalizedTextSha256": "db4ff9e4ac5d377c1814b6d27f0558ba0aefcb09193fd8be9e0e0ff6d991f2ca",
+            "weight": 1
+          },
+          {
+            "id": "d12:p11",
+            "kind": "paragraph",
+            "index": 11,
+            "sourceSha256": "fd7c3e9350bc57b7517bc06f3cbab81869f675f8cc73070f2099921185790145",
+            "normalizedTextSha256": "839675a6163e642f31447162b0a1613957e81297ed48241644798ba5d37de3cf",
+            "weight": 1
+          },
+          {
+            "id": "d12:p13",
+            "kind": "paragraph",
+            "index": 13,
+            "sourceSha256": "fd7c3e9350bc57b7517bc06f3cbab81869f675f8cc73070f2099921185790145",
+            "normalizedTextSha256": "d9c867669548e357e92cabeef9e8e62c78fe37e8d5bfb3035de49327f3195fdd",
+            "weight": 1
+          },
+          {
+            "id": "d12:p44",
+            "kind": "paragraph",
+            "index": 44,
+            "sourceSha256": "fd7c3e9350bc57b7517bc06f3cbab81869f675f8cc73070f2099921185790145",
+            "normalizedTextSha256": "e080c6e36a1b217631ce1f87af5d0213082ee34a954a38a41f678d96607020ba",
+            "weight": 1
+          },
+          {
+            "id": "d12:p45",
+            "kind": "paragraph",
+            "index": 45,
+            "sourceSha256": "fd7c3e9350bc57b7517bc06f3cbab81869f675f8cc73070f2099921185790145",
+            "normalizedTextSha256": "341c144c838b1fa4310e51ca59a5ffd590c282841fa67e8cbc7e1e887ba176ef",
+            "weight": 1
+          },
+          {
+            "id": "d12:p46",
+            "kind": "paragraph",
+            "index": 46,
+            "sourceSha256": "fd7c3e9350bc57b7517bc06f3cbab81869f675f8cc73070f2099921185790145",
+            "normalizedTextSha256": "67fbf9db76173702ada27d4c0bf814de4b79d801cde4c8c4bcd4b0e2e50c67ad",
+            "weight": 1
+          },
+          {
+            "id": "d12:p47",
+            "kind": "paragraph",
+            "index": 47,
+            "sourceSha256": "fd7c3e9350bc57b7517bc06f3cbab81869f675f8cc73070f2099921185790145",
+            "normalizedTextSha256": "85a39ab345d672ff8ca9b9c6876f3adcacf45ee7c1e2dbd2408fd338bd55e07e",
+            "weight": 1
+          },
+          {
+            "id": "d12:p48",
+            "kind": "paragraph",
+            "index": 48,
+            "sourceSha256": "fd7c3e9350bc57b7517bc06f3cbab81869f675f8cc73070f2099921185790145",
+            "normalizedTextSha256": "1ea442a134b2a184bd5d40104401f2a37fbc09ccf3f4bc9da161c6099be3691d",
+            "weight": 1
+          },
+          {
+            "id": "d12:p49",
+            "kind": "paragraph",
+            "index": 49,
+            "sourceSha256": "fd7c3e9350bc57b7517bc06f3cbab81869f675f8cc73070f2099921185790145",
+            "normalizedTextSha256": "d8c39be1d8d647a765724ce4d63a9a17b09dd72837cb63d631c680d84b173276",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "Explain reason for no; FOI may require summary/disclosure, personal details withheld. No absolute confidentiality guarantee."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "ea-response-form.docx"
+      ]
+    }
+  },
+  {
+    "case": "r0-46",
+    "split": "heldout",
+    "family": "precise-fact",
+    "question": "What deadline and email subject does ea-response-form.docx print for returning responses? Describe them as the form's historical instructions, not a new deadline.",
+    "sourceFacts": [
+      {
+        "source": "ea-response-form.docx",
+        "sourceId": "d12",
+        "regions": [
+          {
+            "id": "d12:p19",
+            "kind": "paragraph",
+            "index": 19,
+            "sourceSha256": "fd7c3e9350bc57b7517bc06f3cbab81869f675f8cc73070f2099921185790145",
+            "normalizedTextSha256": "ecf02eb17aac71a28a13d1660939274785bbafef38aceb1c5141656e38754e08",
+            "weight": 1
+          },
+          {
+            "id": "d12:p22",
+            "kind": "paragraph",
+            "index": 22,
+            "sourceSha256": "fd7c3e9350bc57b7517bc06f3cbab81869f675f8cc73070f2099921185790145",
+            "normalizedTextSha256": "cfdde10755edc3a328500f9a4ba3a3bad679de2dcf50524f3bf00095b9bdc5cd",
+            "weight": 1
+          },
+          {
+            "id": "d12:p24",
+            "kind": "paragraph",
+            "index": 24,
+            "sourceSha256": "fd7c3e9350bc57b7517bc06f3cbab81869f675f8cc73070f2099921185790145",
+            "normalizedTextSha256": "4e542d9410277f46ea538eee8fe8c659df61fc37f6426072b971a5164e69fbc7",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "4 October 2026 11:59pm with specified enforcement-policy subject; no submission action requested."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "ea-response-form.docx"
+      ]
+    }
+  },
+  {
+    "case": "r0-47",
+    "split": "heldout",
+    "family": "form-branching",
+    "question": "In ea-response-form.docx, explain what extra information is requested when responding for an organisation, choosing Other, and requesting an outcome email. Do those instructions contain a completed respondent identity?",
+    "sourceFacts": [
+      {
+        "source": "ea-response-form.docx",
+        "sourceId": "d12",
+        "regions": [
+          {
+            "id": "d12:p29",
+            "kind": "paragraph",
+            "index": 29,
+            "sourceSha256": "fd7c3e9350bc57b7517bc06f3cbab81869f675f8cc73070f2099921185790145",
+            "normalizedTextSha256": "fe1225ba4ca3a6a06346900ad95124157aaaa0ce65c3a9f8ac2421e5537a4b66",
+            "weight": 1
+          },
+          {
+            "id": "d12:p30",
+            "kind": "paragraph",
+            "index": 30,
+            "sourceSha256": "fd7c3e9350bc57b7517bc06f3cbab81869f675f8cc73070f2099921185790145",
+            "normalizedTextSha256": "536f24c94cb91f602051174df89ff9952d7bcb67c5211703d078bf2b838a7de9",
+            "weight": 1
+          },
+          {
+            "id": "d12:p31",
+            "kind": "paragraph",
+            "index": 31,
+            "sourceSha256": "fd7c3e9350bc57b7517bc06f3cbab81869f675f8cc73070f2099921185790145",
+            "normalizedTextSha256": "6926478c576e6ad35124219c794da00154fba49714c9ff2ced209ed5f251af7b",
+            "weight": 1
+          },
+          {
+            "id": "d12:p32",
+            "kind": "paragraph",
+            "index": 32,
+            "sourceSha256": "fd7c3e9350bc57b7517bc06f3cbab81869f675f8cc73070f2099921185790145",
+            "normalizedTextSha256": "3701d3961c80def5a5859e470095bbafe77be012ed41eb7fd56df92a2bc58764",
+            "weight": 1
+          },
+          {
+            "id": "d12:p33",
+            "kind": "paragraph",
+            "index": 33,
+            "sourceSha256": "fd7c3e9350bc57b7517bc06f3cbab81869f675f8cc73070f2099921185790145",
+            "normalizedTextSha256": "8dc32005001a2816c5e7a94005d125bbe16aba6102294402f6f77eb3388e6da7",
+            "weight": 1
+          },
+          {
+            "id": "d12:p34",
+            "kind": "paragraph",
+            "index": 34,
+            "sourceSha256": "fd7c3e9350bc57b7517bc06f3cbab81869f675f8cc73070f2099921185790145",
+            "normalizedTextSha256": "9a4bd2669f29e66a55636d2303c641bc5e2db1f83ed0bfb1d4582bd6eda6ee4b",
+            "weight": 1
+          },
+          {
+            "id": "d12:p35",
+            "kind": "paragraph",
+            "index": 35,
+            "sourceSha256": "fd7c3e9350bc57b7517bc06f3cbab81869f675f8cc73070f2099921185790145",
+            "normalizedTextSha256": "f97e9da0e3b879f0a9df979ae260a5f7e1371edb127c1862d4f861981166cdc1",
+            "weight": 1
+          },
+          {
+            "id": "d12:p36",
+            "kind": "paragraph",
+            "index": 36,
+            "sourceSha256": "fd7c3e9350bc57b7517bc06f3cbab81869f675f8cc73070f2099921185790145",
+            "normalizedTextSha256": "5583d826a4d13cb5745103de5162d75b27c887e081f6499c21803e325829f377",
+            "weight": 1
+          },
+          {
+            "id": "d12:p37",
+            "kind": "paragraph",
+            "index": 37,
+            "sourceSha256": "fd7c3e9350bc57b7517bc06f3cbab81869f675f8cc73070f2099921185790145",
+            "normalizedTextSha256": "46af49b0512a2a7f8d5bb1079e6c5d2bf4dba8af0cbfe44c70970a143638c303",
+            "weight": 1
+          },
+          {
+            "id": "d12:p39",
+            "kind": "paragraph",
+            "index": 39,
+            "sourceSha256": "fd7c3e9350bc57b7517bc06f3cbab81869f675f8cc73070f2099921185790145",
+            "normalizedTextSha256": "31f1fce7dbf9adaacbed8dbaa35b56e9f8099caa6cbfe957b5bd68ba6480e5cd",
+            "weight": 1
+          },
+          {
+            "id": "d12:p40",
+            "kind": "paragraph",
+            "index": 40,
+            "sourceSha256": "fd7c3e9350bc57b7517bc06f3cbab81869f675f8cc73070f2099921185790145",
+            "normalizedTextSha256": "f2dd9deff8115d4190f3746283d7e5d28965f8ff9517d0fa624590280b2a0bc7",
+            "weight": 1
+          },
+          {
+            "id": "d12:p41",
+            "kind": "paragraph",
+            "index": 41,
+            "sourceSha256": "fd7c3e9350bc57b7517bc06f3cbab81869f675f8cc73070f2099921185790145",
+            "normalizedTextSha256": "69383c03e0d5d730b23831e3aeb8a2096296473e3b1f22ed8b3598b97600347e",
+            "weight": 1
+          },
+          {
+            "id": "d12:p42",
+            "kind": "paragraph",
+            "index": 42,
+            "sourceSha256": "fd7c3e9350bc57b7517bc06f3cbab81869f675f8cc73070f2099921185790145",
+            "normalizedTextSha256": "17507dcf845793fab0da66594804a4ca956ba284bcf36f4cef09e0a0a50c421a",
+            "weight": 1
+          },
+          {
+            "id": "d12:p38",
+            "kind": "paragraph",
+            "index": 38,
+            "sourceSha256": "fd7c3e9350bc57b7517bc06f3cbab81869f675f8cc73070f2099921185790145",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          },
+          {
+            "id": "d12:p43",
+            "kind": "paragraph",
+            "index": 43,
+            "sourceSha256": "fd7c3e9350bc57b7517bc06f3cbab81869f675f8cc73070f2099921185790145",
+            "normalizedTextSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "weight": 1,
+            "expectedBlank": true
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "Organisation name, interest for Other, email for updates; distinguish prompts from filled responses. Scope absence to those fields."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "ea-response-form.docx"
+      ]
+    },
+    "relationshipReviewRequired": true
+  },
+  {
+    "case": "r0-48",
+    "split": "heldout",
+    "family": "sanction-case-classification",
+    "question": "Compare two hypothetical records using only the named sources: an ordinary company commits a mercury reporting breach, and a non-water company commits an offence discussed in ea-annex-5.docx. Does a civil penalty follow automatically in both? Explain the scope limits using ea-annex-3.docx and ea-annex-5.docx.",
+    "sourceFacts": [
+      {
+        "source": "ea-annex-3.docx",
+        "sourceId": "d09",
+        "regions": [
+          {
+            "id": "d09:p34",
+            "kind": "paragraph",
+            "index": 34,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "5934cac112cc335a61c2169add78d88b96c16edd3409e7df308fb88798074f12",
+            "weight": 1
+          },
+          {
+            "id": "d09:p35",
+            "kind": "paragraph",
+            "index": 35,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "f02b95ed0b00ce45335979782615d60879b99e788fa3b7b8fca1599589b88846",
+            "weight": 1
+          },
+          {
+            "id": "d09:p36",
+            "kind": "paragraph",
+            "index": 36,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "80db349b354a34b8a96ad18b5f760cd776fd689a2227c81df9c0a5cf7dfed374",
+            "weight": 1
+          },
+          {
+            "id": "d09:p37",
+            "kind": "paragraph",
+            "index": 37,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "4a0d52cd1614b86d174a3b5ddd02bcd9ccd06aea2583b9b57004e6b2850b8480",
+            "weight": 1
+          },
+          {
+            "id": "d09:p38",
+            "kind": "paragraph",
+            "index": 38,
+            "sourceSha256": "6dad598b2ba77dc71546b8018f2ab171fec28a334f06cacc65fa9f7500032e1f",
+            "normalizedTextSha256": "0c247f50a66e4c59c878615dc0d8a0cb5dc263aed01e1cb6beb4302f2b60bb96",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      },
+      {
+        "source": "ea-annex-5.docx",
+        "sourceId": "d11",
+        "regions": [
+          {
+            "id": "d11:p124",
+            "kind": "paragraph",
+            "index": 124,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "237cb4a8ad8e8919e722fa81f4f5f117872792f5b924c542c51728fa994159a9",
+            "weight": 1
+          },
+          {
+            "id": "d11:p125",
+            "kind": "paragraph",
+            "index": 125,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "578504b3efb7eb1c67597e43fa3c1681851fce1b340b6dd974c353307cb24d31",
+            "weight": 1
+          },
+          {
+            "id": "d11:p126",
+            "kind": "paragraph",
+            "index": 126,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "174ccd0e73389f2028a911d7acec52a781c2de5d48097ae9ee89108946c3fa8a",
+            "weight": 1
+          },
+          {
+            "id": "d11:p127",
+            "kind": "paragraph",
+            "index": 127,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "f3e166e09b417ce658fa1b22306d458c5daaa0dbe14746d55e2bb94821556195",
+            "weight": 1
+          },
+          {
+            "id": "d11:p128",
+            "kind": "paragraph",
+            "index": 128,
+            "sourceSha256": "c86d4cdad3bdfd11d0c829133a80faec8c871a30d7d905c6384419736613bafd",
+            "normalizedTextSha256": "40841b58d6bbe88a73d27d22f0195eb264051c6d5924fea8e16ab622a63ebf8b",
+            "weight": 1
+          }
+        ],
+        "facts": []
+      }
+    ],
+    "successCriteria": [
+      "Mercury reporting needs case assessment and civil proof; Annex 5 water-company penalties unavailable when offender is not a water company. Do not infer immunity under other law."
+    ],
+    "indicators": {
+      "requiredSourceFiles": [
+        "ea-annex-3.docx",
+        "ea-annex-5.docx"
+      ]
+    }
+  }
+]

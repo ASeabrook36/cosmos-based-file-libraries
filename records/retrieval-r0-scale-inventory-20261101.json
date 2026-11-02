@@ -1,0 +1,200 @@
+{
+  "kind": "retrieval-r0-scale-inventory",
+  "date": "2026-11-01",
+  "method": "read-only local committed receipts and last located owner handoff; no cloud operations",
+  "baselineCommit": "9738236ce9cb3e5d08624f6dd14f8714be51c0cc",
+  "inspectedMainCommit": "02c218baebb67d851aea45c6936c59bbf6f976e5",
+  "evidence": [
+    {
+      "path": "records/scale-probe-20261029.json",
+      "sha256": "92c385f93d692dba86f9c9910093d38360abe7c98f9c727f795cd08709db0184"
+    },
+    {
+      "path": "records/e27-hybrid-routing-20261028.json",
+      "sha256": "653c9fee7c3726aea6f1340b04d45b60a15d28ecb49899c04face6a3390982b8"
+    },
+    {
+      "path": "records/structure-lab-20261028.json",
+      "sha256": "c362929bc303cbda9b390f700b05902ad10250738a861e7d8e7f8d28645430bf"
+    },
+    {
+      "path": "records/modular-cloud-20261029.json",
+      "sha256": "36b80d18206814c3d8578edf0419d198468c2f3d3763e529e0df5e65d650fadb"
+    },
+    {
+      "path": "records/agent-recovery-20261101.json",
+      "sha256": "6df5859ff533c4295192ac9d7ad24b27fb657d33a421b2fff6e4c708408ef979"
+    },
+    {
+      "path": "records/model-context-comparison-20261101.json",
+      "sha256": "0ac8293297e73fc74d9fb4a886b2f592f09e6481e10d1320b34dfe7d7e7c41fd"
+    }
+  ],
+  "latestLocatedScale": {
+    "evidence": "E59",
+    "completedAt": "2026-10-29",
+    "ownerRole": "scale-probe session owner",
+    "lastOwnerHandoffAt": "2026-10-29T19:17:10.559Z",
+    "ownerReportedState": "completed; disposable database deleted; no scale job running",
+    "liveStateRevalidated": false,
+    "laterRunOrOwnerVerified": false,
+    "privateSessionLocatorPublished": false,
+    "resourceReuseAuthorized": false
+  },
+  "e59": {
+    "physicalPartitions": 1,
+    "sdk": "4.17.1",
+    "probeLibraries": 10,
+    "probeVectorsRange": [
+      1000,
+      5000
+    ],
+    "questionsPerProbe": 20,
+    "annRepeatsPerStage": 3,
+    "recallRepeatsSummarized": 1,
+    "exactReferencesPerQuestionPerStage": 1,
+    "nominalFinalLibraries": 1013,
+    "nominalFinalVectors": 243273,
+    "actualFinalLibrariesIncludingLagProbe": 1014,
+    "actualFinalVectorsIncludingLagProbe": 244773,
+    "observedVectorIndex": "QuantizedFlat:/libraryId",
+    "recallAt10MeanRange": [
+      0.995,
+      1.0
+    ],
+    "maximumAbsoluteRuChangeFractionStage1To3": 0.008403361344537785,
+    "allProbesPassHistoricalImplementedGrade": true,
+    "historicalRuToleranceFormula": "abs(after-before) <= max(0.20 * before, max(baseline_run_medians)-min(baseline_run_medians))",
+    "strictSpreadCriterionPassedByProbeStage1To3": {
+      "scale-p01": false,
+      "scale-p02": false,
+      "scale-p03": true,
+      "scale-p04": false,
+      "scale-p05": false,
+      "scale-p06": false,
+      "scale-p07": true,
+      "scale-p08": true,
+      "scale-p09": false,
+      "scale-p10": false
+    },
+    "strictSpreadConjunctionPassedEveryProbe": false,
+    "stage3Wait": {
+      "engaged": false,
+      "reason": "poll selected approximately 200-vector newly added shard, not measured 1000-5000-vector probes",
+      "timeoutMinutes": 30,
+      "probeIndexesReportedAfterWait": true
+    },
+    "newLibraryLag": {
+      "writeSeconds": 56.8,
+      "engaged": true,
+      "secondsToEngage": 0,
+      "waitMinutes": 30,
+      "retrievedLimit": 300.0
+    },
+    "semanticTaskQualityMeasured": false
+  },
+  "settledWithinMeasuredBounds": [
+    "library-prefix vector search small-library cost scoping at one physical partition",
+    "library-filter omission grows full-container cost",
+    "one new 1500-vector library indexed at first post-write poll",
+    "Python ranked hybrid requires no explicit partition key for tested SDKs"
+  ],
+  "openFoundationChecks": [
+    {
+      "id": "R1-global-ranking",
+      "owner": "R1",
+      "status": "unmeasured",
+      "gate": "same library verified on multiple ranges; independent global exact reference; distance order and recall >=0.95"
+    },
+    {
+      "id": "R1-small-scope-routing",
+      "owner": "R1",
+      "status": "unmeasured",
+      "gate": "small-library range contacts and cost in multi-partition container"
+    },
+    {
+      "id": "R1-hybrid-growth",
+      "owner": "R1",
+      "status": "unmeasured",
+      "gate": "distinct rankings then RU and range fan-out by size"
+    },
+    {
+      "id": "R1-large-library-index",
+      "owner": "R1",
+      "status": "unmeasured",
+      "gate": "actual DiskANN engagement, recall, filters, cost and readiness by library size"
+    },
+    {
+      "id": "R1-concurrency-and-split",
+      "owner": "R1",
+      "status": "unmeasured",
+      "gate": "bounded query/update concurrency, throttling, retry and split-rebuild distributions"
+    },
+    {
+      "id": "R1-support",
+      "owner": "R1",
+      "status": "unresolved",
+      "gate": "current vendor support/configuration, shard limits and float16 operational failure explanation"
+    },
+    {
+      "id": "R2-representation",
+      "owner": "R2",
+      "status": "not-selected",
+      "gate": "granular/coalesced then passage/discovery controlled source-based evaluation"
+    },
+    {
+      "id": "R3-layout",
+      "owner": "R3",
+      "status": "not-selected",
+      "gate": "justified identical-vector physical comparisons after R1/R2"
+    },
+    {
+      "id": "P1-evidence-selectors",
+      "owner": "P1",
+      "status": "open",
+      "gate": "source-preserving compact output and separately measured selector recovery"
+    },
+    {
+      "id": "production-lifecycle-scale",
+      "owner": "I1/production",
+      "status": "open",
+      "gate": "multi-instance visibility and remote completion/deletion races under load"
+    }
+  ],
+  "limitations": [
+    "No new cloud validation or current resource inventory",
+    "Absence of a newer located receipt does not prove absence of a running job",
+    "E59 real abstracts had seeded non-topical library membership",
+    "Small pilot/source labels cannot establish physical ANN readiness",
+    "Historical grade and recall coverage retained without changing original receipt",
+    "No current vendor status or price revalidation"
+  ],
+  "r0Harness": {
+    "summaryVersion": 2,
+    "gradeVersion": 2,
+    "allAnnRepeatsScored": true,
+    "expectedQueryAndRepeatCoverageRequired": true,
+    "missingBaselineOrProbeCannotPass": true,
+    "errorsNullScoresMissingIndexAndCostMetricsCannotPass": true,
+    "ruPolicy": "within 20 percent AND baseline run-median spread; flags reported separately",
+    "readinessCorrection": "stage 3 selects existing 5000-vector probe rather than a tiny newly added shard",
+    "historicalReceiptsUnchanged": true,
+    "localScaleTestsPassed": 22,
+    "lintAndFormatPassed": true,
+    "referencePrivacyPassed": true,
+    "liveScaleRunPerformed": false,
+    "files": [
+      {
+        "path": "scripts/scale_probe.py",
+        "sha256": "a7ff39493ed4f88f482342cefd7b196763b4a9a5d961f2ce7b0390e95ab97e23"
+      },
+      {
+        "path": "tests/test_scale_probe.py",
+        "sha256": "8d42d8204f480cacfa9544506e37dc350682ef65c5d0ae29ee15a8882cade219"
+      }
+    ],
+    "focusedScaleQueryCanaryHelperGenerationTestsPassed": 96,
+    "relatedQueryCanaryGenerationSuitePassed": 104,
+    "relatedSuiteNote": "Related suite included fake-client canary integration; three additional cost-metric cases then passed in the focused 96-test selection."
+  }
+}

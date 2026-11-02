@@ -1190,3 +1190,81 @@ Responses runs were not repeated under the original demo cap. Final local valida
 **844 tests passed**, 14 existing TestClient deprecation warnings; Ruff and diff/privacy
 checks passed. Broader corpus/format/visual validation, the remaining selector issues,
 production hosting/authentication and remote-race obligations remain open.
+
+
+## E64. Frozen R0 benchmark and bounded baseline — measured
+
+R0 starts from `9738236ce9cb3e5d08624f6dd14f8714be51c0cc` on the modular-ingestion
+work. The [manifest/task pack](testing/retrieval-r0/README.md) freezes 12 original
+public DOCX files, 48 tasks (32 development/16 held-out), 358 original paragraph or
+table-cell regions, byte/text hashes, source relationships and comparison controls.
+Raw documents, answers, source snapshots, credentials and environment identifiers
+remain private. The four earlier DOCX cases are development regressions; four new
+files and a task family are withheld. This policy-focused sample has correlated
+sources and does not estimate general enterprise accuracy.
+
+[The baseline receipt](../records/retrieval-r0-baseline-20261101.json) records 36
+completed turns on a five-file development corpus: six selected tasks × three
+complete strategies × two repeats.
+GPT-6.1 Sol `2026-09-29`, Responses, medium reasoning, 8k output and a 200k per-task
+conversation allowance were fixed independently of the implementation agent.
+Profile order reversed in repeat two. All source/code snapshots and deployment
+settings remained unchanged. The [scorecard](../records/retrieval-r0-scorecard-20261101.json)
+separates relevant-source delivery, task completion, factual support and citation
+accuracy, preserving missing counters and incomplete applicable denominators.
+
+Current completed/supported 10/12 tasks, custom and Microsoft 12/12 each; all
+36 passed supplied-file/location citation review. Current lost 32 blank form
+cells and asserted blankness in both repeats. Custom selected text retained the
+needed grid separators; Microsoft retained literal HTML tables/blank cells.
+All six complete-section turns supplied all 71 nonempty original regions in
+order, including source headings. Custom missed some auxiliary gold regions even
+where the answer remained supported, so full-label coverage differs from task
+completion. These are assistant reviews, not blinded human judgments or a provider
+winner. Current locations can be broad section starts rather than precise gold
+paragraphs. Table results do not prove broad original-format or visual fidelity.
+
+Four custom and one Microsoft per-call read-budget refusals recovered; two
+Microsoft source-scope selector errors recovered. Maximum measured input was
+94,452 tokens: a 200k allowance is not a 200k-input test. Fourteen provider 429
+retries incurred 178,106.2 ms reported wait in Microsoft cells. Tool choices,
+cache and actual inference region remain confounders, and missing retrieval
+charges leave known subtotals without fabricated totals. No latency/cost winner
+is selected. Full raw captures and review reasons are private.
+
+[Local measurement](../records/retrieval-r0-local-baseline-20261101.json) processes
+all eight development originals using existing current/custom extraction and
+chunking. The long source has 336,603/345,895 estimated body tokens and 862/6,773
+chunks respectively, with median chunk lengths 459/40 tokens. Fine source
+structure therefore need not imply equally fine embeddings; R2 must test that
+choice. The full source cannot fit the frozen 200k allowance and was not cloud
+ingested/replayed. Actual distributions and measured adjacent-overlap definitions
+are retained rather than presenting configured 500-token targets as observations.
+
+[Runtime/attempt receipts](../records/retrieval-r0-runtime-20261101.json) include
+15 source copies, active generations/revisions, actual chunk distributions,
+19 completed logical ingestion-stage attempts, profile/embedding pins, inherited
+canary incarnation verification and separate API/worker provenance. The three
+small cloud libraries have 115/920/9 active vectors including visuals; their ANN
+readiness/graph use was not graded. Post-replay full reads completed for all 15
+sources and did not warm the replay. Connector tokens, billed costs and hosting
+allocation remain unavailable. The temporary answering deployment was removed;
+pre-existing model configurations were verified unchanged.
+
+The [scale inventory](retrieval-r0-scale-handoff.md) preserves E59's original
+receipt, distinguishes its nominal and actual final inventory, identifies its
+one-partition/QuantizedFlat scope and historical grading/first-repeat-recall
+limitations, and records the last located owner's completed/deleted-resource
+handoff as historical evidence. It does not claim a fresh cloud inventory. R0's
+version-2 scale harness checks all repeats, missing/errors/nulls and the written
+20%-plus-repeat-spread criterion; it changes no historical result and runs no
+new scale load. Multi-partition ranking/fan-out, large-library graph behavior,
+concurrency, further format support and lifecycle under load remain open.
+
+Reusable local setup pins dependencies, isolates each worktree's editable install,
+and provides automatic setup/test/lint actions without credentials or provisioning.
+Fresh/repeated setup and a second-worktree smoke passed. Final validation:
+**961 tests passed**, 14 existing warnings; Ruff, format, diff and private-reference
+privacy checks passed. [R1/R2/P1 handoffs](retrieval-r0.md) give dependencies,
+commands, acceptance criteria and explicit implementation/cloud blockers. All
+held-out evaluation and architecture changes remain subsequent work.

@@ -63,6 +63,12 @@ The per-owner figures come from earlier measurements of the same Cosmos features
 
 ## Status
 
+The [R0 benchmark and handoffs](docs/retrieval-r0.md) freeze 12 original DOCX
+sources and 48 tasks, with a 36-turn matched Sol/200k baseline, explicit source
+scoring and reconciled scale evidence. The held-out set remains unrun; no provider
+or retrieval architecture winner is selected. [Reusable local setup](docs/local-development.md)
+provides per-worktree dependencies and test/lint actions.
+
 An isolated [structured-retrieval lab](docs/structure-lab.md) now compares shared
 and separate Cosmos summary indexes using frozen source trees, summaries and
 vectors. Its three index canaries and initial live functional demonstration

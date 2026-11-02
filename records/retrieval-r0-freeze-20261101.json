@@ -1,0 +1,26 @@
+{
+  "schema": "fli.r0.freeze.v1",
+  "baseCommit": "9738236ce9cb3e5d08624f6dd14f8714be51c0cc",
+  "ancestorVerified": true,
+  "branch": "codex/retrieval-r0",
+  "frozenFiles": {
+    "docs/testing/retrieval-r0/manifest.json": "ef9e8ae4037903e8c18a1db09dbb7410030be53ab6c35e6549218ae6803ed1cf",
+    "docs/testing/retrieval-r0/tasks.json": "997a7090c3cca5dacef760a5d0a241eeed4f90168ae427877ec70b4e51deaab5"
+  },
+  "sourceDocuments": 12,
+  "sourceRegions": 358,
+  "developmentDocuments": 8,
+  "heldoutDocuments": 4,
+  "developmentTasks": 32,
+  "heldoutTasks": 16,
+  "cloudBaselineDocuments": 5,
+  "cloudBaselineTasks": 6,
+  "repeats": 2,
+  "profiles": 3,
+  "plannedTurns": 36,
+  "heldoutExecuted": false,
+  "scenarios": "docs/retrieval-r0.md",
+  "splitPolicy": "documents and one task family withheld; earlier four DOCX are development regressions",
+  "rawContentInRepository": false,
+  "automaticSetupCloudProvisioning": false
+}

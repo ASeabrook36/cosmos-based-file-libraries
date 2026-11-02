@@ -1,0 +1,20 @@
+version = 1
+name = "File Library Index"
+
+[setup]
+script = "sh scripts/dev setup"
+
+[[actions]]
+name = "Test"
+icon = "test"
+command = "sh scripts/dev test -q"
+
+[[actions]]
+name = "Lint"
+icon = "tool"
+command = "sh scripts/dev lint"
+
+[[actions]]
+name = "Check"
+icon = "test"
+command = "sh scripts/dev check"

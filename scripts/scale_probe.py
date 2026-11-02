@@ -30,6 +30,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import math
 import os
 import random
 import statistics
@@ -182,22 +183,54 @@ def _median(values: Sequence[float]) -> float | None:
     return round(statistics.median(values), 2) if values else None
 
 
-def summarize(rows: Sequence[dict[str, Any]]) -> dict[str, Any]:
-    """One probe library at one stage: per-question medians over runs, then medians over questions."""
+def summarize(rows: Sequence[dict[str, Any]], *, expected_queries: int = QUESTIONS_PER_LIBRARY) -> dict[str, Any]:
+    """Summarize every repeat, retaining incomplete/error runs as explicit non-passes.
+
+    Cost uses per-question medians over repeats, then medians over questions. Recall
+    uses every ANN repeat against its question's exact reference. Expected query IDs
+    are frozen zero-based ordinals, so a missing question cannot disappear from the
+    denominator merely because it has no successful rows.
+    """
     normal = [r for r in rows if r["kind"] == "vector" and not r["error"]]
     exact = {r["query"]: r for r in rows if r["kind"] == "exact" and not r["error"]}
     by_query: dict[int, list[dict]] = {}
     for r in normal:
         by_query.setdefault(r["query"], []).append(r)
     run_medians = [_median([r["request_charge"] for r in normal if r["run"] == run]) for run in range(RUNS)]
-    recalls = [
-        recall_at_k(runs[0]["result_ids"], exact[q]["result_ids"], K) for q, runs in by_query.items() if q in exact
+    recalls = [recall_at_k(r["result_ids"], exact[r["query"]]["result_ids"], K) for r in normal if r["query"] in exact]
+    recall_run_means = [
+        [
+            recall_at_k(r["result_ids"], exact[r["query"]]["result_ids"], K)
+            for r in normal
+            if r["run"] == run and r["query"] in exact
+        ]
+        for run in range(RUNS)
     ]
+    expected = {
+        (kind, q, run)
+        for q in range(expected_queries)
+        for kind, runs in (("vector", RUNS), ("exact", 1))
+        for run in range(runs)
+    }
+    observed = [(r["kind"], r["query"], r["run"]) for r in rows]
+    complete = len(observed) == len(expected) and set(observed) == expected
+    complete = complete and all(not r["error"] and len(r["result_ids"]) >= K for r in rows)
     indexes = sorted({f"{t}:{','.join(k)}" for r in normal for t, k in [vector_index(r["index_utilization"])] if t})
     return {
+        "summaryVersion": 2,
+        "expectedQueries": expected_queries,
+        "expectedSearches": expected_queries * RUNS,
+        "expectedExactSearches": expected_queries,
+        "complete": complete,
+        "metricsComplete": bool(rows)
+        and all(
+            isinstance(r.get(key), (int, float)) and math.isfinite(r[key]) and r[key] >= 0
+            for r in rows
+            for key in ("request_charge", "retrieved_document_count", "milliseconds")
+        ),
         "searches": len(normal),
         "errors": sum(1 for r in rows if r["error"]),
-        "nullScores": sum(r["null_scores"] for r in normal),
+        "nullScores": sum(r["null_scores"] for r in rows),
         "throttled": sum(r["throttled"] for r in rows),
         "ruMedian": _median([_median([r["request_charge"] for r in runs]) for runs in by_query.values()]),
         "ruRunMedians": run_medians,
@@ -207,29 +240,48 @@ def summarize(rows: Sequence[dict[str, Any]]) -> dict[str, Any]:
         "msMedian": _median([_median([r["milliseconds"] for r in runs]) for runs in by_query.values()]),
         "exactRuMedian": _median([r["request_charge"] for r in exact.values()]),
         "recallAt10Mean": round(statistics.fmean(recalls), 4) if recalls else None,
+        "recallComparisons": len(recalls),
+        "recallAt10RunMeans": [round(statistics.fmean(v), 4) if v else None for v in recall_run_means],
+        "indexReportsComplete": bool(normal) and all(vector_index(r["index_utilization"])[0] for r in normal),
         "vectorIndexes": indexes,
     }
 
 
 def grade(baseline: dict[str, Any], later: dict[str, Any], tolerance: float = TOLERANCE) -> dict[str, Any]:
-    """Scoped when cost and documents read hold within ``tolerance`` and the run-to-run spread,
-    Cosmos reports the library shard, and recall stays at the floor or above."""
+    """Require the documented tolerance AND baseline repeat spread, with complete runs.
 
-    def holds(key: str, spread_key: str | None = None) -> bool:
+    Version 1 used the larger allowance, although the build plan required both.
+    Historical receipts retain that original grade; version 2 reports both checks.
+    """
+
+    def holds(key: str) -> bool:
         before, after = baseline.get(key), later.get(key)
         if before is None or after is None:
             return False
-        limit = before * tolerance
-        if spread_key:
-            runs = [v for v in (baseline.get(spread_key) or []) if v is not None]
-            if runs:
-                limit = max(limit, max(runs) - min(runs))
-        return abs(after - before) <= limit
+        return abs(after - before) <= before * tolerance
 
-    shard = bool(later["vectorIndexes"]) and all(i.endswith("/libraryId") for i in later["vectorIndexes"])
-    recall = later["recallAt10Mean"] is not None and later["recallAt10Mean"] >= RECALL_FLOOR
+    runs = baseline.get("ruRunMedians") or []
+    spread = max(runs) - min(runs) if len(runs) == RUNS and all(v is not None for v in runs) else None
+    before, after = baseline.get("ruMedian"), later.get("ruMedian")
+    within_spread = spread is not None and before is not None and after is not None and abs(after - before) <= spread
+    shard = all(
+        s.get("indexReportsComplete")
+        and s["vectorIndexes"]
+        and all(i.endswith(":/libraryId") for i in s["vectorIndexes"])
+        for s in (baseline, later)
+    )
+    recall = all(
+        len(s.get("recallAt10RunMeans") or []) == RUNS
+        and all(r is not None and r >= RECALL_FLOOR for r in s["recallAt10RunMeans"])
+        for s in (baseline, later)
+    )
     checks = {
-        "ruHolds": holds("ruMedian", "ruRunMedians"),
+        "completeRuns": bool(baseline.get("complete")) and bool(later.get("complete")),
+        "completeCostMetrics": bool(baseline.get("metricsComplete")) and bool(later.get("metricsComplete")),
+        "noErrorsOrNullScores": all(s.get("errors") == 0 and s.get("nullScores") == 0 for s in (baseline, later)),
+        "ruWithinTolerance": holds("ruMedian"),
+        "ruWithinBaselineSpread": within_spread,
+        "ruHolds": holds("ruMedian") and within_spread,
         "retrievedHolds": holds("retrievedMedian"),
         "libraryShardReported": shard,
         "recallAtFloor": recall,
@@ -350,8 +402,8 @@ async def embed_questions(args: argparse.Namespace) -> dict[str, list[list[float
 
 
 async def wait(args: argparse.Namespace) -> None:
-    """Wait until the stage's largest library stops scanning, then a settle period."""
-    library = max(stage_libraries(args.stage), key=lambda lib: lib.size)
+    """Check an indexable library, not a tiny newly added shard that may validly scan."""
+    library = readiness_library(args.stage)
     vectors = await embed_questions(args) if args.stage == 1 else None
     probe = (vectors or json.loads(_state(args, "question-vectors.json").read_text()))["scale-p01"][0]
     credential, cosmos, container = await _clients()
@@ -362,9 +414,16 @@ async def wait(args: argparse.Namespace) -> None:
         await credential.close()
     waits = _read(_state(args, "waits.json"), {})
     waits[str(args.stage)] = {k: v for k, v in result.items() if not isinstance(v, (list, dict))}
+    waits[str(args.stage)].update({"probeLibrary": library.library_id, "probeVectors": library.size})
     _write(_state(args, "waits.json"), waits)
     log(f"index wait for {library.library_id}: {waits[str(args.stage)]}; settling {args.settle} s")
     await asyncio.sleep(args.settle)
+
+
+def readiness_library(stage: int) -> Library:
+    """Use the largest new scope, or a previously loaded probe when all additions are tiny."""
+    added = max(stage_libraries(stage), key=lambda lib: lib.size)
+    return added if added.size >= 1000 else max(stage_libraries(1), key=lambda lib: lib.size)
 
 
 async def measure(args: argparse.Namespace) -> None:
@@ -467,15 +526,17 @@ def report(args: argparse.Namespace) -> None:
     summaries = {}
     for stage in stages:
         rows = _read(_state(args, f"measure-{stage}.json"), {})["rows"]
-        libraries = sorted({r["library"] for r in rows})
+        # An entirely missing probe is incomplete, not silently absent from all grades.
+        libraries = sorted(lib.library_id for lib in stage_libraries(1))
         summaries[stage] = {lib: summarize([r for r in rows if r["library"] == lib]) for lib in libraries}
     sizes = {lib.library_id: lib.size for lib in stage_libraries(1)}
     container = {}
     for stage in stages:
         libs = [lib for s in range(1, stage + 1) for lib in stage_libraries(s)]
         container[stage] = {"libraries": len(libs), "passages": sum(lib.size for lib in libs)}
+    baseline = summaries.get(1, {lib: summarize([]) for lib in sizes})
     grades = {
-        stage: {lib: grade(summaries[stages[0]][lib], s) for lib, s in summaries[stage].items()} for stage in stages[1:]
+        stage: {lib: grade(baseline[lib], s) for lib, s in summaries[stage].items()} for stage in stages if stage != 1
     }
     out = {
         "kind": "phase-4-scale-probe",
@@ -486,6 +547,10 @@ def report(args: argparse.Namespace) -> None:
         "corpus": "public DBpedia-entity abstracts with publisher-supplied text-embedding-3-large 3,072-d vectors; "
         "one abstract per passage; library membership assigned with a fixed seed",
         "method": {
+            "summaryVersion": 2,
+            "gradeVersion": 2,
+            "ruTolerancePolicy": "within fractional tolerance AND baseline run-median spread",
+            "recallPolicy": "all ANN repeats against each question's exact reference; each repeat mean >= floor",
             "seed": SEED,
             "questionsPerLibrary": QUESTIONS_PER_LIBRARY,
             "questionSource": "a sentence from a passage of the same library, embedded fresh",
@@ -501,6 +566,7 @@ def report(args: argparse.Namespace) -> None:
         "loads": {s: _read(_state(args, f"load-{s}.json"), None) for s in range(1, 5)},
         "indexWaits": _read(_state(args, "waits.json"), {}),
         "stages": summaries,
+        "baselineAvailable": 1 in stages,
         "unscopedControl": {s: _read(_state(args, f"measure-{s}.json"), {}).get("control") for s in stages},
         "grades": grades,
         "scopedEverywhere": {s: all(g["scoped"] for g in grades[s].values()) for s in grades},

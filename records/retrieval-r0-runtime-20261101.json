@@ -1,0 +1,1639 @@
+{
+  "schema": "fli.r0.runtime.v1",
+  "profiles": {
+    "current": {
+      "id": "current-v1",
+      "version": 1,
+      "codeRevision": "9738236ce9cb3e5d08624f6dd14f8714be51c0cc",
+      "provider": "python",
+      "extraction": "native-and-layout",
+      "extractionOnly": false,
+      "chunking": {
+        "algorithm": "section-sentence",
+        "targetTokens": 500,
+        "overlapTokens": 50,
+        "overlapCharacters": null,
+        "emailSingleChunkMax": 700
+      },
+      "enrichment": {
+        "adapter": null,
+        "generatedSummaries": false
+      },
+      "embedding": {
+        "model": "text-embedding-3-large",
+        "dimensions": 3072,
+        "modelRevision": "1"
+      },
+      "workflowVersion": null,
+      "capabilities": {
+        "passages": true,
+        "completeProviderText": true,
+        "authoredHierarchy": false,
+        "generatedSummaries": false,
+        "visuals": true
+      },
+      "limitations": []
+    },
+    "custom": {
+      "id": "custom-structured-v1",
+      "version": 1,
+      "codeRevision": "9738236ce9cb3e5d08624f6dd14f8714be51c0cc",
+      "provider": "python",
+      "extraction": "native-and-layout",
+      "extractionOnly": false,
+      "chunking": {
+        "algorithm": "section-sentence",
+        "targetTokens": 500,
+        "overlapTokens": 50,
+        "overlapCharacters": null,
+        "emailSingleChunkMax": null
+      },
+      "enrichment": {
+        "adapter": "source-structure-v1",
+        "generatedSummaries": false
+      },
+      "embedding": {
+        "model": "text-embedding-3-large",
+        "dimensions": 3072,
+        "modelRevision": "1"
+      },
+      "workflowVersion": null,
+      "capabilities": {
+        "passages": true,
+        "completeProviderText": true,
+        "authoredHierarchy": "markdown-atx-and-docx-headings",
+        "generatedSummaries": false,
+        "visuals": true
+      },
+      "limitations": [
+        "Structure adapters support Markdown ATX and DOCX main-body Heading styles; other formats fail explicitly.",
+        "Generated summaries and semantic hierarchy search are not implemented."
+      ]
+    },
+    "microsoft": {
+      "id": "microsoft-indexer-layout-v1",
+      "version": 2,
+      "codeRevision": "9738236ce9cb3e5d08624f6dd14f8714be51c0cc",
+      "provider": "microsoft-indexer",
+      "extraction": "prebuilt-layout",
+      "extractionOnly": false,
+      "chunking": {
+        "algorithm": "token-window",
+        "targetTokens": 5000,
+        "overlapTokens": null,
+        "overlapCharacters": 200,
+        "emailSingleChunkMax": null
+      },
+      "enrichment": {
+        "adapter": null,
+        "generatedSummaries": false
+      },
+      "embedding": {
+        "model": "text-embedding-3-large",
+        "dimensions": 3072,
+        "modelRevision": "1"
+      },
+      "workflowVersion": "shared-indexer-v2",
+      "capabilities": {
+        "passages": true,
+        "completeProviderText": true,
+        "authoredHierarchy": false,
+        "generatedSummaries": false,
+        "visuals": false
+      },
+      "limitations": [
+        "No figure crops or native Office visuals; authored chapters are not inferred.",
+        "One canonical provider-text section; provider usage may be unavailable."
+      ]
+    }
+  },
+  "rows": [
+    {
+      "profile": "current",
+      "sourceId": "d01",
+      "sourceSha256": "b191349dc18aca3b074b56b50e940390a049687d5de03a306b601ad496bf9f78",
+      "generation": 1,
+      "contentRevision": 2,
+      "metadataVersion": 0,
+      "textChunks": {
+        "count": 37,
+        "total": 16000,
+        "min": 78,
+        "p50": 468,
+        "p95": 482,
+        "max": 485,
+        "under100": 3
+      },
+      "imageChunks": 0,
+      "adjacentTextOverlapCharacters": {
+        "count": 36,
+        "total": 1379,
+        "min": 0,
+        "p50": 0,
+        "p95": 273,
+        "max": 310,
+        "under100": 30
+      },
+      "fullReadComplete": true,
+      "fullReadBudgetEstimate": {
+        "scope": "evidence_json",
+        "tokenizer": "cl100k_base",
+        "maxTokens": 180000,
+        "requiredTokens": 15762,
+        "returnedTokens": 15762,
+        "fits": true,
+        "nativeImageTokensIncluded": false
+      },
+      "processingMeasuredCounters": {
+        "extractionMs": 367.6,
+        "chunkingMs": 26.8,
+        "visualExtractionMs": 627.5,
+        "visionMs": 0,
+        "visionPromptTokens": 0,
+        "visionCompletionTokens": 0,
+        "visionCacheHits": 0,
+        "imageCount": 0,
+        "imagesSkipped": 1,
+        "embeddingMs": 1365.7,
+        "chunkWriteMs": 4216,
+        "chunkCount": 37,
+        "chunkTokens": 16000,
+        "chunkTokensMin": 78,
+        "chunkTokensMax": 485,
+        "chunkTokensMean": 432.4,
+        "embeddingTokens": 16000,
+        "embeddingRequests": 3,
+        "embeddingRetries": 0,
+        "embeddingThrottles": 0,
+        "embeddingDimensions": 3072,
+        "chunkWriteCharge": 5953.49,
+        "sourceTextTokensEstimate": 14816,
+        "totalMs": 12555.6
+      }
+    },
+    {
+      "profile": "current",
+      "sourceId": "d02",
+      "sourceSha256": "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e",
+      "generation": 1,
+      "contentRevision": 2,
+      "metadataVersion": 0,
+      "textChunks": {
+        "count": 8,
+        "total": 3503,
+        "min": 215,
+        "p50": 464,
+        "p95": 482,
+        "max": 482,
+        "under100": 0
+      },
+      "imageChunks": 0,
+      "adjacentTextOverlapCharacters": {
+        "count": 7,
+        "total": 0,
+        "min": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 0,
+        "under100": 7
+      },
+      "fullReadComplete": true,
+      "fullReadBudgetEstimate": {
+        "scope": "evidence_json",
+        "tokenizer": "cl100k_base",
+        "maxTokens": 180000,
+        "requiredTokens": 3902,
+        "returnedTokens": 3902,
+        "fits": true,
+        "nativeImageTokensIncluded": false
+      },
+      "processingMeasuredCounters": {
+        "extractionMs": 41.4,
+        "chunkingMs": 4.9,
+        "visualExtractionMs": 89.7,
+        "visionMs": 0,
+        "visionPromptTokens": 0,
+        "visionCompletionTokens": 0,
+        "visionCacheHits": 0,
+        "imageCount": 0,
+        "imagesSkipped": 0,
+        "embeddingMs": 643.9,
+        "chunkWriteMs": 130.4,
+        "chunkCount": 8,
+        "chunkTokens": 3503,
+        "chunkTokensMin": 215,
+        "chunkTokensMax": 482,
+        "chunkTokensMean": 437.9,
+        "embeddingTokens": 3503,
+        "embeddingRequests": 1,
+        "embeddingRetries": 0,
+        "embeddingThrottles": 0,
+        "embeddingDimensions": 3072,
+        "chunkWriteCharge": 1311.85,
+        "sourceTextTokensEstimate": 3276,
+        "totalMs": 9468.4
+      }
+    },
+    {
+      "profile": "current",
+      "sourceId": "d03",
+      "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+      "generation": 1,
+      "contentRevision": 2,
+      "metadataVersion": 0,
+      "textChunks": {
+        "count": 1,
+        "total": 357,
+        "min": 357,
+        "p50": 357,
+        "p95": 357,
+        "max": 357,
+        "under100": 0
+      },
+      "imageChunks": 1,
+      "adjacentTextOverlapCharacters": {
+        "count": 0,
+        "total": 0,
+        "min": null,
+        "p50": null,
+        "p95": null,
+        "max": null,
+        "under100": 0
+      },
+      "fullReadComplete": true,
+      "fullReadBudgetEstimate": {
+        "scope": "evidence_json",
+        "tokenizer": "cl100k_base",
+        "maxTokens": 180000,
+        "requiredTokens": 1346,
+        "returnedTokens": 1346,
+        "fits": true,
+        "nativeImageTokensIncluded": false
+      },
+      "processingMeasuredCounters": {
+        "extractionMs": 13.6,
+        "chunkingMs": 1.1,
+        "visualExtractionMs": 164.7,
+        "visionMs": 5384.8,
+        "visionPromptTokens": 1145,
+        "visionCompletionTokens": 608,
+        "visionCacheHits": 0,
+        "imageCount": 1,
+        "imagesSkipped": 0,
+        "embeddingMs": 383.7,
+        "chunkWriteMs": 45.1,
+        "chunkCount": 2,
+        "chunkTokens": 557,
+        "chunkTokensMin": 200,
+        "chunkTokensMax": 357,
+        "chunkTokensMean": 278.5,
+        "embeddingTokens": 557,
+        "embeddingRequests": 2,
+        "embeddingRetries": 0,
+        "embeddingThrottles": 0,
+        "embeddingDimensions": 3072,
+        "chunkWriteCharge": 259.87,
+        "sourceTextTokensEstimate": 368,
+        "totalMs": 130993.9
+      }
+    },
+    {
+      "profile": "current",
+      "sourceId": "d04",
+      "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+      "generation": 1,
+      "contentRevision": 2,
+      "metadataVersion": 0,
+      "textChunks": {
+        "count": 3,
+        "total": 652,
+        "min": 35,
+        "p50": 175,
+        "p95": 442,
+        "max": 442,
+        "under100": 1
+      },
+      "imageChunks": 0,
+      "adjacentTextOverlapCharacters": {
+        "count": 2,
+        "total": 0,
+        "min": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 0,
+        "under100": 2
+      },
+      "fullReadComplete": true,
+      "fullReadBudgetEstimate": {
+        "scope": "evidence_json",
+        "tokenizer": "cl100k_base",
+        "maxTokens": 180000,
+        "requiredTokens": 1279,
+        "returnedTokens": 1279,
+        "fits": true,
+        "nativeImageTokensIncluded": false
+      },
+      "processingMeasuredCounters": {
+        "extractionMs": 34.9,
+        "chunkingMs": 1.1,
+        "visualExtractionMs": 89,
+        "visionMs": 0,
+        "visionPromptTokens": 0,
+        "visionCompletionTokens": 0,
+        "visionCacheHits": 0,
+        "imageCount": 0,
+        "imagesSkipped": 0,
+        "embeddingMs": 349.8,
+        "chunkWriteMs": 52.9,
+        "chunkCount": 3,
+        "chunkTokens": 652,
+        "chunkTokensMin": 35,
+        "chunkTokensMax": 442,
+        "chunkTokensMean": 217.3,
+        "embeddingTokens": 652,
+        "embeddingRequests": 1,
+        "embeddingRetries": 0,
+        "embeddingThrottles": 0,
+        "embeddingDimensions": 3072,
+        "chunkWriteCharge": 323.7,
+        "sourceTextTokensEstimate": 623,
+        "totalMs": 12176.7
+      }
+    },
+    {
+      "profile": "current",
+      "sourceId": "d06",
+      "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+      "generation": 1,
+      "contentRevision": 2,
+      "metadataVersion": 0,
+      "textChunks": {
+        "count": 63,
+        "total": 9359,
+        "min": 2,
+        "p50": 115,
+        "p95": 449,
+        "max": 474,
+        "under100": 27
+      },
+      "imageChunks": 2,
+      "adjacentTextOverlapCharacters": {
+        "count": 62,
+        "total": 0,
+        "min": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 0,
+        "under100": 62
+      },
+      "fullReadComplete": true,
+      "fullReadBudgetEstimate": {
+        "scope": "evidence_json",
+        "tokenizer": "cl100k_base",
+        "maxTokens": 180000,
+        "requiredTokens": 14176,
+        "returnedTokens": 14176,
+        "fits": true,
+        "nativeImageTokensIncluded": false
+      },
+      "processingMeasuredCounters": {
+        "extractionMs": 273.5,
+        "chunkingMs": 11.7,
+        "visualExtractionMs": 702.6,
+        "visionMs": 9014.7,
+        "visionPromptTokens": 761,
+        "visionCompletionTokens": 1019,
+        "visionCacheHits": 0,
+        "imageCount": 2,
+        "imagesSkipped": 2,
+        "embeddingMs": 2918.2999999999997,
+        "chunkWriteMs": 1650.9,
+        "chunkCount": 65,
+        "chunkTokens": 9639,
+        "chunkTokensMin": 2,
+        "chunkTokensMax": 474,
+        "chunkTokensMean": 148.3,
+        "embeddingTokens": 9639,
+        "embeddingRequests": 5,
+        "embeddingRetries": 0,
+        "embeddingThrottles": 0,
+        "embeddingDimensions": 3072,
+        "chunkWriteCharge": 6222.18,
+        "sourceTextTokensEstimate": 8894,
+        "totalMs": 102379.4
+      }
+    },
+    {
+      "profile": "custom",
+      "sourceId": "d01",
+      "sourceSha256": "b191349dc18aca3b074b56b50e940390a049687d5de03a306b601ad496bf9f78",
+      "generation": 1,
+      "contentRevision": 2,
+      "metadataVersion": 0,
+      "textChunks": {
+        "count": 317,
+        "total": 15878,
+        "min": 2,
+        "p50": 41,
+        "p95": 128,
+        "max": 185,
+        "under100": 274
+      },
+      "imageChunks": 0,
+      "adjacentTextOverlapCharacters": {
+        "count": 316,
+        "total": 88,
+        "min": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 53,
+        "under100": 316
+      },
+      "fullReadComplete": true,
+      "fullReadBudgetEstimate": {
+        "scope": "evidence_json",
+        "tokenizer": "cl100k_base",
+        "maxTokens": 180000,
+        "requiredTokens": 77026,
+        "returnedTokens": 77026,
+        "fits": true,
+        "nativeImageTokensIncluded": false
+      },
+      "processingMeasuredCounters": {
+        "extractionMs": 258.6,
+        "chunkingMs": 20.6,
+        "visualExtractionMs": 402.9,
+        "visionMs": 0,
+        "visionPromptTokens": 0,
+        "visionCompletionTokens": 0,
+        "visionCacheHits": 0,
+        "imageCount": 0,
+        "imagesSkipped": 1,
+        "embeddingMs": 8045.1,
+        "chunkWriteMs": 11374.7,
+        "chunkCount": 317,
+        "chunkTokens": 15878,
+        "chunkTokensMin": 2,
+        "chunkTokensMax": 185,
+        "chunkTokensMean": 50.1,
+        "embeddingTokens": 15878,
+        "embeddingRequests": 20,
+        "embeddingRetries": 0,
+        "embeddingThrottles": 0,
+        "embeddingDimensions": 3072,
+        "chunkWriteCharge": 25452,
+        "sourceTextTokensEstimate": 14946,
+        "totalMs": 29389.2
+      }
+    },
+    {
+      "profile": "custom",
+      "sourceId": "d02",
+      "sourceSha256": "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e",
+      "generation": 1,
+      "contentRevision": 2,
+      "metadataVersion": 0,
+      "textChunks": {
+        "count": 54,
+        "total": 3539,
+        "min": 6,
+        "p50": 60,
+        "p95": 151,
+        "max": 160,
+        "under100": 41
+      },
+      "imageChunks": 0,
+      "adjacentTextOverlapCharacters": {
+        "count": 53,
+        "total": 34,
+        "min": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 34,
+        "under100": 53
+      },
+      "fullReadComplete": true,
+      "fullReadBudgetEstimate": {
+        "scope": "evidence_json",
+        "tokenizer": "cl100k_base",
+        "maxTokens": 180000,
+        "requiredTokens": 16124,
+        "returnedTokens": 16124,
+        "fits": true,
+        "nativeImageTokensIncluded": false
+      },
+      "processingMeasuredCounters": {
+        "extractionMs": 43.1,
+        "chunkingMs": 7.8,
+        "visualExtractionMs": 72.1,
+        "visionMs": 0,
+        "visionPromptTokens": 0,
+        "visionCompletionTokens": 0,
+        "visionCacheHits": 0,
+        "imageCount": 0,
+        "imagesSkipped": 0,
+        "embeddingMs": 2519.5,
+        "chunkWriteMs": 1120.1,
+        "chunkCount": 54,
+        "chunkTokens": 3539,
+        "chunkTokensMin": 6,
+        "chunkTokensMax": 160,
+        "chunkTokensMean": 65.5,
+        "embeddingTokens": 3539,
+        "embeddingRequests": 4,
+        "embeddingRetries": 0,
+        "embeddingThrottles": 0,
+        "embeddingDimensions": 3072,
+        "chunkWriteCharge": 4530.39,
+        "sourceTextTokensEstimate": 3303,
+        "totalMs": 12239
+      }
+    },
+    {
+      "profile": "custom",
+      "sourceId": "d03",
+      "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+      "generation": 1,
+      "contentRevision": 2,
+      "metadataVersion": 0,
+      "textChunks": {
+        "count": 4,
+        "total": 405,
+        "min": 22,
+        "p50": 25,
+        "p95": 327,
+        "max": 327,
+        "under100": 3
+      },
+      "imageChunks": 1,
+      "adjacentTextOverlapCharacters": {
+        "count": 3,
+        "total": 0,
+        "min": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 0,
+        "under100": 3
+      },
+      "fullReadComplete": true,
+      "fullReadBudgetEstimate": {
+        "scope": "evidence_json",
+        "tokenizer": "cl100k_base",
+        "maxTokens": 180000,
+        "requiredTokens": 2329,
+        "returnedTokens": 2329,
+        "fits": true,
+        "nativeImageTokensIncluded": false
+      },
+      "processingMeasuredCounters": {
+        "extractionMs": 13.6,
+        "chunkingMs": 1.2,
+        "visualExtractionMs": 170,
+        "visionMs": 7747.8,
+        "visionPromptTokens": 1145,
+        "visionCompletionTokens": 912,
+        "visionCacheHits": 0,
+        "imageCount": 1,
+        "imagesSkipped": 0,
+        "embeddingMs": 494.90000000000003,
+        "chunkWriteMs": 73.8,
+        "chunkCount": 5,
+        "chunkTokens": 656,
+        "chunkTokensMin": 22,
+        "chunkTokensMax": 327,
+        "chunkTokensMean": 131.2,
+        "embeddingTokens": 656,
+        "embeddingRequests": 2,
+        "embeddingRetries": 0,
+        "embeddingThrottles": 0,
+        "embeddingDimensions": 3072,
+        "chunkWriteCharge": 471.08,
+        "sourceTextTokensEstimate": 439,
+        "totalMs": 144106
+      }
+    },
+    {
+      "profile": "custom",
+      "sourceId": "d04",
+      "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+      "generation": 1,
+      "contentRevision": 2,
+      "metadataVersion": 0,
+      "textChunks": {
+        "count": 48,
+        "total": 1001,
+        "min": 7,
+        "p50": 12,
+        "p95": 57,
+        "max": 103,
+        "under100": 47
+      },
+      "imageChunks": 0,
+      "adjacentTextOverlapCharacters": {
+        "count": 47,
+        "total": 60,
+        "min": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 39,
+        "under100": 47
+      },
+      "fullReadComplete": true,
+      "fullReadBudgetEstimate": {
+        "scope": "evidence_json",
+        "tokenizer": "cl100k_base",
+        "maxTokens": 180000,
+        "requiredTokens": 8749,
+        "returnedTokens": 8749,
+        "fits": true,
+        "nativeImageTokensIncluded": false
+      },
+      "processingMeasuredCounters": {
+        "extractionMs": 27.3,
+        "chunkingMs": 5.1,
+        "visualExtractionMs": 88.2,
+        "visionMs": 0,
+        "visionPromptTokens": 0,
+        "visionCompletionTokens": 0,
+        "visionCacheHits": 0,
+        "imageCount": 0,
+        "imagesSkipped": 0,
+        "embeddingMs": 2223.5,
+        "chunkWriteMs": 773.1,
+        "chunkCount": 48,
+        "chunkTokens": 1001,
+        "chunkTokensMin": 7,
+        "chunkTokensMax": 103,
+        "chunkTokensMean": 20.9,
+        "embeddingTokens": 1001,
+        "embeddingRequests": 3,
+        "embeddingRetries": 0,
+        "embeddingThrottles": 0,
+        "embeddingDimensions": 3072,
+        "chunkWriteCharge": 3439.63,
+        "sourceTextTokensEstimate": 741,
+        "totalMs": 13986.1
+      }
+    },
+    {
+      "profile": "custom",
+      "sourceId": "d06",
+      "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+      "generation": 1,
+      "contentRevision": 2,
+      "metadataVersion": 0,
+      "textChunks": {
+        "count": 494,
+        "total": 12694,
+        "min": 1,
+        "p50": 22,
+        "p95": 59,
+        "max": 103,
+        "under100": 493
+      },
+      "imageChunks": 2,
+      "adjacentTextOverlapCharacters": {
+        "count": 493,
+        "total": 1592,
+        "min": 0,
+        "p50": 0,
+        "p95": 25,
+        "max": 216,
+        "under100": 492
+      },
+      "fullReadComplete": true,
+      "fullReadBudgetEstimate": {
+        "scope": "evidence_json",
+        "tokenizer": "cl100k_base",
+        "maxTokens": 180000,
+        "requiredTokens": 92255,
+        "returnedTokens": 92255,
+        "fits": true,
+        "nativeImageTokensIncluded": false
+      },
+      "processingMeasuredCounters": {
+        "extractionMs": 217.3,
+        "chunkingMs": 20.5,
+        "visualExtractionMs": 665.3,
+        "visionMs": 5614.6,
+        "visionPromptTokens": 761,
+        "visionCompletionTokens": 1181,
+        "visionCacheHits": 0,
+        "imageCount": 2,
+        "imagesSkipped": 2,
+        "embeddingMs": 18155.5,
+        "chunkWriteMs": 18805.600000000002,
+        "chunkCount": 496,
+        "chunkTokens": 12948,
+        "chunkTokensMin": 1,
+        "chunkTokensMax": 159,
+        "chunkTokensMean": 26.1,
+        "embeddingTokens": 12948,
+        "embeddingRequests": 32,
+        "embeddingRetries": 0,
+        "embeddingThrottles": 0,
+        "embeddingDimensions": 3072,
+        "chunkWriteCharge": 36118.68,
+        "sourceTextTokensEstimate": 9451,
+        "totalMs": 120764
+      }
+    },
+    {
+      "profile": "microsoft",
+      "sourceId": "d01",
+      "sourceSha256": "b191349dc18aca3b074b56b50e940390a049687d5de03a306b601ad496bf9f78",
+      "generation": 1,
+      "contentRevision": 2,
+      "metadataVersion": 0,
+      "textChunks": {
+        "count": 4,
+        "total": 15253,
+        "min": 253,
+        "p50": 4999,
+        "p95": 5001,
+        "max": 5001,
+        "under100": 0
+      },
+      "imageChunks": 0,
+      "adjacentTextOverlapCharacters": {
+        "count": 3,
+        "total": 828,
+        "min": 249,
+        "p50": 279,
+        "p95": 300,
+        "max": 300,
+        "under100": 0
+      },
+      "fullReadComplete": true,
+      "fullReadBudgetEstimate": {
+        "scope": "evidence_json",
+        "tokenizer": "cl100k_base",
+        "maxTokens": 180000,
+        "requiredTokens": 16294,
+        "returnedTokens": 16294,
+        "fits": true,
+        "nativeImageTokensIncluded": false
+      },
+      "processingMeasuredCounters": {
+        "imageCount": 0,
+        "imagesSkipped": 0,
+        "chunkWriteMs": 197,
+        "chunkCount": 4,
+        "chunkTokens": 15253,
+        "chunkTokensMin": 253,
+        "chunkTokensMax": 5001,
+        "chunkTokensMean": 3813.2,
+        "embeddingDimensions": 3072,
+        "chunkWriteCharge": 2798.67,
+        "sourceTextTokensEstimate": 15103,
+        "totalMs": 17425.2
+      }
+    },
+    {
+      "profile": "microsoft",
+      "sourceId": "d02",
+      "sourceSha256": "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e",
+      "generation": 1,
+      "contentRevision": 2,
+      "metadataVersion": 0,
+      "textChunks": {
+        "count": 1,
+        "total": 3432,
+        "min": 3432,
+        "p50": 3432,
+        "p95": 3432,
+        "max": 3432,
+        "under100": 0
+      },
+      "imageChunks": 0,
+      "adjacentTextOverlapCharacters": {
+        "count": 0,
+        "total": 0,
+        "min": null,
+        "p50": null,
+        "p95": null,
+        "max": null,
+        "under100": 0
+      },
+      "fullReadComplete": true,
+      "fullReadBudgetEstimate": {
+        "scope": "evidence_json",
+        "tokenizer": "cl100k_base",
+        "maxTokens": 180000,
+        "requiredTokens": 4047,
+        "returnedTokens": 4047,
+        "fits": true,
+        "nativeImageTokensIncluded": false
+      },
+      "processingMeasuredCounters": {
+        "imageCount": 0,
+        "imagesSkipped": 0,
+        "chunkWriteMs": 41,
+        "chunkCount": 1,
+        "chunkTokens": 3432,
+        "chunkTokensMin": 3432,
+        "chunkTokensMax": 3432,
+        "chunkTokensMean": 3432,
+        "embeddingDimensions": 3072,
+        "chunkWriteCharge": 655.12,
+        "sourceTextTokensEstimate": 3432,
+        "totalMs": 10870
+      }
+    },
+    {
+      "profile": "microsoft",
+      "sourceId": "d03",
+      "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+      "generation": 1,
+      "contentRevision": 2,
+      "metadataVersion": 0,
+      "textChunks": {
+        "count": 1,
+        "total": 842,
+        "min": 842,
+        "p50": 842,
+        "p95": 842,
+        "max": 842,
+        "under100": 0
+      },
+      "imageChunks": 0,
+      "adjacentTextOverlapCharacters": {
+        "count": 0,
+        "total": 0,
+        "min": null,
+        "p50": null,
+        "p95": null,
+        "max": null,
+        "under100": 0
+      },
+      "fullReadComplete": true,
+      "fullReadBudgetEstimate": {
+        "scope": "evidence_json",
+        "tokenizer": "cl100k_base",
+        "maxTokens": 180000,
+        "requiredTokens": 1476,
+        "returnedTokens": 1476,
+        "fits": true,
+        "nativeImageTokensIncluded": false
+      },
+      "processingMeasuredCounters": {
+        "imageCount": 0,
+        "imagesSkipped": 0,
+        "chunkWriteMs": 25,
+        "chunkCount": 1,
+        "chunkTokens": 842,
+        "chunkTokensMin": 842,
+        "chunkTokensMax": 842,
+        "chunkTokensMean": 842,
+        "embeddingDimensions": 3072,
+        "chunkWriteCharge": 199.76,
+        "sourceTextTokensEstimate": 842,
+        "totalMs": 10877.2
+      }
+    },
+    {
+      "profile": "microsoft",
+      "sourceId": "d04",
+      "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+      "generation": 1,
+      "contentRevision": 2,
+      "metadataVersion": 0,
+      "textChunks": {
+        "count": 1,
+        "total": 1023,
+        "min": 1023,
+        "p50": 1023,
+        "p95": 1023,
+        "max": 1023,
+        "under100": 0
+      },
+      "imageChunks": 0,
+      "adjacentTextOverlapCharacters": {
+        "count": 0,
+        "total": 0,
+        "min": null,
+        "p50": null,
+        "p95": null,
+        "max": null,
+        "under100": 0
+      },
+      "fullReadComplete": true,
+      "fullReadBudgetEstimate": {
+        "scope": "evidence_json",
+        "tokenizer": "cl100k_base",
+        "maxTokens": 180000,
+        "requiredTokens": 1712,
+        "returnedTokens": 1712,
+        "fits": true,
+        "nativeImageTokensIncluded": false
+      },
+      "processingMeasuredCounters": {
+        "imageCount": 0,
+        "imagesSkipped": 0,
+        "chunkWriteMs": 28,
+        "chunkCount": 1,
+        "chunkTokens": 1023,
+        "chunkTokensMin": 1023,
+        "chunkTokensMax": 1023,
+        "chunkTokensMean": 1023,
+        "embeddingDimensions": 3072,
+        "chunkWriteCharge": 221.19,
+        "sourceTextTokensEstimate": 1023,
+        "totalMs": 8818.3
+      }
+    },
+    {
+      "profile": "microsoft",
+      "sourceId": "d06",
+      "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+      "generation": 1,
+      "contentRevision": 2,
+      "metadataVersion": 0,
+      "textChunks": {
+        "count": 2,
+        "total": 9529,
+        "min": 4529,
+        "p50": 4529,
+        "p95": 5000,
+        "max": 5000,
+        "under100": 0
+      },
+      "imageChunks": 0,
+      "adjacentTextOverlapCharacters": {
+        "count": 1,
+        "total": 265,
+        "min": 265,
+        "p50": 265,
+        "p95": 265,
+        "max": 265,
+        "under100": 0
+      },
+      "fullReadComplete": true,
+      "fullReadBudgetEstimate": {
+        "scope": "evidence_json",
+        "tokenizer": "cl100k_base",
+        "maxTokens": 180000,
+        "requiredTokens": 10910,
+        "returnedTokens": 10910,
+        "fits": true,
+        "nativeImageTokensIncluded": false
+      },
+      "processingMeasuredCounters": {
+        "imageCount": 0,
+        "imagesSkipped": 0,
+        "chunkWriteMs": 50.8,
+        "chunkCount": 2,
+        "chunkTokens": 9529,
+        "chunkTokensMin": 4529,
+        "chunkTokensMax": 5000,
+        "chunkTokensMean": 4764.5,
+        "embeddingDimensions": 3072,
+        "chunkWriteCharge": 1530.38,
+        "sourceTextTokensEstimate": 9479,
+        "totalMs": 12995.2
+      }
+    }
+  ],
+  "inheritedCanary": {
+    "passed": true,
+    "containerIncarnationMatches": true,
+    "privateReceiptSha256": "e823ba183c724d70352b6265cd90b6cc482fd3beec6e2fdc6e94feffbfac71a5",
+    "scope": "inherited E62 canary; not an actual R0 pilot index-readiness grade"
+  },
+  "hostingProvenance": {
+    "apiSourceRevision": "9738236ce9cb3e5d08624f6dd14f8714be51c0cc",
+    "workerDeclaredBuildRevision": "53ffe2cd68b0c0dbfa469b7dca72715715813efa",
+    "workerImageDigest": "sha256:5d325b6cbaa6d2934e89b5320165d7c3bfd032e38945ec79b09fdf33364e6e5c",
+    "workerImageMatchesInheritedReceipt": true,
+    "profileCodeRevisionMeaning": "submitted API recipe revision, separate from remote worker build",
+    "ingestionModuleDiffFromBase": [],
+    "otherInheritedDifferences": [
+      "search runs in this checkout API",
+      "reconcile has its own separately pinned inherited job image"
+    ]
+  },
+  "scope": "post-replay exact active-generation chunk census and full reads; not used to warm replay; no vector or ranking measurement",
+  "overlapMeaning": "exact adjacent text suffix/prefix in characters, max2048; includes coincidental repeated headings; not tokenizer token overlap",
+  "textLengthUnit": "stored cl100k_base tokenCount; actual rows",
+  "model": {
+    "unchanged": true,
+    "model": "gpt-6.1-sol",
+    "version": "2026-09-29",
+    "capacity": 200,
+    "scope": "management-plane model/version/NoAutoUpgrade/SKU before and after"
+  },
+  "serviceControls": {
+    "searchMode": "vector",
+    "topDefault": 8,
+    "includeNeighborsDefault": true,
+    "environment": "isolated modular validation services",
+    "indexReadiness": "functional smoke; inherited E62 canary only, actual pilot ANN readiness ungraded"
+  },
+  "startupFailure": {
+    "requests": 1,
+    "status": 400,
+    "category": "wrong_checkout_import",
+    "resourcesCreated": false,
+    "correction": "own worktree virtual environment; failed receipt preserved"
+  },
+  "usageBoundary": "post-replay census/direct reads/model inventory excluded from replay totals; preserved privately; generation metrics not lifetime attempt costs",
+  "attemptReceipts": [
+    {
+      "profile": "current",
+      "sourceId": "d01",
+      "generation": 1,
+      "startedAttempts": 1,
+      "finishedAttempts": 1,
+      "unfinishedAttempts": 0,
+      "bounded": false,
+      "statuses": {
+        "published": 1
+      },
+      "attempts": [
+        {
+          "stage": "ingest",
+          "status": "published",
+          "deliveryNumber": 1,
+          "enqueueToDeliveryMs": 18437.809999999998,
+          "chunkWriteChargeKnown": 5953.489999999999,
+          "chunkWriteChargeComplete": true,
+          "localEmbeddingUsage": {
+            "tokens": 16000,
+            "requests": 3,
+            "retries": 0,
+            "throttles": 0
+          },
+          "providerEmbeddingUsage": {
+            "embeddingTokens": null,
+            "embeddingRequests": null,
+            "embeddingRetries": null,
+            "embeddingThrottles": null
+          }
+        }
+      ]
+    },
+    {
+      "profile": "current",
+      "sourceId": "d02",
+      "generation": 1,
+      "startedAttempts": 1,
+      "finishedAttempts": 1,
+      "unfinishedAttempts": 0,
+      "bounded": false,
+      "statuses": {
+        "published": 1
+      },
+      "attempts": [
+        {
+          "stage": "ingest",
+          "status": "published",
+          "deliveryNumber": 1,
+          "enqueueToDeliveryMs": 91659.51699999999,
+          "chunkWriteChargeKnown": 1311.85,
+          "chunkWriteChargeComplete": true,
+          "localEmbeddingUsage": {
+            "tokens": 3503,
+            "requests": 1,
+            "retries": 0,
+            "throttles": 0
+          },
+          "providerEmbeddingUsage": {
+            "embeddingTokens": null,
+            "embeddingRequests": null,
+            "embeddingRetries": null,
+            "embeddingThrottles": null
+          }
+        }
+      ]
+    },
+    {
+      "profile": "current",
+      "sourceId": "d03",
+      "generation": 1,
+      "startedAttempts": 2,
+      "finishedAttempts": 2,
+      "unfinishedAttempts": 0,
+      "bounded": false,
+      "statuses": {
+        "published": 2
+      },
+      "attempts": [
+        {
+          "stage": "images",
+          "status": "published",
+          "deliveryNumber": 1,
+          "enqueueToDeliveryMs": 116574.808,
+          "chunkWriteChargeKnown": 121.54,
+          "chunkWriteChargeComplete": true,
+          "localEmbeddingUsage": {
+            "tokens": 200,
+            "requests": 1,
+            "retries": 0,
+            "throttles": 0
+          },
+          "providerEmbeddingUsage": {
+            "embeddingTokens": null,
+            "embeddingRequests": null,
+            "embeddingRetries": null,
+            "embeddingThrottles": null
+          }
+        },
+        {
+          "stage": "ingest",
+          "status": "published",
+          "deliveryNumber": 1,
+          "enqueueToDeliveryMs": 106860.11899999999,
+          "chunkWriteChargeKnown": 138.33,
+          "chunkWriteChargeComplete": true,
+          "localEmbeddingUsage": {
+            "tokens": 357,
+            "requests": 1,
+            "retries": 0,
+            "throttles": 0
+          },
+          "providerEmbeddingUsage": {
+            "embeddingTokens": null,
+            "embeddingRequests": null,
+            "embeddingRetries": null,
+            "embeddingThrottles": null
+          }
+        }
+      ]
+    },
+    {
+      "profile": "current",
+      "sourceId": "d04",
+      "generation": 1,
+      "startedAttempts": 1,
+      "finishedAttempts": 1,
+      "unfinishedAttempts": 0,
+      "bounded": false,
+      "statuses": {
+        "published": 1
+      },
+      "attempts": [
+        {
+          "stage": "ingest",
+          "status": "published",
+          "deliveryNumber": 1,
+          "enqueueToDeliveryMs": 119218.594,
+          "chunkWriteChargeKnown": 323.7,
+          "chunkWriteChargeComplete": true,
+          "localEmbeddingUsage": {
+            "tokens": 652,
+            "requests": 1,
+            "retries": 0,
+            "throttles": 0
+          },
+          "providerEmbeddingUsage": {
+            "embeddingTokens": null,
+            "embeddingRequests": null,
+            "embeddingRetries": null,
+            "embeddingThrottles": null
+          }
+        }
+      ]
+    },
+    {
+      "profile": "current",
+      "sourceId": "d06",
+      "generation": 1,
+      "startedAttempts": 2,
+      "finishedAttempts": 2,
+      "unfinishedAttempts": 0,
+      "bounded": false,
+      "statuses": {
+        "published": 2
+      },
+      "attempts": [
+        {
+          "stage": "ingest",
+          "status": "published",
+          "deliveryNumber": 1,
+          "enqueueToDeliveryMs": 144618.954,
+          "chunkWriteChargeKnown": 6023.659999999998,
+          "chunkWriteChargeComplete": true,
+          "localEmbeddingUsage": {
+            "tokens": 9359,
+            "requests": 4,
+            "retries": 0,
+            "throttles": 0
+          },
+          "providerEmbeddingUsage": {
+            "embeddingTokens": null,
+            "embeddingRequests": null,
+            "embeddingRetries": null,
+            "embeddingThrottles": null
+          }
+        },
+        {
+          "stage": "images",
+          "status": "published",
+          "deliveryNumber": 1,
+          "enqueueToDeliveryMs": 78995.541,
+          "chunkWriteChargeKnown": 198.51999999999998,
+          "chunkWriteChargeComplete": true,
+          "localEmbeddingUsage": {
+            "tokens": 280,
+            "requests": 1,
+            "retries": 0,
+            "throttles": 0
+          },
+          "providerEmbeddingUsage": {
+            "embeddingTokens": null,
+            "embeddingRequests": null,
+            "embeddingRetries": null,
+            "embeddingThrottles": null
+          }
+        }
+      ]
+    },
+    {
+      "profile": "custom",
+      "sourceId": "d01",
+      "generation": 1,
+      "startedAttempts": 1,
+      "finishedAttempts": 1,
+      "unfinishedAttempts": 0,
+      "bounded": false,
+      "statuses": {
+        "published": 1
+      },
+      "attempts": [
+        {
+          "stage": "ingest",
+          "status": "published",
+          "deliveryNumber": 1,
+          "enqueueToDeliveryMs": 96.741,
+          "chunkWriteChargeKnown": 25451.99999999996,
+          "chunkWriteChargeComplete": true,
+          "localEmbeddingUsage": {
+            "tokens": 15878,
+            "requests": 20,
+            "retries": 0,
+            "throttles": 0
+          },
+          "providerEmbeddingUsage": {
+            "embeddingTokens": null,
+            "embeddingRequests": null,
+            "embeddingRetries": null,
+            "embeddingThrottles": null
+          }
+        }
+      ]
+    },
+    {
+      "profile": "custom",
+      "sourceId": "d02",
+      "generation": 1,
+      "startedAttempts": 1,
+      "finishedAttempts": 1,
+      "unfinishedAttempts": 0,
+      "bounded": false,
+      "statuses": {
+        "published": 1
+      },
+      "attempts": [
+        {
+          "stage": "ingest",
+          "status": "published",
+          "deliveryNumber": 1,
+          "enqueueToDeliveryMs": 32137.217999999997,
+          "chunkWriteChargeKnown": 4530.389999999999,
+          "chunkWriteChargeComplete": true,
+          "localEmbeddingUsage": {
+            "tokens": 3539,
+            "requests": 4,
+            "retries": 0,
+            "throttles": 0
+          },
+          "providerEmbeddingUsage": {
+            "embeddingTokens": null,
+            "embeddingRequests": null,
+            "embeddingRetries": null,
+            "embeddingThrottles": null
+          }
+        }
+      ]
+    },
+    {
+      "profile": "custom",
+      "sourceId": "d03",
+      "generation": 1,
+      "startedAttempts": 2,
+      "finishedAttempts": 2,
+      "unfinishedAttempts": 0,
+      "bounded": false,
+      "statuses": {
+        "published": 2
+      },
+      "attempts": [
+        {
+          "stage": "ingest",
+          "status": "published",
+          "deliveryNumber": 1,
+          "enqueueToDeliveryMs": 102314.244,
+          "chunkWriteChargeKnown": 343.25,
+          "chunkWriteChargeComplete": true,
+          "localEmbeddingUsage": {
+            "tokens": 405,
+            "requests": 1,
+            "retries": 0,
+            "throttles": 0
+          },
+          "providerEmbeddingUsage": {
+            "embeddingTokens": null,
+            "embeddingRequests": null,
+            "embeddingRetries": null,
+            "embeddingThrottles": null
+          }
+        },
+        {
+          "stage": "images",
+          "status": "published",
+          "deliveryNumber": 1,
+          "enqueueToDeliveryMs": 129402.80000000002,
+          "chunkWriteChargeKnown": 127.83,
+          "chunkWriteChargeComplete": true,
+          "localEmbeddingUsage": {
+            "tokens": 251,
+            "requests": 1,
+            "retries": 0,
+            "throttles": 0
+          },
+          "providerEmbeddingUsage": {
+            "embeddingTokens": null,
+            "embeddingRequests": null,
+            "embeddingRetries": null,
+            "embeddingThrottles": null
+          }
+        }
+      ]
+    },
+    {
+      "profile": "custom",
+      "sourceId": "d04",
+      "generation": 1,
+      "startedAttempts": 1,
+      "finishedAttempts": 1,
+      "unfinishedAttempts": 0,
+      "bounded": false,
+      "statuses": {
+        "published": 1
+      },
+      "attempts": [
+        {
+          "stage": "ingest",
+          "status": "published",
+          "deliveryNumber": 1,
+          "enqueueToDeliveryMs": 116612.815,
+          "chunkWriteChargeKnown": 3439.63,
+          "chunkWriteChargeComplete": true,
+          "localEmbeddingUsage": {
+            "tokens": 1001,
+            "requests": 3,
+            "retries": 0,
+            "throttles": 0
+          },
+          "providerEmbeddingUsage": {
+            "embeddingTokens": null,
+            "embeddingRequests": null,
+            "embeddingRetries": null,
+            "embeddingThrottles": null
+          }
+        }
+      ]
+    },
+    {
+      "profile": "custom",
+      "sourceId": "d06",
+      "generation": 1,
+      "startedAttempts": 2,
+      "finishedAttempts": 2,
+      "unfinishedAttempts": 0,
+      "bounded": false,
+      "statuses": {
+        "published": 2
+      },
+      "attempts": [
+        {
+          "stage": "images",
+          "status": "published",
+          "deliveryNumber": 1,
+          "enqueueToDeliveryMs": 69160.27699999999,
+          "chunkWriteChargeKnown": 192.52,
+          "chunkWriteChargeComplete": true,
+          "localEmbeddingUsage": {
+            "tokens": 254,
+            "requests": 1,
+            "retries": 0,
+            "throttles": 0
+          },
+          "providerEmbeddingUsage": {
+            "embeddingTokens": null,
+            "embeddingRequests": null,
+            "embeddingRetries": null,
+            "embeddingThrottles": null
+          }
+        },
+        {
+          "stage": "ingest",
+          "status": "published",
+          "deliveryNumber": 1,
+          "enqueueToDeliveryMs": 131923.101,
+          "chunkWriteChargeKnown": 35926.15999999993,
+          "chunkWriteChargeComplete": true,
+          "localEmbeddingUsage": {
+            "tokens": 12694,
+            "requests": 31,
+            "retries": 0,
+            "throttles": 0
+          },
+          "providerEmbeddingUsage": {
+            "embeddingTokens": null,
+            "embeddingRequests": null,
+            "embeddingRetries": null,
+            "embeddingThrottles": null
+          }
+        }
+      ]
+    },
+    {
+      "profile": "microsoft",
+      "sourceId": "d01",
+      "generation": 1,
+      "startedAttempts": 1,
+      "finishedAttempts": 1,
+      "unfinishedAttempts": 0,
+      "bounded": false,
+      "statuses": {
+        "published": 1
+      },
+      "attempts": [
+        {
+          "stage": "ingest",
+          "status": "published",
+          "deliveryNumber": 1,
+          "enqueueToDeliveryMs": 99.968,
+          "chunkWriteChargeKnown": 2798.67,
+          "chunkWriteChargeComplete": true,
+          "localEmbeddingUsage": {
+            "tokens": null,
+            "requests": 0,
+            "retries": 0,
+            "throttles": 0
+          },
+          "providerEmbeddingUsage": {
+            "embeddingTokens": null,
+            "embeddingRequests": null,
+            "embeddingRetries": null,
+            "embeddingThrottles": null
+          }
+        }
+      ]
+    },
+    {
+      "profile": "microsoft",
+      "sourceId": "d02",
+      "generation": 1,
+      "startedAttempts": 1,
+      "finishedAttempts": 1,
+      "unfinishedAttempts": 0,
+      "bounded": false,
+      "statuses": {
+        "published": 1
+      },
+      "attempts": [
+        {
+          "stage": "ingest",
+          "status": "published",
+          "deliveryNumber": 1,
+          "enqueueToDeliveryMs": 29858.503,
+          "chunkWriteChargeKnown": 655.12,
+          "chunkWriteChargeComplete": true,
+          "localEmbeddingUsage": {
+            "tokens": null,
+            "requests": 0,
+            "retries": 0,
+            "throttles": 0
+          },
+          "providerEmbeddingUsage": {
+            "embeddingTokens": null,
+            "embeddingRequests": null,
+            "embeddingRetries": null,
+            "embeddingThrottles": null
+          }
+        }
+      ]
+    },
+    {
+      "profile": "microsoft",
+      "sourceId": "d03",
+      "generation": 1,
+      "startedAttempts": 1,
+      "finishedAttempts": 1,
+      "unfinishedAttempts": 0,
+      "bounded": false,
+      "statuses": {
+        "published": 1
+      },
+      "attempts": [
+        {
+          "stage": "ingest",
+          "status": "published",
+          "deliveryNumber": 1,
+          "enqueueToDeliveryMs": 94983.035,
+          "chunkWriteChargeKnown": 199.76,
+          "chunkWriteChargeComplete": true,
+          "localEmbeddingUsage": {
+            "tokens": null,
+            "requests": 0,
+            "retries": 0,
+            "throttles": 0
+          },
+          "providerEmbeddingUsage": {
+            "embeddingTokens": null,
+            "embeddingRequests": null,
+            "embeddingRetries": null,
+            "embeddingThrottles": null
+          }
+        }
+      ]
+    },
+    {
+      "profile": "microsoft",
+      "sourceId": "d04",
+      "generation": 1,
+      "startedAttempts": 1,
+      "finishedAttempts": 1,
+      "unfinishedAttempts": 0,
+      "bounded": false,
+      "statuses": {
+        "published": 1
+      },
+      "attempts": [
+        {
+          "stage": "ingest",
+          "status": "published",
+          "deliveryNumber": 1,
+          "enqueueToDeliveryMs": 109355.39199999999,
+          "chunkWriteChargeKnown": 221.19,
+          "chunkWriteChargeComplete": true,
+          "localEmbeddingUsage": {
+            "tokens": null,
+            "requests": 0,
+            "retries": 0,
+            "throttles": 0
+          },
+          "providerEmbeddingUsage": {
+            "embeddingTokens": null,
+            "embeddingRequests": null,
+            "embeddingRetries": null,
+            "embeddingThrottles": null
+          }
+        }
+      ]
+    },
+    {
+      "profile": "microsoft",
+      "sourceId": "d06",
+      "generation": 1,
+      "startedAttempts": 1,
+      "finishedAttempts": 1,
+      "unfinishedAttempts": 0,
+      "bounded": false,
+      "statuses": {
+        "published": 1
+      },
+      "attempts": [
+        {
+          "stage": "ingest",
+          "status": "published",
+          "deliveryNumber": 1,
+          "enqueueToDeliveryMs": 130580.59700000001,
+          "chunkWriteChargeKnown": 1530.38,
+          "chunkWriteChargeComplete": true,
+          "localEmbeddingUsage": {
+            "tokens": null,
+            "requests": 0,
+            "retries": 0,
+            "throttles": 0
+          },
+          "providerEmbeddingUsage": {
+            "embeddingTokens": null,
+            "embeddingRequests": null,
+            "embeddingRetries": null,
+            "embeddingThrottles": null
+          }
+        }
+      ]
+    }
+  ],
+  "attemptCounterMeaning": "Start/finish events per logical ingestion stage; missing provider counters unavailable. Queue elapsed on redelivery is not pure queue wait. No retry or failure is dropped.",
+  "software": {
+    "python": "3.14.3",
+    "azure-cosmos": "4.17.1",
+    "openai": "3.37.0",
+    "tiktoken": "0.14.0"
+  }
+}

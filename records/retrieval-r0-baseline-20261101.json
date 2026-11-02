@@ -1,0 +1,245 @@
+{
+  "schema": "fli.r0.baseline.v1",
+  "status": "complete",
+  "baseCommit": "9738236ce9cb3e5d08624f6dd14f8714be51c0cc",
+  "manifestFileSha256": "ef9e8ae4037903e8c18a1db09dbb7410030be53ab6c35e6549218ae6803ed1cf",
+  "tasksFileSha256": "997a7090c3cca5dacef760a5d0a241eeed4f90168ae427877ec70b4e51deaab5",
+  "answeringModel": {
+    "model": "gpt-6.1-sol",
+    "version": "2026-09-29",
+    "api": "Responses",
+    "reasoningEffort": "medium",
+    "maxOutputTokens": 8000,
+    "contextAllowancePerRun": 200000,
+    "maxAttempts": 3,
+    "capacityTokensPerMinute": 200000
+  },
+  "measurementMode": "functional-smoke",
+  "completedTurns": 36,
+  "frozenPilot": {
+    "documents": 12,
+    "tasks": 48,
+    "developmentTasks": 32,
+    "heldoutTasks": 16
+  },
+  "cloudSubset": {
+    "documents": 5,
+    "tasks": 6,
+    "profiles": 3,
+    "repeats": 2
+  },
+  "heldoutExecuted": false,
+  "sourceAndCodeSnapshotsUnchanged": true,
+  "deploymentSettingsUnchangedDuringReplay": true,
+  "groups": {
+    "current": {
+      "turns": 12,
+      "taskCompletion": {
+        "passed": 10,
+        "applicable": 12
+      },
+      "factualSupport": {
+        "passed": 10,
+        "applicable": 12
+      },
+      "citationAccuracy": {
+        "passed": 12,
+        "applicable": 12
+      },
+      "manualSourceCoverage": {
+        "reviewedTurns": 12,
+        "allRequiredRegions": {
+          "passed": 8,
+          "applicable": 10
+        },
+        "pairedAllRequiredRegions": {
+          "passed": 8,
+          "applicable": 10
+        },
+        "relationshipsDelivered": {
+          "passed": 0,
+          "applicable": 2
+        },
+        "completeOrderedSection": {
+          "passed": 2,
+          "applicable": 2
+        },
+        "catalogueComplete": {
+          "passed": 2,
+          "applicable": 2
+        }
+      },
+      "providerInputTokens": 327240,
+      "providerOutputTokens": 7736,
+      "maxProviderInputTokens": 34917,
+      "providerRateLimitRetries": 0,
+      "providerRateLimitWaitMs": 0.0,
+      "elapsedMs": 184850.3,
+      "retrievalChargeKnownSubtotal": 225.4,
+      "retrievalChargeTotal": 225.4,
+      "retrievalChargeComplete": true,
+      "operations": {
+        "search": 4,
+        "read": 12,
+        "discover": 8,
+        "images": 2
+      },
+      "toolErrors": {},
+      "toolBudgetRefusals": 0,
+      "automaticDocumentScopedRecoveries": 0
+    },
+    "custom": {
+      "turns": 12,
+      "taskCompletion": {
+        "passed": 12,
+        "applicable": 12
+      },
+      "factualSupport": {
+        "passed": 12,
+        "applicable": 12
+      },
+      "citationAccuracy": {
+        "passed": 12,
+        "applicable": 12
+      },
+      "manualSourceCoverage": {
+        "reviewedTurns": 12,
+        "allRequiredRegions": {
+          "passed": 6,
+          "applicable": 10
+        },
+        "pairedAllRequiredRegions": {
+          "passed": 6,
+          "applicable": 10
+        },
+        "relationshipsDelivered": {
+          "passed": 2,
+          "applicable": 2
+        },
+        "completeOrderedSection": {
+          "passed": 2,
+          "applicable": 2
+        },
+        "catalogueComplete": {
+          "passed": 2,
+          "applicable": 2
+        }
+      },
+      "providerInputTokens": 548912,
+      "providerOutputTokens": 8756,
+      "maxProviderInputTokens": 43314,
+      "providerRateLimitRetries": 0,
+      "providerRateLimitWaitMs": 0.0,
+      "elapsedMs": 219197.2,
+      "retrievalChargeKnownSubtotal": 492.16,
+      "retrievalChargeTotal": 492.16,
+      "retrievalChargeComplete": true,
+      "operations": {
+        "search": 15,
+        "read": 22,
+        "discover": 9,
+        "images": 2
+      },
+      "toolErrors": {},
+      "toolBudgetRefusals": 4,
+      "automaticDocumentScopedRecoveries": 4
+    },
+    "microsoft": {
+      "turns": 12,
+      "taskCompletion": {
+        "passed": 12,
+        "applicable": 12
+      },
+      "factualSupport": {
+        "passed": 12,
+        "applicable": 12
+      },
+      "citationAccuracy": {
+        "passed": 12,
+        "applicable": 12
+      },
+      "manualSourceCoverage": {
+        "reviewedTurns": 12,
+        "allRequiredRegions": {
+          "passed": 10,
+          "applicable": 10
+        },
+        "pairedAllRequiredRegions": {
+          "passed": 10,
+          "applicable": 10
+        },
+        "relationshipsDelivered": {
+          "passed": 2,
+          "applicable": 2
+        },
+        "completeOrderedSection": {
+          "passed": 2,
+          "applicable": 2
+        },
+        "catalogueComplete": {
+          "passed": 2,
+          "applicable": 2
+        }
+      },
+      "providerInputTokens": 1074648,
+      "providerOutputTokens": 7924,
+      "maxProviderInputTokens": 94452,
+      "providerRateLimitRetries": 14,
+      "providerRateLimitWaitMs": 178106.2,
+      "elapsedMs": 373810.3,
+      "retrievalChargeKnownSubtotal": 268.76,
+      "retrievalChargeTotal": null,
+      "retrievalChargeComplete": false,
+      "operations": {
+        "search": 6,
+        "read": 14,
+        "discover": 9
+      },
+      "toolErrors": {
+        "source_scope_unavailable": 2
+      },
+      "toolBudgetRefusals": 1,
+      "automaticDocumentScopedRecoveries": 1
+    }
+  },
+  "qualityReview": "Source-based assistant review against original bytes and delivered evidence; current second repeat independently reviewed with fresh context. Not blinded human evaluation.",
+  "findings": [
+    "Current lost the form blank cells and asserted blankness in both repeats: 10/12 completion/support. Custom and Microsoft completed 12/12 each with supported citations.",
+    "Custom preserved form grid/blankness in selected source; Microsoft preserved original HTML table structure and blank td cells. This does not establish general layout fidelity.",
+    "All six complete-section turns delivered the 71 required original regions in order; source headings count as evidence when bound to an original body.",
+    "Custom omitted auxiliary labeled regions in comparison/form tasks while supporting the requested answer elsewhere; full gold-region coverage is scored separately from task completion.",
+    "Four custom and one Microsoft per-call read-budget refusals recovered. Two Microsoft source-scope selector errors recovered. No manually reviewed task failed due to the shared conversation capacity.",
+    "The 200k allowance was matched; maximum measured input was 94452, so this is not a 200k-input stress test.",
+    "Native local long-document body exceeds 336k tokens; its full-read case remains context-limited and was not cloud replayed."
+  ],
+  "limitations": [
+    "No retrieval architecture, provider, performance or cost winner selected. Three complete strategies differ in extraction, chunking, visuals and response structure.",
+    "Pilot libraries contain 115,920,9 active vectors including image rows; actual pilot index readiness/graph use ungraded. Inherited canary verified separately; no new containers.",
+    "32 development and16 held-out tasks are frozen; only six development tasks replayed. No held-out confirmation or broad format/visual validation.",
+    "All large-library, multi-partition global ranking, hybrid fan-out, concurrency and lifecycle-under-load claims remain open per scale inventory.",
+    "Rate limits/cache/native images/tool choices differ; no latency/currency comparison. Successful-turn reported usage includes waits/retries, unreported failed-provider usage remains unavailable.",
+    "API recipe codeRevision and inherited worker build are distinct; actual image and unchanged ingestion modules are recorded in runtime receipt."
+  ],
+  "cleanup": {
+    "temporaryAnsweringDeploymentsRemoved": 1,
+    "originalDeploymentSettingsUnchanged": true,
+    "scope": "model/version/upgrade/SKU inventory equality; original deployment identities private",
+    "r0LibrariesRetained": 3,
+    "sourceCopiesRetained": 15,
+    "scaleResourcesTouched": false
+  },
+  "validation": {
+    "pytestPassed": 961,
+    "existingWarnings": 14,
+    "ruffPassed": true,
+    "formatPassed": true,
+    "privacyPassed": true,
+    "applicationSourceChanged": false
+  },
+  "receipts": {
+    "scorecard": "records/retrieval-r0-scorecard-20261101.json",
+    "runtime": "records/retrieval-r0-runtime-20261101.json",
+    "local": "records/retrieval-r0-local-baseline-20261101.json",
+    "scale": "records/retrieval-r0-scale-inventory-20261101.json"
+  }
+}

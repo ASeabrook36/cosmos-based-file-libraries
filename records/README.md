@@ -34,3 +34,19 @@ The user-requested [evidence pack](../docs/testing/2026-10-27/README.md) adds sa
 `agent-capabilities-20261027.json` summarizes the subsequent implemented capability package and four iterative frozen-corpus replays. [Sanitized answers/traces and live probes](../docs/testing/2026-10-27/agent-fixes/README.md) retain successes, regressions, repair costs and remaining model-quality gaps. The iterations are not controlled replicas or a general performance benchmark (E49).
 
 `agent-scope-experiment-20261027.json` preserves the subsequent **abandoned** interpretation/semantic-review experiment, including failures and token/time measurements. The user clarified the file-library versus consuming-agent boundary; that experimental implementation was removed. It is not an accepted quality benchmark or shipped capability (E50).
+
+R0 freezes the source-based retrieval benchmark without selecting an architecture:
+
+- `retrieval-r0-baseline-20261101.json` summarizes the 36-turn matched run, controls, outcomes, retries, limits and cleanup.
+- `retrieval-r0-scorecard-20261101.json` separates manual source coverage, completion, support/citations and deterministic delivery indicators.
+- `retrieval-r0-runtime-20261101.json` records active chunk distributions, profile/worker/model provenance and all captured ingestion attempts.
+- `retrieval-r0-freeze-20261101.json` identifies the 12-source/48-task pack, split and bounded matrix.
+- `retrieval-r0-local-baseline-20261101.json` measures actual native current/custom development chunk distributions; it is not cloud retrieval or model quality.
+- `retrieval-r0-scale-inventory-20261101.json` reconciles historical scale measurements and ownership evidence without touching scale resources.
+- `local-environment-20261101.json` records dependency, test and second-worktree isolation checks.
+
+See [the R0 runbook and successor handoffs](../docs/retrieval-r0.md) and
+[the source/scoring contract](../docs/testing/retrieval-r0/README.md). All source
+bodies, environment bindings, full replay captures and private reviewer reasons
+stay outside Git; public receipts contain allowlisted counters, IDs from the
+benchmark, hashes and review judgments only.
