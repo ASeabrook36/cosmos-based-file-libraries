@@ -166,7 +166,7 @@ def private_run(tmp_path):
             {
                 "case": case["case"],
                 "turn": 1,
-                "question": PRIVATE,
+                "question": case["question"],
                 "answer": PRIVATE,
                 "toolReplies": [body()],
                 "traces": [{"libraryId": PRIVATE}],
@@ -248,13 +248,19 @@ def test_scoring_refuses_changed_manifest_or_task_pack(tmp_path):
 
 def complete_run(tmp_path):
     args = private_run(tmp_path)
-    run, _manifest, _tasks, _gold = args
+    run, _manifest, tasks, _gold = args
     row = scoring.read(run / "r1-current/results.json")[0]
+    root = {"agent": {"libraryIds": list(scoring.ROLES)}, "libraries": {role: {} for role in scoring.ROLES}}
+    save(run / "source-snapshot.json", root)
     for role in scoring.ROLES:
         cell = run / f"r1-{role}"
         cell.mkdir(exist_ok=True)
         save(cell / "results.json", [row])
-        save(cell / "run-status.json", {"status": "complete", "completedTurns": 1})
+        save(cell / "run-status.json", {"status": "complete", "completedTurns": 1, "budget": 200000})
+        before = {"agent": {"libraryIds": [role]}, "libraries": {role: {}}}
+        save(cell / "source-snapshot.json", before)
+        save(cell / "cases.json", tasks)
+        save(cell / "snapshot-check.json", {"unchanged": True, "before": before, "after": before})
     save(
         run / "run-status.json",
         {"status": "complete", "completedTurns": 3, "snapshotsUnchanged": True, "heldoutExecuted": False},
@@ -269,6 +275,35 @@ def test_complete_scorecard_requires_every_matched_cell_but_not_quality_passes(t
     assert result["completeness"]["completeMatchedTriples"] == 1
     assert result["completeness"]["missingTurns"] == []
     assert all(row["quality"]["taskCompletion"] is None for row in result["rows"])
+
+
+@pytest.mark.parametrize("damage", ["missing-check", "snapshot", "root-binding"])
+def test_claimed_unchanged_status_requires_original_snapshot_artifacts(tmp_path, damage):
+    args = complete_run(tmp_path)
+    path = args[0] / "r1-current/snapshot-check.json"
+    if damage == "missing-check":
+        path.unlink()
+    elif damage == "snapshot":
+        value = scoring.read(path)
+        value["after"]["libraries"]["current"] = {"generation": 2}
+        save(path, value)
+    else:
+        root = scoring.read(args[0] / "source-snapshot.json")
+        root["libraries"]["current"] = {"generation": 2}
+        save(args[0] / "source-snapshot.json", root)
+    result = scoring.score(*args)
+    assert not result["completeness"]["executionComplete"]
+    assert not result["completeness"]["sourceArtifactsVerified"]
+
+
+def test_executed_question_cannot_differ_from_selected_question(tmp_path):
+    args = complete_run(tmp_path)
+    path = args[0] / "r1-current/results.json"
+    rows = scoring.read(path)
+    rows[0]["question"] = "A different easier question"
+    save(path, rows)
+    with pytest.raises(ValueError, match="executed question"):
+        scoring.score(*args)
 
 
 @pytest.mark.parametrize("damage", ["missing-file", "missing-row", "root-count", "cell-status", "failed-cell", "drift"])

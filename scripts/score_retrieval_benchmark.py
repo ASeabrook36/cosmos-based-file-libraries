@@ -8,6 +8,7 @@ section completeness/order, citations and task success require source-based revi
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import json
 import math
@@ -17,6 +18,7 @@ from pathlib import Path
 
 from fli.structure_lab import digest
 from scripts.retrieval_benchmark import REPO, read, sha
+from scripts.retrieval_controls import private_path, verify_cell
 from scripts.structure_lab import save
 
 QUALITY = ("taskCompletion", "factualSupport", "citationAccuracy", "sourceRelationships")
@@ -276,9 +278,7 @@ def status_receipt(status):
 
 
 def score(run, manifest, tasks, gold, reviews=None):
-    run = Path(run).resolve()
-    if run.is_relative_to(REPO):
-        raise ValueError("raw captures must remain private")
+    run = private_path(run)
     controls, status = read(run / "controls.json"), read(run / "run-status.json")
     if controls["manifestSha256"] != digest(manifest) or controls["tasksSha256"] != digest(tasks):
         raise ValueError("frozen scoring inputs differ from run")
@@ -302,6 +302,8 @@ def score(run, manifest, tasks, gold, reviews=None):
         }
     rows, attempts, observed = [], [], set()
     cells_complete = True
+    source_artifacts_verified = True
+    root_snapshot = read(run / "source-snapshot.json") if (run / "source-snapshot.json").exists() else None
     for cell in controls["schedule"]:
         directory = run / f"r{cell['repeat']}-{cell['role']}"
         cell_expected = {key for key in expected if key[:2] == (cell["repeat"], cell["role"])}
@@ -314,6 +316,17 @@ def score(run, manifest, tasks, gold, reviews=None):
             and type(cell_status.get("completedTurns")) is int
             and cell_status["completedTurns"] == len(cell_expected)
         )
+        try:
+            before = read(directory / "source-snapshot.json")
+            libraries = list(before["libraries"])
+            if root_snapshot is None or len(libraries) != 1:
+                raise ValueError("missing or invalid root source binding")
+            expected_snapshot = copy.deepcopy(root_snapshot)
+            expected_snapshot["agent"]["libraryIds"] = libraries
+            expected_snapshot["libraries"] = {key: root_snapshot["libraries"][key] for key in libraries}
+            verify_cell(directory, controls["cases"], expected_snapshot)
+        except (ValueError, OSError, KeyError, TypeError):
+            source_artifacts_verified = False
         if not (directory / "results.json").exists():
             continue
         for result in read(directory / "results.json"):
@@ -322,6 +335,10 @@ def score(run, manifest, tasks, gold, reviews=None):
                 raise ValueError("result references an unexpected case or turn")
             if key in observed:
                 raise ValueError("duplicate result for comparison turn")
+            case = cases[result["case"]]
+            questions = case.get("questions") or [case["question"]]
+            if result.get("question") != questions[result["turn"] - 1]:
+                raise ValueError("executed question differs from frozen selected task")
             observed.add(key)
             review = judgments.get(key, {})
             rows.append(
@@ -346,6 +363,7 @@ def score(run, manifest, tasks, gold, reviews=None):
         matrix_complete
         and count_matches
         and cells_complete
+        and source_artifacts_verified
         and status.get("status") == "complete"
         and status.get("snapshotsUnchanged") is True
         and status.get("heldoutExecuted") is False
@@ -391,6 +409,7 @@ def score(run, manifest, tasks, gold, reviews=None):
             "executionComplete": execution_complete,
             "turnMatrixComplete": matrix_complete,
             "cellReceiptsComplete": cells_complete,
+            "sourceArtifactsVerified": source_artifacts_verified,
             "reportedCountMatchesRows": count_matches,
             "plannedTurns": len(expected),
             "capturedTurns": len(rows),
