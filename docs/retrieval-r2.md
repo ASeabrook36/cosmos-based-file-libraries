@@ -108,3 +108,78 @@ actual-corpus readiness, ANN/source relevance, write/read RU, hosted source-read
 cost, replacement/deletion/retry/metadata/permission integration, broad format
 coverage and held-out four-cell confirmation remain separate gates. R3 must wait
 for R1/R2 findings that justify a particular physical comparison.
+
+## Bounded document-discovery follow-on
+
+The follow-on names its retained passage representation from the completed first
+comparison; it does not re-embed any passage or query. Its deliberately narrower
+scope is the three development enforcement files (`d06`–`d08`) and five broad
+source tasks (`r0-17`, `r0-22`, `r0-25`, `r0-27`, `r0-30`). This development selection
+is declared before summary generation and is not evidence for broad vague-file
+navigation, the long compilation, or held-out sources.
+
+Both arms return at most eight candidates: eight passages versus seven passages
+plus one document-summary candidate. The latter expands to the same original
+canonical document blocks; generated summary text is never counted as evidence.
+Document summaries use the existing `Summarizer.reduce` over every canonical
+block, a 12k source input bound and 220-token summary bound. Fixed Sol Responses,
+medium reasoning, 8k output and three provider attempts remain explicit. The three
+source bodies fit this summary input bound; the reducer does not truncate them.
+Both arms use the same frozen query vectors and float16 exact cosine reference.
+
+Predeclare at least 20% reduction in missing source regions, no lost
+baseline-delivered region IDs on any task, and no 200k evidence-only budget
+excess. Report added source JSON/body tokens, summary creation and validation
+retry usage, unchanged-source cache reuse and omission separately. Changed-source
+refresh remains unmeasured; a document body change invalidates its summary.
+A coverage gain at substantially higher read cost needs integration review.
+
+```sh
+.venv/bin/python -m scripts.retrieval_r2_navigation plan \
+  --source-dir "$R2_PRIVATE/pilot" --work-dir "$R2_PRIVATE/navigation"
+# Review navigation-plan.json, then obtain an exclusive coordinated cloud slot.
+.venv/bin/python -m scripts.retrieval_r2_navigation freeze \
+  --source-dir "$R2_PRIVATE/pilot" --work-dir "$R2_PRIVATE/navigation" \
+  --model-receipt "$R2_PRIVATE/summary-before.json" \
+  --embedding-receipt "$R2_PRIVATE/navigation-embedding-before.json"
+.venv/bin/python -m scripts.retrieval_r2_navigation evaluate \
+  --source-dir "$R2_PRIVATE/pilot" --work-dir "$R2_PRIVATE/navigation" \
+  --model-receipt "$R2_PRIVATE/summary-after.json" \
+  --embedding-receipt "$R2_PRIVATE/navigation-embedding-after.json"
+```
+
+The plan and both vector artifacts are hash-bound. Fresh management receipts are
+required for both models before and after the measured window. Runtime directories
+are locked against concurrent writers. Changed passage decisions, vectors, source
+or navigation code invalidate the frozen comparison. No mutable-library
+replacement, deletion or profile update happens in this lab.
+
+## Passage result — retain the granular baseline
+
+[The frozen local distribution](../records/retrieval-r2-local-20261101.json) and
+[the exact source-relevance result](../records/retrieval-r2-passages-20261101.json)
+record the first completed comparison. All eight canonical source trees matched
+R0 exactly, and 256 distinct original development regions passed locator/hash
+verification. Thirty body-evidence tasks produce 278 task-region incidences.
+
+Coalescing reduced passage rows from **8,435 to 3,368 (60.1%)**. Complete gold-region
+coverage increased from **14/30 to 19/30 tasks**, and delivered task-region incidences
+from **149/278 to 179/278**. However it lost baseline-delivered region IDs on
+**r0-01, r0-02, r0-09 and r0-10**. In r0-02 the total rose from three to five regions
+while losing a previously delivered region, illustrating why count-only grading
+would have hidden a regression. The predeclared strict gate therefore fails.
+No follow-up tuning or held-out evaluation was used to rescue the candidate.
+
+Source JSON estimates summed over these paired queries rose from 79,779 to 250,369
+tokens; the maximum single expansion was 23,134, below the 200k evidence-only bound.
+These are local source serialization estimates, not provider answering tokens or
+live Blob/REST costs. Broader packing supplies more source per hit and may help
+complete-section tasks while reducing exact-fact retrieval. The observed vector
+count reduction does not establish proportional embedding-token, RU or cost gains.
+
+The shared embedding cache made **589 provider requests**, reporting **642,547
+input tokens**, no retries/throttles, and no retry wait. Elapsed embedding time was
+402.84 seconds, with serial 16-item batches; it is not a strategy performance
+comparison. Original model settings remained pinned across fresh management
+receipts. Frozen vectors remain private, hashed, and available for the navigation
+comparison and a later expressly justified experiment.
