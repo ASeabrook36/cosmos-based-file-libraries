@@ -257,11 +257,15 @@ def merged_exact(
         if len(ids) != len(scores) or len(set(ids)) != len(ids) or not all(finite(s) for s in scores):
             raise ValueError("invalid exact distances or repeated IDs")
         bindings = row.get("result_bindings", [])
-        if len(bindings) != len(ids) or any(
-            item.get("id") not in allowed
-            or item.get("documentId") != document
-            or any(item.get(key) != allowed[item["id"]][key] for key in ("libraryId", "documentId", "generation"))
-            for item in bindings
+        if (
+            len(bindings) != len(ids)
+            or [item.get("id") for item in bindings] != ids
+            or any(
+                item.get("id") not in allowed
+                or item.get("documentId") != document
+                or any(item.get(key) != allowed[item["id"]][key] for key in ("libraryId", "documentId", "generation"))
+                for item in bindings
+            )
         ):
             raise ValueError("independent exact reference has invalid source bindings")
         if any(a > b + EPSILON for a, b in zip(scores, scores[1:], strict=False)):
@@ -272,18 +276,34 @@ def merged_exact(
     return sorted(pairs, key=lambda pair: (pair[1], pair[0]))[:K]
 
 
-def result_checks(row: dict, truth: list[tuple[str, float]], allowed: dict[str, dict]) -> dict:
+def result_checks(
+    row: dict,
+    truth: list[tuple[str, float]],
+    allowed: dict[str, dict],
+    reference_scores: dict[str, float] | None = None,
+) -> dict:
     ids, scores = row["result_ids"], row.get("scores", [])
     complete = not row.get("error") and len(ids) == K and len(set(ids)) == K
     valid_scores = len(scores) == len(ids) and all(finite(s) for s in scores)
     order = bool(complete and valid_scores and all(a <= b + EPSILON for a, b in zip(scores, scores[1:], strict=False)))
     bindings = row.get("result_bindings", [])
-    isolated = len(bindings) == len(ids) and all(
-        item.get("id") in allowed
-        and all(item.get(key) == allowed[item["id"]][key] for key in ("libraryId", "documentId", "generation"))
-        for item in bindings
+    isolated = (
+        len(bindings) == len(ids)
+        and [item.get("id") for item in bindings] == ids
+        and all(
+            item.get("id") in allowed
+            and all(item.get(key) == allowed[item["id"]][key] for key in ("libraryId", "documentId", "generation"))
+            for item in bindings
+        )
     )
     reference = {identifier for identifier, _score in truth}
+    reference_scores = dict(truth) if reference_scores is None else reference_scores
+    comparable = [
+        (score, reference_scores[identifier])
+        for identifier, score in zip(ids, scores, strict=False)
+        if identifier in reference_scores
+    ]
+    score_mismatches = sum(not finite(score) or abs(score - exact) > EPSILON for score, exact in comparable)
     recall = len(set(ids[:K]) & reference) / K if len(truth) == K else None
     # Tied boundary rows can have equal validity despite different IDs. Count only
     # delivered original IDs whose service distance is tied at the global cutoff.
@@ -300,7 +320,17 @@ def result_checks(row: dict, truth: list[tuple[str, float]], allowed: dict[str, 
         "distanceOrder": order,
         "recallAt10": recall,
         "tieAwareRecallAt10": tie_recall,
-        "passed": bool(complete and isolated and order and tie_recall is not None and tie_recall >= RECALL_FLOOR),
+        "distancesCompared": len(comparable),
+        "distanceMismatches": score_mismatches,
+        "scoresMatchExact": bool(valid_scores and score_mismatches == 0),
+        "passed": bool(
+            complete
+            and isolated
+            and order
+            and score_mismatches == 0
+            and tie_recall is not None
+            and tie_recall >= RECALL_FLOOR
+        ),
     }
 
 
@@ -440,7 +470,20 @@ def report(args: argparse.Namespace) -> dict:
     results = {}
     for kind in ("prefix", "no-prefix", "hybrid"):
         selected = [row for row in rows if row["kind"] == kind]
-        checks = [result_checks(row, truth.get(row["query"], []), allowed) for row in selected]
+        checks = [
+            result_checks(
+                row,
+                truth.get(row["query"], []),
+                allowed,
+                {
+                    identifier: score
+                    for doc in exact[row["query"]].values()
+                    for identifier, score in zip(doc["result_ids"], doc["scores"], strict=False)
+                    if finite(score)
+                },
+            )
+            for row in selected
+        ]
         distinct = [
             len({tuple(row["result_ids"]) for row in selected if row["repeat"] == repeat and not row.get("error")})
             for repeat in range(REPEATS)
@@ -471,7 +514,7 @@ def report(args: argparse.Namespace) -> dict:
         )
         correct = (
             valid
-            and all(check["distanceOrder"] for check in checks)
+            and all(check["distanceOrder"] and check["scoresMatchExact"] for check in checks)
             and all(value is not None and value >= RECALL_FLOOR for value in recall)
             if kind != "hybrid"
             else valid and all(value >= QUERIES // 2 for value in distinct)
@@ -494,6 +537,8 @@ def report(args: argparse.Namespace) -> dict:
             "sourceBindingFailures": sum(not c["sourceBindings"] for c in checks),
             "cardinalityFailures": sum(not c["complete"] for c in checks),
             "distanceOrderFailures": sum(not c["distanceOrder"] for c in checks) if kind != "hybrid" else None,
+            "distancesCompared": sum(c["distancesCompared"] for c in checks) if kind != "hybrid" else None,
+            "distanceMismatches": sum(c["distanceMismatches"] for c in checks) if kind != "hybrid" else None,
             "errors": sum(bool(row["error"]) for row in selected),
             "knownAttemptRU": round(sum(charges), 2),
             "totalRU": round(sum(charges), 2)
@@ -516,6 +561,12 @@ def report(args: argparse.Namespace) -> dict:
                 }
             ),
         }
+    winner_ranges = Counter()
+    for merged in truth.values():
+        if merged:
+            document = allowed[merged[0][0]]["documentId"]
+            for range_id in before.get("documents", {}).get(document, {}).get("ranges", []):
+                winner_ranges[range_id] += 1
     out = {
         "schema": "fli.retrieval-r1-result.v1",
         "baselineCommit": BASE,
@@ -537,6 +588,11 @@ def report(args: argparse.Namespace) -> dict:
         "sourceAndPlacementUnchanged": unchanged,
         "verifiedLibraryRangeCount": len(before["knownRanges"]) if before["rangeComplete"] else None,
         "multiRangeLibraryProven": bool(before["rangeComplete"] and len(before["knownRanges"]) > 1),
+        "queryWinnerRangeCount": len(winner_ranges) if before["rangeComplete"] else None,
+        "queryWinnersPerRange": sorted(winner_ranges.values()) if before["rangeComplete"] else None,
+        "multiRangeRankingConfirmed": bool(
+            before["rangeComplete"] and len(winner_ranges) > 1 and results["prefix"]["correctInMeasuredScope"]
+        ),
         "actualScopeReady": readiness.get("engaged", False),
         "readinessSeconds": readiness.get("secondsToEngage"),
         "results": results,

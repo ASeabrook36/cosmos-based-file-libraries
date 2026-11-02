@@ -168,3 +168,21 @@ def test_incomplete_report_keeps_the_full_expected_denominator(tmp_path, monkeyp
     assert output["results"]["prefix"]["knownAttemptRU"] == 3.5
     assert output["results"]["prefix"]["totalRU"] is None
     assert output["verifiedLibraryRangeCount"] is None and not output["multiRangeLibraryProven"]
+
+
+def test_binding_rows_must_align_with_delivered_ids():
+    first, second, allowed = inputs()
+    truth = merged_exact({"first": first, "second": second}, {"first": 10, "second": 10}, allowed)
+    second["result_bindings"] = second["result_bindings"][::-1]
+    assert not result_checks(second, truth, allowed)["sourceBindings"]
+    with pytest.raises(ValueError, match="bindings"):
+        merged_exact({"first": first, "second": second}, {"first": 10, "second": 10}, allowed)
+
+
+def test_correct_ids_and_order_do_not_hide_wrong_distances():
+    first, second, allowed = inputs()
+    truth = merged_exact({"first": first, "second": second}, {"first": 10, "second": 10}, allowed)
+    second["scores"] = [score + 0.1 for score in second["scores"]]
+    checks = result_checks(second, truth, allowed)
+    assert checks["recallAt10"] == 1 and checks["distanceOrder"]
+    assert checks["distanceMismatches"] == 10 and not checks["passed"]
