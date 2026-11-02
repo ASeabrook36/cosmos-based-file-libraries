@@ -507,6 +507,8 @@ def main():
     parser.add_argument("--offline", action="store_true", help="Re-evaluate previously finalized vectors without cloud")
     parser.add_argument("--output", type=Path, help="New private offline verification receipt")
     args = parser.parse_args()
+    if args.offline and (args.command != "evaluate" or args.output is None):
+        parser.error("--offline requires evaluate and a new --output; it never permits model calls")
     source_dir, directory = private_path(args.source_dir), private_path(args.work_dir)
     directory.mkdir(mode=0o700, parents=True, exist_ok=True)
     with (directory / ".navigation-lock").open("w") as lock:
