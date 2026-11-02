@@ -28,6 +28,17 @@ CASES = ("r0-17", "r0-22", "r0-25", "r0-27", "r0-30")
 SOURCES = ("d06", "d07", "d08")
 
 
+def navigation_code_hashes():
+    root = Path(__file__).resolve().parents[1]
+    paths = [
+        "scripts/retrieval_r2_navigation.py",
+        "scripts/compare_agent_models.py",
+        "src/fli_demo/responses.py",
+        "src/fli_demo/agent.py",
+    ]
+    return {path: sha256((root / path).read_bytes()) for path in paths}
+
+
 def read(path):
     return json.loads(Path(path).read_text())
 
@@ -83,7 +94,7 @@ def plan(source_dir: Path, directory: Path):
             "report added source JSON tokens and creation/cache/omission counters; "
             "source gain can justify added cost only at integration review"
         ),
-        "codeSha256": sha256(Path(__file__).read_bytes()),
+        "codeSha256": navigation_code_hashes(),
     }
     save(directory / "navigation-plan.json", controls)
     print(json.dumps({"status": "planned", "selectedRepresentation": selected, "documents": 3, "tasks": 5}))
@@ -92,10 +103,7 @@ def plan(source_dir: Path, directory: Path):
 def inputs(source_dir, directory):
     controls = read(directory / "navigation-plan.json")
     source = load_source(source_dir)
-    if (
-        controls["codeSha256"] != sha256(Path(__file__).read_bytes())
-        or source["digest"] != controls["sourceArtifactDigest"]
-    ):
+    if controls["codeSha256"] != navigation_code_hashes() or source["digest"] != controls["sourceArtifactDigest"]:
         raise ValueError("navigation code or source changed since predeclaration")
     if digest(read(source_dir / "r2-evaluation.json")) != controls["passageDecisionDigest"]:
         raise ValueError("passage decision changed after navigation predeclaration")
