@@ -1,0 +1,13 @@
+{
+  "schema": "fli.i1.cleanup.v1",
+  "temporaryAnsweringDeploymentRemoved": true,
+  "originalDeploymentSettingsUnchanged": true,
+  "lifecycleScopesPurged": 3,
+  "evaluationLibraryRetainedForReproduction": true,
+  "r0AndP1LibrariesDeleted": false,
+  "ongoingScaleResourcesAccessed": false,
+  "localApiProcessesStopped": true,
+  "deploymentCleanupVerifiedAt": "2026-11-02T06:21:29.206214+00:00",
+  "localApiStopsConfirmedAt": "2026-11-02T06:37:03.810964+00:00",
+  "apiStopEvidence": "Coordinator launcher exit confirmed; delegated replay API shutdown confirmed by operator and private log."
+}

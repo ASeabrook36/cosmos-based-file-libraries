@@ -1,0 +1,40 @@
+{
+  "schema": "fli.i1.validation.v1",
+  "baseCommit": "d65a225a32d00dc58713121831f15abc0c685cee",
+  "requiredModularCommitPresent": "9738236",
+  "r0CommitPresent": "a449dc01e5acde6391bfc1aa50ca07670d54097d",
+  "testedMergedCodeRevision": "6a22e600ad2c919f2277446a36dbef37902e7d8a",
+  "measuredReplayRevision": "0c7e6a2e9e2034a33939121627ed3684e44362a7",
+  "trackImplementationCommits": {
+    "lifecycle": "d6094e9",
+    "replay": "0c7e6a2e9e2034a33939121627ed3684e44362a7"
+  },
+  "separateTrackWorktreesAndPrivateRuntimeDirectories": true,
+  "localEnvironmentDoctorPassed": true,
+  "command": "sh scripts/dev check -q",
+  "testsPassed": 1089,
+  "warnings": 14,
+  "testSeconds": 146.33,
+  "lintPassed": true,
+  "formatPassed": true,
+  "defaultPrivacyCheckPassed": true,
+  "privateIdentifierScanEntries": 60,
+  "privateLogSha256": "0dd3469c5666ddb3f6db7fac0889f4e371e56fbad48bc8508cf6381cbc71aebb",
+  "protectedPathsUnchanged": [
+    "src",
+    "cosmos",
+    "infra",
+    "docs/testing/retrieval-r0",
+    "scripts/dev",
+    "requirements-local.lock"
+  ],
+  "heldoutExecuted": true,
+  "r3Started": false,
+  "productionDefaultChanged": false,
+  "interpretation": "Combined local regression suite; bounded live lifecycle and separately controlled held-out results have their own receipts. Not broad production, scale, latency or billed-cost acceptance.",
+  "testedMergedCodeUnchanged": true,
+  "combinedCodeInventorySha256": "6a8dd4acda234759176bc3aeb8273665f077ebf2af0dff612e6af2ddfc2912b3",
+  "privateIdentifierScanPassed": true,
+  "diffCheckPassed": true,
+  "changedJsonAndLocalMarkdownLinksChecked": true
+}

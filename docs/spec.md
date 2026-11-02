@@ -433,8 +433,13 @@ budget checks. Unsupported source scopes direct the caller to a pinned outline,
 without inventing coordinates or dropping generation/revision requirements.
 Existing raw REST and compact adapter defaults remain unchanged. P1's bounded
 paired source reviews pass, but neither opt-in establishes the declared 20%
-input-efficiency gain; deployed lifecycle and held-out confirmation remain open
-(E65). R2's representation experiments are lab-only and select no profile change.
+input-efficiency gain (E65). Subsequent [selector-only I1](retrieval-i1.md) passes
+13 bounded live lifecycle gates and all 64 held-out source/answer reviews, with
+four unsupported expansion errors reduced to zero. Its 18.8542783% input reduction
+still fails the frozen 20% gate; selectors remain opt-in and no default changes
+(E66). Production Entra authentication, broker redelivery and broader concurrent
+revocation remain open. R2's representation experiments remain lab-only and select
+no profile change.
 
 ## 7. Ingestion
 

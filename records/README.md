@@ -67,3 +67,32 @@ calculation, not a database failure or a threshold relaxation. Neither R2's
 aggregate gains nor P1's near-threshold result override their declared no-loss/
 20% gates. No held-out result or broad production/latency/currency-cost claim is
 published by this stage.
+
+Selector-only I1 subsequently consumes the reserved held-out set; see the
+[coordinator result and remaining gates](../docs/retrieval-i1.md) (E66):
+
+- `retrieval-i1-lifecycle-20261102.json` records all 13 live lifecycle gates;
+  `retrieval-i1-lifecycle-independent-20261102.json` independently reopens the
+  HTTP/storage evidence and scoped cleanup before held-out execution.
+- `retrieval-i1-scorecard-20261102.json` preserves all 64 source-based judgments,
+  per-task pair comparisons and provider-wire hashes. Quality/usability pass;
+  18.8542783% input reduction fails the frozen 20% efficiency gate.
+- `retrieval-i1-runtime-20261102.json` binds the actual model/API controls and
+  208 calls, with complete and incomplete usage counters kept separate.
+- `retrieval-i1-review-20261102.json` binds both independent review sets and the
+  coordinator's exact offline re-score, including the nested Word placeholder
+  annotation limitation and scope of source review.
+- `retrieval-i1-infrastructure-20261102.json` records inherited canary/policy
+  validation and unchanged worker/embedding bindings without environment IDs.
+- `retrieval-i1-ingestion-20261102.json` records the four original held-out source
+  hashes and published-generation counters in the new owned evaluation library.
+- `retrieval-i1-preservation-20261102.json` verifies unchanged R0/P1 snapshots;
+  `retrieval-i1-cleanup-20261102.json` records temporary deployment removal, three
+  purged lifecycle scopes and the retained I1 evaluation library.
+- `retrieval-i1-validation-20261102.json` records the merged 1,089-test result,
+  ancestry, unchanged protected paths and local privacy/lint checks.
+
+I1 changes no production default or architecture and starts no R3 comparison.
+The current held-out answers cannot guide tuning and then be counted as fresh
+confirmation. Private captures are required for offline scoring from the exact
+measured implementation; the single-execution ledger remains consumed.

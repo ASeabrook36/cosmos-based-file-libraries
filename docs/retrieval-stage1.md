@@ -1,5 +1,9 @@
 # R1, R2 and P1 coordination
 
+Subsequent result: [selector-only I1 confirmation](retrieval-i1.md) completed the
+reserved held-out evaluation on 2026-11-02 (E66). This stage-one report preserves
+the decisions and remaining gates as they stood before I1.
+
 The three experiments descend from frozen R0 commit
 `a449dc01e5acde6391bfc1aa50ca07670d54097d`. They have separate worktrees,
 branches and private runtime directories. The coordinator owns shared documentation,

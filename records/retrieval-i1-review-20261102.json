@@ -1,0 +1,100 @@
+{
+  "schema": "fli.i1.review.v1",
+  "separateReviewersIndependentOfReplayImplementationOwner": true,
+  "reviewMethod": "Original DOCX sources, actual provider evidence and final answers; unblinded assistant review.",
+  "rows": [
+    {
+      "cell": "baseline",
+      "turns": 32,
+      "privateReviewSha256": "b0ba5e9629c16f3a7003fe3ecd86b09def184ba4fe9f67152beb32bee2af4e4c",
+      "requiredRegionOccurrences": 232,
+      "verifiedPlaceholderOccurrences": 4,
+      "quality": {
+        "taskCompletion": {
+          "passed": 32,
+          "applicable": 32
+        },
+        "factualSupport": {
+          "passed": 32,
+          "applicable": 32
+        },
+        "citationAccuracy": {
+          "passed": 32,
+          "applicable": 32
+        },
+        "sourceRelationships": {
+          "passed": 10,
+          "applicable": 10
+        }
+      }
+    },
+    {
+      "cell": "selectors-only",
+      "turns": 32,
+      "privateReviewSha256": "104d3420a8a707616c3474540b7bd3627d7828f4e62ddef771f258842b570fd7",
+      "requiredRegionOccurrences": 232,
+      "verifiedPlaceholderOccurrences": 4,
+      "quality": {
+        "taskCompletion": {
+          "passed": 32,
+          "applicable": 32
+        },
+        "factualSupport": {
+          "passed": 32,
+          "applicable": 32
+        },
+        "citationAccuracy": {
+          "passed": 32,
+          "applicable": 32
+        },
+        "sourceRelationships": {
+          "passed": 10,
+          "applicable": 10
+        }
+      }
+    }
+  ],
+  "coordinatorSpotReviewCases": [
+    "r0-34",
+    "r0-41",
+    "r0-47"
+  ],
+  "coordinatorReproducedEntireScorecardExactly": true,
+  "verifiedProviderInputs": 208,
+  "all64TurnsReviewed": true,
+  "measuredCodeRevision": "0c7e6a2e9e2034a33939121627ed3684e44362a7",
+  "canonicalScorecardSha256": "3fa07831db2514bfe5e759e9ea50a9cdca161ab1e23e8c25a11407de69929ea0",
+  "mergedCheckoutInitialRescore": "Refused expected code inventory mismatch because it additionally contains the lifecycle script; unchanged measured checkout re-score passed.",
+  "codeHashGuardBypassed": false,
+  "gates": {
+    "sourceAndQualityNoRegression": true,
+    "qualityGateConclusive": true,
+    "providerInputReductionFraction": 0.18854278301088612,
+    "efficiencyTargetMet": false,
+    "usabilityNoRegression": true,
+    "unsupportedExpansionBenefitObserved": true,
+    "promotion": "requires coordinator decision; no automatic default or architecture change"
+  },
+  "sourceAnnotationLimitation": {
+    "case": "r0-47",
+    "regions": [
+      "d12:p38",
+      "d12:p43"
+    ],
+    "frozenDirectParagraphTextEmpty": true,
+    "originalNestedControlsContainUnderscorePlaceholders": true,
+    "originalCoordinatesAndDeliveredPlaceholdersVerified": true,
+    "originalUntickedControlStatesVerified": true,
+    "initialPrivateChecklistInterpretationCorrectedBeforeAnswerReview": true,
+    "frozenGoldTasksPromptsAndCandidateChanged": false,
+    "privateSourceControlErratumSha256": "50b1bc9a18e53124d88312f03a1a1665a90bee9c52026af10559cb4131c227a8"
+  },
+  "privateLifecycleIndependentAuditSha256": "667072ea63488f11ec972c5a82658a0943099223f65ca41d927f566ed9d73591",
+  "privateSelectorSourceAuditSha256": "bfe19a58260762fba70ad8b2cb18ebdc486ded8603d1c11d7b85d692b6e50e8e",
+  "limitations": [
+    "Unblinded assistant review, not human accuracy or statistical equivalence.",
+    "Four DOCX sources; no catalogue enumeration task or image evaluation.",
+    "Consumed held-out results cannot be treated as unseen confirmation after tuning."
+  ],
+  "coordinatorDecision": "Accept bounded no-regression/usability evidence; retain selector opt-in and unchanged defaults. Efficiency threshold failed; no R3 comparison."
+}

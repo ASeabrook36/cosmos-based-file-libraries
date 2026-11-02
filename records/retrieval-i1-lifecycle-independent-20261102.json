@@ -1,0 +1,16 @@
+{
+  "schema": "fli.i1.lifecycle-independent-audit.v1",
+  "lifecycleReceiptSha256": "dd9763d5f83baba4fb53cb44f531a6ffabd5ecad16f05c0bae03a7c39bb940e8",
+  "httpReceiptsReopened": 94,
+  "sdkDiagnosticsReopened": 13,
+  "ownedScopes": 3,
+  "protectedScopesDisjoint": true,
+  "everyRequestWithinOwnedScope": true,
+  "errorsContainOnlyErrorEnvelope": true,
+  "metadataRowsReverified": 4,
+  "replacementGenerationAndSourceProvenanceReverified": true,
+  "enqueueFaultsObserved": 2,
+  "allOwnedLibraryDocumentChunkBlobInventoriesAbsent": true,
+  "embeddingModelAndSkuUnchanged": true,
+  "heldoutStarted": false
+}

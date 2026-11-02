@@ -1340,3 +1340,87 @@ source/vector/model-wire captures stay private. See the
 [validation](../records/retrieval-stage1-validation-20261101.json),
 [preservation](../records/retrieval-stage1-r0-preservation-20261101.json) and
 [cleanup](../records/retrieval-stage1-cleanup-20261101.json) receipts.
+
+## E66 — Selector-only I1 lifecycle and held-out confirmation (2026-11-02)
+
+Starting from reviewed stage one `d65a225`, I1 changed only the selector option
+in its answering comparison. Current physical policies, Microsoft representation
+and compact evidence stayed fixed. The [predeclared controls](testing/retrieval-i1-controls.json)
+bound all 16 reserved tasks on four original held-out DOCX sources, two repeats
+and reversed cell order: 64 independent turns. Sol `2026-09-29`, Responses,
+medium reasoning, 8,000 output tokens, three attempts and a 200k task allowance
+remained fixed, with storage/truncation disabled. No prompt, case, gold or
+candidate changed after the freeze, and no answering run was excluded or rerun.
+
+**Lifecycle preceded answering.** Thirteen [live gates](retrieval-i1-lifecycle.md)
+passed in three owned disposable library scopes using actual Azure data planes,
+the unchanged managed-identity Microsoft worker and two independent loopback API
+clients. They covered dev authentication and personal binding across retrieval
+endpoints, foreign/pinned selectors, metadata propagation, stale revision and
+generation rejection, replacement/deletion during reads, pre-send enqueue faults,
+retry recovery and complete purge. The coordinator independently reopened 94 HTTP
+receipts and 13 SDK observations; another reviewer independently audited the raw
+evidence. All mutation and direct-storage observations remained in owned scopes.
+See the [independent receipt](../records/retrieval-i1-lifecycle-independent-20261102.json).
+
+**Source and answer quality passed; usability improved.** Every cell's 32 turns
+passed completion, factual support and citations; all 10 applicable relationship
+judgments passed. Each cell delivered 232/232 required region occurrences, including
+four explicitly verified placeholder occurrences. Separate reviewers examined
+original sources, all answers and actual provider evidence. The coordinator
+reproduced the [complete scorecard](../records/retrieval-i1-scorecard-20261102.json)
+exactly. All 208 provider inputs were bound to frozen questions, captured compact
+tool-sequence prefixes and final canonical source evidence. Baseline unsupported
+expansion errors on `r0-38`/`r0-39` were four across both repeats, versus zero with
+selector handles; the baseline recovered and still answered successfully. There
+were no provider retries or read-budget refusals.
+
+**Efficiency failed its frozen threshold.** Aggregate provider input was 709,160
+baseline versus 575,453 selector tokens: **18.8542783% lower**, below 20%. Output
+was 12,383 versus 12,764 tokens, with 104 model calls per cell. Serialized
+tool-evidence estimates were 404,174 versus 246,884, but this is distinct from
+provider usage and reflects changed tool paths under the same compact format.
+Summed observed times were 352.83 versus 381.84 seconds. Baseline retrieval RU is
+incomplete (397.72 known subtotal); selector RU was 379.80. Cache and backend
+placement were uncontrolled. No latency, complete billed-cost, reference-format
+or architecture improvement follows from these counters.
+
+**Annotation and evaluation limits remain explicit.** The frozen parser's direct
+paragraph text for `d12:p38` and `d12:p43` is empty, while original nested Word
+content controls contain underscore placeholders. Review verified the field
+positions and delivered placeholder lines, and checked original unticked control
+states separately. Empty-string matching or complete-file flags were not accepted
+as evidence. An initial private checklist interpretation was corrected before
+answer review; the frozen gold and candidate were unchanged. This limitation
+belongs in a future benchmark annotation revision. These are unblinded assistant
+reviews of four DOCX files, not a human accuracy estimate, proof of statistical
+equivalence or metadata/catalogue completeness. The held-out set is now consumed
+and cannot be reused as unseen confirmation after tuning.
+
+**Decision and remaining gates.** [The coordinator accepts](retrieval-i1.md) the
+bounded source/quality and usability findings, retains selector handles as an
+independent opt-in, and preserves the failed efficiency gate. Defaults, physical
+foundation and representation remain unchanged. R3 remains unstarted. Production
+Entra authentication, broker worker redelivery, sustained concurrent lifecycle
+behavior and global immediate revocation were not established by localhost dev
+authentication, pre-send faults or two-client barriers. Split-library global
+top-k, many-range load, non-DOCX/image workloads, complete cost and controlled
+latency remain open. Any future foundation/format finalist still requires its
+own justified comparison and the full four-cell integration experiment.
+
+**Preservation and validation.** Fresh library scopes reused the isolated,
+canary-validated services; no existing worker or container configuration changed.
+Before/after R0 and P1 catalogue/tool/metadata/source-version snapshots match
+exactly, and ongoing scale resources were not accessed. All three lifecycle
+scopes and the owned temporary answering deployment were removed; local APIs
+stopped. The four-source I1 evaluation library remains frozen for reproduction.
+The merged checkout passed **1,089 tests**, lint, formatting and a 60-entry private
+identifier scan. The exact measured checkout is required for offline scoring;
+the broader merged script inventory is deliberately rejected by code-hash guards.
+The [review](../records/retrieval-i1-review-20261102.json),
+[runtime](../records/retrieval-i1-runtime-20261102.json),
+[validation](../records/retrieval-i1-validation-20261102.json),
+[preservation](../records/retrieval-i1-preservation-20261102.json) and
+[cleanup](../records/retrieval-i1-cleanup-20261102.json) receipts retain sanitized
+counts and hashes. All source bodies, answers, credentials and environment
+identifiers remain outside Git.

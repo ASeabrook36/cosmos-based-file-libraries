@@ -1,0 +1,80 @@
+{
+  "schema": "fli.i1.infrastructure-preflight.v1",
+  "existingIsolatedValidationServices": true,
+  "newContainerCreated": false,
+  "inheritedCanaryPassed": true,
+  "incarnationAndPoliciesMatch": true,
+  "canarySha256": "e823ba183c724d70352b6265cd90b6cc482fd3beec6e2fdc6e94feffbfac71a5",
+  "targetFingerprint": "67a763ea815d854dbc5e2f921f347aa4bfa91611dcd1864d1fbd99ba0a276db5",
+  "scaleResourcesAccessed": false,
+  "worker": {
+    "capturedAt": "2026-11-02T06:20:30.896602+00:00",
+    "existingWorkerConfigurationUnchanged": true,
+    "runningStatus": "Running",
+    "workerCodeRevision": "53ffe2cd68b0c0dbfa469b7dca72715715813efa",
+    "privateConfigurationSha256": "a911de71ae619427043aefa0d5ac27c094ec3935ab0f7f106fedc52b28234714"
+  },
+  "embeddingBindings": [
+    {
+      "stage": "before-lifecycle",
+      "capturedAt": "2026-11-02T05:59:00.968372+00:00",
+      "privateReceiptSha256": "7e7f90014e95e5e5d6d77ec980076120b7838631bb20b90dba2b8a2ccb2edcd5",
+      "model": {
+        "format": "OpenAI",
+        "name": "text-embedding-3-large",
+        "version": "1"
+      },
+      "sku": {
+        "capacity": 150,
+        "name": "GlobalStandard"
+      },
+      "bindingSha256": "ee62493b8a61d86b5fcb6a1e5434c3722615828d3905b4695fcbd425501f913c"
+    },
+    {
+      "stage": "after-lifecycle",
+      "capturedAt": "2026-11-02T06:01:21.468376+00:00",
+      "privateReceiptSha256": "c56b50b0d949715a4a0d6f6f2a0431936397d2c28bc9bf35db7094a0138db613",
+      "model": {
+        "format": "OpenAI",
+        "name": "text-embedding-3-large",
+        "version": "1"
+      },
+      "sku": {
+        "capacity": 150,
+        "name": "GlobalStandard"
+      },
+      "bindingSha256": "ee62493b8a61d86b5fcb6a1e5434c3722615828d3905b4695fcbd425501f913c"
+    },
+    {
+      "stage": "before-replay",
+      "capturedAt": "2026-11-02T06:05:37.663881+00:00",
+      "privateReceiptSha256": "dd97601364e8d8c23501db9bd93e91b665443735a09f486925b735ff94792c26",
+      "model": {
+        "format": "OpenAI",
+        "name": "text-embedding-3-large",
+        "version": "1"
+      },
+      "sku": {
+        "capacity": 150,
+        "name": "GlobalStandard"
+      },
+      "bindingSha256": "ee62493b8a61d86b5fcb6a1e5434c3722615828d3905b4695fcbd425501f913c"
+    },
+    {
+      "stage": "after-replay",
+      "capturedAt": "2026-11-02T06:19:29.390077+00:00",
+      "privateReceiptSha256": "dc31f282125f77c4d3b0888c9a92ddd2c66d0d32a7693a46f495e9c9bffaee42",
+      "model": {
+        "format": "OpenAI",
+        "name": "text-embedding-3-large",
+        "version": "1"
+      },
+      "sku": {
+        "capacity": 150,
+        "name": "GlobalStandard"
+      },
+      "bindingSha256": "ee62493b8a61d86b5fcb6a1e5434c3722615828d3905b4695fcbd425501f913c"
+    }
+  ],
+  "embeddingBindingUnchanged": true
+}

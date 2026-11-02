@@ -1,0 +1,18 @@
+{
+  "schema": "fli.i1.preservation.v1",
+  "stage": "after",
+  "rows": [
+    {
+      "scope": "r0",
+      "libraries": 3,
+      "documents": 15,
+      "snapshotUnchanged": true
+    },
+    {
+      "scope": "p1",
+      "libraries": 1,
+      "documents": 5,
+      "snapshotUnchanged": true
+    }
+  ]
+}

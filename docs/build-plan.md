@@ -1,5 +1,16 @@
 # Build plan
 
+**Selector-only I1 complete, 2026-11-02 (E66):** the
+[coordinator result](retrieval-i1.md) records 13 live lifecycle gates passed
+before all 64 reserved held-out turns. Both cells retain reviewed source and
+answer quality; selector handles avoid four recovered scope errors. Provider
+input falls 18.8542783%, below the frozen 20% target. Keep selectors opt-in and
+retain current compact defaults, representation and physical policies. No R3
+comparison follows. The held-out set is now consumed; production authentication,
+broker redelivery, broader concurrency/scale and controlled cost/latency remain
+open. The merged suite passes 1,089 tests; isolated cleanup and R0/P1 preservation
+are verified.
+
 **R1/R2/P1 bounded stage complete, 2026-11-01 (E65):** the
 [coordinator decision and integration gates](retrieval-stage1.md) retain current
 physical policies, representation and compact defaults. R1's two-range-container
@@ -11,13 +22,14 @@ P1's 18 development turns preserve reviewed source quality; selector hints avoid
 the observed scope errors, but format and selector input savings miss 20%.
 Both P1 changes remain independent opt-ins. Recommend a versioned selector-only
 I1 confirmation on the current foundation, with deployed lifecycle checks before
-predeclared held-out evaluation. No held-out task or R3 comparison has run.
+predeclared held-out evaluation. At this stage no held-out task or R3 comparison
+had run; the subsequent I1 result is above.
 
 **R0 complete, 2026-11-01 (E64):** [benchmark and successor handoffs](retrieval-r0.md)
 freeze 12 real DOCX sources, 48 tasks, source-relative labels, development/held-out
 split, workload scenarios and fixed Sol/200k controls. The bounded five-file,
 six-task, three-profile, two-repeat cloud baseline completed 36 turns; held-out
-remains unrun. Source-based review records current 10/12 completion/support and
+remained unrun at R0. Source-based review records current 10/12 completion/support and
 custom/Microsoft 12/12, with table fidelity, source coverage and citation scores
 separate. No architecture or provider winner is selected. Reusable local setup
 passed in two worktrees; final suite: 961 tests. Scale receipts are reconciled,
