@@ -197,6 +197,9 @@ def summarize(rows: Sequence[dict[str, Any]], *, expected_queries: int = QUESTIO
     for r in normal:
         by_query.setdefault(r["query"], []).append(r)
     run_medians = [_median([r["request_charge"] for r in normal if r["run"] == run]) for run in range(RUNS)]
+    retrieved_run_medians = [
+        _median([r["retrieved_document_count"] for r in normal if r["run"] == run]) for run in range(RUNS)
+    ]
     recalls = [recall_at_k(r["result_ids"], exact[r["query"]]["result_ids"], K) for r in normal if r["query"] in exact]
     recall_run_means = [
         [
@@ -214,17 +217,19 @@ def summarize(rows: Sequence[dict[str, Any]], *, expected_queries: int = QUESTIO
     }
     observed = [(r["kind"], r["query"], r["run"]) for r in rows]
     complete = len(observed) == len(expected) and set(observed) == expected
-    complete = complete and all(not r["error"] and len(r["result_ids"]) >= K for r in rows)
+    complete = complete and all(
+        not r["error"] and len(r["result_ids"]) == K and len(set(r["result_ids"])) == K for r in rows
+    )
     indexes = sorted({f"{t}:{','.join(k)}" for r in normal for t, k in [vector_index(r["index_utilization"])] if t})
     return {
-        "summaryVersion": 2,
+        "summaryVersion": 3,
         "expectedQueries": expected_queries,
         "expectedSearches": expected_queries * RUNS,
         "expectedExactSearches": expected_queries,
         "complete": complete,
         "metricsComplete": bool(rows)
         and all(
-            isinstance(r.get(key), (int, float)) and math.isfinite(r[key]) and r[key] >= 0
+            type(r.get(key)) in (int, float) and math.isfinite(r[key]) and r[key] >= 0
             for r in rows
             for key in ("request_charge", "retrieved_document_count", "milliseconds")
         ),
@@ -234,6 +239,7 @@ def summarize(rows: Sequence[dict[str, Any]], *, expected_queries: int = QUESTIO
         "throttled": sum(r["throttled"] for r in rows),
         "ruMedian": _median([_median([r["request_charge"] for r in runs]) for runs in by_query.values()]),
         "ruRunMedians": run_medians,
+        "retrievedRunMedians": retrieved_run_medians,
         "retrievedMedian": _median(
             [_median([r["retrieved_document_count"] for r in runs]) for runs in by_query.values()]
         ),
@@ -251,7 +257,8 @@ def grade(baseline: dict[str, Any], later: dict[str, Any], tolerance: float = TO
     """Require the documented tolerance AND baseline repeat spread, with complete runs.
 
     Version 1 used the larger allowance, although the build plan required both.
-    Historical receipts retain that original grade; version 2 reports both checks.
+    Historical receipts retain their original grades. Version 3 also applies the
+    documented spread requirement to retrieved rows, not just RU.
     """
 
     def holds(key: str) -> bool:
@@ -264,6 +271,17 @@ def grade(baseline: dict[str, Any], later: dict[str, Any], tolerance: float = TO
     spread = max(runs) - min(runs) if len(runs) == RUNS and all(v is not None for v in runs) else None
     before, after = baseline.get("ruMedian"), later.get("ruMedian")
     within_spread = spread is not None and before is not None and after is not None and abs(after - before) <= spread
+    read_runs = baseline.get("retrievedRunMedians") or []
+    read_spread = (
+        max(read_runs) - min(read_runs) if len(read_runs) == RUNS and all(v is not None for v in read_runs) else None
+    )
+    read_before, read_after = baseline.get("retrievedMedian"), later.get("retrievedMedian")
+    reads_within_spread = (
+        read_spread is not None
+        and read_before is not None
+        and read_after is not None
+        and abs(read_after - read_before) <= read_spread
+    )
     shard = all(
         s.get("indexReportsComplete")
         and s["vectorIndexes"]
@@ -282,7 +300,9 @@ def grade(baseline: dict[str, Any], later: dict[str, Any], tolerance: float = TO
         "ruWithinTolerance": holds("ruMedian"),
         "ruWithinBaselineSpread": within_spread,
         "ruHolds": holds("ruMedian") and within_spread,
-        "retrievedHolds": holds("retrievedMedian"),
+        "retrievedWithinTolerance": holds("retrievedMedian"),
+        "retrievedWithinBaselineSpread": reads_within_spread,
+        "retrievedHolds": holds("retrievedMedian") and reads_within_spread,
         "libraryShardReported": shard,
         "recallAtFloor": recall,
     }
@@ -547,9 +567,10 @@ def report(args: argparse.Namespace) -> None:
         "corpus": "public DBpedia-entity abstracts with publisher-supplied text-embedding-3-large 3,072-d vectors; "
         "one abstract per passage; library membership assigned with a fixed seed",
         "method": {
-            "summaryVersion": 2,
-            "gradeVersion": 2,
+            "summaryVersion": 3,
+            "gradeVersion": 3,
             "ruTolerancePolicy": "within fractional tolerance AND baseline run-median spread",
+            "retrievedTolerancePolicy": "within fractional tolerance AND baseline run-median spread",
             "recallPolicy": "all ANN repeats against each question's exact reference; each repeat mean >= floor",
             "seed": SEED,
             "questionsPerLibrary": QUESTIONS_PER_LIBRARY,

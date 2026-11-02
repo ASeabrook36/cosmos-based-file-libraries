@@ -1,0 +1,47 @@
+{
+  "schema": "fli.retrieval-r1-range-audit.v1",
+  "rawMeasurementsSha256": "f3804a5cf3985d44da542dc967afc1e56e91f838b141a65c1d892c11cbe07351",
+  "targetFingerprint": "4672d9810758ec26f8a267764cb41d496a6bf9e9c83f41f645954946414f7528",
+  "placementBeforeSha256": "d76994927728204de81a490e21552a0e22b0c7f5de161d21558168ec5f3e503d",
+  "placementAfterMatches": true,
+  "physicalRangeInventorySha256": "78ed31ffa4e30850c8cb6d78c4e339671f5a8c8f80523d0d26135bff4ca42d35",
+  "libraryRangeCount": 1,
+  "allDocumentCensusRangesKnown": true,
+  "containerFeedRangeCount": 2,
+  "containerRangeInventoryAfterPerformanceWindow": true,
+  "profiles": {
+    "prefix": {
+      "calls": 60,
+      "callsWithObservedBackendContactOutsideVerifiedLibraryRanges": 0,
+      "observedContactsOutsideVerifiedScope": false,
+      "observedSuccessfulBackendRangeCount": 1,
+      "visibleHttpStatusCounts": {
+        "200": 60
+      },
+      "allVisibleSuccessfulDataResponsesHaveRange": true
+    },
+    "no-prefix": {
+      "calls": 60,
+      "callsWithObservedBackendContactOutsideVerifiedLibraryRanges": 0,
+      "observedContactsOutsideVerifiedScope": false,
+      "observedSuccessfulBackendRangeCount": 1,
+      "visibleHttpStatusCounts": {
+        "400": 60,
+        "200": 60
+      },
+      "allVisibleSuccessfulDataResponsesHaveRange": true
+    },
+    "hybrid": {
+      "calls": 60,
+      "callsWithObservedBackendContactOutsideVerifiedLibraryRanges": 60,
+      "observedContactsOutsideVerifiedScope": true,
+      "observedSuccessfulBackendRangeCount": 2,
+      "visibleHttpStatusCounts": {
+        "400": 60,
+        "200": 240
+      },
+      "allVisibleSuccessfulDataResponsesHaveRange": true
+    }
+  },
+  "scope": "Visible successful HTTP 200 backend responses with query metrics; initial HTTP 400 query-plan fallback responses are recorded separately. Positive contacts outside proven placement establish fan-out despite incomplete overall telemetry; zero observed contacts alone do not prove absence."
+}

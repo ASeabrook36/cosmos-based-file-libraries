@@ -1,0 +1,63 @@
+{
+  "schema": "fli.retrieval-r1-audit.v1",
+  "baseCommit": "a449dc01e5acde6391bfc1aa50ca07670d54097d",
+  "historicalRecordSha256": "92c385f93d692dba86f9c9910093d38360abe7c98f9c727f795cd08709db0184",
+  "historicalInputFileHashes": {
+    "lag.json": "db1ccfbcca79f6d65155fadb62eb0ccb444e1c5c84f66f58005818a7d88a0055",
+    "load-1.json": "29b7afe0d47ac4dc9757833597995a0631134d939af8d6f2b615381ff72ca724",
+    "load-2.json": "3f9926f54abd5b565be9ca2e22056602e1b1c4006cc328ae123baacfeba55937",
+    "load-3.json": "1c8b57b9d449ba2c8e1ff686f8b0f9977f0444ec6bd41db4a80c231cfaa19c69",
+    "measure-1.json": "62a67f9e835e5e1e516e59c0e0dc992167751882f216cbba105c7d0fa7bb74fd",
+    "measure-2.json": "7a9a70987612369c5e91b14a0174db0fd09e81281fb59d081e7b96b1ba257ca6",
+    "measure-3.json": "1ea5805255f54017a300ffe7a03af10eee1f5b9b4732a5241cc16bf44aeca011",
+    "question-sources.json": "ea87fc01edefff967eb1115833c579ddfadde90c202b85f6cf21d7181aeed48a",
+    "question-vectors.json": "4ac038f73f4eb71f499118c7f13dd264ae4825c4cce0b593d8808f7bf2e247bc",
+    "waits.json": "d05e1024e19edd23d7ffed9d93d2463c90315baecc5e4e0fcb22fd856046cd7a"
+  },
+  "readOnlyLocalCopy": true,
+  "cloudOperations": 0,
+  "measurementCorrections": [
+    "Scale grade v3 applies the documented 20% AND baseline repeat-spread conjunction to retrieved rows as well as RU. Historical receipts stay unchanged.",
+    "Canary requires complete unique vector/hybrid/exact query ordinals and exactly k unique results; readiness rejects errors, incomplete results and nonfinite distances.",
+    "Canary retains every visible attempt and per-response range/index telemetry; hidden SDK/query-plan charges mean total RU is unavailable.",
+    "R1 never uses prefix-exact as independent truth: reference is exact per complete document key, with a local distance merge and source binding/distance checks."
+  ],
+  "historicalRegrade": {
+    "2": {
+      "probes": 10,
+      "complete": 10,
+      "allRepeatRecallPass": 10,
+      "retrievedSpreadPass": 10,
+      "ruSpreadPass": 3,
+      "scoped": 3
+    },
+    "3": {
+      "probes": 10,
+      "complete": 10,
+      "allRepeatRecallPass": 10,
+      "retrievedSpreadPass": 10,
+      "ruSpreadPass": 3,
+      "scoped": 3
+    }
+  },
+  "sdkMechanismAudit": {
+    "kind": "r1-local-sdk-mechanism-audit",
+    "azureCosmos": "4.17.1",
+    "modules": {
+      "azure.cosmos._base": "003a702669b1256bb1e548755ad163fa18d1a144588967c3b4795f269d3dd64e",
+      "azure.cosmos.aio._cosmos_client_connection_async": "0e6b9666cd29f0e2891e5580fec81776ca36a2c0b477949a30809b8d68ed762b"
+    },
+    "fixtureOnly": true,
+    "resultDistances": [
+      0.7,
+      0.8,
+      0.1,
+      0.2
+    ],
+    "rows": 4,
+    "globalTopKApplied": false,
+    "distanceOrderPreserved": false,
+    "scope": "Calling the installed SDK merge helper directly concatenates non-aggregate partition replies. This confirms the local helper risk, not that a live scoped query reaches this branch across physical partitions. No cloud operation or random-vector search quality measurement."
+  },
+  "meaning": "An exact source/helper audit, not new scale evidence. R0 answering-model quality counts are unaffected. The prior one-physical-partition evidence cannot close a multi-range library query gate."
+}
