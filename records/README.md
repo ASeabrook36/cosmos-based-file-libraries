@@ -50,3 +50,20 @@ See [the R0 runbook and successor handoffs](../docs/retrieval-r0.md) and
 bodies, environment bindings, full replay captures and private reviewer reasons
 stay outside Git; public receipts contain allowlisted counters, IDs from the
 benchmark, hashes and review judgments only.
+
+R1/R2/P1 retain separate attribution; see the [coordinator decision](../docs/retrieval-stage1.md):
+
+- `retrieval-stage1-r0-audit-20261101.json` reopens the original 36-turn controls and artifacts.
+- `retrieval-r1-*` preserves audit, initial grader failure, corrected read-only result, runtime and positive range-contact evidence. `retrieval-stage1-r1-independent-check-20261101.json` and `retrieval-stage1-r1-range-check-20261101.json` independently reproduce scores/recall and positive hybrid fan-out.
+- `retrieval-r2-*` records source-coordinate validation, actual passage embeddings, rejected coalescing, offline reproduction and the stopped navigation bound. `retrieval-stage1-r2-independent-bound-20261101.json` independently enumerates all 15 choices.
+- `retrieval-p1-saved-responses-20261101.json` measures exact reconstruction and estimated response-token savings. `retrieval-p1-scorecard-20261102.json` and `retrieval-p1-runtime-20261102.json` preserve the 18-turn source reviews, actual-wire binding, model counters, failures and runtime controls.
+- `retrieval-stage1-p1-review-20261101.json` records the separate review assignments, private review digests and coordinator code/source review.
+- `retrieval-stage1-r0-preservation-20261101.json` checks the unchanged three-library/15-document catalogue, tool and source-version snapshot after all runs.
+- `retrieval-stage1-cleanup-20261101.json` records removal of owned temporary model deployments and the isolated R1 resource group, with original deployment settings preserved and the new P1 library retained.
+- `retrieval-stage1-validation-20261101.json` records the merged 1,050-test suite, local checks, ancestry and unchanged protected paths.
+
+The initial R1 failure is an oracle error corrected using independent cosine
+calculation, not a database failure or a threshold relaxation. Neither R2's
+aggregate gains nor P1's near-threshold result override their declared no-loss/
+20% gates. No held-out result or broad production/latency/currency-cost claim is
+published by this stage.

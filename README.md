@@ -59,7 +59,7 @@ What this arrangement buys, with the measurements behind it (`docs/evidence.md`)
 
 The arrangement pays off only when every search names exactly one library. In earlier measurements, a search that omitted the shard value scanned the whole container: 7,812 RU against 26–28 RU (about 300 times more), and 57,200 RU on a million-chunk container. One query across several shard values cost about 320 times more than separate queries (E4, E5). In one container shared by every library, a missing library filter is priced by every library's data. So the service always takes the library ID from the URL the platform called, and searches several libraries as several queries.
 
-The per-owner figures come from earlier measurements of the same Cosmos features: about 600,000 abstracts across 2,003 synthetic owners in one container on one physical partition. Those searches named the owner in a filter and **never supplied a partition key**, so they did not exercise the routing this design uses. This project's own routed searches (8–16 RU on a 5,535-passage library) are the only measurement of that path. The first Phase 4 measurement now covers that path at scale: from 10 to 1,013 libraries on one physical partition, small libraries' searches kept the same cost, documents read and recall (E59). Large libraries, several partitions and hybrid search remain unmeasured (N2, N4, E57). Sharded DiskANN, which gives each library its own index, is a Microsoft public-preview feature (N5, E58).
+The per-owner figures come from earlier measurements of the same Cosmos features: about 600,000 abstracts across 2,003 synthetic owners in one container on one physical partition. Those searches named the owner in a filter and **never supplied a partition key**, so they did not exercise the routing this design uses. This project's routed searches measured 8–16 RU on a 5,535-passage library. Phase 4 subsequently covered 10 to 1,013 libraries on one physical partition (E59); the later audit preserves that receipt and reports stricter repeat-spread grades separately. [R1](docs/retrieval-r1.md) now confirms exact top-ten vector results for a 1,500-passage library in a two-range container, while the library itself occupied only one range. Every hybrid call contacted both ranges; hybrid remains nondefault. Large and split libraries, global SDK merging, graph engagement and hybrid growth remain open (E65). Sharded DiskANN is a Microsoft public-preview feature (N5, E58).
 
 ## Status
 
@@ -68,6 +68,13 @@ sources and 48 tasks, with a 36-turn matched Sol/200k baseline, explicit source
 scoring and reconciled scale evidence. The held-out set remains unrun; no provider
 or retrieval architecture winner is selected. [Reusable local setup](docs/local-development.md)
 provides per-worktree dependencies and test/lint actions.
+
+The [reviewed R1/R2/P1 results](docs/retrieval-stage1.md) retain the current
+foundation and compact defaults. Coalescing loses required source regions;
+format savings miss the declared threshold. Eighteen matched P1 development turns
+preserve reviewed source quality, with fewer selector errors. The recommended
+next step is selector-only integration confirmation after live lifecycle checks;
+held-out tasks remain reserved and R3 has not started.
 
 An isolated [structured-retrieval lab](docs/structure-lab.md) now compares shared
 and separate Cosmos summary indexes using frozen source trees, summaries and
@@ -82,7 +89,7 @@ Phases 0–3 of `docs/build-plan.md` have passed on live Azure.
 - Phase 2: a demo platform (Streamlit) runs official and personal agents that search their libraries through tools.
 - Phase 3: metadata filters (period, dates, authors, tags, file types), AI proposals of tags, periods, authors and library descriptions for an admin to accept, and document replacement and deletion.
 
-Phase 3B image support is implemented and smoke-tested for standalone uploads, Word/PowerPoint pictures and individual PDF figure crops with linked captions (including vector charts and scanned illustrations). The current local suite passes 581 tests; live checks cover ingestion, stored-caption retrieval, inline display and lifecycle protection. These are prototype checks, with broader retrieval and figure/caption accuracy evaluation still pending; see [image retrieval](docs/image-retrieval.md) for the platform contract and limits. Phase 4's library-count measurement has passed (E59); its large-library, multi-partition, hybrid and telemetry items remain. The design rests on earlier measurements of these Cosmos features on live Azure (2026). `docs/evidence.md` traces each decision to them and lists what is not yet proven.
+Phase 3B image support is implemented and smoke-tested for standalone uploads, Word/PowerPoint pictures and individual PDF figure crops with linked captions (including vector charts and scanned illustrations). The combined local suite passes 1,050 tests (E65); live checks cover ingestion, stored-caption retrieval, inline display and lifecycle protection. These are prototype checks, with broader retrieval and figure/caption accuracy evaluation still pending; see [image retrieval](docs/image-retrieval.md) for the platform contract and limits. Phase 4's library-count measurement has passed (E59); its large-library, multi-partition, hybrid and telemetry items remain. The design rests on earlier measurements of these Cosmos features on live Azure (2026). `docs/evidence.md` traces each decision to them and lists what is not yet proven.
 
 ## Prototype choices and production boundaries
 

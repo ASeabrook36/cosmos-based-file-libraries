@@ -1,0 +1,44 @@
+{
+  "schema": "fli.retrieval-stage1.p1-review.v1",
+  "method": "Source-based assistant review; not blinded human evaluation",
+  "actualWireBindingVerified": true,
+  "heldoutExecuted": false,
+  "reviews": [
+    {
+      "cell": "baseline",
+      "reviewer": "R2 agent independent of P1 implementation",
+      "privateReviewSha256": "e278af6521bbb5d7cbce1104802d0242ee85898d044c9fee6652a8fb2c5a037e",
+      "turns": 6,
+      "allApplicableQualityPassed": true
+    },
+    {
+      "cell": "format-only",
+      "reviewer": "R1 agent independent of P1 implementation",
+      "privateReviewSha256": "7239630074559715b1144af9650c989d17a1c4063a15d296dff756ed9c8fa895",
+      "turns": 6,
+      "allApplicableQualityPassed": true
+    },
+    {
+      "cell": "selectors-only",
+      "reviewer": "P1 agent, with coordinator review of both repeats answers",
+      "privateReviewSha256": "88c5cebec914ff1e2f6268cc9cd8e9b982501c5c3e922bb3f22687c64d70d22f",
+      "turns": 6,
+      "allApplicableQualityPassed": true
+    }
+  ],
+  "coordinatorCodeReview": [
+    "reference encoding and strict decoder",
+    "selector scope/generation capabilities and recovery",
+    "API and raw/compact budget ordering",
+    "actual model serialization and context accounting",
+    "wire-to-source scorer binding"
+  ],
+  "limitations": [
+    "Three development tasks, two repeats; no statistical accuracy claim",
+    "Live lifecycle and held-out gates remain open"
+  ],
+  "coordinatorRescoreEqualsPublished": true,
+  "actualProviderCallsReopened": 66,
+  "turnsRescored": 18,
+  "privateRescoreSha256": "419e29e7ef1d32583cb6928ad34e28fec434a50cf3671837ab66af5738803d89"
+}

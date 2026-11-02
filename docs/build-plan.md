@@ -1,5 +1,18 @@
 # Build plan
 
+**R1/R2/P1 bounded stage complete, 2026-11-01 (E65):** the
+[coordinator decision and integration gates](retrieval-stage1.md) retain current
+physical policies, representation and compact defaults. R1's two-range-container
+probe confirms bounded vector correctness and positive hybrid outside-range
+contacts; a library spanning ranges is still untested. R2's 60.07% vector reduction
+loses required regions on four tasks, so promotion fails. Its proposed navigation
+comparison cannot beat the matched named-file control and stops before model use.
+P1's 18 development turns preserve reviewed source quality; selector hints avoid
+the observed scope errors, but format and selector input savings miss 20%.
+Both P1 changes remain independent opt-ins. Recommend a versioned selector-only
+I1 confirmation on the current foundation, with deployed lifecycle checks before
+predeclared held-out evaluation. No held-out task or R3 comparison has run.
+
 **R0 complete, 2026-11-01 (E64):** [benchmark and successor handoffs](retrieval-r0.md)
 freeze 12 real DOCX sources, 48 tasks, source-relative labels, development/held-out
 split, workload scenarios and fixed Sol/200k controls. The bounded five-file,
@@ -8,7 +21,7 @@ remains unrun. Source-based review records current 10/12 completion/support and
 custom/Microsoft 12/12, with table fidelity, source coverage and citation scores
 separate. No architecture or provider winner is selected. Reusable local setup
 passed in two worktrees; final suite: 961 tests. Scale receipts are reconciled,
-and measurement checks tightened without new scale load. Start R1, R2 and P1 from
+and measurement checks tightened without new scale load. R1, R2 and P1 started from
 the final R0 commit and their explicit dependencies/gates; the remaining scale,
 full-corpus, held-out and production claims stay open.
 

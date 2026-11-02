@@ -1,0 +1,39 @@
+{
+  "schema": "fli.retrieval-stage1.validation.v1",
+  "baseCommit": "a449dc01e5acde6391bfc1aa50ca07670d54097d",
+  "requiredModularCommitPresent": "9738236",
+  "testedMergedRevision": "71a76aa6f2ad81932bc38d6fa48849ee409f1e11",
+  "trackCommits": {
+    "r1": "5dfb7db7fe98adea704ae1c99bb140c60aa18e42",
+    "r2": "a2ccf85d511f0d3d62ff73e6a99e6dda0cae3f15",
+    "p1": "eef7e1bad6d458fb17732e3ef5d901f9ed43a688"
+  },
+  "allTrackCommitsMerged": true,
+  "separateTrackWorktreesAndPrivateRuntimeDirectories": true,
+  "localEnvironmentDoctorPassed": true,
+  "command": "sh scripts/dev check -q",
+  "testsPassed": 1050,
+  "warnings": 14,
+  "testSeconds": 142.56,
+  "lintPassed": true,
+  "formatPassed": true,
+  "defaultPrivacyCheckPassed": true,
+  "privateIdentifierScanEntries": 47,
+  "privateLogSha256": "349b197980a15082244e9737b7932d9b7ad7224b631e9271bdbb3dd8f2daaf6d",
+  "protectedPathsUnchanged": [
+    "cosmos",
+    "infra",
+    "docs/testing/retrieval-r0",
+    "scripts/dev",
+    "requirements-local.lock",
+    "src/fli/permissions.py",
+    "src/fli/query.py",
+    "src/fli/worker.py",
+    "src/fli/ingestion.py"
+  ],
+  "heldoutExecuted": false,
+  "r3Started": false,
+  "productionDefaultChanged": false,
+  "interpretation": "Combined local regression checks after separately reviewed merges; not deployed lifecycle, scale, held-out or production acceptance.",
+  "privateIdentifierScanPassed": true
+}

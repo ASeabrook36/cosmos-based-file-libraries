@@ -1,0 +1,9 @@
+{
+  "schema": "fli.retrieval-stage1.r0-preservation.v1",
+  "scope": "catalogue metadata, tool contracts, source hashes and active generation/revision fields",
+  "libraryCount": 3,
+  "documentCount": 15,
+  "snapshotUnchanged": true,
+  "sourceBodiesReread": false,
+  "performanceMeasurements": false
+}

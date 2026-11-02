@@ -423,6 +423,19 @@ Compact `maxEvidenceTokens` counts canonical evidence JSON using the named servi
 
 This is presentation after existing access, source integrity and lifecycle checks; no ingestion/index migration or re-upload is required. The demo consumes the supported response. Local response-token comparisons are not actual cumulative model usage, Cosmos RU or latency/cost savings (E54).
 
+Two independent experimental opt-ins are specified in [P1](retrieval-p1.md):
+`view=references` losslessly factors the existing evidence into a versioned
+dictionary/column encoding; `selectors=handles` adds snapshot-bound request
+templates and explicit expansion capabilities. Both preserve source bodies,
+permissions, provenance and all-or-nothing read checks. The adapter budgets the
+same encoded messages it sends to the model; selector hints are included before
+budget checks. Unsupported source scopes direct the caller to a pinned outline,
+without inventing coordinates or dropping generation/revision requirements.
+Existing raw REST and compact adapter defaults remain unchanged. P1's bounded
+paired source reviews pass, but neither opt-in establishes the declared 20%
+input-efficiency gain; deployed lifecycle and held-out confirmation remain open
+(E65). R2's representation experiments are lab-only and select no profile change.
+
 ## 7. Ingestion
 
 ### 7.1 Queue

@@ -1,0 +1,16 @@
+{
+  "schema": "fli.retrieval-stage1.cleanup.v1",
+  "requestedAt": "2026-11-02T03:29:21.994306+00:00",
+  "temporaryModelDeploymentsRemoved": true,
+  "originalModelSettingsUnchanged": true,
+  "isolatedR1GroupDeletionRequested": true,
+  "r0LibrariesDeleted": false,
+  "p1LibraryRetained": true,
+  "unrelatedResourcesModified": false,
+  "isolatedR1GroupDeletionVerified": true,
+  "verifiedAt": "2026-11-02T03:44:41.471149+00:00",
+  "ownershipAndResourceInventoryCheckedBeforeDelete": true,
+  "temporaryApiProcessesStopped": true,
+  "ongoingScaleResourcesAccessed": false,
+  "cleanupStatus": "complete"
+}

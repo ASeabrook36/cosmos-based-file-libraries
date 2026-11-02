@@ -479,7 +479,7 @@ These are the honest limits of the evidence. Phase 0 and Phase 4 of `build-plan.
 - **N1. ~~This exact configuration has never been built.~~ Built and passing at small scale (Phase 0).** float16, spherical, `indexingSearchListSize` 300, a shard key and hybrid search deployed together, and their stored definitions match `cosmos/*.json`. The canary passed at 1,500 chunks in one library (E8, E12, E25). What remains open is behaviour at scale (N11).
 - **N2. Library-only sharding is inferred, and so is partition-key routing at scale.** The source measurements cover type plus owner, not owner alone, and none of their queries supplied a partition key (E57). Library alone means one query per search instead of one per document type. Small libraries are scanned either way (E12), so the open question is large shared libraries (10,000–100,000+ chunks). A comparison run on such libraries settles it.
 - **N3. Hybrid ranking quality is unmeasured** (E21). Until Phase 1 it had never actually run ranked (E27); the source project's one hybrid check recorded only row counts and RU, not whether results were ranked (E57).
-- **N4. One physical partition only.** Everything was measured with the data on a single physical partition. A container spanning many partitions, at roughly 5 million chunks and up, is unmeasured. Each search should still reach one partition, since the library leads the key.
+- **N4. A library spanning physical ranges and global top-k merging remain untested.** R1 (E65) verified a two-range container, but its library occupied only one range. Prefix-vector calls stayed on that range in complete visible telemetry; all 60 hybrid calls visibly contacted both. This does not establish split-library ranking, many-range behavior or absence of additional SDK requests where telemetry is incomplete. A split-library reproduction must verify document placement and query winners in different ranges before claiming correct global merging or changing routing/layout.
 - **N5. The design depends on preview features** (E58, checked 2026-10-28). **Sharded DiskANN** (`vectorIndexShardKey`, public preview since April 2025, no GA notice) is what gives each library its own vector index; without it a library search becomes a filtered search over the partition's whole index, the layout E2 found much more expensive. **Filtered DiskANN** (public preview since May 2025) is the feature that routes a filtered search to its shard. The **spherical quantizer** (public preview since May 2026) has a GA fallback, product quantization, at somewhat lower recall (E6). *Corrected 2026-10-28:* this entry previously named only spherical.
 - **N6. Microsoft asks to be contacted, and the route is uncertain.** Microsoft's vector-search (updated 2026-09-29), sharded DiskANN (2026-04-27) and performance-tips (2026-05-08) pages, read 2026-10-28, all ask users of vector search on containers with hierarchical partition keys to email the Cosmos search team so the account can be configured. The source project reports that this address rejected an external message on 2 August 2026, as a group that does not accept external senders (E57); that is not verified here. *Not resolved.* The remaining route is an Azure support request, by inference; no Microsoft page names it for this purpose. Treat Microsoft's confirmation as a production prerequisite.
 - **N7. Not workplace content.** Earlier measurements did not use workplace documents, spreadsheets, emails or image descriptions. E38 adds invented chart/image descriptions, but broad workplace-content validation remains open. The demo corpus (`build-plan.md`) should include all of them.
@@ -1268,3 +1268,75 @@ Fresh/repeated setup and a second-worktree smoke passed. Final validation:
 privacy checks passed. [R1/R2/P1 handoffs](retrieval-r0.md) give dependencies,
 commands, acceptance criteria and explicit implementation/cloud blockers. All
 held-out evaluation and architecture changes remain subsequent work.
+
+## E65 — Separately controlled R1, R2 and P1 pilots (2026-11-01)
+
+Three separate worktrees/branches descend from R0 `a449dc0`. The coordinator
+audited controls first, bound actual deployment identity and revision to fresh
+before/after management receipts, and reopened saved questions/source artifacts
+instead of trusting status flags. All 36 R0 turns re-score unchanged. Local setup
+remains credential-free. Cloud measurement windows were serialized on owned
+isolated resources; R0 libraries and ongoing scale resources were not loaded or
+modified. The [coordinator record](retrieval-stage1.md) gives decisions, review
+provenance, cleanup and exact remaining gates.
+
+[R1](retrieval-r1.md) uses a fresh passing canary and unchanged Cosmos policies.
+A two-range container held one 1,500-vector library entirely in one range. Forty
+full-document-key exact calls form the independent reference; 120 vector calls
+across prefix/no-prefix paths and three repeats all achieve top-ten recall 1.0.
+The initial score grader incorrectly assumed ascending distance. Its failure is
+preserved; read-only reanalysis corrects cosine-similarity order after independent
+calculation reproduces 400 exact scores within 2.22e-16. Original calls, vectors,
+recall floor and tolerance are unchanged. All 60 hybrid calls visibly contact both
+physical ranges; semantic hybrid quality and complete request charge remain
+unavailable. The coordinator independently checked scores, all vector top-ten
+sets and positive hybrid fan-out. Retain prefix vector routing/current policies.
+A library spanning ranges, global SDK merge correctness, large-library graph
+engagement, concurrency and hybrid growth remain open. Historical E59 is preserved:
+the stricter repeat-spread reanalysis passes RU for only three of ten probes at
+each later stage, while all ten retain all-repeat recall and retrieved-row passes.
+
+[R2](retrieval-r2.md) compares exact cosine retrieval with matched extraction,
+source coordinates, zero overlap, heading treatment, top eight and whole-block
+expansion over all eight development sources and 30 body-evidence tasks. Actual
+frozen embeddings reduce vectors from 8,435 to 3,368 (60.07%), while estimated
+embedding input falls only about 7.3%. Full labeled-region delivery improves from
+14 to 19 tasks, but four tasks lose one baseline region each. The frozen per-task
+set-preservation gate therefore fails. This is a lab-only normalized comparison,
+not a change to the shipped overlap recipe or a Cosmos/answer-quality result.
+The proposed document-summary follow-on includes a matched literal-filename
+control. Independent enumeration of all 15 document/task choices proves none
+can improve source delivery without loss against that control. Stop this narrow
+experiment before summary generation. Vague-file/section navigation, actual
+summary cost, refresh/omission behavior and model quality remain unmeasured.
+
+[P1](retrieval-p1.md) adds independent opt-in reference serialization and selector
+templates. All 95 saved R0 replies reconstruct exactly; estimated savings of
+4.39%/13.73%/1.06% miss the 20% gate. Actual replay uses one new frozen Microsoft
+library, three development tasks, three cells and two reversed-order repeats,
+with fixed Sol `2026-09-29`, medium reasoning and 200k allowance. Provider-wire
+captures bind to scored source replies. Source-based assistant reviews pass all
+six turns per cell for completion/support/citations and preserve 2/2, 56/56 and
+71/71 required regions, including blank table cells and complete section order.
+Independent agents reviewed baseline and format; the coordinator spot-reviewed
+selector answers and code. Reviews are not blinded human accuracy estimates.
+
+Actual input totals are 690,926 baseline, 675,202 format and 585,251 selector
+tokens. Format saves 2.28%; selectors save 15.29% overall and 19.962% in the target
+case, still below 20%. Baseline/format each incur two recovered scope errors;
+selectors incur none. Read-budget refusals are 1/2/0 and provider retries 8/12/11.
+Maximum actual input is 96,652, not 200k. All tasks finish; differing tool paths,
+cache and rate waits preclude latency/cost superiority. Retain current compact
+default and independent experimental opt-ins. Recommend selector-only I1
+confirmation on the retained foundation, after deployed lifecycle checks and a
+predeclared held-out plan. No held-out tasks or R3 comparisons ran.
+
+Combined validation passed **1,050 tests**, with 14 existing warnings, plus lint,
+formatting, diff and private-identifier checks. Both temporary model deployments
+and the isolated R1 resource group are confirmed removed; original deployment
+settings are unchanged. The final three-library/15-document R0 metadata/source-
+binding snapshot matches exactly. The new P1 library is retained, and all raw
+source/vector/model-wire captures stay private. See the
+[validation](../records/retrieval-stage1-validation-20261101.json),
+[preservation](../records/retrieval-stage1-r0-preservation-20261101.json) and
+[cleanup](../records/retrieval-stage1-cleanup-20261101.json) receipts.
