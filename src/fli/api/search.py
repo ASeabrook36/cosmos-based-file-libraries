@@ -17,7 +17,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, String
 from fli.api.documents import FILE_TYPES
 from fli.auth import require_caller
 from fli.errors import ApiError
-from fli.presentation import CompactResponse, EvidenceBudget, ResponseView, respond
+from fli.presentation import CompactResponse, EvidenceBudget, ResponseView, SelectorMode, respond
 from fli.query import DateRange, SearchFilters
 from fli.search import Searcher, SearchRequest
 
@@ -118,6 +118,7 @@ async def search(
     request: Request,
     x_agent_id: Annotated[str | None, Header()] = None,
     view: ResponseView = "raw",
+    selectors: SelectorMode = "legacy",
     maxEvidenceTokens: EvidenceBudget = None,
 ) -> dict[str, Any]:
     settings = request.app.state.settings
@@ -142,4 +143,4 @@ async def search(
         ),
     )
 
-    return await respond(response, view, maxEvidenceTokens)
+    return await respond(response, view, maxEvidenceTokens, selectors)
