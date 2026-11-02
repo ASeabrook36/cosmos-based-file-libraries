@@ -230,3 +230,24 @@ def test_selector_adapter_rejects_bare_id_without_unpinning_or_calling_search():
     result = json.loads(content)
     assert result["errorCategory"] == "invalid_selector" and not result["complete"]
     assert "returned-but-unpinned" not in content
+
+
+async def test_raw_selector_hints_count_toward_atomic_read_budget(ctx):
+    client, services, library, worker = ctx
+    document = upload(client, library)
+    await drain(services, worker)
+    endpoint = f"/v1/libraries/{library}/documents:read"
+    body = {"documents": [{"documentId": document}], "maxTokens": 200000}
+    raw = client.post(endpoint, json=body).json()
+    raw_limit = raw["estimatedTokens"] + 1
+    hints = client.post(endpoint, params={"selectors": "handles"}, json=body).json()
+    assert hints["complete"] and hints["estimatedTokens"] > raw_limit
+    assert len(default_tokenizer().encode(json.dumps(hints, ensure_ascii=False))) <= hints["estimatedTokens"]
+    refused = client.post(endpoint, params={"selectors": "handles"}, json={**body, "maxTokens": raw_limit}).json()
+    assert refused["disposition"] == "budget_exceeded" and not refused["complete"]
+    assert refused["estimatedTokens"] > raw_limit
+    assert all("sections" not in d and "outline" not in d and "candidateImages" not in d for d in refused["documents"])
+    # The stored-section shortcut remains a refusal, with usable pinned outline hints.
+    early = client.post(endpoint, params={"selectors": "handles"}, json={**body, "maxTokens": 1}).json()
+    assert not early["complete"] and "outlineSelector" in early["documents"][0]
+    assert "sections" not in early["documents"][0]

@@ -362,7 +362,7 @@ async def read_documents(
             contentReturned=False,
             **response["usage"],
         )
-        return response
+        return add_hints(response) if selectors == "handles" else response
 
     for doc in records:
         document_id, generation = doc["id"], doc["activeGeneration"]
@@ -521,6 +521,9 @@ async def read_documents(
         fits = result["metadata"]["budget"]["fits"]
         response = {**expanded(result["evidence"]), "usage": result["metadata"]["usage"]}
     else:
+        if selectors == "handles":
+            response = add_hints(response)
+            items = response["documents"]
         # Count the complete envelope once off the event loop. A small allowance covers the
         # estimate's own digits and final latency value without repeatedly tokenizing files.
         response["estimatedTokens"] = await asyncio.to_thread(
@@ -570,4 +573,4 @@ async def read_documents(
         contentReturned=include_text and fits,
         **response["usage"],
     )
-    return result if view != "raw" else add_hints(response) if selectors == "handles" else response
+    return result if view != "raw" else response
