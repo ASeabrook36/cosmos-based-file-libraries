@@ -1,0 +1,34 @@
+{
+  "schema": "fli.stage1.independent-r1-range-check.v1",
+  "rawMeasurementSha256": "f3804a5cf3985d44da542dc967afc1e56e91f838b141a65c1d892c11cbe07351",
+  "libraryRangesVerified": 1,
+  "placementUnchanged": true,
+  "results": {
+    "prefix": {
+      "calls": 60,
+      "callsWithSuccessfulResponseOutsideProvenLibraryRanges": 0,
+      "minSuccessfulRangeCount": 1,
+      "maxSuccessfulRangeCount": 1,
+      "observedHTTP400Responses": 0,
+      "applicationErrors": 0
+    },
+    "no-prefix": {
+      "calls": 60,
+      "callsWithSuccessfulResponseOutsideProvenLibraryRanges": 0,
+      "minSuccessfulRangeCount": 1,
+      "maxSuccessfulRangeCount": 1,
+      "observedHTTP400Responses": 60,
+      "applicationErrors": 0
+    },
+    "hybrid": {
+      "calls": 60,
+      "callsWithSuccessfulResponseOutsideProvenLibraryRanges": 60,
+      "minSuccessfulRangeCount": 2,
+      "maxSuccessfulRangeCount": 2,
+      "observedHTTP400Responses": 60,
+      "applicationErrors": 0
+    }
+  },
+  "limitation": "Positive outside-range contacts are observable despite missing range headers on other responses; absence claims require complete range telemetry. HTTP400 responses are internal SDK attempts, not failed application queries.",
+  "cloudCalls": 0
+}

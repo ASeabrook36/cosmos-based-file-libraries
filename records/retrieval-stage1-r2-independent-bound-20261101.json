@@ -1,0 +1,44 @@
+{
+  "schema": "fli.stage1.independent-r2-navigation-bound.v1",
+  "method": "root enumeration of all document choices with unchanged passage/query vectors and source oracle",
+  "cloudCalls": 0,
+  "rows": [
+    {
+      "case": "r0-17",
+      "namedControlDelivered": 71,
+      "required": 71,
+      "possibleDocumentChoices": 3,
+      "strictlyImprovingNoLossChoices": 0
+    },
+    {
+      "case": "r0-22",
+      "namedControlDelivered": 11,
+      "required": 11,
+      "possibleDocumentChoices": 3,
+      "strictlyImprovingNoLossChoices": 0
+    },
+    {
+      "case": "r0-25",
+      "namedControlDelivered": 9,
+      "required": 9,
+      "possibleDocumentChoices": 3,
+      "strictlyImprovingNoLossChoices": 0
+    },
+    {
+      "case": "r0-27",
+      "namedControlDelivered": 8,
+      "required": 8,
+      "possibleDocumentChoices": 3,
+      "strictlyImprovingNoLossChoices": 0
+    },
+    {
+      "case": "r0-30",
+      "namedControlDelivered": 8,
+      "required": 12,
+      "possibleDocumentChoices": 3,
+      "strictlyImprovingNoLossChoices": 0
+    }
+  ],
+  "anyStrictlyImprovingNoLossChoice": false,
+  "scope": "three explicitly named development sources/five tasks only; not vague discovery evidence"
+}

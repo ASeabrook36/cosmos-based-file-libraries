@@ -1,0 +1,23 @@
+{
+  "schema": "fli.stage1.independent-r1-score-check.v1",
+  "source": "root recomputation from immutable inputs and recorded service results",
+  "numericMeaning": "cosine similarity, descending; stored float16 rounding and flushed query",
+  "sourceRows": 1500,
+  "independentQueryVectors": 20,
+  "exactScoresChecked": 400,
+  "maxAbsoluteScoreDifference": 2.220446049250313e-16,
+  "allRepeatGlobalRecall": {
+    "prefix": {
+      "comparisons": 60,
+      "minimum": 1.0,
+      "mean": 1.0
+    },
+    "no-prefix": {
+      "comparisons": 60,
+      "minimum": 1.0,
+      "mean": 1.0
+    }
+  },
+  "rawMeasurementSha256": "f3804a5cf3985d44da542dc967afc1e56e91f838b141a65c1d892c11cbe07351",
+  "cloudCalls": 0
+}
