@@ -1,0 +1,203 @@
+{
+  "schema": "fli.retrieval-r1-runtime.v1",
+  "baselineCommit": "a449dc01e5acde6391bfc1aa50ca07670d54097d",
+  "executedCommit": "cf81e39921752e123878000bc0796e02535a3025",
+  "isolation": {
+    "newDedicatedProvisionedAccount": true,
+    "unchangedContainerPolicies": true,
+    "containers": 3,
+    "configuredRUPerSecond": {
+      "chunks": 11000,
+      "libraries": 400,
+      "documents": 400,
+      "total": 11800
+    },
+    "serializedReservation": true,
+    "preservedR0Libraries": true,
+    "untouchedScaleResources": true,
+    "heldoutTasksExecuted": false,
+    "answeringModelCalls": 0,
+    "cleanupOwner": "coordinator; canary purged its own scope; diagnostic scope retained pending account cleanup"
+  },
+  "canary": {
+    "receiptSha256": "92f9407e0dd2c4a847c925fe5717cdefe86fc6c497feb57af7e0680d0a66bcbe",
+    "targetFingerprint": "4672d9810758ec26f8a267764cb41d496a6bf9e9c83f41f645954946414f7528",
+    "inputCaptureSha256": "c083c5ad27e7524c3e906046f596e6e88f00bde52ebd6329d9e5c16369001a55",
+    "passed": true,
+    "checks": [
+      {
+        "name": "container_definitions_match",
+        "passed": true
+      },
+      {
+        "name": "crud_libraries",
+        "passed": true
+      },
+      {
+        "name": "crud_documents",
+        "passed": true
+      },
+      {
+        "name": "crud_chunks",
+        "passed": true
+      },
+      {
+        "name": "corpus_large_enough",
+        "passed": true
+      },
+      {
+        "name": "searches_executed",
+        "passed": true
+      },
+      {
+        "name": "no_empty_results",
+        "passed": true
+      },
+      {
+        "name": "no_null_scores",
+        "passed": true
+      },
+      {
+        "name": "index_engaged_charge",
+        "passed": true
+      },
+      {
+        "name": "index_engaged_retrieved",
+        "passed": true
+      },
+      {
+        "name": "hybrid_ranks",
+        "passed": true
+      },
+      {
+        "name": "vector_recall_at_10",
+        "passed": true
+      }
+    ],
+    "chunks": 1500,
+    "sourceFiles": 2,
+    "indexReadySeconds": 429,
+    "load": {
+      "chunks": 1500,
+      "documents": 2,
+      "seconds": 66.1,
+      "chunksPerSecond": 22.7,
+      "chunkRequestCharge": 215103.1,
+      "ruPerChunk": 143.5,
+      "documentRequestCharge": 8.8,
+      "concurrentWrites": 2,
+      "throttledRetries": 0
+    },
+    "cleanedUp": true,
+    "vectorRecall": {
+      "mean": 1.0,
+      "min": 1.0,
+      "queries": 20
+    }
+  },
+  "embedding": {
+    "identity": {
+      "model": "text-embedding-3-large",
+      "revision": "1",
+      "dimensions": 3072
+    },
+    "usage": {
+      "requests": 99,
+      "prompt_tokens": 572753,
+      "throttled": 2,
+      "retries": 2,
+      "tokens_reported": true
+    },
+    "managementBinding": {
+      "before": {
+        "model": {
+          "format": "OpenAI",
+          "name": "text-embedding-3-large",
+          "version": "1"
+        },
+        "sku": {
+          "capacity": 300,
+          "name": "GlobalStandard"
+        },
+        "bindingSha256": "c859186b9a83b3ca113592910acd4f215f4d445589e3236b403b56ec38db20af"
+      },
+      "after": {
+        "model": {
+          "format": "OpenAI",
+          "name": "text-embedding-3-large",
+          "version": "1"
+        },
+        "sku": {
+          "capacity": 300,
+          "name": "GlobalStandard"
+        },
+        "bindingSha256": "c859186b9a83b3ca113592910acd4f215f4d445589e3236b403b56ec38db20af"
+      },
+      "unchanged": true
+    },
+    "reusedExactlyForProbe": true,
+    "newProbeEmbeddingCalls": 0
+  },
+  "probeLoad": {
+    "status": "complete",
+    "inputDigest": "cb2aa403f1d92b713ba2a3c582917d8682721521c4d660dde6af74a909e9d997",
+    "rows": 1500,
+    "knownWriteRU": 215193.6199999994,
+    "writeRUComplete": false,
+    "costLimit": "existing writer counts successful response charges only; failed/SDK retry charges unavailable",
+    "applicationRetries": 0,
+    "applicationRetryWaitMs": 0.0
+  },
+  "sdkBeforeAndAfterUnchanged": true,
+  "sdk": {
+    "version": "4.17.1",
+    "modules": {
+      "azure.cosmos._base": "003a702669b1256bb1e548755ad163fa18d1a144588967c3b4795f269d3dd64e",
+      "azure.cosmos.aio._cosmos_client_connection_async": "0e6b9666cd29f0e2891e5580fec81776ca36a2c0b477949a30809b8d68ed762b",
+      "azure.cosmos._execution_context.aio.execution_dispatcher": "b083e6f4a8ef4180828492cfc2a9bd8896747515622041803f11d22022437129"
+    }
+  },
+  "scoreOracleCorrection": {
+    "kind": "r1-offline-score-semantics-verification",
+    "vectors": 1500,
+    "queries": 20,
+    "inputSha256": "cb2aa403f1d92b713ba2a3c582917d8682721521c4d660dde6af74a909e9d997",
+    "rawMeasurementsSha256": "f3804a5cf3985d44da542dc967afc1e56e91f838b141a65c1d892c11cbe07351",
+    "methods": {
+      "float16": {
+        "cosineSimilarityMaxAbsDelta": 2.220446049250313e-16,
+        "exactScoresCompared": 400,
+        "prefixFirstRepeatRecall": 1.0
+      },
+      "float16Flushed": {
+        "cosineSimilarityMaxAbsDelta": 6.395287598381927e-06,
+        "exactScoresCompared": 400,
+        "prefixFirstRepeatRecall": 1.0
+      }
+    },
+    "providerDocumentation": "https://learn.microsoft.com/en-us/cosmos-db/query/vectordistance",
+    "interpretation": "The configured cosine VectorDistance returns similarity, ordered higher first. Local cosine from frozen vectors confirms observed score direction independently. This is a grader correction, not a query or data change."
+  },
+  "validation": {
+    "fullSuiteBeforeCloud": {
+      "passed": 1014,
+      "warnings": 14,
+      "seconds": 138.8
+    },
+    "finalFocusedR1Tests": 20,
+    "lint": true,
+    "format": true,
+    "privacy": true,
+    "privateReferenceAudit": {
+      "operatorIdentityLiterals": "absent",
+      "genericTrackLabelCollision": "verified only in schema namespaces and repository links already named in the frozen R0 handoff",
+      "originalPrivateDenyListRetained": true
+    }
+  },
+  "costLimits": [
+    "Known visible RU is a subtotal; SDK/query-plan calls and billed currency remain unavailable.",
+    "Embedding counters cover actual canary requests including two provider retries; missing failed-request token charges cannot be manufactured.",
+    "Provisioned11800RU/s is isolated test allocation, not a recommended production capacity.",
+    "No standing-resource currency or total cost winner is inferred."
+  ]
+}

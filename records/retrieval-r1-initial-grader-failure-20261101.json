@@ -1,0 +1,153 @@
+{
+  "schema": "fli.retrieval-r1-result.v1",
+  "baselineCommit": "a449dc01e5acde6391bfc1aa50ca07670d54097d",
+  "controls": {
+    "schema": "fli.retrieval-r1-controls.v1",
+    "baselineCommit": "a449dc01e5acde6391bfc1aa50ca07670d54097d",
+    "implementationCommit": "cf81e39921752e123878000bc0796e02535a3025",
+    "sourceCaptureSha256": "c083c5ad27e7524c3e906046f596e6e88f00bde52ebd6329d9e5c16369001a55",
+    "inputsSha256": "cb2aa403f1d92b713ba2a3c582917d8682721521c4d660dde6af74a909e9d997",
+    "canarySha256": "92f9407e0dd2c4a847c925fe5717cdefe86fc6c497feb57af7e0680d0a66bcbe",
+    "targetFingerprint": "4672d9810758ec26f8a267764cb41d496a6bf9e9c83f41f645954946414f7528",
+    "queries": 20,
+    "repeats": 3,
+    "k": 10,
+    "recallFloor": 0.95,
+    "scoreTieEpsilon": 1e-06,
+    "minimumUsefulEfficiencyImprovement": 0.2,
+    "qualityTolerance": "zero isolation/order/cardinality violations; each repeat mean recall >= 0.95",
+    "changedVariable": "query route only; prefix ANN vs no-prefix ANN; independently merged full-key exact truth",
+    "hybrid": "20 different source-derived queries; equality/no partition key; rank distinctness only, no exact-hybrid recall",
+    "codeHashes": {
+      "scripts/retrieval_r1.py": "880c757b9b1c06df2ae03b73768316d2d5f151451eea834c0cfcc9bac674b5b8",
+      "scripts/canary.py": "2bd80698df6d12300887af082155763bde967042a33c8ca4463710f330f5d0ee",
+      "src/fli/query.py": "bdbea3ca40f7d581f80431df0cd331ccfede09bae5d4354da725745bd782e6a1",
+      "cosmos/chunks.container.json": "553f3e07f7c133f9d57705f15b4e93a3bfe066d3de43677a9d5643ef56b9b958",
+      "requirements-local.lock": "2efc8992e6413ffbd49c686779b406b4cd329c1f33b3d4962e6ec642b158ba67"
+    },
+    "createdAt": "2026-11-02T03:07:26.985303+00:00"
+  },
+  "sources": [
+    {
+      "fileIndex": 0,
+      "sha256": "90b21028e1616c41c7d73c3e996fd6128d837a41b38d432286e991aed3fbd9a1",
+      "chunks": 1410,
+      "sizeBytes": 20706059
+    },
+    {
+      "fileIndex": 1,
+      "sha256": "c15d7a38b41d7baef49e78a9db9bbb1deaeec685ec160d1b7478c062eef8d6f2",
+      "chunks": 90,
+      "sizeBytes": 16949978
+    }
+  ],
+  "vectors": 1500,
+  "documents": 2,
+  "measuredCalls": 220,
+  "expectedCalls": 220,
+  "complete": false,
+  "independentExactQueries": 0,
+  "exactReferenceFailures": 20,
+  "sourceAndPlacementUnchanged": true,
+  "verifiedLibraryRangeCount": 1,
+  "multiRangeLibraryProven": false,
+  "queryWinnerRangeCount": 0,
+  "queryWinnersPerRange": [],
+  "multiRangeRankingConfirmed": false,
+  "actualScopeReady": true,
+  "readinessSeconds": 0,
+  "results": {
+    "prefix": {
+      "calls": 60,
+      "correctInMeasuredScope": false,
+      "recallAt10RepeatMeans": [
+        null,
+        null,
+        null
+      ],
+      "distinctRankingsPerRepeat": null,
+      "sourceBindingFailures": 0,
+      "cardinalityFailures": 0,
+      "distanceOrderFailures": 60,
+      "distancesCompared": 600,
+      "distanceMismatches": 0,
+      "errors": 0,
+      "knownAttemptRU": 917.67,
+      "totalRU": null,
+      "ruMedian": 15.34,
+      "latencyP50Ms": 60.9,
+      "latencyP95Ms": 66.5,
+      "applicationRetries": 0,
+      "applicationRetryWaitMs": 0.0,
+      "rangeDiagnosticsComplete": true,
+      "contactsOutsideVerifiedScope": false,
+      "indexTypes": [
+        "QuantizedFlat"
+      ]
+    },
+    "no-prefix": {
+      "calls": 60,
+      "correctInMeasuredScope": false,
+      "recallAt10RepeatMeans": [
+        null,
+        null,
+        null
+      ],
+      "distinctRankingsPerRepeat": null,
+      "sourceBindingFailures": 0,
+      "cardinalityFailures": 0,
+      "distanceOrderFailures": 60,
+      "distancesCompared": 600,
+      "distanceMismatches": 0,
+      "errors": 0,
+      "knownAttemptRU": 902.55,
+      "totalRU": null,
+      "ruMedian": 15.09,
+      "latencyP50Ms": 159.2,
+      "latencyP95Ms": 167.1,
+      "applicationRetries": 0,
+      "applicationRetryWaitMs": 0.0,
+      "rangeDiagnosticsComplete": false,
+      "contactsOutsideVerifiedScope": null,
+      "indexTypes": [
+        "QuantizedFlat"
+      ]
+    },
+    "hybrid": {
+      "calls": 60,
+      "correctInMeasuredScope": false,
+      "recallAt10RepeatMeans": null,
+      "distinctRankingsPerRepeat": [
+        20,
+        20,
+        20
+      ],
+      "sourceBindingFailures": 0,
+      "cardinalityFailures": 0,
+      "distanceOrderFailures": null,
+      "distancesCompared": null,
+      "distanceMismatches": null,
+      "errors": 0,
+      "knownAttemptRU": 10557.93,
+      "totalRU": null,
+      "ruMedian": 185.155,
+      "latencyP50Ms": 453.3,
+      "latencyP95Ms": 493.1,
+      "applicationRetries": 0,
+      "applicationRetryWaitMs": 0.0,
+      "rangeDiagnosticsComplete": false,
+      "contactsOutsideVerifiedScope": null,
+      "indexTypes": [
+        "QuantizedFlat"
+      ]
+    }
+  },
+  "limits": [
+    "No application API permission/lifecycle gate is replaced by direct chunk diagnostics.",
+    "No hybrid semantic relevance or exact-hybrid recall claim.",
+    "No performance crossover, layout candidate or representation change evaluated.",
+    "Raw-hook known RU excludes unobserved query-plan/SDK-internal requests; unknown total stays null.",
+    "Scalar document counts prove placement only where every response supplies a range identifier.",
+    "Source-derived canary queries measure database agreement, not workplace task relevance."
+  ]
+}
