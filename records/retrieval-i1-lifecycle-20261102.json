@@ -1,0 +1,263 @@
+{
+  "schema": "fli.retrieval-i1-lifecycle.sanitized.v1",
+  "executionCommit": "d6094e9",
+  "status": "complete",
+  "live": true,
+  "experimentPlanSha256": "d87f983214e8f8ae2b241dfe08db12be831839eb35c4b22c2b7056a64772e643",
+  "apiSourceSha256": {
+    "src/fli/__init__.py": "9bcd9eca441026cb92824aa85d6bd8f7afd2f350f44592411d151fe0353d1bff",
+    "src/fli/api/__init__.py": "12cb7798714f6c089ddaa1ede3d99e4187805144ef5eb1275c03e09a2175abae",
+    "src/fli/api/documents.py": "1ad9278207e0be41f54d60c13594bdb7ead7fd0cf1947a9dcdcc714f6cd86b8c",
+    "src/fli/api/experiments.py": "923348d532600e988c6296b26efacf1a372a2a78c95ddd7cb4615de21b5fed2e",
+    "src/fli/api/libraries.py": "929f3eb1267ed531c08d1a8f96fe238aeb30877bcd686bb46c3a6e356701a2f5",
+    "src/fli/api/metrics.py": "87db04b0d4fb2bb35536fef5c24a58d008b54b1cbeb598276d0ff78dfe9e9edf",
+    "src/fli/api/reading.py": "ceb93f57c78e97b7a30fcf8e88272b71716e0cf7723cf93c222caf0ac171258a",
+    "src/fli/api/search.py": "d999c2a222630ea604f22cd756e0404e49198a6e6b441dedb341e1a983b6491a",
+    "src/fli/auth.py": "69f39a98ffbf0b37e53dfa77ec48466057358014e6d4a54a57330085c7211c7b",
+    "src/fli/blobs.py": "d24c5c075a4a873d45bcd1bd2873366bd852ff6516bc9cc0e61b9a05a32b6eb3",
+    "src/fli/checkpoints.py": "2f186f4257bfcdb8329900b19457dd5b340c0ca928e79b9a1b36b22ef556a075",
+    "src/fli/chunking.py": "f799eceec274b3930a4aeb61a11347f7c86381c817b5f9323556b1fef272221e",
+    "src/fli/chunks.py": "89a304bffedb1a8478ce415a4760b1fbf93b27856b691834e54fa4c1292c69ed",
+    "src/fli/config.py": "721e20e80180e9ba0b585d2c5c67de63b5b07f59455b84c318af18bacf9079ce",
+    "src/fli/docintel.py": "1eb546cd02f82ce52ed060325376d740f2e763983b76af71fffcd21f8f4fa42f",
+    "src/fli/embedding.py": "7fc5e895ed2874233e8bb21b8638bf475e37e51e1fa43f59cba0307e60c6298f",
+    "src/fli/enums.py": "9c89197153ec990b6f86852fd4038e3c85bed746951d3d5a069aa062445e14dd",
+    "src/fli/errors.py": "c19d6ec645d05a31d73aaa2c2ebde582c29fb3e5f2c606f636fb2c0890ccaa67",
+    "src/fli/evidence.py": "5e369ecd2cb29817f9055097d83151ee28fd9a671a14fc5bc558d583350714e6",
+    "src/fli/extraction.py": "769b2176382521559ffa698ba48ac010d7bb71038226706a9e119cbc4a2fda40",
+    "src/fli/figures.py": "2bde27097de7294426f8e636d7d51b5c04d9bd5595c22757c58f1a1d1282bde1",
+    "src/fli/generation.py": "92c856b7b7d8acfeb21f75ddfb5244e3780b763f9ad51327270c72324a697070",
+    "src/fli/governor.py": "47b8bec2b6de96cbe36e9de1dcc78aec5b9a1598c5c402302a2bd61fe2e432f9",
+    "src/fli/http.py": "644dc7e93e03e15f90072e03cf79716faef7c746f8b0909fa6f1cfd3b307104a",
+    "src/fli/ids.py": "bcb765ac1d5e45e3ae64f6da2e4225bac71d1f634ef9f735e722735ce8e5b1ab",
+    "src/fli/image_assets.py": "066ae5681a1f00f3502280f3a822ce22e474f5702036173226626550960f95cc",
+    "src/fli/images.py": "5742b8a5a1483df38ebb177e60ad04097fe6f8ffd4b3efb1e70facebdaf436ad",
+    "src/fli/ingestion.py": "923ffe2b909e96bdaf26d29b930dd02198ffa878d8a101f6529a0c4504e33b37",
+    "src/fli/logs.py": "d365bca9eb21ace14cd4d1b46597efb9505d896eebe669400629395e4bf9cc2f",
+    "src/fli/metrics.py": "6f15b230ff15be4ef8818b3a8855d346da986449a745bdddb5198ab6a5225b06",
+    "src/fli/microsoft.py": "2b35a114059ff5b712d9ea994893748a21e14ea71fb856ff9196ae4ffa3fc161",
+    "src/fli/page_images.py": "b1eb68089e87be77e5890cea2b1f1c6efc02205d3b79da636943b87ffbe6987c",
+    "src/fli/permissions.py": "dd849d8fd1bf21b5066b8c1e8c73bd7ddf8b98c1da64c9360a8a8a89905d0bcf",
+    "src/fli/presentation.py": "747352989219b02504312998b403d654632d669ddd5b5835c34346b01e7ac13e",
+    "src/fli/proposals.py": "112bf284606f0257019ae0d6d38181d2d17d90f97826ef61b8f5757a70822d57",
+    "src/fli/query.py": "bdbea3ca40f7d581f80431df0cd331ccfede09bae5d4354da725745bd782e6a1",
+    "src/fli/queue.py": "653e917c9debab4f982ee6af78a6c468345ce222f8f56500f9b5a073b9629d2f",
+    "src/fli/reading.py": "34c5b0db04644971e2e978448b17928fda7db9c350d27fbb3a42d404e2a33946",
+    "src/fli/reconcile.py": "4180ed8f4ed7ae7d0b103172d046042593ef82eebce8d2b31498d2ff9787f2fc",
+    "src/fli/reference_format.py": "70e562240e0f65d185461aadea0bb5054abda17b8dd8ad7e13d8f5c33cfb7f99",
+    "src/fli/search.py": "0213d535f3d0fde0da7202e8fc127d8affac827e03967fc573bef17cb50041a4",
+    "src/fli/selector_hints.py": "be8a1b9f07808eefe003672234afeab1fe0cd964eb51530e5dd56e2331db3026",
+    "src/fli/store.py": "14dab254183d0326a021baf286ff0d32c35ec26e44edbb7760b87b9183ef36f9",
+    "src/fli/structural_enrichment.py": "29bdc6325734802ae546b0040d218512d3131d05b08e8e6dbc85ece0f4bed8f3",
+    "src/fli/structure_lab.py": "50de9c0caa8d37f330b78afd8e9cf262aef3d0ba9b217664195c0fd8c30295fb",
+    "src/fli/structure_representation.py": "1c9e02b96ac6d6535dcd9681f1606e4c0c4298aea49782bb342041578598a60e",
+    "src/fli/tokens.py": "22a30504d00795a6431a6b35f1f8fa88b13c1c5f29cddcb0b8f770658a63bd7a",
+    "src/fli/tool.py": "3eaacff26ad0647ce232597204ccd206198c9817db3c0a379565b6f329dbc221",
+    "src/fli/vocabulary.py": "4784854092158ba19ef8d77b3e90f3151568b66c83125a35d3a3c60a79c8be1f",
+    "src/fli/worker/__init__.py": "be8d881b79190ecf5b0a11b3bd60b23c6e2e2ff110261b0433bd9369827aab0c",
+    "src/fli/worker/handlers.py": "1d56b187305008522b32cc87044bfe519bdd036fe72a0250e85701dd3ed9c6dd",
+    "src/fli_demo/__init__.py": "c76e51a232d3e956b611cfd99e3ee705732432530dcf5e9c34a33d8e9adff738",
+    "src/fli_demo/agent.py": "6e004170f10e6f3a361c5d29c477ed99c4ff4d9d3c8cd026f3bb301266d8268e",
+    "src/fli_demo/client.py": "8461d2a4a6a99bb486c89899245af8142877cc771945493c381903927144c777",
+    "src/fli_demo/proposals.py": "a87ea32b4c2dcf023098a6c719e63f521a8a44e52a3a4700d31486190cdc7eee",
+    "src/fli_demo/registry.py": "4173e7def2adfc9d9a5bb9ff1e946f99384b956d38a29de6a0bfb2c75160f86d",
+    "src/fli_demo/responses.py": "72bbbe50e5ddda0dadeca46da5cb7a9b57a81b7d526d63cb09934912c59750c4",
+    "src/fli_demo/telemetry.py": "95bb3cc0f6ef252b8b65f23d0aeeec73205fac26acd932531f1a1988973f37d7"
+  },
+  "settingsBindingSha256": "1608a250f744c310faa8ca6bbdd99b63e2146c0dada2014038e4d27b157bb409",
+  "profile": "microsoft-indexer-layout-v1",
+  "authenticationMode": "dev",
+  "startedAt": "2026-11-02T05:59:23.590196+00:00",
+  "finishedAt": "2026-11-02T06:00:41.713804+00:00",
+  "checks": [
+    {
+      "id": "caller_authentication",
+      "passed": true,
+      "evidence": {
+        "endpointCount": 5,
+        "denials": 10,
+        "authenticationMode": "dev"
+      }
+    },
+    {
+      "id": "personal_binding_all_retrieval",
+      "passed": true,
+      "evidence": {
+        "endpointCount": 5,
+        "wrongAgentDenials": 5,
+        "missingAgentDenials": 5,
+        "immutableFieldDenials": 2
+      }
+    },
+    {
+      "id": "selector_pin_roundtrip",
+      "passed": true,
+      "evidence": {
+        "generation": 1,
+        "contentRevision": 2,
+        "completeSelectedRead": true,
+        "documentScopedSearchMatches": true,
+        "searchResults": 4
+      }
+    },
+    {
+      "id": "foreign_selector_rejection",
+      "passed": true,
+      "evidence": {
+        "foreignLibraryRead": 1,
+        "foreignLibrarySearch": 1,
+        "foreignDocumentHandle": 1,
+        "bodyLibraryInjectionRead": 1,
+        "bodyLibraryInjectionSearch": 1
+      }
+    },
+    {
+      "id": "stale_revision_rejection",
+      "passed": true,
+      "evidence": {
+        "wrongPinnedRevisionReadRejected": true,
+        "wrongPinnedRevisionSearchRejected": true
+      }
+    },
+    {
+      "id": "metadata_inflight_read",
+      "passed": true,
+      "evidence": {
+        "batchDocuments": 2,
+        "bodyReturned": false,
+        "independentClients": true
+      }
+    },
+    {
+      "id": "metadata_propagation",
+      "passed": true,
+      "evidence": {
+        "matchingActiveChunks": 4,
+        "expectedChunks": 4,
+        "readMetadataMatches": true,
+        "filteredDiscoveryMetadataMatches": true
+      }
+    },
+    {
+      "id": "replacement_inflight_read",
+      "passed": true,
+      "evidence": {
+        "batchDocuments": 2,
+        "bodyReturned": false,
+        "independentClients": true
+      }
+    },
+    {
+      "id": "stale_generation_rejection",
+      "passed": true,
+      "evidence": {
+        "staleSelectedReadRejected": true,
+        "staleDocumentSearchRejected": true,
+        "pinsPreserved": true
+      }
+    },
+    {
+      "id": "replacement_queue_retry",
+      "passed": true,
+      "evidence": {
+        "injectedFailures": 1,
+        "activeAfterFailure": 1,
+        "failedGeneration": 2,
+        "retryGeneration": 3,
+        "sourceHashMatches": true,
+        "oldPinsRejected": true,
+        "scope": "API enqueue retry; no broker worker redelivery claim"
+      }
+    },
+    {
+      "id": "deletion_inflight_read",
+      "passed": true,
+      "evidence": {
+        "batchDocuments": 2,
+        "bodyReturned": false,
+        "independentClients": true
+      }
+    },
+    {
+      "id": "deletion_retry_purge",
+      "passed": true,
+      "evidence": {
+        "repeatedDeleteStatus": 202,
+        "recordAbsent": true,
+        "blobPrefixEmpty": true,
+        "allGenerationChunks": 0,
+        "unrelatedDocumentReadable": true
+      }
+    },
+    {
+      "id": "two_client_freshness",
+      "passed": true,
+      "evidence": {
+        "independentCosmosClients": true,
+        "copiedSessionTokens": false,
+        "crossClientMutationBarriers": 3,
+        "postDeleteReadDenials": 10,
+        "observedStaleBodies": 0,
+        "limitation": "bounded observations; Session consistency does not imply global immediate revocation"
+      }
+    }
+  ],
+  "sourceSha256": {
+    "old": "b191349dc18aca3b074b56b50e940390a049687d5de03a306b601ad496bf9f78",
+    "new": "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e"
+  },
+  "preflightSha256": "a13834d4bd0d9e00a9e54315288a6718c341e2464bf61293c1b6216afc61935a",
+  "harnessSha256": "61ffb5368ddc14ab18ee42f48ff6697888070ba13e9fc6866f1147b2b95af821",
+  "cleanupComplete": true,
+  "untested": [
+    "production Entra platform authentication",
+    "broker worker redelivery",
+    "global immediate Session-consistency revocation",
+    "performance or sustained concurrency"
+  ],
+  "privateReceiptSha256": "dd9763d5f83baba4fb53cb44f531a6ffabd5ecad16f05c0bae03a7c39bb940e8",
+  "rawReceiptsSha256": {
+    "sdk-diagnostics-private.json": "d9a5ac336dd95af4d1f2944d6df3df73cb86a8ddf9e79be8516f29b9b895f120",
+    "cleanup-private.json": "7ec421e0bebf33d228c7e0fc5cd02b9ea2701cc4cd13e5667dfbe24e75be775b",
+    "checks-partial.json": "c9154cd0dd9dfdc0a2ca81e2c37425ffef0a48a1f56e375972086ea24ddaa379",
+    "http-receipts.json": "c6918475cea48b86910314168d360563842c653c935ee317c01cc62dbc894a54",
+    "owned-scopes.json": "d88f475786a22901320500e936219937edf81d133fd1ba739e38adfaebeb6cc6"
+  },
+  "httpObservationCounts": {
+    "calls": 94,
+    "statuses": {
+      "201": 3,
+      "401": 10,
+      "403": 5,
+      "400": 9,
+      "202": 7,
+      "200": 38,
+      "404": 12,
+      "409": 8,
+      "503": 2
+    }
+  },
+  "sdkObservationCounts": {
+    "metadata_chunks": 2,
+    "document_purge_poll": 2,
+    "document_purge_chunks": 1,
+    "library_purge_poll": 8
+  },
+  "ownedScopesCreated": 3,
+  "ownedScopesRemoved": 3,
+  "cleanupChecks": [
+    "library record absent",
+    "document records absent",
+    "no chunk across any generation",
+    "live Blob prefix empty"
+  ],
+  "runtimeSeconds": 78.124,
+  "validation": {
+    "focusedTestsPassed": 70,
+    "lintPassed": true,
+    "formatPassed": true,
+    "referencePrivacyPassed": true
+  },
+  "heldoutExecutedByLifecycleHarness": false,
+  "interpretation": "Bounded two-client localhost dev-auth API lifecycle observations with real Azure Cosmos/Blob/Service Bus and existing Microsoft workflow. Controlled Blob-read barriers and one-shot pre-send queue faults. No production auth, broker redelivery, sustained concurrency, semantic ranking quality or performance claim."
+}

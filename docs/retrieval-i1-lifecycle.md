@@ -17,6 +17,30 @@ same upload filename. The other scopes are an empty shared library for foreign
 selectors and an empty personal library for permission checks. Held-out sources
 and evaluation libraries are never used here.
 
+## Completed bounded result
+
+The [sanitized receipt](../records/retrieval-i1-lifecycle-20261102.json) records
+one live attempt on 2026-11-02, executed at `d6094e9`. **All thirteen gates passed**
+in 78.123 seconds. This is total harness runtime, not an application performance
+measurement. All three disposable libraries, their documents, chunks and live
+Blob prefixes were verified absent after cleanup.
+
+The copied search selector returned four results from the pinned source; all four
+active chunks eventually reflected the metadata update, also seen in filtered
+discovery and complete reads. Each of the three controlled two-document races
+returned an error-only 409. Failed replacement generation 2 left generation 1
+readable; the real workflow then published generation 3 with the replacement
+source hash. Old generation and wrong revision pins failed on both read and search.
+The deliberately failed deletion enqueue hid the document before purge; ten
+second-client reads returned 404, and repeating DELETE completed the real purge.
+Both deliberate 503 responses are preserved as expected fault observations.
+
+The receipt binds 94 HTTP observations and private SDK metadata/purge observations
+to the frozen plan, code, settings and original-source hashes. Local validation
+passed 70 focused tests plus lint, formatting and privacy checks. A peer reviewed
+the harness before the live window. Coordinator acceptance of the private receipt
+remains a separate prerequisite for held-out replay.
+
 ## Predeclared checks
 
 The thirteen names must exactly match the independently frozen I1 plan:
@@ -103,5 +127,4 @@ architecture change is selected. A live failure is preserved and blocks the
 held-out gate until a separately reviewed resolution.
 
 Local rehearsal uses actual API/Worker code with memory stores and a fake provider;
-it checks harness control flow only and never emits a live receipt. Live results
-are recorded separately after the authorized Azure run.
+it checks harness control flow only and never emits a live receipt.
