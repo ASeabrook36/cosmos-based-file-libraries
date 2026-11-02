@@ -1,0 +1,82 @@
+{
+  "schema": "fli.i1.plan.v1",
+  "baseCommit": "d65a225a32d00dc58713121831f15abc0c685cee",
+  "candidate": "selector-handles-only",
+  "foundation": "retained-current",
+  "evidenceView": "compact",
+  "sourceStrategy": "microsoft-indexer-layout-v1",
+  "sourceIds": [
+    "d09",
+    "d10",
+    "d11",
+    "d12"
+  ],
+  "cases": [
+    "r0-33",
+    "r0-34",
+    "r0-35",
+    "r0-36",
+    "r0-37",
+    "r0-38",
+    "r0-39",
+    "r0-40",
+    "r0-41",
+    "r0-42",
+    "r0-43",
+    "r0-44",
+    "r0-45",
+    "r0-46",
+    "r0-47",
+    "r0-48"
+  ],
+  "split": "heldout",
+  "cells": [
+    "baseline",
+    "selectors-only"
+  ],
+  "repeats": 2,
+  "repeatOrder": "forward then reverse",
+  "expectedTurns": 64,
+  "taskOrder": "frozen pack order, unchanged within every cell",
+  "contextAllowancePerRun": 200000,
+  "model": {
+    "model": "gpt-6.1-sol",
+    "version": "2026-09-29",
+    "transport": "responses",
+    "reasoningEffort": "medium",
+    "maxOutputTokens": 8000,
+    "maxAttempts": 3,
+    "store": false,
+    "automaticTruncation": false
+  },
+  "efficiencyTarget": {
+    "relativeReduction": 0.2,
+    "measure": "aggregate provider input tokens; serialized tool evidence tokens reported separately",
+    "qualityTolerance": "zero loss of baseline-delivered original region IDs or applicable source/answer quality per task and repeat"
+  },
+  "usabilityTarget": {
+    "measure": "unsupported expansion and invalid/stale/foreign selector errors",
+    "noRegression": "candidate error count cannot exceed baseline; per-task source and answer no-regression gates must pass",
+    "benefit": "strictly fewer unsupported expansion errors reported separately from efficiency"
+  },
+  "requiredLifecycleChecks": [
+    "caller_authentication",
+    "personal_binding_all_retrieval",
+    "foreign_selector_rejection",
+    "selector_pin_roundtrip",
+    "metadata_inflight_read",
+    "metadata_propagation",
+    "stale_generation_rejection",
+    "stale_revision_rejection",
+    "replacement_inflight_read",
+    "replacement_queue_retry",
+    "deletion_inflight_read",
+    "deletion_retry_purge",
+    "two_client_freshness"
+  ],
+  "lifecycleRequirement": "passing live hash-bound receipt independently accepted by coordinator before held-out execution; disposable sources distinct from evaluation library",
+  "partialRunPolicy": "preserve all attempts; no automatic rerun/resume or exclusions; any infrastructure-only continuation needs a separately versioned coordinator decision, never tuning on answers",
+  "reviewRequirement": "original source and actual final provider wire; exact delivered region IDs, explicit blank-region verification, table relationships and ordered section completeness; frozen labels never enter model context",
+  "promotion": "no automatic promotion or full I1 selection; no new foundation/format; keep 20% failure separate from usability findings",
+  "interpretation": "held-out paired confirmation, not statistical equivalence, architecture selection, production authentication or steady-state latency proof"
+}
