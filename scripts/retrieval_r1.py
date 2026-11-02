@@ -15,6 +15,7 @@ import json
 import math
 import os
 import statistics
+import subprocess
 import uuid
 from collections import Counter, defaultdict
 from dataclasses import asdict
@@ -118,6 +119,7 @@ def prepare(args: argparse.Namespace) -> None:
         {
             "schema": "fli.retrieval-r1-controls.v1",
             "baselineCommit": BASE,
+            "implementationCommit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO, text=True).strip(),
             "sourceCaptureSha256": digest(raw),
             "inputsSha256": digest((args.state / "inputs.json").read_bytes()),
             "canarySha256": digest(private_path(args.canary).read_bytes()),
@@ -235,7 +237,11 @@ def diagnostic_query(
     # Narrow projection preserves real distances and source bindings without returning raw content.
     projection, rest = sql.split(" FROM c ", 1)
     distance = projection.split(" AS score, ", 1)[0]
-    sql = distance + " AS score, c.id, c.libraryId, c.documentId, c.generation FROM c " + rest
+    sql = (
+        "SELECT TOP 10 c.id, c.libraryId, c.documentId, c.generation FROM c " + rest
+        if terms
+        else distance + " AS score, c.id, c.libraryId, c.documentId, c.generation FROM c " + rest
+    )
     if exact:
         sql = exact_variant(sql)
     # check_query deliberately rejects *any* embedding reference in a projection;
@@ -403,7 +409,7 @@ async def measure(args: argparse.Namespace) -> None:
                     inputs["libraryId"],
                     SearchMeasurement(kind, ordinal),
                     throttle,
-                    scored=True,
+                    scored=not hybrid,
                     prefix_partition_key=kind not in {"no-prefix", "hybrid"},
                     document_partition=document,
                 )
