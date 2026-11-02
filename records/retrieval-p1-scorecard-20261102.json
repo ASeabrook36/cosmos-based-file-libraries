@@ -1,0 +1,5671 @@
+{
+  "schema": "fli.p1.scorecard.v1",
+  "status": "complete",
+  "heldoutExecuted": false,
+  "contextAllowancePerRun": 200000,
+  "model": {
+    "model": "gpt-6.1-sol",
+    "version": "2026-09-29"
+  },
+  "controlsSha256": "9896f0c85c6f50ebc9fb42b96cdf5320c9b36afc3a24814ce32d48af97d19464",
+  "codeSha256": {
+    "src/fli/__init__.py": "9bcd9eca441026cb92824aa85d6bd8f7afd2f350f44592411d151fe0353d1bff",
+    "src/fli/api/__init__.py": "12cb7798714f6c089ddaa1ede3d99e4187805144ef5eb1275c03e09a2175abae",
+    "src/fli/api/documents.py": "1ad9278207e0be41f54d60c13594bdb7ead7fd0cf1947a9dcdcc714f6cd86b8c",
+    "src/fli/api/experiments.py": "923348d532600e988c6296b26efacf1a372a2a78c95ddd7cb4615de21b5fed2e",
+    "src/fli/api/libraries.py": "929f3eb1267ed531c08d1a8f96fe238aeb30877bcd686bb46c3a6e356701a2f5",
+    "src/fli/api/metrics.py": "87db04b0d4fb2bb35536fef5c24a58d008b54b1cbeb598276d0ff78dfe9e9edf",
+    "src/fli/api/reading.py": "ceb93f57c78e97b7a30fcf8e88272b71716e0cf7723cf93c222caf0ac171258a",
+    "src/fli/api/search.py": "d999c2a222630ea604f22cd756e0404e49198a6e6b441dedb341e1a983b6491a",
+    "src/fli/auth.py": "69f39a98ffbf0b37e53dfa77ec48466057358014e6d4a54a57330085c7211c7b",
+    "src/fli/blobs.py": "d24c5c075a4a873d45bcd1bd2873366bd852ff6516bc9cc0e61b9a05a32b6eb3",
+    "src/fli/checkpoints.py": "2f186f4257bfcdb8329900b19457dd5b340c0ca928e79b9a1b36b22ef556a075",
+    "src/fli/chunking.py": "f799eceec274b3930a4aeb61a11347f7c86381c817b5f9323556b1fef272221e",
+    "src/fli/chunks.py": "89a304bffedb1a8478ce415a4760b1fbf93b27856b691834e54fa4c1292c69ed",
+    "src/fli/config.py": "721e20e80180e9ba0b585d2c5c67de63b5b07f59455b84c318af18bacf9079ce",
+    "src/fli/docintel.py": "1eb546cd02f82ce52ed060325376d740f2e763983b76af71fffcd21f8f4fa42f",
+    "src/fli/embedding.py": "7fc5e895ed2874233e8bb21b8638bf475e37e51e1fa43f59cba0307e60c6298f",
+    "src/fli/enums.py": "9c89197153ec990b6f86852fd4038e3c85bed746951d3d5a069aa062445e14dd",
+    "src/fli/errors.py": "c19d6ec645d05a31d73aaa2c2ebde582c29fb3e5f2c606f636fb2c0890ccaa67",
+    "src/fli/evidence.py": "5e369ecd2cb29817f9055097d83151ee28fd9a671a14fc5bc558d583350714e6",
+    "src/fli/extraction.py": "769b2176382521559ffa698ba48ac010d7bb71038226706a9e119cbc4a2fda40",
+    "src/fli/figures.py": "2bde27097de7294426f8e636d7d51b5c04d9bd5595c22757c58f1a1d1282bde1",
+    "src/fli/generation.py": "92c856b7b7d8acfeb21f75ddfb5244e3780b763f9ad51327270c72324a697070",
+    "src/fli/governor.py": "47b8bec2b6de96cbe36e9de1dcc78aec5b9a1598c5c402302a2bd61fe2e432f9",
+    "src/fli/http.py": "644dc7e93e03e15f90072e03cf79716faef7c746f8b0909fa6f1cfd3b307104a",
+    "src/fli/ids.py": "bcb765ac1d5e45e3ae64f6da2e4225bac71d1f634ef9f735e722735ce8e5b1ab",
+    "src/fli/image_assets.py": "066ae5681a1f00f3502280f3a822ce22e474f5702036173226626550960f95cc",
+    "src/fli/images.py": "5742b8a5a1483df38ebb177e60ad04097fe6f8ffd4b3efb1e70facebdaf436ad",
+    "src/fli/ingestion.py": "923ffe2b909e96bdaf26d29b930dd02198ffa878d8a101f6529a0c4504e33b37",
+    "src/fli/logs.py": "d365bca9eb21ace14cd4d1b46597efb9505d896eebe669400629395e4bf9cc2f",
+    "src/fli/metrics.py": "6f15b230ff15be4ef8818b3a8855d346da986449a745bdddb5198ab6a5225b06",
+    "src/fli/microsoft.py": "2b35a114059ff5b712d9ea994893748a21e14ea71fb856ff9196ae4ffa3fc161",
+    "src/fli/page_images.py": "b1eb68089e87be77e5890cea2b1f1c6efc02205d3b79da636943b87ffbe6987c",
+    "src/fli/permissions.py": "dd849d8fd1bf21b5066b8c1e8c73bd7ddf8b98c1da64c9360a8a8a89905d0bcf",
+    "src/fli/presentation.py": "747352989219b02504312998b403d654632d669ddd5b5835c34346b01e7ac13e",
+    "src/fli/proposals.py": "112bf284606f0257019ae0d6d38181d2d17d90f97826ef61b8f5757a70822d57",
+    "src/fli/query.py": "bdbea3ca40f7d581f80431df0cd331ccfede09bae5d4354da725745bd782e6a1",
+    "src/fli/queue.py": "653e917c9debab4f982ee6af78a6c468345ce222f8f56500f9b5a073b9629d2f",
+    "src/fli/reading.py": "34c5b0db04644971e2e978448b17928fda7db9c350d27fbb3a42d404e2a33946",
+    "src/fli/reconcile.py": "4180ed8f4ed7ae7d0b103172d046042593ef82eebce8d2b31498d2ff9787f2fc",
+    "src/fli/reference_format.py": "70e562240e0f65d185461aadea0bb5054abda17b8dd8ad7e13d8f5c33cfb7f99",
+    "src/fli/search.py": "0213d535f3d0fde0da7202e8fc127d8affac827e03967fc573bef17cb50041a4",
+    "src/fli/selector_hints.py": "be8a1b9f07808eefe003672234afeab1fe0cd964eb51530e5dd56e2331db3026",
+    "src/fli/store.py": "14dab254183d0326a021baf286ff0d32c35ec26e44edbb7760b87b9183ef36f9",
+    "src/fli/structural_enrichment.py": "29bdc6325734802ae546b0040d218512d3131d05b08e8e6dbc85ece0f4bed8f3",
+    "src/fli/structure_lab.py": "50de9c0caa8d37f330b78afd8e9cf262aef3d0ba9b217664195c0fd8c30295fb",
+    "src/fli/tokens.py": "22a30504d00795a6431a6b35f1f8fa88b13c1c5f29cddcb0b8f770658a63bd7a",
+    "src/fli/tool.py": "3eaacff26ad0647ce232597204ccd206198c9817db3c0a379565b6f329dbc221",
+    "src/fli/vocabulary.py": "4784854092158ba19ef8d77b3e90f3151568b66c83125a35d3a3c60a79c8be1f",
+    "src/fli/worker/__init__.py": "be8d881b79190ecf5b0a11b3bd60b23c6e2e2ff110261b0433bd9369827aab0c",
+    "src/fli/worker/handlers.py": "1d56b187305008522b32cc87044bfe519bdd036fe72a0250e85701dd3ed9c6dd",
+    "src/fli_demo/__init__.py": "c76e51a232d3e956b611cfd99e3ee705732432530dcf5e9c34a33d8e9adff738",
+    "src/fli_demo/agent.py": "6e004170f10e6f3a361c5d29c477ed99c4ff4d9d3c8cd026f3bb301266d8268e",
+    "src/fli_demo/client.py": "8461d2a4a6a99bb486c89899245af8142877cc771945493c381903927144c777",
+    "src/fli_demo/proposals.py": "a87ea32b4c2dcf023098a6c719e63f521a8a44e52a3a4700d31486190cdc7eee",
+    "src/fli_demo/registry.py": "4173e7def2adfc9d9a5bb9ff1e946f99384b956d38a29de6a0bfb2c75160f86d",
+    "src/fli_demo/responses.py": "72bbbe50e5ddda0dadeca46da5cb7a9b57a81b7d526d63cb09934912c59750c4",
+    "src/fli_demo/telemetry.py": "95bb3cc0f6ef252b8b65f23d0aeeec73205fac26acd932531f1a1988973f37d7",
+    "scripts/compare_agent_models.py": "de5dfdfc70c82603031edbf943644a69ccfff8118fbe2eba5d55ecc0c6cdaca0",
+    "scripts/evaluate_agent_retrieval.py": "1a343804dfe3e0733104c3049ca0da0f05a4a5a2b3174a2dab8431a2fb6f7ef7",
+    "scripts/retrieval_p1.py": "39636960b75ad27a28b991111c46c5669802608fcedcf0d490a2b8f7812801ea",
+    "docs/testing/retrieval-p1-controls.json": "2edccd5ba83b28766b747cd53b7904cfa4f6b737b9f6a0f611839139e9896094",
+    "scripts/retrieval_controls.py": "596b5ae6f474abe5289db6b87681ff899783b019353814c2be44d70271e468d0"
+  },
+  "reviewMethod": "source-based assistant review; not blinded or independent human accuracy",
+  "meaning": "Small functional paired pilot; token estimates and provider usage are separate; no latency or production winner.",
+  "summary": {
+    "baseline": {
+      "turns": 6,
+      "quality": {
+        "taskCompletion": {
+          "passed": 6,
+          "applicable": 6
+        },
+        "factualSupport": {
+          "passed": 6,
+          "applicable": 6
+        },
+        "citationAccuracy": {
+          "passed": 6,
+          "applicable": 6
+        },
+        "sourceRelationships": {
+          "passed": 4,
+          "applicable": 4
+        }
+      },
+      "usage": {
+        "promptTokens": 690926,
+        "promptTokensKnownSubtotal": 690926,
+        "completionTokens": 4338,
+        "completionTokensKnownSubtotal": 4338,
+        "totalTokens": 695264,
+        "totalTokensKnownSubtotal": 695264,
+        "rateLimitRetries": 8,
+        "rateLimitRetriesKnownSubtotal": 8,
+        "rateLimitWaitMs": 117071.2,
+        "rateLimitWaitMsKnownSubtotal": 117071.2,
+        "retrievalRequestCharge": null,
+        "retrievalRequestChargeKnownSubtotal": 151.36,
+        "totalMs": 227875.69341610651,
+        "totalMsKnownSubtotal": 227875.69341610651,
+        "toolErrors": 2,
+        "toolErrorsKnownSubtotal": 2,
+        "toolBudgetRefusals": 1,
+        "toolBudgetRefusalsKnownSubtotal": 1,
+        "retrievalChargeComplete": false
+      }
+    },
+    "format-only": {
+      "turns": 6,
+      "quality": {
+        "taskCompletion": {
+          "passed": 6,
+          "applicable": 6
+        },
+        "factualSupport": {
+          "passed": 6,
+          "applicable": 6
+        },
+        "citationAccuracy": {
+          "passed": 6,
+          "applicable": 6
+        },
+        "sourceRelationships": {
+          "passed": 4,
+          "applicable": 4
+        }
+      },
+      "usage": {
+        "promptTokens": 675202,
+        "promptTokensKnownSubtotal": 675202,
+        "completionTokens": 4259,
+        "completionTokensKnownSubtotal": 4259,
+        "totalTokens": 679461,
+        "totalTokensKnownSubtotal": 679461,
+        "rateLimitRetries": 12,
+        "rateLimitRetriesKnownSubtotal": 12,
+        "rateLimitWaitMs": 147076.1,
+        "rateLimitWaitMsKnownSubtotal": 147076.1,
+        "retrievalRequestCharge": null,
+        "retrievalRequestChargeKnownSubtotal": 171.12,
+        "totalMs": 250056.45795725286,
+        "totalMsKnownSubtotal": 250056.45795725286,
+        "toolErrors": 2,
+        "toolErrorsKnownSubtotal": 2,
+        "toolBudgetRefusals": 2,
+        "toolBudgetRefusalsKnownSubtotal": 2,
+        "retrievalChargeComplete": false
+      }
+    },
+    "selectors-only": {
+      "turns": 6,
+      "quality": {
+        "taskCompletion": {
+          "passed": 6,
+          "applicable": 6
+        },
+        "factualSupport": {
+          "passed": 6,
+          "applicable": 6
+        },
+        "citationAccuracy": {
+          "passed": 6,
+          "applicable": 6
+        },
+        "sourceRelationships": {
+          "passed": 4,
+          "applicable": 4
+        }
+      },
+      "usage": {
+        "promptTokens": 585251,
+        "promptTokensKnownSubtotal": 585251,
+        "completionTokens": 4233,
+        "completionTokensKnownSubtotal": 4233,
+        "totalTokens": 589484,
+        "totalTokensKnownSubtotal": 589484,
+        "rateLimitRetries": 11,
+        "rateLimitRetriesKnownSubtotal": 11,
+        "rateLimitWaitMs": 112093.5,
+        "rateLimitWaitMsKnownSubtotal": 112093.5,
+        "retrievalRequestCharge": 140.72,
+        "retrievalRequestChargeKnownSubtotal": 140.72,
+        "totalMs": 210649.39262589905,
+        "totalMsKnownSubtotal": 210649.39262589905,
+        "toolErrors": 0,
+        "toolErrorsKnownSubtotal": 0,
+        "toolBudgetRefusals": 0,
+        "toolBudgetRefusalsKnownSubtotal": 0,
+        "retrievalChargeComplete": true
+      }
+    }
+  },
+  "rows": [
+    {
+      "repeat": 1,
+      "cell": "baseline",
+      "case": "r0-01",
+      "turn": 1,
+      "sourceDelivery": {
+        "regions": [
+          {
+            "regionId": "d01:p28",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d01:p30",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          }
+        ],
+        "matched": 2,
+        "textApplicable": 2,
+        "totalRegions": 2,
+        "meaning": "single-body normalized-text match only; false can mean text split across delivered bodies, not source loss; true does not verify source order, snapshot, relevance or complete section coverage",
+        "completeSectionInOrderVerified": null,
+        "sourceSnapshotVerified": null
+      },
+      "providerSourceSequenceVerified": true,
+      "relevantSourceCoverage": {
+        "requiredRegionCount": 2,
+        "deliveredRegionCount": 2,
+        "relationshipsDelivered": null,
+        "completeOrderedSection": null,
+        "catalogueComplete": null
+      },
+      "quality": {
+        "taskCompletion": true,
+        "factualSupport": true,
+        "citationAccuracy": true,
+        "sourceRelationships": null
+      },
+      "failureCategories": [],
+      "errorCategories": {
+        "source_scope_unavailable": 1
+      },
+      "usage": {
+        "promptTokens": 316060,
+        "completionTokens": 692,
+        "totalTokens": 316752,
+        "totalMs": 43896.9105000142,
+        "providerMs": 26706.3,
+        "rateLimitWaitMs": 14010.0,
+        "rateLimitRetries": 1,
+        "retrievalRequestCharge": 42.55,
+        "retrievalMs": 2776.2348337564617,
+        "modelCalls": 5,
+        "maxProviderInputTokens": 94137,
+        "maxKnownProviderInputTokens": 94137,
+        "cachedPromptTokens": 221911,
+        "cachedPromptTokensKnownSubtotal": 221911,
+        "reasoningTokens": 22,
+        "reasoningTokensKnownSubtotal": 22,
+        "toolAttempts": 4,
+        "toolErrors": 1,
+        "retrievalChargeComplete": false,
+        "toolBudgetRefusals": 0
+      }
+    },
+    {
+      "repeat": 1,
+      "cell": "baseline",
+      "case": "r0-11",
+      "turn": 1,
+      "sourceDelivery": {
+        "regions": [
+          {
+            "regionId": "d03:p5",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:p6",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r2:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r2:c2",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r6:c0",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r6:c1",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r6:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r6:c4",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r8:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r8:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r8:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r10:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r10:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r10:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r10:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r12:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r12:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r12:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r12:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r14:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r14:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r14:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r14:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r16:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r16:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r16:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r18:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r18:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r18:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r18:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r20:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r20:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r20:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r20:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r22:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r22:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:p47",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:p48",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r0:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r0:c1",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r0:c2",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r1:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r1:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r1:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r2:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r2:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r2:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r3:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r3:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r3:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r4:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r4:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r4:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r5:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r5:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r5:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          }
+        ],
+        "matched": 24,
+        "textApplicable": 24,
+        "totalRegions": 56,
+        "meaning": "single-body normalized-text match only; false can mean text split across delivered bodies, not source loss; true does not verify source order, snapshot, relevance or complete section coverage",
+        "completeSectionInOrderVerified": null,
+        "sourceSnapshotVerified": null
+      },
+      "providerSourceSequenceVerified": true,
+      "relevantSourceCoverage": {
+        "requiredRegionCount": 56,
+        "deliveredRegionCount": 56,
+        "relationshipsDelivered": true,
+        "completeOrderedSection": null,
+        "catalogueComplete": null
+      },
+      "quality": {
+        "taskCompletion": true,
+        "factualSupport": true,
+        "citationAccuracy": true,
+        "sourceRelationships": true
+      },
+      "failureCategories": [],
+      "errorCategories": {},
+      "usage": {
+        "promptTokens": 13606,
+        "completionTokens": 587,
+        "totalTokens": 14193,
+        "totalMs": 41211.13275003154,
+        "providerMs": 12360.1,
+        "rateLimitWaitMs": 28007.3,
+        "rateLimitRetries": 1,
+        "retrievalRequestCharge": 12.82,
+        "retrievalMs": 676.6872509615496,
+        "modelCalls": 3,
+        "maxProviderInputTokens": 6925,
+        "maxKnownProviderInputTokens": 6925,
+        "cachedPromptTokens": 9517,
+        "cachedPromptTokensKnownSubtotal": 9517,
+        "reasoningTokens": 0,
+        "reasoningTokensKnownSubtotal": 0,
+        "toolAttempts": 2,
+        "toolErrors": 0,
+        "retrievalChargeComplete": true,
+        "toolBudgetRefusals": 0
+      }
+    },
+    {
+      "repeat": 1,
+      "cell": "baseline",
+      "case": "r0-17",
+      "turn": 1,
+      "sourceDelivery": {
+        "regions": [
+          {
+            "regionId": "d06:p80",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p81",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p83",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p84",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p85",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p86",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p87",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p88",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p89",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p91",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p92",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p93",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p94",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p95",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p96",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p97",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p98",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p100",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p101",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p102",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p103",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p104",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p105",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p106",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p107",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p108",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p109",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p110",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p111",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p112",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p113",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p115",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p116",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p117",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p118",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p119",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p120",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p121",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p122",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p124",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p125",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p126",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p127",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p128",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p129",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p130",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p131",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p132",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p133",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p134",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p135",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p137",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p138",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p139",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p140",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p141",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p142",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p143",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p144",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p145",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p146",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p147",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p148",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p150",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p151",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p154",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p155",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p156",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p157",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p158",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p160",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          }
+        ],
+        "matched": 71,
+        "textApplicable": 71,
+        "totalRegions": 71,
+        "meaning": "single-body normalized-text match only; false can mean text split across delivered bodies, not source loss; true does not verify source order, snapshot, relevance or complete section coverage",
+        "completeSectionInOrderVerified": null,
+        "sourceSnapshotVerified": null
+      },
+      "providerSourceSequenceVerified": true,
+      "relevantSourceCoverage": {
+        "requiredRegionCount": 71,
+        "deliveredRegionCount": 71,
+        "relationshipsDelivered": null,
+        "completeOrderedSection": true,
+        "catalogueComplete": null
+      },
+      "quality": {
+        "taskCompletion": true,
+        "factualSupport": true,
+        "citationAccuracy": true,
+        "sourceRelationships": true
+      },
+      "failureCategories": [],
+      "errorCategories": {},
+      "usage": {
+        "promptTokens": 20851,
+        "completionTokens": 834,
+        "totalTokens": 21685,
+        "totalMs": 14228.402707958594,
+        "providerMs": 13723.5,
+        "rateLimitWaitMs": 0.0,
+        "rateLimitRetries": 0,
+        "retrievalRequestCharge": 10.43,
+        "retrievalMs": 400.93204204458743,
+        "modelCalls": 3,
+        "maxProviderInputTokens": 14513,
+        "maxKnownProviderInputTokens": 14513,
+        "cachedPromptTokens": 9174,
+        "cachedPromptTokensKnownSubtotal": 9174,
+        "reasoningTokens": 0,
+        "reasoningTokensKnownSubtotal": 0,
+        "toolAttempts": 2,
+        "toolErrors": 0,
+        "retrievalChargeComplete": true,
+        "toolBudgetRefusals": 0
+      }
+    },
+    {
+      "repeat": 1,
+      "cell": "format-only",
+      "case": "r0-01",
+      "turn": 1,
+      "sourceDelivery": {
+        "regions": [
+          {
+            "regionId": "d01:p28",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d01:p30",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          }
+        ],
+        "matched": 2,
+        "textApplicable": 2,
+        "totalRegions": 2,
+        "meaning": "single-body normalized-text match only; false can mean text split across delivered bodies, not source loss; true does not verify source order, snapshot, relevance or complete section coverage",
+        "completeSectionInOrderVerified": null,
+        "sourceSnapshotVerified": null
+      },
+      "providerSourceSequenceVerified": true,
+      "relevantSourceCoverage": {
+        "requiredRegionCount": 2,
+        "deliveredRegionCount": 2,
+        "relationshipsDelivered": null,
+        "completeOrderedSection": null,
+        "catalogueComplete": null
+      },
+      "quality": {
+        "taskCompletion": true,
+        "factualSupport": true,
+        "citationAccuracy": true,
+        "sourceRelationships": null
+      },
+      "failureCategories": [
+        "none"
+      ],
+      "errorCategories": {
+        "source_scope_unavailable": 1
+      },
+      "usage": {
+        "promptTokens": 303428,
+        "completionTokens": 764,
+        "totalTokens": 304192,
+        "totalMs": 71987.4260830693,
+        "providerMs": 19018.3,
+        "rateLimitWaitMs": 49037.3,
+        "rateLimitRetries": 5,
+        "retrievalRequestCharge": 62.31,
+        "retrievalMs": 3455.462543061003,
+        "modelCalls": 5,
+        "maxProviderInputTokens": 83226,
+        "maxKnownProviderInputTokens": 83226,
+        "cachedPromptTokens": 223071,
+        "cachedPromptTokensKnownSubtotal": 223071,
+        "reasoningTokens": 19,
+        "reasoningTokensKnownSubtotal": 19,
+        "toolAttempts": 6,
+        "toolErrors": 1,
+        "retrievalChargeComplete": false,
+        "toolBudgetRefusals": 1
+      }
+    },
+    {
+      "repeat": 1,
+      "cell": "format-only",
+      "case": "r0-11",
+      "turn": 1,
+      "sourceDelivery": {
+        "regions": [
+          {
+            "regionId": "d03:p5",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:p6",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r2:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r2:c2",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r6:c0",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r6:c1",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r6:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r6:c4",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r8:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r8:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r8:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r10:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r10:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r10:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r10:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r12:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r12:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r12:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r12:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r14:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r14:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r14:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r14:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r16:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r16:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r16:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r18:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r18:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r18:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r18:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r20:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r20:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r20:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r20:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r22:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r22:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:p47",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:p48",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r0:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r0:c1",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r0:c2",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r1:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r1:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r1:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r2:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r2:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r2:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r3:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r3:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r3:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r4:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r4:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r4:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r5:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r5:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r5:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          }
+        ],
+        "matched": 24,
+        "textApplicable": 24,
+        "totalRegions": 56,
+        "meaning": "single-body normalized-text match only; false can mean text split across delivered bodies, not source loss; true does not verify source order, snapshot, relevance or complete section coverage",
+        "completeSectionInOrderVerified": null,
+        "sourceSnapshotVerified": null
+      },
+      "providerSourceSequenceVerified": true,
+      "relevantSourceCoverage": {
+        "requiredRegionCount": 56,
+        "deliveredRegionCount": 56,
+        "relationshipsDelivered": true,
+        "completeOrderedSection": null,
+        "catalogueComplete": null
+      },
+      "quality": {
+        "taskCompletion": true,
+        "factualSupport": true,
+        "citationAccuracy": true,
+        "sourceRelationships": true
+      },
+      "failureCategories": [
+        "none"
+      ],
+      "errorCategories": {},
+      "usage": {
+        "promptTokens": 13309,
+        "completionTokens": 540,
+        "totalTokens": 13849,
+        "totalMs": 38509.2698330991,
+        "providerMs": 11407.6,
+        "rateLimitWaitMs": 26001.2,
+        "rateLimitRetries": 1,
+        "retrievalRequestCharge": 12.82,
+        "retrievalMs": 906.8420409457758,
+        "modelCalls": 3,
+        "maxProviderInputTokens": 6719,
+        "maxKnownProviderInputTokens": 6719,
+        "cachedPromptTokens": 9507,
+        "cachedPromptTokensKnownSubtotal": 9507,
+        "reasoningTokens": 0,
+        "reasoningTokensKnownSubtotal": 0,
+        "toolAttempts": 2,
+        "toolErrors": 0,
+        "retrievalChargeComplete": true,
+        "toolBudgetRefusals": 0
+      }
+    },
+    {
+      "repeat": 1,
+      "cell": "format-only",
+      "case": "r0-17",
+      "turn": 1,
+      "sourceDelivery": {
+        "regions": [
+          {
+            "regionId": "d06:p80",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p81",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p83",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p84",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p85",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p86",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p87",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p88",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p89",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p91",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p92",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p93",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p94",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p95",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p96",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p97",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p98",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p100",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p101",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p102",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p103",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p104",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p105",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p106",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p107",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p108",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p109",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p110",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p111",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p112",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p113",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p115",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p116",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p117",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p118",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p119",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p120",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p121",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p122",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p124",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p125",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p126",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p127",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p128",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p129",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p130",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p131",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p132",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p133",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p134",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p135",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p137",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p138",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p139",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p140",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p141",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p142",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p143",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p144",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p145",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p146",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p147",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p148",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p150",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p151",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p154",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p155",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p156",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p157",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p158",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p160",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          }
+        ],
+        "matched": 71,
+        "textApplicable": 71,
+        "totalRegions": 71,
+        "meaning": "single-body normalized-text match only; false can mean text split across delivered bodies, not source loss; true does not verify source order, snapshot, relevance or complete section coverage",
+        "completeSectionInOrderVerified": null,
+        "sourceSnapshotVerified": null
+      },
+      "providerSourceSequenceVerified": true,
+      "relevantSourceCoverage": {
+        "requiredRegionCount": 71,
+        "deliveredRegionCount": 71,
+        "relationshipsDelivered": null,
+        "completeOrderedSection": true,
+        "catalogueComplete": null
+      },
+      "quality": {
+        "taskCompletion": true,
+        "factualSupport": true,
+        "citationAccuracy": true,
+        "sourceRelationships": true
+      },
+      "failureCategories": [
+        "none"
+      ],
+      "errorCategories": {},
+      "usage": {
+        "promptTokens": 20878,
+        "completionTokens": 831,
+        "totalTokens": 21709,
+        "totalMs": 15167.1515830094,
+        "providerMs": 14628.099999999999,
+        "rateLimitWaitMs": 0.0,
+        "rateLimitRetries": 0,
+        "retrievalRequestCharge": 10.43,
+        "retrievalMs": 450.9657910093665,
+        "modelCalls": 3,
+        "maxProviderInputTokens": 14531,
+        "maxKnownProviderInputTokens": 14531,
+        "cachedPromptTokens": 9237,
+        "cachedPromptTokensKnownSubtotal": 9237,
+        "reasoningTokens": 0,
+        "reasoningTokensKnownSubtotal": 0,
+        "toolAttempts": 2,
+        "toolErrors": 0,
+        "retrievalChargeComplete": true,
+        "toolBudgetRefusals": 0
+      }
+    },
+    {
+      "repeat": 1,
+      "cell": "selectors-only",
+      "case": "r0-01",
+      "turn": 1,
+      "sourceDelivery": {
+        "regions": [
+          {
+            "regionId": "d01:p28",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d01:p30",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          }
+        ],
+        "matched": 2,
+        "textApplicable": 2,
+        "totalRegions": 2,
+        "meaning": "single-body normalized-text match only; false can mean text split across delivered bodies, not source loss; true does not verify source order, snapshot, relevance or complete section coverage",
+        "completeSectionInOrderVerified": null,
+        "sourceSnapshotVerified": null
+      },
+      "providerSourceSequenceVerified": true,
+      "relevantSourceCoverage": {
+        "requiredRegionCount": 2,
+        "deliveredRegionCount": 2,
+        "relationshipsDelivered": null,
+        "completeOrderedSection": null,
+        "catalogueComplete": null
+      },
+      "quality": {
+        "taskCompletion": true,
+        "factualSupport": true,
+        "citationAccuracy": true,
+        "sourceRelationships": null
+      },
+      "failureCategories": [],
+      "errorCategories": {},
+      "usage": {
+        "promptTokens": 248923,
+        "completionTokens": 639,
+        "totalTokens": 249562,
+        "totalMs": 45493.87274996843,
+        "providerMs": 18480.5,
+        "rateLimitWaitMs": 25036.2,
+        "rateLimitRetries": 4,
+        "retrievalRequestCharge": 42.55,
+        "retrievalMs": 1658.2088749855757,
+        "modelCalls": 4,
+        "maxProviderInputTokens": 96649,
+        "maxKnownProviderInputTokens": 96649,
+        "cachedPromptTokens": 152265,
+        "cachedPromptTokensKnownSubtotal": 152265,
+        "reasoningTokens": 10,
+        "reasoningTokensKnownSubtotal": 10,
+        "toolAttempts": 3,
+        "toolErrors": 0,
+        "retrievalChargeComplete": true,
+        "toolBudgetRefusals": 0
+      }
+    },
+    {
+      "repeat": 1,
+      "cell": "selectors-only",
+      "case": "r0-11",
+      "turn": 1,
+      "sourceDelivery": {
+        "regions": [
+          {
+            "regionId": "d03:p5",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:p6",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r2:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r2:c2",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r6:c0",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r6:c1",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r6:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r6:c4",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r8:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r8:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r8:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r10:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r10:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r10:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r10:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r12:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r12:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r12:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r12:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r14:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r14:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r14:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r14:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r16:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r16:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r16:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r18:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r18:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r18:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r18:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r20:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r20:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r20:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r20:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r22:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r22:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:p47",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:p48",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r0:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r0:c1",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r0:c2",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r1:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r1:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r1:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r2:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r2:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r2:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r3:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r3:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r3:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r4:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r4:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r4:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r5:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r5:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r5:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          }
+        ],
+        "matched": 24,
+        "textApplicable": 24,
+        "totalRegions": 56,
+        "meaning": "single-body normalized-text match only; false can mean text split across delivered bodies, not source loss; true does not verify source order, snapshot, relevance or complete section coverage",
+        "completeSectionInOrderVerified": null,
+        "sourceSnapshotVerified": null
+      },
+      "providerSourceSequenceVerified": true,
+      "relevantSourceCoverage": {
+        "requiredRegionCount": 56,
+        "deliveredRegionCount": 56,
+        "relationshipsDelivered": true,
+        "completeOrderedSection": null,
+        "catalogueComplete": null
+      },
+      "quality": {
+        "taskCompletion": true,
+        "factualSupport": true,
+        "citationAccuracy": true,
+        "sourceRelationships": true
+      },
+      "failureCategories": [],
+      "errorCategories": {},
+      "usage": {
+        "promptTokens": 15509,
+        "completionTokens": 623,
+        "totalTokens": 16132,
+        "totalMs": 43495.72879099287,
+        "providerMs": 12441.6,
+        "rateLimitWaitMs": 30007.5,
+        "rateLimitRetries": 1,
+        "retrievalRequestCharge": 12.82,
+        "retrievalMs": 823.0473330477253,
+        "modelCalls": 3,
+        "maxProviderInputTokens": 8091,
+        "maxKnownProviderInputTokens": 8091,
+        "cachedPromptTokens": 10478,
+        "cachedPromptTokensKnownSubtotal": 10478,
+        "reasoningTokens": 0,
+        "reasoningTokensKnownSubtotal": 0,
+        "toolAttempts": 2,
+        "toolErrors": 0,
+        "retrievalChargeComplete": true,
+        "toolBudgetRefusals": 0
+      }
+    },
+    {
+      "repeat": 1,
+      "cell": "selectors-only",
+      "case": "r0-17",
+      "turn": 1,
+      "sourceDelivery": {
+        "regions": [
+          {
+            "regionId": "d06:p80",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p81",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p83",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p84",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p85",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p86",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p87",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p88",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p89",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p91",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p92",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p93",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p94",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p95",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p96",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p97",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p98",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p100",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p101",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p102",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p103",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p104",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p105",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p106",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p107",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p108",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p109",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p110",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p111",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p112",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p113",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p115",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p116",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p117",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p118",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p119",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p120",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p121",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p122",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p124",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p125",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p126",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p127",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p128",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p129",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p130",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p131",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p132",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p133",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p134",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p135",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p137",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p138",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p139",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p140",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p141",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p142",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p143",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p144",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p145",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p146",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p147",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p148",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p150",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p151",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p154",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p155",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p156",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p157",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p158",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p160",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          }
+        ],
+        "matched": 71,
+        "textApplicable": 71,
+        "totalRegions": 71,
+        "meaning": "single-body normalized-text match only; false can mean text split across delivered bodies, not source loss; true does not verify source order, snapshot, relevance or complete section coverage",
+        "completeSectionInOrderVerified": null,
+        "sourceSnapshotVerified": null
+      },
+      "providerSourceSequenceVerified": true,
+      "relevantSourceCoverage": {
+        "requiredRegionCount": 71,
+        "deliveredRegionCount": 71,
+        "relationshipsDelivered": null,
+        "completeOrderedSection": true,
+        "catalogueComplete": null
+      },
+      "quality": {
+        "taskCompletion": true,
+        "factualSupport": true,
+        "citationAccuracy": true,
+        "sourceRelationships": true
+      },
+      "failureCategories": [],
+      "errorCategories": {},
+      "usage": {
+        "promptTokens": 28197,
+        "completionTokens": 831,
+        "totalTokens": 29028,
+        "totalMs": 17483.65270893555,
+        "providerMs": 16674.6,
+        "rateLimitWaitMs": 0.0,
+        "rateLimitRetries": 0,
+        "retrievalRequestCharge": 14.989999999999998,
+        "retrievalMs": 698.533458984457,
+        "modelCalls": 4,
+        "maxProviderInputTokens": 16335,
+        "maxKnownProviderInputTokens": 16335,
+        "cachedPromptTokens": 14919,
+        "cachedPromptTokensKnownSubtotal": 14919,
+        "reasoningTokens": 0,
+        "reasoningTokensKnownSubtotal": 0,
+        "toolAttempts": 3,
+        "toolErrors": 0,
+        "retrievalChargeComplete": true,
+        "toolBudgetRefusals": 0
+      }
+    },
+    {
+      "repeat": 2,
+      "cell": "baseline",
+      "case": "r0-01",
+      "turn": 1,
+      "sourceDelivery": {
+        "regions": [
+          {
+            "regionId": "d01:p28",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d01:p30",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          }
+        ],
+        "matched": 2,
+        "textApplicable": 2,
+        "totalRegions": 2,
+        "meaning": "single-body normalized-text match only; false can mean text split across delivered bodies, not source loss; true does not verify source order, snapshot, relevance or complete section coverage",
+        "completeSectionInOrderVerified": null,
+        "sourceSnapshotVerified": null
+      },
+      "providerSourceSequenceVerified": true,
+      "relevantSourceCoverage": {
+        "requiredRegionCount": 2,
+        "deliveredRegionCount": 2,
+        "relationshipsDelivered": null,
+        "completeOrderedSection": null,
+        "catalogueComplete": null
+      },
+      "quality": {
+        "taskCompletion": true,
+        "factualSupport": true,
+        "citationAccuracy": true,
+        "sourceRelationships": null
+      },
+      "failureCategories": [],
+      "errorCategories": {
+        "source_scope_unavailable": 1
+      },
+      "usage": {
+        "promptTokens": 305952,
+        "completionTokens": 756,
+        "totalTokens": 306708,
+        "totalMs": 72771.91937505268,
+        "providerMs": 20044.0,
+        "rateLimitWaitMs": 48036.6,
+        "rateLimitRetries": 4,
+        "retrievalRequestCharge": 62.31,
+        "retrievalMs": 4239.059709128924,
+        "modelCalls": 5,
+        "maxProviderInputTokens": 84065,
+        "maxKnownProviderInputTokens": 84065,
+        "cachedPromptTokens": 224756,
+        "cachedPromptTokensKnownSubtotal": 224756,
+        "reasoningTokens": 33,
+        "reasoningTokensKnownSubtotal": 33,
+        "toolAttempts": 6,
+        "toolErrors": 1,
+        "retrievalChargeComplete": false,
+        "toolBudgetRefusals": 1
+      }
+    },
+    {
+      "repeat": 2,
+      "cell": "baseline",
+      "case": "r0-11",
+      "turn": 1,
+      "sourceDelivery": {
+        "regions": [
+          {
+            "regionId": "d03:p5",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:p6",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r2:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r2:c2",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r6:c0",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r6:c1",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r6:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r6:c4",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r8:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r8:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r8:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r10:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r10:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r10:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r10:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r12:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r12:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r12:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r12:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r14:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r14:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r14:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r14:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r16:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r16:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r16:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r18:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r18:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r18:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r18:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r20:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r20:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r20:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r20:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r22:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r22:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:p47",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:p48",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r0:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r0:c1",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r0:c2",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r1:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r1:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r1:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r2:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r2:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r2:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r3:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r3:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r3:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r4:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r4:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r4:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r5:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r5:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r5:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          }
+        ],
+        "matched": 24,
+        "textApplicable": 24,
+        "totalRegions": 56,
+        "meaning": "single-body normalized-text match only; false can mean text split across delivered bodies, not source loss; true does not verify source order, snapshot, relevance or complete section coverage",
+        "completeSectionInOrderVerified": null,
+        "sourceSnapshotVerified": null
+      },
+      "providerSourceSequenceVerified": true,
+      "relevantSourceCoverage": {
+        "requiredRegionCount": 56,
+        "deliveredRegionCount": 56,
+        "relationshipsDelivered": true,
+        "completeOrderedSection": null,
+        "catalogueComplete": null
+      },
+      "quality": {
+        "taskCompletion": true,
+        "factualSupport": true,
+        "citationAccuracy": true,
+        "sourceRelationships": true
+      },
+      "failureCategories": [],
+      "errorCategories": {},
+      "usage": {
+        "promptTokens": 13606,
+        "completionTokens": 631,
+        "totalTokens": 14237,
+        "totalMs": 40652.45237504132,
+        "providerMs": 12661.9,
+        "rateLimitWaitMs": 27017.3,
+        "rateLimitRetries": 2,
+        "retrievalRequestCharge": 12.82,
+        "retrievalMs": 746.9919590512291,
+        "modelCalls": 3,
+        "maxProviderInputTokens": 6925,
+        "maxKnownProviderInputTokens": 6925,
+        "cachedPromptTokens": 10427,
+        "cachedPromptTokensKnownSubtotal": 10427,
+        "reasoningTokens": 0,
+        "reasoningTokensKnownSubtotal": 0,
+        "toolAttempts": 2,
+        "toolErrors": 0,
+        "retrievalChargeComplete": true,
+        "toolBudgetRefusals": 0
+      }
+    },
+    {
+      "repeat": 2,
+      "cell": "baseline",
+      "case": "r0-17",
+      "turn": 1,
+      "sourceDelivery": {
+        "regions": [
+          {
+            "regionId": "d06:p80",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p81",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p83",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p84",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p85",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p86",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p87",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p88",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p89",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p91",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p92",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p93",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p94",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p95",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p96",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p97",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p98",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p100",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p101",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p102",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p103",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p104",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p105",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p106",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p107",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p108",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p109",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p110",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p111",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p112",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p113",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p115",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p116",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p117",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p118",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p119",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p120",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p121",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p122",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p124",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p125",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p126",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p127",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p128",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p129",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p130",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p131",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p132",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p133",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p134",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p135",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p137",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p138",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p139",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p140",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p141",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p142",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p143",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p144",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p145",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p146",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p147",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p148",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p150",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p151",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p154",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p155",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p156",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p157",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p158",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p160",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          }
+        ],
+        "matched": 71,
+        "textApplicable": 71,
+        "totalRegions": 71,
+        "meaning": "single-body normalized-text match only; false can mean text split across delivered bodies, not source loss; true does not verify source order, snapshot, relevance or complete section coverage",
+        "completeSectionInOrderVerified": null,
+        "sourceSnapshotVerified": null
+      },
+      "providerSourceSequenceVerified": true,
+      "relevantSourceCoverage": {
+        "requiredRegionCount": 71,
+        "deliveredRegionCount": 71,
+        "relationshipsDelivered": null,
+        "completeOrderedSection": true,
+        "catalogueComplete": null
+      },
+      "quality": {
+        "taskCompletion": true,
+        "factualSupport": true,
+        "citationAccuracy": true,
+        "sourceRelationships": true
+      },
+      "failureCategories": [],
+      "errorCategories": {},
+      "usage": {
+        "promptTokens": 20851,
+        "completionTokens": 838,
+        "totalTokens": 21689,
+        "totalMs": 15114.875708008185,
+        "providerMs": 14595.2,
+        "rateLimitWaitMs": 0.0,
+        "rateLimitRetries": 0,
+        "retrievalRequestCharge": 10.43,
+        "retrievalMs": 421.30312393419445,
+        "modelCalls": 3,
+        "maxProviderInputTokens": 14513,
+        "maxKnownProviderInputTokens": 14513,
+        "cachedPromptTokens": 9768,
+        "cachedPromptTokensKnownSubtotal": 9768,
+        "reasoningTokens": 0,
+        "reasoningTokensKnownSubtotal": 0,
+        "toolAttempts": 2,
+        "toolErrors": 0,
+        "retrievalChargeComplete": true,
+        "toolBudgetRefusals": 0
+      }
+    },
+    {
+      "repeat": 2,
+      "cell": "format-only",
+      "case": "r0-01",
+      "turn": 1,
+      "sourceDelivery": {
+        "regions": [
+          {
+            "regionId": "d01:p28",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d01:p30",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          }
+        ],
+        "matched": 2,
+        "textApplicable": 2,
+        "totalRegions": 2,
+        "meaning": "single-body normalized-text match only; false can mean text split across delivered bodies, not source loss; true does not verify source order, snapshot, relevance or complete section coverage",
+        "completeSectionInOrderVerified": null,
+        "sourceSnapshotVerified": null
+      },
+      "providerSourceSequenceVerified": true,
+      "relevantSourceCoverage": {
+        "requiredRegionCount": 2,
+        "deliveredRegionCount": 2,
+        "relationshipsDelivered": null,
+        "completeOrderedSection": null,
+        "catalogueComplete": null
+      },
+      "quality": {
+        "taskCompletion": true,
+        "factualSupport": true,
+        "citationAccuracy": true,
+        "sourceRelationships": null
+      },
+      "failureCategories": [
+        "none"
+      ],
+      "errorCategories": {
+        "source_scope_unavailable": 1
+      },
+      "usage": {
+        "promptTokens": 303400,
+        "completionTokens": 747,
+        "totalTokens": 304147,
+        "totalMs": 72762.8566250205,
+        "providerMs": 22270.7,
+        "rateLimitWaitMs": 47020.9,
+        "rateLimitRetries": 4,
+        "retrievalRequestCharge": 62.31,
+        "retrievalMs": 3012.8520828438923,
+        "modelCalls": 5,
+        "maxProviderInputTokens": 83198,
+        "maxKnownProviderInputTokens": 83198,
+        "cachedPromptTokens": 223071,
+        "cachedPromptTokensKnownSubtotal": 223071,
+        "reasoningTokens": 27,
+        "reasoningTokensKnownSubtotal": 27,
+        "toolAttempts": 6,
+        "toolErrors": 1,
+        "retrievalChargeComplete": false,
+        "toolBudgetRefusals": 1
+      }
+    },
+    {
+      "repeat": 2,
+      "cell": "format-only",
+      "case": "r0-11",
+      "turn": 1,
+      "sourceDelivery": {
+        "regions": [
+          {
+            "regionId": "d03:p5",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:p6",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r2:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r2:c2",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r6:c0",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r6:c1",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r6:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r6:c4",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r8:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r8:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r8:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r10:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r10:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r10:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r10:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r12:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r12:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r12:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r12:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r14:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r14:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r14:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r14:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r16:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r16:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r16:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r18:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r18:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r18:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r18:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r20:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r20:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r20:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r20:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r22:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r22:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:p47",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:p48",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r0:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r0:c1",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r0:c2",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r1:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r1:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r1:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r2:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r2:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r2:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r3:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r3:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r3:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r4:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r4:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r4:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r5:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r5:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r5:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          }
+        ],
+        "matched": 24,
+        "textApplicable": 24,
+        "totalRegions": 56,
+        "meaning": "single-body normalized-text match only; false can mean text split across delivered bodies, not source loss; true does not verify source order, snapshot, relevance or complete section coverage",
+        "completeSectionInOrderVerified": null,
+        "sourceSnapshotVerified": null
+      },
+      "providerSourceSequenceVerified": true,
+      "relevantSourceCoverage": {
+        "requiredRegionCount": 56,
+        "deliveredRegionCount": 56,
+        "relationshipsDelivered": true,
+        "completeOrderedSection": null,
+        "catalogueComplete": null
+      },
+      "quality": {
+        "taskCompletion": true,
+        "factualSupport": true,
+        "citationAccuracy": true,
+        "sourceRelationships": true
+      },
+      "failureCategories": [
+        "none"
+      ],
+      "errorCategories": {},
+      "usage": {
+        "promptTokens": 13309,
+        "completionTokens": 532,
+        "totalTokens": 13841,
+        "totalMs": 37388.703791075386,
+        "providerMs": 11313.5,
+        "rateLimitWaitMs": 25016.7,
+        "rateLimitRetries": 2,
+        "retrievalRequestCharge": 12.82,
+        "retrievalMs": 799.9084581388161,
+        "modelCalls": 3,
+        "maxProviderInputTokens": 6719,
+        "maxKnownProviderInputTokens": 6719,
+        "cachedPromptTokens": 10245,
+        "cachedPromptTokensKnownSubtotal": 10245,
+        "reasoningTokens": 0,
+        "reasoningTokensKnownSubtotal": 0,
+        "toolAttempts": 2,
+        "toolErrors": 0,
+        "retrievalChargeComplete": true,
+        "toolBudgetRefusals": 0
+      }
+    },
+    {
+      "repeat": 2,
+      "cell": "format-only",
+      "case": "r0-17",
+      "turn": 1,
+      "sourceDelivery": {
+        "regions": [
+          {
+            "regionId": "d06:p80",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p81",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p83",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p84",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p85",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p86",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p87",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p88",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p89",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p91",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p92",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p93",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p94",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p95",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p96",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p97",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p98",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p100",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p101",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p102",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p103",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p104",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p105",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p106",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p107",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p108",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p109",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p110",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p111",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p112",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p113",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p115",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p116",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p117",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p118",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p119",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p120",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p121",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p122",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p124",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p125",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p126",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p127",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p128",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p129",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p130",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p131",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p132",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p133",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p134",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p135",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p137",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p138",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p139",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p140",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p141",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p142",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p143",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p144",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p145",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p146",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p147",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p148",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p150",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p151",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p154",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p155",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p156",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p157",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p158",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p160",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          }
+        ],
+        "matched": 71,
+        "textApplicable": 71,
+        "totalRegions": 71,
+        "meaning": "single-body normalized-text match only; false can mean text split across delivered bodies, not source loss; true does not verify source order, snapshot, relevance or complete section coverage",
+        "completeSectionInOrderVerified": null,
+        "sourceSnapshotVerified": null
+      },
+      "providerSourceSequenceVerified": true,
+      "relevantSourceCoverage": {
+        "requiredRegionCount": 71,
+        "deliveredRegionCount": 71,
+        "relationshipsDelivered": null,
+        "completeOrderedSection": true,
+        "catalogueComplete": null
+      },
+      "quality": {
+        "taskCompletion": true,
+        "factualSupport": true,
+        "citationAccuracy": true,
+        "sourceRelationships": true
+      },
+      "failureCategories": [
+        "none"
+      ],
+      "errorCategories": {},
+      "usage": {
+        "promptTokens": 20878,
+        "completionTokens": 845,
+        "totalTokens": 21723,
+        "totalMs": 14241.050041979179,
+        "providerMs": 13703.3,
+        "rateLimitWaitMs": 0.0,
+        "rateLimitRetries": 0,
+        "retrievalRequestCharge": 10.43,
+        "retrievalMs": 437.4507499160245,
+        "modelCalls": 3,
+        "maxProviderInputTokens": 14531,
+        "maxKnownProviderInputTokens": 14531,
+        "cachedPromptTokens": 9786,
+        "cachedPromptTokensKnownSubtotal": 9786,
+        "reasoningTokens": 0,
+        "reasoningTokensKnownSubtotal": 0,
+        "toolAttempts": 2,
+        "toolErrors": 0,
+        "retrievalChargeComplete": true,
+        "toolBudgetRefusals": 0
+      }
+    },
+    {
+      "repeat": 2,
+      "cell": "selectors-only",
+      "case": "r0-01",
+      "turn": 1,
+      "sourceDelivery": {
+        "regions": [
+          {
+            "regionId": "d01:p28",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d01:p30",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          }
+        ],
+        "matched": 2,
+        "textApplicable": 2,
+        "totalRegions": 2,
+        "meaning": "single-body normalized-text match only; false can mean text split across delivered bodies, not source loss; true does not verify source order, snapshot, relevance or complete section coverage",
+        "completeSectionInOrderVerified": null,
+        "sourceSnapshotVerified": null
+      },
+      "providerSourceSequenceVerified": true,
+      "relevantSourceCoverage": {
+        "requiredRegionCount": 2,
+        "deliveredRegionCount": 2,
+        "relationshipsDelivered": null,
+        "completeOrderedSection": null,
+        "catalogueComplete": null
+      },
+      "quality": {
+        "taskCompletion": true,
+        "factualSupport": true,
+        "citationAccuracy": true,
+        "sourceRelationships": null
+      },
+      "failureCategories": [],
+      "errorCategories": {},
+      "usage": {
+        "promptTokens": 248922,
+        "completionTokens": 619,
+        "totalTokens": 249541,
+        "totalMs": 44846.69483406469,
+        "providerMs": 15541.5,
+        "rateLimitWaitMs": 27037.899999999998,
+        "rateLimitRetries": 4,
+        "retrievalRequestCharge": 42.55,
+        "retrievalMs": 1944.2492919042706,
+        "modelCalls": 4,
+        "maxProviderInputTokens": 96652,
+        "maxKnownProviderInputTokens": 96652,
+        "cachedPromptTokens": 155366,
+        "cachedPromptTokensKnownSubtotal": 155366,
+        "reasoningTokens": 18,
+        "reasoningTokensKnownSubtotal": 18,
+        "toolAttempts": 3,
+        "toolErrors": 0,
+        "retrievalChargeComplete": true,
+        "toolBudgetRefusals": 0
+      }
+    },
+    {
+      "repeat": 2,
+      "cell": "selectors-only",
+      "case": "r0-11",
+      "turn": 1,
+      "sourceDelivery": {
+        "regions": [
+          {
+            "regionId": "d03:p5",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:p6",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r2:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r2:c2",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r6:c0",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r6:c1",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r6:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r6:c4",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r8:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r8:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r8:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r10:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r10:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r10:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r10:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r12:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r12:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r12:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r12:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r14:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r14:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r14:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r14:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r16:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r16:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r16:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r18:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r18:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r18:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r18:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r20:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r20:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r20:c3",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r20:c4",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r22:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d03:t0:r22:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:p47",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:p48",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r0:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r0:c1",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r0:c2",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r1:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r1:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r1:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r2:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r2:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r2:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r3:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r3:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r3:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r4:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r4:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r4:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r5:c0",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r5:c1",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d04:t2:r5:c2",
+            "singleBodyNormalizedTextMatch": null,
+            "relationshipVerified": null
+          }
+        ],
+        "matched": 24,
+        "textApplicable": 24,
+        "totalRegions": 56,
+        "meaning": "single-body normalized-text match only; false can mean text split across delivered bodies, not source loss; true does not verify source order, snapshot, relevance or complete section coverage",
+        "completeSectionInOrderVerified": null,
+        "sourceSnapshotVerified": null
+      },
+      "providerSourceSequenceVerified": true,
+      "relevantSourceCoverage": {
+        "requiredRegionCount": 56,
+        "deliveredRegionCount": 56,
+        "relationshipsDelivered": true,
+        "completeOrderedSection": null,
+        "catalogueComplete": null
+      },
+      "quality": {
+        "taskCompletion": true,
+        "factualSupport": true,
+        "citationAccuracy": true,
+        "sourceRelationships": true
+      },
+      "failureCategories": [],
+      "errorCategories": {},
+      "usage": {
+        "promptTokens": 15509,
+        "completionTokens": 598,
+        "totalTokens": 16107,
+        "totalMs": 42398.1707500061,
+        "providerMs": 11432.3,
+        "rateLimitWaitMs": 30011.9,
+        "rateLimitRetries": 2,
+        "retrievalRequestCharge": 12.82,
+        "retrievalMs": 774.7463339474052,
+        "modelCalls": 3,
+        "maxProviderInputTokens": 8091,
+        "maxKnownProviderInputTokens": 8091,
+        "cachedPromptTokens": 15500,
+        "cachedPromptTokensKnownSubtotal": 15500,
+        "reasoningTokens": 0,
+        "reasoningTokensKnownSubtotal": 0,
+        "toolAttempts": 2,
+        "toolErrors": 0,
+        "retrievalChargeComplete": true,
+        "toolBudgetRefusals": 0
+      }
+    },
+    {
+      "repeat": 2,
+      "cell": "selectors-only",
+      "case": "r0-17",
+      "turn": 1,
+      "sourceDelivery": {
+        "regions": [
+          {
+            "regionId": "d06:p80",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p81",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p83",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p84",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p85",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p86",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p87",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p88",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p89",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p91",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p92",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p93",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p94",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p95",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p96",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p97",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p98",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p100",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p101",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p102",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p103",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p104",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p105",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p106",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p107",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p108",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p109",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p110",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p111",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p112",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p113",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p115",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p116",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p117",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p118",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p119",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p120",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p121",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p122",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p124",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p125",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p126",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p127",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p128",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p129",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p130",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p131",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p132",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p133",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p134",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p135",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p137",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p138",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p139",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p140",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p141",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p142",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p143",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p144",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p145",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p146",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p147",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p148",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p150",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p151",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p154",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p155",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p156",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p157",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p158",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          },
+          {
+            "regionId": "d06:p160",
+            "singleBodyNormalizedTextMatch": true,
+            "relationshipVerified": null
+          }
+        ],
+        "matched": 71,
+        "textApplicable": 71,
+        "totalRegions": 71,
+        "meaning": "single-body normalized-text match only; false can mean text split across delivered bodies, not source loss; true does not verify source order, snapshot, relevance or complete section coverage",
+        "completeSectionInOrderVerified": null,
+        "sourceSnapshotVerified": null
+      },
+      "providerSourceSequenceVerified": true,
+      "relevantSourceCoverage": {
+        "requiredRegionCount": 71,
+        "deliveredRegionCount": 71,
+        "relationshipsDelivered": null,
+        "completeOrderedSection": true,
+        "catalogueComplete": null
+      },
+      "quality": {
+        "taskCompletion": true,
+        "factualSupport": true,
+        "citationAccuracy": true,
+        "sourceRelationships": true
+      },
+      "failureCategories": [],
+      "errorCategories": {},
+      "usage": {
+        "promptTokens": 28191,
+        "completionTokens": 923,
+        "totalTokens": 29114,
+        "totalMs": 16931.272791931406,
+        "providerMs": 16120.8,
+        "rateLimitWaitMs": 0.0,
+        "rateLimitRetries": 0,
+        "retrievalRequestCharge": 14.989999999999998,
+        "retrievalMs": 685.7301259879023,
+        "modelCalls": 4,
+        "maxProviderInputTokens": 16329,
+        "maxKnownProviderInputTokens": 16329,
+        "cachedPromptTokens": 16749,
+        "cachedPromptTokensKnownSubtotal": 16749,
+        "reasoningTokens": 0,
+        "reasoningTokensKnownSubtotal": 0,
+        "toolAttempts": 3,
+        "toolErrors": 0,
+        "retrievalChargeComplete": true,
+        "toolBudgetRefusals": 0
+      }
+    }
+  ],
+  "wireReceipts": [
+    {
+      "repeat": 1,
+      "cell": "baseline",
+      "call": 1,
+      "wireSha256": "f8d3fe870ca7a6905526939d323ecbdc00135399253652648d53e401ece7b79c",
+      "wireInputTokensEstimate": 3194,
+      "expandedInputTokensEstimate": 3194,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 1,
+      "cell": "baseline",
+      "call": 2,
+      "wireSha256": "8835050260d8395052c83d7b6cfac4fa84811a0847de3a2c7e03ea0a9b3f8596",
+      "wireInputTokensEstimate": 76966,
+      "expandedInputTokensEstimate": 76966,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 1,
+      "cell": "baseline",
+      "call": 3,
+      "wireSha256": "561a9ca8dc8967e6db104385b28d0a68b12fba88bc4fd3151f1f935e17448457",
+      "wireInputTokensEstimate": 77275,
+      "expandedInputTokensEstimate": 77275,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 1,
+      "cell": "baseline",
+      "call": 4,
+      "wireSha256": "561a7ac1f06844c82eb0050a85875247330973578b36b2d9845953f1e45daa5f",
+      "wireInputTokensEstimate": 78470,
+      "expandedInputTokensEstimate": 78470,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 1,
+      "cell": "baseline",
+      "call": 5,
+      "wireSha256": "926abddfc11950a8480d2c25de603efb0740012336b5851b1beffb2e854dff51",
+      "wireInputTokensEstimate": 99707,
+      "expandedInputTokensEstimate": 99707,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 1,
+      "cell": "baseline",
+      "call": 6,
+      "wireSha256": "4c1afc48369defa09a5d64b1fbfeb4adb7cadb65ed594979f8adaa78fc0f0868",
+      "wireInputTokensEstimate": 3236,
+      "expandedInputTokensEstimate": 3236,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 1,
+      "cell": "baseline",
+      "call": 7,
+      "wireSha256": "f99f57b295c4492a7944ef12ba71ec7f0eacb4a4b647099020142d9445e461ce",
+      "wireInputTokensEstimate": 4173,
+      "expandedInputTokensEstimate": 4173,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 1,
+      "cell": "baseline",
+      "call": 8,
+      "wireSha256": "ff481b9cbb2fbde327955c01cab50c392acb7b0b84f2a9405b0546fa515794f8",
+      "wireInputTokensEstimate": 7875,
+      "expandedInputTokensEstimate": 7875,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 1,
+      "cell": "baseline",
+      "call": 9,
+      "wireSha256": "8c1924752da14d25ae543b7d344e822fa19f747c9e88101f3e07209f77e4a924",
+      "wireInputTokensEstimate": 3208,
+      "expandedInputTokensEstimate": 3208,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 1,
+      "cell": "baseline",
+      "call": 10,
+      "wireSha256": "e7a9c159ae36597cb4c63678511d6f5fe2f614776bde74f530b2d34cf540342b",
+      "wireInputTokensEstimate": 3833,
+      "expandedInputTokensEstimate": 3833,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 1,
+      "cell": "baseline",
+      "call": 11,
+      "wireSha256": "2a886c3df1217059e318c8696c7ff63d4016ac56be5c4ed0bcb47c98a0aba365",
+      "wireInputTokensEstimate": 15905,
+      "expandedInputTokensEstimate": 15905,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 1,
+      "cell": "format-only",
+      "call": 1,
+      "wireSha256": "f8d3fe870ca7a6905526939d323ecbdc00135399253652648d53e401ece7b79c",
+      "wireInputTokensEstimate": 3194,
+      "expandedInputTokensEstimate": 3194,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 1,
+      "cell": "format-only",
+      "call": 2,
+      "wireSha256": "8492f809b363ab811647331373e3ce8722afa2dfda6918fba8391b2b035ca4b6",
+      "wireInputTokensEstimate": 76432,
+      "expandedInputTokensEstimate": 76972,
+      "referenceToolMessages": 1
+    },
+    {
+      "repeat": 1,
+      "cell": "format-only",
+      "call": 3,
+      "wireSha256": "3345191efe937670fa1ae51800caa0215b9fa995073d10ea39d3db691eab408a",
+      "wireInputTokensEstimate": 76760,
+      "expandedInputTokensEstimate": 77281,
+      "referenceToolMessages": 2
+    },
+    {
+      "repeat": 1,
+      "cell": "format-only",
+      "call": 4,
+      "wireSha256": "796fc262f7174e2945adaaad86cecc0e452c5928db19861e1564475b6ef84617",
+      "wireInputTokensEstimate": 77780,
+      "expandedInputTokensEstimate": 78470,
+      "referenceToolMessages": 3
+    },
+    {
+      "repeat": 1,
+      "cell": "format-only",
+      "call": 5,
+      "wireSha256": "7c5f1c77f79eb2a65cf4c1204d70d5441b91055a6616e314bc497bc050d1b67d",
+      "wireInputTokensEstimate": 88284,
+      "expandedInputTokensEstimate": 89172,
+      "referenceToolMessages": 4
+    },
+    {
+      "repeat": 1,
+      "cell": "format-only",
+      "call": 6,
+      "wireSha256": "4c1afc48369defa09a5d64b1fbfeb4adb7cadb65ed594979f8adaa78fc0f0868",
+      "wireInputTokensEstimate": 3236,
+      "expandedInputTokensEstimate": 3236,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 1,
+      "cell": "format-only",
+      "call": 7,
+      "wireSha256": "2ca56ac4544e9a2c154846766bd7428eb04ccf1b5a89d1c06c661b0b70e83a1b",
+      "wireInputTokensEstimate": 4082,
+      "expandedInputTokensEstimate": 4169,
+      "referenceToolMessages": 1
+    },
+    {
+      "repeat": 1,
+      "cell": "format-only",
+      "call": 8,
+      "wireSha256": "16016adc56fa623c4530fdfb8d272f28dcec09723334709c9e41bec4a516f70e",
+      "wireInputTokensEstimate": 7667,
+      "expandedInputTokensEstimate": 7850,
+      "referenceToolMessages": 2
+    },
+    {
+      "repeat": 1,
+      "cell": "format-only",
+      "call": 9,
+      "wireSha256": "8c1924752da14d25ae543b7d344e822fa19f747c9e88101f3e07209f77e4a924",
+      "wireInputTokensEstimate": 3208,
+      "expandedInputTokensEstimate": 3208,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 1,
+      "cell": "format-only",
+      "call": 10,
+      "wireSha256": "1b09348141159477817e84aae337212c65f21d05feb021c8ab6c4e442bec522d",
+      "wireInputTokensEstimate": 3844,
+      "expandedInputTokensEstimate": 3833,
+      "referenceToolMessages": 1
+    },
+    {
+      "repeat": 1,
+      "cell": "format-only",
+      "call": 11,
+      "wireSha256": "2c46a16a1d7751c6b4abe6204ba51448652efda59fb0d6b7f0ead80230ceca2e",
+      "wireInputTokensEstimate": 15930,
+      "expandedInputTokensEstimate": 15907,
+      "referenceToolMessages": 2
+    },
+    {
+      "repeat": 1,
+      "cell": "selectors-only",
+      "call": 1,
+      "wireSha256": "f8d3fe870ca7a6905526939d323ecbdc00135399253652648d53e401ece7b79c",
+      "wireInputTokensEstimate": 3417,
+      "expandedInputTokensEstimate": 3417,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 1,
+      "cell": "selectors-only",
+      "call": 2,
+      "wireSha256": "823e37d09734a892457ba63d7ac7506718cf8bb2745429a71277826db61ec8e1",
+      "wireInputTokensEstimate": 78186,
+      "expandedInputTokensEstimate": 78186,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 1,
+      "cell": "selectors-only",
+      "call": 3,
+      "wireSha256": "a3ed4248a27b2ddb70d67e4d2dd26847dfe5d7ac061a4a547f966d119fa714e9",
+      "wireInputTokensEstimate": 80072,
+      "expandedInputTokensEstimate": 80072,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 1,
+      "cell": "selectors-only",
+      "call": 4,
+      "wireSha256": "cbf1fd9e121d3bd0cc5e1aba361754fc0fa46d1e7af8b5fbe110a185a6dc745a",
+      "wireInputTokensEstimate": 102200,
+      "expandedInputTokensEstimate": 102200,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 1,
+      "cell": "selectors-only",
+      "call": 5,
+      "wireSha256": "4c1afc48369defa09a5d64b1fbfeb4adb7cadb65ed594979f8adaa78fc0f0868",
+      "wireInputTokensEstimate": 3459,
+      "expandedInputTokensEstimate": 3459,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 1,
+      "cell": "selectors-only",
+      "call": 6,
+      "wireSha256": "d0acb25dc097c160b5be506a9cb43998e951edd2e46679292de5de36d11e57d8",
+      "wireInputTokensEstimate": 4682,
+      "expandedInputTokensEstimate": 4682,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 1,
+      "cell": "selectors-only",
+      "call": 7,
+      "wireSha256": "c1d9d9267ed90353af091c0eb6e4fe8454120c938c4cbb44939cb30449bf3380",
+      "wireInputTokensEstimate": 9045,
+      "expandedInputTokensEstimate": 9045,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 1,
+      "cell": "selectors-only",
+      "call": 8,
+      "wireSha256": "8c1924752da14d25ae543b7d344e822fa19f747c9e88101f3e07209f77e4a924",
+      "wireInputTokensEstimate": 3431,
+      "expandedInputTokensEstimate": 3431,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 1,
+      "cell": "selectors-only",
+      "call": 9,
+      "wireSha256": "cc90bc799ae143498fb09c6dcfc428446e7277b3d77a8a79a0a2d60a92c9d81e",
+      "wireInputTokensEstimate": 4244,
+      "expandedInputTokensEstimate": 4244,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 1,
+      "cell": "selectors-only",
+      "call": 10,
+      "wireSha256": "93a4ceb1c0d5d658ff37c2ea13ed059481675db83eda83604f87588157fc3542",
+      "wireInputTokensEstimate": 5399,
+      "expandedInputTokensEstimate": 5399,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 1,
+      "cell": "selectors-only",
+      "call": 11,
+      "wireSha256": "ceedacb7ca3db6e6194cf5d91d23ccefd3da50373f6d777f6ab2b71e92b1eb60",
+      "wireInputTokensEstimate": 17845,
+      "expandedInputTokensEstimate": 17845,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 2,
+      "cell": "baseline",
+      "call": 1,
+      "wireSha256": "f8d3fe870ca7a6905526939d323ecbdc00135399253652648d53e401ece7b79c",
+      "wireInputTokensEstimate": 3194,
+      "expandedInputTokensEstimate": 3194,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 2,
+      "cell": "baseline",
+      "call": 2,
+      "wireSha256": "9874de9fcbdc9dddcdb9f22bf14efbb9991b662003f9ccb48227f6542eb0933f",
+      "wireInputTokensEstimate": 76970,
+      "expandedInputTokensEstimate": 76970,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 2,
+      "cell": "baseline",
+      "call": 3,
+      "wireSha256": "9552ac0a8d80a606fe64c40cf8116e2a70eb0821f47b30655ff735e3cf3940e0",
+      "wireInputTokensEstimate": 77263,
+      "expandedInputTokensEstimate": 77263,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 2,
+      "cell": "baseline",
+      "call": 4,
+      "wireSha256": "4f3fe326036f683c238888ce1c7c42af7f5108a8d3da32d3fa30142bf9a0a9eb",
+      "wireInputTokensEstimate": 78452,
+      "expandedInputTokensEstimate": 78452,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 2,
+      "cell": "baseline",
+      "call": 5,
+      "wireSha256": "3a9fc2344482aed70977aafdda67c829fe551c3bcfee165fa01ccd31fda3be47",
+      "wireInputTokensEstimate": 89120,
+      "expandedInputTokensEstimate": 89120,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 2,
+      "cell": "baseline",
+      "call": 6,
+      "wireSha256": "4c1afc48369defa09a5d64b1fbfeb4adb7cadb65ed594979f8adaa78fc0f0868",
+      "wireInputTokensEstimate": 3236,
+      "expandedInputTokensEstimate": 3236,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 2,
+      "cell": "baseline",
+      "call": 7,
+      "wireSha256": "9560d09bb355e696f078bad0ace28640a1d82af1b4aabcd039733a13e948069f",
+      "wireInputTokensEstimate": 4169,
+      "expandedInputTokensEstimate": 4169,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 2,
+      "cell": "baseline",
+      "call": 8,
+      "wireSha256": "4aedfb3b4be27db3b60a3614976c5157923c898c41ba5fc26cda794723249d32",
+      "wireInputTokensEstimate": 7866,
+      "expandedInputTokensEstimate": 7866,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 2,
+      "cell": "baseline",
+      "call": 9,
+      "wireSha256": "8c1924752da14d25ae543b7d344e822fa19f747c9e88101f3e07209f77e4a924",
+      "wireInputTokensEstimate": 3208,
+      "expandedInputTokensEstimate": 3208,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 2,
+      "cell": "baseline",
+      "call": 10,
+      "wireSha256": "f5433fa56c4c3cf46cb280cdabf9fb6d83826ee71db2dbc2441e395c8687d216",
+      "wireInputTokensEstimate": 3843,
+      "expandedInputTokensEstimate": 3843,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 2,
+      "cell": "baseline",
+      "call": 11,
+      "wireSha256": "f0ca2db9a28e3558e1a4a190917ff362d8e7afc7ab8d55c59e8e83eec191ad80",
+      "wireInputTokensEstimate": 15919,
+      "expandedInputTokensEstimate": 15919,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 2,
+      "cell": "format-only",
+      "call": 1,
+      "wireSha256": "f8d3fe870ca7a6905526939d323ecbdc00135399253652648d53e401ece7b79c",
+      "wireInputTokensEstimate": 3194,
+      "expandedInputTokensEstimate": 3194,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 2,
+      "cell": "format-only",
+      "call": 2,
+      "wireSha256": "1f5720217ed7a0bdf9b505b2ad8d23766e85e0f6bde9e59b189e3fbfbe20d387",
+      "wireInputTokensEstimate": 76426,
+      "expandedInputTokensEstimate": 76966,
+      "referenceToolMessages": 1
+    },
+    {
+      "repeat": 2,
+      "cell": "format-only",
+      "call": 3,
+      "wireSha256": "6c65ce41de8841638d25784b2f8413735bb26e3fb0a28bb214b366a329035889",
+      "wireInputTokensEstimate": 76756,
+      "expandedInputTokensEstimate": 77277,
+      "referenceToolMessages": 2
+    },
+    {
+      "repeat": 2,
+      "cell": "format-only",
+      "call": 4,
+      "wireSha256": "9c8541f8f409dec32871d23d4af6fb4d5c01ea7e315e149d4ae5962c1bcee5b8",
+      "wireInputTokensEstimate": 77776,
+      "expandedInputTokensEstimate": 78466,
+      "referenceToolMessages": 3
+    },
+    {
+      "repeat": 2,
+      "cell": "format-only",
+      "call": 5,
+      "wireSha256": "77047a977e6af8ba9d3f94ba4426f798a4a12097b062cb0183e8ebbc85de576a",
+      "wireInputTokensEstimate": 88250,
+      "expandedInputTokensEstimate": 89138,
+      "referenceToolMessages": 4
+    },
+    {
+      "repeat": 2,
+      "cell": "format-only",
+      "call": 6,
+      "wireSha256": "4c1afc48369defa09a5d64b1fbfeb4adb7cadb65ed594979f8adaa78fc0f0868",
+      "wireInputTokensEstimate": 3236,
+      "expandedInputTokensEstimate": 3236,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 2,
+      "cell": "format-only",
+      "call": 7,
+      "wireSha256": "c9c220a5b541a41df5b768e8447195adf8a3b9bfccfe5f4bf32f1028a6f14549",
+      "wireInputTokensEstimate": 4084,
+      "expandedInputTokensEstimate": 4171,
+      "referenceToolMessages": 1
+    },
+    {
+      "repeat": 2,
+      "cell": "format-only",
+      "call": 8,
+      "wireSha256": "7ecbcf73e384ffeb7294058a181ccbe9109f892d2db23130de684dce163f439b",
+      "wireInputTokensEstimate": 7676,
+      "expandedInputTokensEstimate": 7859,
+      "referenceToolMessages": 2
+    },
+    {
+      "repeat": 2,
+      "cell": "format-only",
+      "call": 9,
+      "wireSha256": "8c1924752da14d25ae543b7d344e822fa19f747c9e88101f3e07209f77e4a924",
+      "wireInputTokensEstimate": 3208,
+      "expandedInputTokensEstimate": 3208,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 2,
+      "cell": "format-only",
+      "call": 10,
+      "wireSha256": "9570f34131025cf9f687da48d23c57a251f19d2ff1ab2b9583f4079c92eeab8d",
+      "wireInputTokensEstimate": 3850,
+      "expandedInputTokensEstimate": 3839,
+      "referenceToolMessages": 1
+    },
+    {
+      "repeat": 2,
+      "cell": "format-only",
+      "call": 11,
+      "wireSha256": "4eca05543d136319d40aece4db4c45b742cd1d223099f9f961d822bc21f330a9",
+      "wireInputTokensEstimate": 15942,
+      "expandedInputTokensEstimate": 15919,
+      "referenceToolMessages": 2
+    },
+    {
+      "repeat": 2,
+      "cell": "selectors-only",
+      "call": 1,
+      "wireSha256": "f8d3fe870ca7a6905526939d323ecbdc00135399253652648d53e401ece7b79c",
+      "wireInputTokensEstimate": 3417,
+      "expandedInputTokensEstimate": 3417,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 2,
+      "cell": "selectors-only",
+      "call": 2,
+      "wireSha256": "c20f169a798321715aeff74540826b22917eb7451e56e5f5e42793a4491a240f",
+      "wireInputTokensEstimate": 78187,
+      "expandedInputTokensEstimate": 78187,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 2,
+      "cell": "selectors-only",
+      "call": 3,
+      "wireSha256": "7b2ed1508ec720edd5b58ea172f6c1825f00b65f704c544e38a438307e7588e7",
+      "wireInputTokensEstimate": 80067,
+      "expandedInputTokensEstimate": 80067,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 2,
+      "cell": "selectors-only",
+      "call": 4,
+      "wireSha256": "ebe0b5ad28d6da614e9fb13912750cb1d424e9916c90c05edc8ec57785c9fc2e",
+      "wireInputTokensEstimate": 102203,
+      "expandedInputTokensEstimate": 102203,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 2,
+      "cell": "selectors-only",
+      "call": 5,
+      "wireSha256": "4c1afc48369defa09a5d64b1fbfeb4adb7cadb65ed594979f8adaa78fc0f0868",
+      "wireInputTokensEstimate": 3459,
+      "expandedInputTokensEstimate": 3459,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 2,
+      "cell": "selectors-only",
+      "call": 6,
+      "wireSha256": "21d65279516217ee6bed8262cbd1899506cf98a0f3e81335e9d3cd6f873f6634",
+      "wireInputTokensEstimate": 4684,
+      "expandedInputTokensEstimate": 4684,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 2,
+      "cell": "selectors-only",
+      "call": 7,
+      "wireSha256": "49d6c32f3ab9b0791f60e4a35374b3e157e1a50ddb777490976e809e1bb54048",
+      "wireInputTokensEstimate": 9049,
+      "expandedInputTokensEstimate": 9049,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 2,
+      "cell": "selectors-only",
+      "call": 8,
+      "wireSha256": "8c1924752da14d25ae543b7d344e822fa19f747c9e88101f3e07209f77e4a924",
+      "wireInputTokensEstimate": 3431,
+      "expandedInputTokensEstimate": 3431,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 2,
+      "cell": "selectors-only",
+      "call": 9,
+      "wireSha256": "accc445ad1f11bbd18a00438364b14458c54a9706cd948d9edad6f440ef8dd6e",
+      "wireInputTokensEstimate": 4242,
+      "expandedInputTokensEstimate": 4242,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 2,
+      "cell": "selectors-only",
+      "call": 10,
+      "wireSha256": "b418e27cf324a8766f700c9e529527a0e42e6b2a07a4b396852162d1f160eaf7",
+      "wireInputTokensEstimate": 5393,
+      "expandedInputTokensEstimate": 5393,
+      "referenceToolMessages": 0
+    },
+    {
+      "repeat": 2,
+      "cell": "selectors-only",
+      "call": 11,
+      "wireSha256": "a8d2c851247fed47cb374e8396dd3c7c8338fe49178f9d4eb6bef77e6e2ada31",
+      "wireInputTokensEstimate": 17833,
+      "expandedInputTokensEstimate": 17833,
+      "referenceToolMessages": 0
+    }
+  ],
+  "unavailable": [
+    "billed currency",
+    "connector/provider ingestion usage",
+    "allocated hosting",
+    "actual inference region"
+  ]
+}

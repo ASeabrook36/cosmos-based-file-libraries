@@ -1,0 +1,120 @@
+{
+  "schema": "fli.p1.runtime-attestation.v1",
+  "status": "complete",
+  "measuredCodeRevision": "ddc5f2d8bb09861a0df53c9cf64c98b6524c72fa",
+  "startupAttestationSha256": "564047e0fa3e89d51f50d2daef2ca5f2c4b07e1263efea8644f1712e7fa44a09",
+  "controlsSha256": "9896f0c85c6f50ebc9fb42b96cdf5320c9b36afc3a24814ce32d48af97d19464",
+  "newIsolatedMicrosoftProfileLibrary": true,
+  "sourceDocuments": 5,
+  "heldoutExecuted": false,
+  "ownWorktreeEnvironmentAndImportVerified": true,
+  "effectiveSearch": {
+    "searchMode": "vector",
+    "searchDefaultTop": 8,
+    "searchMaxTop": 20,
+    "embeddingDimensions": 3072,
+    "embeddingRevision": "1"
+  },
+  "answeringControls": {
+    "contextAllowancePerRun": 200000,
+    "reasoningEffort": "medium",
+    "maxOutputTokens": 8000,
+    "maxAttempts": 3,
+    "transport": "responses",
+    "store": false,
+    "automaticTruncation": false
+  },
+  "answeringModel": {
+    "model": "gpt-6.1-sol",
+    "version": "2026-09-29"
+  },
+  "managementBindingFreshBeforeAndAfter": true,
+  "sourcesAndCodeUnchanged": true,
+  "exclusiveSerialCloudWindow": true,
+  "providerContextAssessment": "Maximum successful provider input 96,652 tokens, within fixed 200,000 context allowance with 8,000 output reserve; no context-limited outcome. Cumulative input counters include multiple model calls, not a per-call window.",
+  "rows": [
+    {
+      "repeat": 1,
+      "cell": "baseline",
+      "modelCalls": 11,
+      "maximumProviderInputTokens": 94137,
+      "cachedPromptTokens": 240602,
+      "cacheWriteTokens": 109882,
+      "privateResultsSha256": "6b34160b88acdfaea8cfe0af0848ee309bf5b5433b3a86d4219da0c558abbe33",
+      "privateWireReceiptsSha256": "f5d8a52faabf3f153aa9ea8796ff2c435ee5f5ff5b8a7c0b0e4d9c91a9aa204d",
+      "privateSnapshotCheckSha256": "d4c0f095e025d658bf37ea5feeb9f6742a5e63d6404451af94444e9867536f15"
+    },
+    {
+      "repeat": 1,
+      "cell": "format-only",
+      "modelCalls": 11,
+      "maximumProviderInputTokens": 83226,
+      "cachedPromptTokens": 241815,
+      "cacheWriteTokens": 95767,
+      "privateResultsSha256": "f66770e3888768041e566e8f5a2c1c3f4c6d8636941dba1177737b7fe0bfd507",
+      "privateWireReceiptsSha256": "bfb0c7bdba5f4f71525bc6899d732aefa057c25439b819141f2bc9f96438e6d8",
+      "privateSnapshotCheckSha256": "d4c0f095e025d658bf37ea5feeb9f6742a5e63d6404451af94444e9867536f15"
+    },
+    {
+      "repeat": 1,
+      "cell": "selectors-only",
+      "modelCalls": 11,
+      "maximumProviderInputTokens": 96649,
+      "cachedPromptTokens": 177662,
+      "cacheWriteTokens": 114934,
+      "privateResultsSha256": "4bae1ec9169025124176278063be12ebff9d37cdb93d93b5e8a40f0118ddece2",
+      "privateWireReceiptsSha256": "dc32f034c556a71c6d7918994217d42c7527783a880179b69980bcfdc29207b2",
+      "privateSnapshotCheckSha256": "ecda32e2c08f5a87d4d8a9bbbb709644c86ea1b2ca7a16f7bb8524cdb4523bef"
+    },
+    {
+      "repeat": 2,
+      "cell": "baseline",
+      "modelCalls": 11,
+      "maximumProviderInputTokens": 84065,
+      "cachedPromptTokens": 244951,
+      "cacheWriteTokens": 95425,
+      "privateResultsSha256": "b7ce8e66b51c0290928cdff431dc3fc75bd5fcce328f39663e9d695eaf7a3798",
+      "privateWireReceiptsSha256": "cfd44e6520f2f2b1909f4fd57b184d820d3fb723f5d737059abf7c8c59e20802",
+      "privateSnapshotCheckSha256": "d4c0f095e025d658bf37ea5feeb9f6742a5e63d6404451af94444e9867536f15"
+    },
+    {
+      "repeat": 2,
+      "cell": "format-only",
+      "modelCalls": 11,
+      "maximumProviderInputTokens": 83198,
+      "cachedPromptTokens": 243102,
+      "cacheWriteTokens": 94452,
+      "privateResultsSha256": "a5756e1cc1a91b9e86c71d41bbb78cec01ee183c1a878d831b945d5c46fd5848",
+      "privateWireReceiptsSha256": "52a4e389ba033a812ae36f5dc4443cbce2c1a1a951c376d12308ec69b476b8ea",
+      "privateSnapshotCheckSha256": "d4c0f095e025d658bf37ea5feeb9f6742a5e63d6404451af94444e9867536f15"
+    },
+    {
+      "repeat": 2,
+      "cell": "selectors-only",
+      "modelCalls": 11,
+      "maximumProviderInputTokens": 96652,
+      "cachedPromptTokens": 187615,
+      "cacheWriteTokens": 104974,
+      "privateResultsSha256": "a482a826ff0917b7089016c2af6849626ddaad9cb9dba765b4bc38e2fa16f19a",
+      "privateWireReceiptsSha256": "d511330cb08a26660d97543959454e9d671241c18da4890f22cd7227733a68b5",
+      "privateSnapshotCheckSha256": "ecda32e2c08f5a87d4d8a9bbbb709644c86ea1b2ca7a16f7bb8524cdb4523bef"
+    }
+  ],
+  "validation": {
+    "fullTestsPassed": 1005,
+    "warnings": 14,
+    "fullTestsSeconds": 133.01,
+    "lintPassed": true,
+    "exactSavedReplyReconstruction": 95,
+    "rawPlusSelectorsBudgetRegressionCovered": true
+  },
+  "untestedLiveGates": [
+    "held-out integration confirmation",
+    "replacement or deletion while a selector request is in flight",
+    "metadata edits and new-generation retries during an active read",
+    "cross-agent personal-library rejection under production authentication",
+    "multi-instance freshness and concurrent readers under load",
+    "other extraction providers and non-text visual assets in paired model replay"
+  ],
+  "interpretation": "Counters only; cache and rate-limit state differed. No steady-state latency, billed-cost or architecture conclusion."
+}

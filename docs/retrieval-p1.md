@@ -87,10 +87,66 @@ latency, RU or money.
 
 None meets the predeclared 20% efficiency target. Preserve current compact as the
 default; reference encoding is an explicit experiment, not a selected integration
-candidate. Provider replay, independently scored source delivery and selector
-recovery are separate gates. Model output randomness, cache state and rate waits
-must remain visible; a paired pilot cannot establish a latency or general accuracy
-winner.
+candidate. These same-response measurements isolate serialization from changes in
+the model's choice of tools.
+
+The [paired replay scorecard](../records/retrieval-p1-scorecard-20261102.json)
+records all 18 planned development turns on one new, isolated Microsoft-profile
+library containing the five frozen source files. The
+[runtime receipt](../records/retrieval-p1-runtime-20261102.json) binds the actual
+API process to its own environment, source imports, effective vector settings and
+measured code revision `ddc5f2d8bb09861a0df53c9cf64c98b6524c72fa`. Source snapshots,
+model deployment binding and code stayed unchanged. All cells used Sol
+`2026-09-29`, medium reasoning, the same 200k allowance, 8k output reserve and
+three-attempt policy. The maximum successful provider input was 96,652 tokens;
+there was no context-limited outcome. Cumulative input below includes repeated
+model calls and is not the size of a single context window.
+
+| Cell, six turns each | Provider input | Provider output | Input reduction | Source-scope errors | Read budget refusals | Rate retries / wait seconds |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Current compact / legacy selectors | 690,926 | 4,338 | — | 2 | 1 | 8 / 117.07 |
+| References / legacy selectors | 675,202 | 4,259 | 2.28% | 2 | 2 | 12 / 147.08 |
+| Current compact / selector handles | 585,251 | 4,233 | 15.29% | 0 | 0 | 11 / 112.09 |
+
+Each cell made 22 model calls. All six answers per cell passed task completion,
+material factual support and citation accuracy; all four applicable table/section
+judgments per cell passed. Original-source review verified 2/2, 56/56 and 71/71
+required regions for the three tasks in every cell and repeat. This includes the
+32 labeled blank table cells and the complete section in original order. The
+scorer binds these judgments to the actual final provider input, not merely to
+the adapter's canonical evidence. Baseline and format answers were independently
+reviewed by the R2 and R1 assistants; selector answers were reviewed by the P1
+assistant and spot-reviewed by the coordinator. This is unblinded assistant
+review, not an independent human accuracy estimate. A minor compression of a
+targeting-list phrase was recorded privately and judged nonmaterial consistently
+across cells; no exact-quotation claim is made for those summaries.
+
+The selector capability target succeeded: both selective-expansion turns used
+the supported outline/section route without an unsupported expansion request.
+Baseline and format each attempted the unsupported empty-scope route twice,
+received `source_scope_unavailable`, then recovered. The selector change reduced
+input on that target task by **19.962%**, below the 20% efficiency gate. It also
+added input on the other two tasks. Neither format nor selectors passes the
+frozen efficiency gate; the selector recovery result is a separate functional
+finding, not grounds to round up or relax the threshold.
+
+Baseline's first selective-expansion repeat chose a full read; its second chose
+a selected read that exceeded the tool budget and recovered through existing
+document-scoped passages. Both format repeats took that latter recovery route.
+These route differences mean the live format reduction is a paired outcome, not
+a pure byte-for-byte serialization effect. All required source evidence was
+delivered despite those refusals. Cache hits and rate waits differed across the
+serial cells, so the recorded timings establish no latency benefit. Retrieval RU
+totals are unavailable for baseline and format because failed requests lack full
+charges; their known subtotals are 151.36 and 171.12 RU. Selector retrieval totals
+are complete at 140.72 RU. No billed-cost comparison follows from these figures.
+
+The full local suite passed **1,005 tests** (14 existing warnings); lint, format,
+diff and private-identifier checks passed. Focused coverage includes exact
+reconstruction, actual wire accounting, stale/invalid selectors, foreign personal
+binding, deletion fences and atomic refusals. Independent review found and fixed
+raw-plus-selector budget accounting before the measured code was frozen: added
+hints now count before the all-or-nothing delivery decision.
 
 ## Reproduce and hand off
 
@@ -150,10 +206,23 @@ Reviews name `repeat`, `cell`, `case`, `turn`, all four R0 quality fields,
 regions, table relationships and section order separately from answering quality.
 Only reviewed allowlist receipts belong in `records/`.
 
-P1 may inform I1 only after paired replay and lifecycle gates. Retain current
-compact if no useful gain appears; selector hints can be selected independently
-if their recovery benefit survives confirmation. I1 must use the planned current/new
-foundation × current/compact held-out comparison with frozen model/context. P1
-provides no reason to start R3 or alter physical storage. Broader provider/format
-coverage, natural remote races, multi-instance freshness, lifecycle under load,
-ANN readiness and production authentication remain outside this package.
+For the next integration decision, retain the current foundation and compact
+format, and keep references opt-in. Predeclare a selector-only confirmation on
+that retained foundation/format, with live lifecycle checks before any held-out
+use and the 20% efficiency gate recorded as failed. No foundation or format won
+in this stage, and this is not a completed I1 selection. A later changed-foundation
+I1 comparison still requires all four roadmap cells: current/new foundation ×
+current/compact evidence, with frozen model/context. This package has not consumed
+any held-out task and provides no basis to skip a cell or combine unaccepted R1
+routing/R2 representation changes with the selector experiment.
+
+Live lifecycle gates still untested are replacement/deletion during an in-flight
+selector read, metadata changes and new-generation retries during active reads,
+cross-agent personal binding under production authentication, and multi-instance
+freshness/concurrent reads under load. Existing and focused local tests cover the
+corresponding fences, but this replay was read-only and used development
+authentication. Paired answering across other extraction providers, non-text
+visual assets, held-out integration and broader workloads also remains untested.
+Freeze a new isolated source snapshot and centrally schedule those checks; never
+mutate R0 libraries to run them. P1 provides no reason to start R3, alter physical
+storage or infer actual-corpus ANN readiness.
