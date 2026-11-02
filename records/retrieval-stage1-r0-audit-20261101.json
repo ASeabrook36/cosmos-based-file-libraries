@@ -1,0 +1,51 @@
+{
+  "schema": "fli.retrieval-stage1.r0-artifact-audit.v1",
+  "sourceCommit": "a449dc01e5acde6391bfc1aa50ca07670d54097d",
+  "packBytesVerified": true,
+  "answerControlsVerified": true,
+  "cells": [
+    {
+      "role": "current",
+      "repeat": 1,
+      "completedTurns": 6,
+      "sourceArtifactsVerified": true,
+      "questionsVerified": true
+    },
+    {
+      "role": "custom",
+      "repeat": 1,
+      "completedTurns": 6,
+      "sourceArtifactsVerified": true,
+      "questionsVerified": true
+    },
+    {
+      "role": "microsoft",
+      "repeat": 1,
+      "completedTurns": 6,
+      "sourceArtifactsVerified": true,
+      "questionsVerified": true
+    },
+    {
+      "role": "microsoft",
+      "repeat": 2,
+      "completedTurns": 6,
+      "sourceArtifactsVerified": true,
+      "questionsVerified": true
+    },
+    {
+      "role": "custom",
+      "repeat": 2,
+      "completedTurns": 6,
+      "sourceArtifactsVerified": true,
+      "questionsVerified": true
+    },
+    {
+      "role": "current",
+      "repeat": 2,
+      "completedTurns": 6,
+      "sourceArtifactsVerified": true,
+      "questionsVerified": true
+    }
+  ],
+  "conclusion": "R0 original stored questions and source artifacts satisfy strengthened checks; no historical result changed."
+}
