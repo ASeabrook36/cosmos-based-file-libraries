@@ -12,6 +12,7 @@ import fcntl
 import json
 import os
 import time
+from datetime import UTC, datetime
 from pathlib import Path
 
 from fli.chunking import TiktokenTokenizer
@@ -22,6 +23,7 @@ from scripts.compare_agent_models import default_chat_factory
 from scripts.retrieval_controls import deployment_binding, private_path
 from scripts.retrieval_r0_corpus import sha256
 from scripts.retrieval_r2 import deployment_identity, exact_rank, load_source
+from scripts.retrieval_r2_offline import window_binding
 from scripts.structure_lab import Cache, TokenCache, VectorCache, cached_vectors, save
 
 CASES = ("r0-17", "r0-22", "r0-25", "r0-27", "r0-30")
@@ -35,6 +37,7 @@ def navigation_code_hashes():
         "scripts/compare_agent_models.py",
         "src/fli_demo/responses.py",
         "src/fli_demo/agent.py",
+        "scripts/retrieval_r2_offline.py",
     ]
     return {path: sha256((root / path).read_bytes()) for path in paths}
 
@@ -63,9 +66,17 @@ def plan(source_dir: Path, directory: Path):
         "scope": "three enforcement development sources; no long-document or held-out discovery claim",
         "arms": {
             "passages": {"passageTop": 8, "documentTop": 0},
+            "named-file-control": {"passageTop": 7, "documentTop": 1},
             "document-discovery": {"passageTop": 7, "documentTop": 1},
         },
-        "changedVariable": "replace the eighth passage candidate with one generated document-discovery candidate",
+        "changedVariable": "replace eighth passage with one document selected by filename lookup or summary vector",
+        "namedFileControl": (
+            "case-insensitive literal filename mentions; first position, "
+            "then filename/documentId tie break; no gold consulted"
+        ),
+        "attribution": (
+            "named-file full-read mechanism comparison; summary must beat both passage-only and named-file arms"
+        ),
         "readExpansion": (
             "same original blocks for passage hits; whole original document for document hit; deduplicated"
         ),
@@ -88,6 +99,7 @@ def plan(source_dir: Path, directory: Path):
         "selectionGate": {
             "minimumRelativeMissingRegionReduction": 0.2,
             "lostBaselineRegionIdsAllowed": 0,
+            "comparators": ["passages", "named-file-control"],
             "contextLimitedCasesAllowed": 0,
         },
         "costPolicy": (
@@ -146,6 +158,7 @@ async def freeze(args, source_dir, directory):
     embedding_binding = deployment_identity(read(private_path(args.embedding_receipt)), endpoint, embedding_deployment)
     calls, cache = [], Cache(directory / "summary-cache.json")
     started, status = time.perf_counter(), "interrupted"
+    started_at = datetime.now(UTC).isoformat()
     usage = None
 
     class ResponsesSummary:
@@ -262,6 +275,12 @@ async def freeze(args, source_dir, directory):
             "sourceArtifactDigest": source["digest"],
             "summaries": summaries,
             "vectors": {row["id"]: vector for row, vector in zip(summaries, vectors, strict=True)},
+            "measurementStartedAt": started_at,
+            "measurementFinishedAt": datetime.now(UTC).isoformat(),
+            "privateReceipts": {
+                "modelBefore": read(private_path(args.model_receipt)),
+                "embeddingBefore": read(private_path(args.embedding_receipt)),
+            },
             "summaryBinding": model_binding,
             "embeddingIdentity": embedding_binding,
             "privateBinding": {
@@ -295,6 +314,31 @@ async def freeze(args, source_dir, directory):
     print(json.dumps({"status": status, "summaryCalls": summarizer.calls, "summaryCacheHits": summarizer.hits}))
 
 
+def named_document_hits(question, documents):
+    """Existing metadata capability control. Task gold is deliberately unavailable."""
+    matches = []
+    for doc in documents:
+        position = question.casefold().find(doc["title"].casefold())
+        if position >= 0:
+            matches.append((position, doc["title"].casefold(), doc["id"]))
+    matches.sort()
+    if not matches:
+        return [], {"matchedDocuments": 0, "selectedDocumentId": None, "tieAtFirstPosition": False}
+    selected = next(doc for doc in documents if doc["id"] == matches[0][2])
+    row = {
+        "id": selected["id"] + ":metadata:n0",
+        "documentId": selected["id"],
+        "sourceSha256": selected["sourceSha256"],
+        "sourceDigest": selected["sourceDigest"],
+        "sourceSpans": [{"blockId": b["id"], "start": 0, "end": len(b["text"])} for b in selected["blocks"]],
+    }
+    return [row], {
+        "matchedDocuments": len(matches),
+        "selectedDocumentId": selected["id"],
+        "tieAtFirstPosition": sum(m[0] == matches[0][0] for m in matches) > 1,
+    }
+
+
 def evaluate(args, source_dir, directory):
     import numpy as np
 
@@ -304,31 +348,67 @@ def evaluate(args, source_dir, directory):
     if digest(frozen) != expected or frozen["planDigest"] != digest(controls):
         raise ValueError("navigation artifact changed")
     binding = frozen["privateBinding"]
+    if args.offline:
+        finalization = read(directory / "navigation-finalization.json")
+        final_digest = finalization.pop("digest")
+        if digest(finalization) != final_digest or finalization["frozenArtifactDigest"] != expected:
+            raise ValueError("historical navigation finalization changed")
+        model_after, embedding_after = finalization["after"]["model"], finalization["after"]["embedding"]
+    else:
+        model_after = read(private_path(args.model_receipt))
+        embedding_after = read(private_path(args.embedding_receipt))
+        if summary_binding(model_after, binding["endpoint"], binding["summaryDeployment"]) != frozen["summaryBinding"]:
+            raise ValueError("summary model changed")
+        if (
+            deployment_identity(embedding_after, binding["endpoint"], binding["embeddingDeployment"])
+            != frozen["embeddingIdentity"]
+        ):
+            raise ValueError("embedding model changed")
+    common = {
+        "started": datetime.fromisoformat(frozen["measurementStartedAt"]),
+        "finished": datetime.fromisoformat(frozen["measurementFinishedAt"]),
+        "endpoint": binding["endpoint"],
+    }
     if (
-        summary_binding(read(private_path(args.model_receipt)), binding["endpoint"], binding["summaryDeployment"])
+        window_binding(
+            frozen["privateReceipts"]["modelBefore"],
+            model_after,
+            **common,
+            deployment=binding["summaryDeployment"],
+            model="gpt-6.1-sol",
+            revision="2026-09-29",
+        )
         != frozen["summaryBinding"]
     ):
-        raise ValueError("summary model changed")
-    if (
-        deployment_identity(
-            read(private_path(args.embedding_receipt)), binding["endpoint"], binding["embeddingDeployment"]
-        )
-        != frozen["embeddingIdentity"]
-    ):
-        raise ValueError("embedding model changed")
+        raise ValueError("historical summary window differs")
+    embedding_window = window_binding(
+        frozen["privateReceipts"]["embeddingBefore"],
+        embedding_after,
+        **common,
+        deployment=binding["embeddingDeployment"],
+        model="text-embedding-3-large",
+        revision="1",
+    )
+    if embedding_window["bindingSha256"] != frozen["embeddingIdentity"]:
+        raise ValueError("historical embedding window differs")
     array = np.load(source_dir / vectors["arrayFile"], mmap_mode="r", allow_pickle=False)
     rows = [r for r in source["variants"][controls["selectedRepresentation"]] if r["documentId"] in SOURCES]
     passage_vectors = {r["id"]: array[vectors["rows"][r["id"]]] for r in rows}
     docs, tok = {d["id"]: d for d in documents}, TiktokenTokenizer()
-    measurements, lost, gains = [], {}, {}
+    measurements, lost, gains, named_choices = [], {}, {}, {}
     for task in tasks:
         query = array[vectors["queries"][task["case"]]]
         passage_hits = exact_rank(rows, passage_vectors, query, 8)
         summary_hits = exact_rank(frozen["summaries"], frozen["vectors"], query, 1)
-        pair = []
-        for arm, hits in (("passages", passage_hits), ("document-discovery", passage_hits[:7] + summary_hits)):
+        named_hits, named_choices[task["case"]] = named_document_hits(task["question"], documents)
+        pair = {}
+        for arm, hits in (
+            ("passages", passage_hits),
+            ("named-file-control", passage_hits[:7] + named_hits),
+            ("document-discovery", passage_hits[:7] + summary_hits),
+        ):
             result = source_relevance(task, docs, hits, tok)
-            pair.append(result)
+            pair[arm] = result
             measurements.append(
                 result
                 | {
@@ -337,17 +417,22 @@ def evaluate(args, source_dir, directory):
                     "evidenceContextLimited": result["expandedSourceJsonTokensEstimate"] > 200000,
                 }
             )
-        a, b = [set(r["deliveredRegionIds"]) for r in pair]
-        if a - b:
-            lost[task["case"]] = sorted(a - b)
-        if b - a:
-            gains[task["case"]] = sorted(b - a)
+        candidate = set(pair["document-discovery"]["deliveredRegionIds"])
+        for comparator in ("passages", "named-file-control"):
+            baseline = set(pair[comparator]["deliveredRegionIds"])
+            if baseline - candidate:
+                lost.setdefault(comparator, {})[task["case"]] = sorted(baseline - candidate)
+            if candidate - baseline:
+                gains.setdefault(comparator, {})[task["case"]] = sorted(candidate - baseline)
     missing = {
         arm: sum(len(m["missingRegionIds"]) for m in measurements if m["arm"] == arm) for arm in controls["arms"]
     }
-    reduction = 1 - missing["document-discovery"] / missing["passages"] if missing["passages"] else 0
+    reductions = {
+        comparator: (1 - missing["document-discovery"] / missing[comparator] if missing[comparator] else 0)
+        for comparator in ("passages", "named-file-control")
+    }
     limited = sorted({m["case"] for m in measurements if m["evidenceContextLimited"]})
-    passed = not lost and not limited and reduction >= 0.2
+    passed = not lost and not limited and all(value >= 0.2 for value in reductions.values())
     report = {
         "schema": "fli.r2.navigation-result.v1",
         "status": "complete",
@@ -357,23 +442,54 @@ def evaluate(args, source_dir, directory):
         "lostRegionIdsByCase": lost,
         "gainedRegionIdsByCase": gains,
         "missingRegions": missing,
-        "relativeMissingRegionReduction": reduction,
+        "relativeMissingRegionReduction": reductions,
+        "namedFileChoices": named_choices,
         "evidenceContextLimitedCases": limited,
         "candidatePassedPredeclaredGate": passed,
-        "recommendation": "bounded-document-discovery-candidate" if passed else "retain-passages-only",
+        "recommendation": "bounded-document-discovery-candidate"
+        if passed
+        else "retain-existing-metadata-outline-full-read",
         "summaryCreationCalls": frozen["summaryCreationCalls"],
         "unchangedRefreshAdditionalModelCalls": frozen["unchangedRefreshAdditionalModelCalls"],
         "omission": frozen["omission"],
         "summarySourceInputs": frozen["summarySourceInputs"],
         "changedSourceRefresh": "unmeasured; recompute affected document summary",
         "limitations": [
-            "three development sources/five section-comparison tasks, not broad vague navigation",
+            "three development sources/five named-file section-comparison tasks, not broad vague navigation",
             "source delivery only; answering quality/actual provider evidence tokens unmeasured",
             "source reads expanded locally; Cosmos/Blob write/read charges and latency unavailable",
             "source gain may increase read/context cost; review before integration",
         ],
     }
-    save(directory / "navigation-result.json", report)
+    if args.offline:
+        if digest(report) != finalization["resultDigest"]:
+            raise ValueError("offline navigation result differs from accepted result")
+        output = private_path(args.output)
+        if output.exists():
+            raise ValueError("offline navigation output must be new")
+        save(
+            output,
+            {
+                "status": "complete",
+                "cloudCalls": 0,
+                "verifiedMeasurements": len(measurements),
+                "allFrozenResultsReproduced": True,
+                "finalizationDigest": final_digest,
+            },
+        )
+    else:
+        if (directory / "navigation-finalization.json").exists():
+            raise ValueError("navigation comparison already finalized; use --offline")
+        save(directory / "navigation-result.json", report)
+        finalization = {
+            "schema": "fli.r2.navigation-finalization.v1",
+            "frozenArtifactDigest": expected,
+            "resultDigest": digest(report),
+            "modelWindowVerified": True,
+            "after": {"model": model_after, "embedding": embedding_after},
+        }
+        finalization["digest"] = digest(finalization)
+        save(directory / "navigation-finalization.json", finalization)
     print(
         json.dumps(
             {k: report[k] for k in ("status", "missingRegions", "relativeMissingRegionReduction", "recommendation")}
@@ -388,6 +504,8 @@ def main():
     parser.add_argument("--work-dir", type=Path, required=True)
     parser.add_argument("--model-receipt", type=Path)
     parser.add_argument("--embedding-receipt", type=Path)
+    parser.add_argument("--offline", action="store_true", help="Re-evaluate previously finalized vectors without cloud")
+    parser.add_argument("--output", type=Path, help="New private offline verification receipt")
     args = parser.parse_args()
     source_dir, directory = private_path(args.source_dir), private_path(args.work_dir)
     directory.mkdir(mode=0o700, parents=True, exist_ok=True)

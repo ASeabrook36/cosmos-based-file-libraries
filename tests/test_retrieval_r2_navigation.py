@@ -66,3 +66,21 @@ def test_navigation_inputs_reject_changed_passage_decision_or_vector_bytes(tmp_p
     (source_dir / "r2-vectors.npy").write_bytes(b"reembedded")
     with pytest.raises(ValueError, match="vector bytes changed"):
         nav.inputs(source_dir, output)
+
+
+def test_named_file_control_uses_question_mentions_without_gold_and_records_choice():
+    docs = [
+        {
+            "id": key,
+            "title": name,
+            "sourceSha256": key,
+            "sourceDigest": key,
+            "blocks": [{"id": "b0", "text": "Original source"}],
+        }
+        for key, name in (("d06", "ea-policy.docx"), ("d07", "ea-annex-1.docx"))
+    ]
+    hits, choice = nav.named_document_hits("Compare EA-ANNEX-1.DOCX with ea-policy.docx", docs)
+    assert choice == {"matchedDocuments": 2, "selectedDocumentId": "d07", "tieAtFirstPosition": False}
+    assert hits[0]["documentId"] == "d07"
+    assert hits[0]["sourceSpans"] == [{"blockId": "b0", "start": 0, "end": 15}]
+    assert nav.named_document_hits("Unspecified file", docs)[0] == []

@@ -118,18 +118,22 @@ source tasks (`r0-17`, `r0-22`, `r0-25`, `r0-27`, `r0-30`). This development sel
 is declared before summary generation and is not evidence for broad vague-file
 navigation, the long compilation, or held-out sources.
 
-Both arms return at most eight candidates: eight passages versus seven passages
-plus one document-summary candidate. The latter expands to the same original
-canonical document blocks; generated summary text is never counted as evidence.
+Three arms return at most eight candidates: eight passages; seven passages plus
+one document found by literal filename lookup; and seven passages plus one
+summary-vector-selected document. The filename control picks the first mentioned
+source filename case-insensitively, with a deterministic tie break and recorded
+choice. It cannot inspect gold. Both document arms use the same complete-document
+expansion, preventing ordinary full reads from being mistaken for summary-vector
+value. Generated summary text is never counted as evidence.
 Document summaries use the existing `Summarizer.reduce` over every canonical
 block, a 12k source input bound and 220-token summary bound. Fixed Sol Responses,
 medium reasoning, 8k output and three provider attempts remain explicit. The three
 source bodies fit this summary input bound; the reducer does not truncate them.
 Both arms use the same frozen query vectors and float16 exact cosine reference.
 
-Predeclare at least 20% reduction in missing source regions, no lost
-baseline-delivered region IDs on any task, and no 200k evidence-only budget
-excess. Report added source JSON/body tokens, summary creation and validation
+Predeclare at least 20% reduction in missing source regions against **both** the
+passage-only and filename-control arms, no lost comparator-delivered region IDs
+on any task, and no 200k evidence-only budget excess. Report added source JSON/body tokens, summary creation and validation
 retry usage, unchanged-source cache reuse and omission separately. Changed-source
 refresh remains unmeasured; a document body change invalidates its summary.
 A coverage gain at substantially higher read cost needs integration review.
@@ -176,6 +180,8 @@ These are local source serialization estimates, not provider answering tokens or
 live Blob/REST costs. Broader packing supplies more source per hit and may help
 complete-section tasks while reducing exact-fact retrieval. The observed vector
 count reduction does not establish proportional embedding-token, RU or cost gains.
+Estimated passage embedding input falls only from 436,722 to 404,961 tokens
+(7.3%), far less than the vector-row reduction.
 
 The shared embedding cache made **589 provider requests**, reporting **642,547
 input tokens**, no retries/throttles, and no retry wait. Elapsed embedding time was
@@ -183,3 +189,27 @@ input tokens**, no retries/throttles, and no retry wait. Elapsed embedding time 
 comparison. Original model settings remained pinned across fresh management
 receipts. Frozen vectors remain private, hashed, and available for the navigation
 comparison and a later expressly justified experiment.
+
+## Recheck after temporary model cleanup
+
+Historical receipt validation is explicitly tied to the measurement's start/end,
+including its original freshness interval. It is not a claim about present cloud
+inventory. The completed passage artifact was finalized against preserved before/
+after ARM receipts, and all 60 source-delivery measurements were recomputed from
+its frozen vectors without any cloud calls.
+
+```sh
+.venv/bin/python -m scripts.retrieval_r2_offline finalize \
+  --source-dir "$R2_PRIVATE/pilot" \
+  --before "$R2_PRIVATE/embedding-before.json" --after "$R2_PRIVATE/embedding-after.json"
+.venv/bin/python -m scripts.retrieval_r2_offline recheck \
+  --source-dir "$R2_PRIVATE/pilot" --output "$R2_PRIVATE/new-offline-recheck.json"
+# After the navigation evaluation has stored its verified finalization:
+.venv/bin/python -m scripts.retrieval_r2_navigation evaluate --offline \
+  --source-dir "$R2_PRIVATE/pilot" --work-dir "$R2_PRIVATE/navigation" \
+  --output "$R2_PRIVATE/new-navigation-offline-recheck.json"
+```
+
+Use the exact committed measurement implementation in a separate worktree. Source,
+vector, model-window, code and original-result digests must all match. Rechecks
+create new receipts; they do not overwrite or re-embed completed artifacts.
