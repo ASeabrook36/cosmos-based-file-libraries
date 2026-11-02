@@ -18,7 +18,7 @@ def reference(document, start, count=10):
     ]
     return {
         "result_ids": [b["id"] for b in bindings],
-        "scores": [start + i * 0.001 for i in range(count)],
+        "scores": [start - i * 0.001 for i in range(count)],
         "result_bindings": bindings,
         "error": None,
         "null_scores": 0,
@@ -26,7 +26,7 @@ def reference(document, start, count=10):
 
 
 def inputs():
-    first, second = reference("first", 0.7), reference("second", 0.1)
+    first, second = reference("first", 0.1), reference("second", 0.7)
     allowed = {b["id"]: b for result in (first, second) for b in result["result_bindings"]}
     return first, second, allowed
 
@@ -186,3 +186,25 @@ def test_correct_ids_and_order_do_not_hide_wrong_distances():
     checks = result_checks(second, truth, allowed)
     assert checks["recallAt10"] == 1 and checks["distanceOrder"]
     assert checks["distanceMismatches"] == 10 and not checks["passed"]
+
+
+def test_changed_code_remains_blocked_for_execution_but_allows_named_read_only_reanalysis(tmp_path):
+    import hashlib
+
+    import scripts.retrieval_r1 as r1
+
+    save(tmp_path / "inputs.json", {"private": "fixture"})
+    save(
+        tmp_path / "controls.json",
+        {
+            "inputsSha256": hashlib.sha256((tmp_path / "inputs.json").read_bytes()).hexdigest(),
+            "codeHashes": {"older-grader": "fixture-hash"},
+        },
+    )
+    with pytest.raises(ValueError, match="implementation changed"):
+        r1.frozen(tmp_path)
+    controls, _ = r1.frozen(tmp_path, reanalysis=True)
+    assert controls["codeHashes"] == {"older-grader": "fixture-hash"}
+    save(tmp_path / "inputs.json", {"private": "changed"})
+    with pytest.raises(ValueError, match="inputs changed"):
+        r1.frozen(tmp_path, reanalysis=True)

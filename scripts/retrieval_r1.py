@@ -129,6 +129,8 @@ def prepare(args: argparse.Namespace) -> None:
             "k": K,
             "recallFloor": RECALL_FLOOR,
             "scoreTieEpsilon": EPSILON,
+            "scoreSemantics": "cosine similarity; higher is better",
+            "referenceVersion": 2,
             "minimumUsefulEfficiencyImprovement": 0.20,
             "qualityTolerance": "zero isolation/order/cardinality violations; each repeat mean recall >= 0.95",
             "changedVariable": (
@@ -145,11 +147,11 @@ def prepare(args: argparse.Namespace) -> None:
     print("Prepared immutable R1 source/vector/query inputs; no cloud call.")
 
 
-def frozen(state: Path) -> tuple[dict, dict]:
+def frozen(state: Path, *, reanalysis: bool = False) -> tuple[dict, dict]:
     controls, inputs = read(state / "controls.json"), read(state / "inputs.json")
     if digest((state / "inputs.json").read_bytes()) != controls["inputsSha256"]:
         raise ValueError("frozen inputs changed")
-    if controls["codeHashes"] != code_hashes():
+    if not reanalysis and controls["codeHashes"] != code_hashes():
         raise ValueError("measurement implementation changed after freeze; create a new named run")
     return controls, inputs
 
@@ -274,12 +276,12 @@ def merged_exact(
             )
         ):
             raise ValueError("independent exact reference has invalid source bindings")
-        if any(a > b + EPSILON for a, b in zip(scores, scores[1:], strict=False)):
-            raise ValueError("document exact result is not distance ordered")
+        if any(a + EPSILON < b for a, b in zip(scores, scores[1:], strict=False)):
+            raise ValueError("document exact result is not descending cosine-similarity ordered")
         pairs.extend(zip(ids, scores, strict=True))
     if len({p[0] for p in pairs}) != len(pairs):
         raise ValueError("exact document references overlap")
-    return sorted(pairs, key=lambda pair: (pair[1], pair[0]))[:K]
+    return sorted(pairs, key=lambda pair: (-pair[1], pair[0]))[:K]
 
 
 def result_checks(
@@ -291,7 +293,7 @@ def result_checks(
     ids, scores = row["result_ids"], row.get("scores", [])
     complete = not row.get("error") and len(ids) == K and len(set(ids)) == K
     valid_scores = len(scores) == len(ids) and all(finite(s) for s in scores)
-    order = bool(complete and valid_scores and all(a <= b + EPSILON for a, b in zip(scores, scores[1:], strict=False)))
+    order = bool(complete and valid_scores and all(a + EPSILON >= b for a, b in zip(scores, scores[1:], strict=False)))
     bindings = row.get("result_bindings", [])
     isolated = (
         len(bindings) == len(ids)
@@ -445,7 +447,10 @@ def percentile(values: list[float], fraction: float) -> float | None:
 
 
 def report(args: argparse.Namespace) -> dict:
-    controls, inputs = frozen(args.state)
+    reanalysis = getattr(args, "command", "report") == "reanalyse"
+    controls, inputs = frozen(args.state, reanalysis=True) if reanalysis else frozen(args.state)
+    if reanalysis and args.out.exists():
+        raise ValueError("reanalysis requires a fresh output; preserve the original result")
     rows = [json.loads(line) for line in (args.state / "measurements.jsonl").read_text().splitlines()]
     counts = dict(Counter(row["documentId"] for row in inputs["chunks"]))
     allowed = {row["id"]: row for row in inputs["chunks"]}
@@ -574,7 +579,7 @@ def report(args: argparse.Namespace) -> dict:
             for range_id in before.get("documents", {}).get(document, {}).get("ranges", []):
                 winner_ranges[range_id] += 1
     out = {
-        "schema": "fli.retrieval-r1-result.v1",
+        "schema": "fli.retrieval-r1-result.v2",
         "baselineCommit": BASE,
         "controls": controls,
         "sources": [
@@ -602,6 +607,22 @@ def report(args: argparse.Namespace) -> dict:
         "actualScopeReady": readiness.get("engaged", False),
         "readinessSeconds": readiness.get("secondsToEngage"),
         "results": results,
+        "analysis": {
+            "referenceVersion": 2,
+            "scoreSemantics": "cosine similarity; higher is better",
+            "source": "https://learn.microsoft.com/en-us/cosmos-db/query/vectordistance",
+            "reanalysis": reanalysis,
+            "implementationCommit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO, text=True).strip(),
+            "codeHashes": code_hashes(),
+            "rawMeasurementsSha256": digest((args.state / "measurements.jsonl").read_bytes()),
+            "correction": (
+                "The v1 grader incorrectly treated cosine VectorDistance as ascending distance. "
+                "The v2 read-only reanalysis uses documented descending similarity; "
+                "source data, raw calls, repeats, 0.95 recall floor and 1e-6 tolerance stay unchanged."
+                if reanalysis
+                else None
+            ),
+        },
         "limits": [
             "No application API permission/lifecycle gate is replaced by direct chunk diagnostics.",
             "No hybrid semantic relevance or exact-hybrid recall claim.",
@@ -618,7 +639,7 @@ def report(args: argparse.Namespace) -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    parser.add_argument("command", choices=("prepare", "load", "measure", "report"))
+    parser.add_argument("command", choices=("prepare", "load", "measure", "report", "reanalyse"))
     parser.add_argument("--state", type=private_path, required=True)
     parser.add_argument("--capture", type=Path)
     parser.add_argument("--canary", type=Path)
@@ -631,7 +652,7 @@ def main() -> None:
             parser.error("prepare requires --capture and --canary")
         prepare(args)
         return
-    if args.command == "report":
+    if args.command in {"report", "reanalyse"}:
         if not args.out:
             parser.error("report requires --out")
         report(args)
