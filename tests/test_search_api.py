@@ -405,7 +405,12 @@ async def test_filter_keys_are_logged_but_never_their_values(ctx, caplog):
         search(client, lib, filters={"tags": ["diagnosis=private"], "authors": ["Jane Doe"]})
     [line] = [r for r in caplog.records if r.getMessage() == "library_search"]
     assert line.filterKeys == ["authors", "tags"]
-    logged = " ".join(f"{r.getMessage()} {r.__dict__}" for r in caplog.records)
+    # Standard metadata includes OS paths; source values must be absent from
+    # messages and custom fields, regardless of the checkout directory name.
+    standard = logging.makeLogRecord({}).__dict__.keys()
+    logged = " ".join(
+        f"{r.getMessage()} { {k: v for k, v in r.__dict__.items() if k not in standard} }" for r in caplog.records
+    )
     assert "private" not in logged and "Jane" not in logged
 
 

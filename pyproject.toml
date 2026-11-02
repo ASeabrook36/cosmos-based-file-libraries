@@ -28,6 +28,7 @@ dependencies = [
 [project.optional-dependencies]
 reuse-lab = ["reportlab>=4.4,<5"]  # opt-in compatibility fixtures only; no application dependency
 samples = ["Pillow>=10.1,<14"]
+comparison = ["openai>=3.37,<4"]  # tested Responses transport; normal demo requirements remain compatible
 demo = [
   "streamlit>=1.40,<2",
   "openai>=1.50,<4",

@@ -34,3 +34,8 @@ The user-requested [evidence pack](../docs/testing/2026-10-27/README.md) adds sa
 `agent-capabilities-20261027.json` summarizes the subsequent implemented capability package and four iterative frozen-corpus replays. [Sanitized answers/traces and live probes](../docs/testing/2026-10-27/agent-fixes/README.md) retain successes, regressions, repair costs and remaining model-quality gaps. The iterations are not controlled replicas or a general performance benchmark (E49).
 
 `agent-scope-experiment-20261027.json` preserves the subsequent **abandoned** interpretation/semantic-review experiment, including failures and token/time measurements. The user clarified the file-library versus consuming-agent boundary; that experimental implementation was removed. It is not an accepted quality benchmark or shipped capability (E50).
+
+`local-environment-primary-20261102.json` records setup-only delivery to the primary
+local checkout, fresh and repeated dependency installation, 705 passing tests and
+the portable logging-test correction. Actual UI picker discovery remains a
+separate user confirmation; automatic cloud setup is excluded.

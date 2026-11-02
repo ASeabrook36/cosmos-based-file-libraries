@@ -307,3 +307,14 @@ Subsequent human-run paired and casual tests exposed remaining agent-integration
 Natural-test follow-ups implement the [agent evidence contract](docs/agent-retrieval.md): explicit file finding versus passage evidence, scoped searches, bounded source expansion, cross-format image inspection and reference-adapter progress/follow-up handling. Refresh API/adapter/tool definitions; compatible existing source artifacts need no re-ingestion.
 
 When deploying Python changes to the API or demo adapter, restart the affected API and Streamlit processes. A browser reload or Streamlit **Rerun** can leave imported Python modules and cached clients from an older version in memory. After tool/signature changes, restart both processes together. The library contents and agent registry persist; in-memory chat history resets on a Streamlit process restart. See E51 in [the evidence record](docs/evidence.md).
+
+## Local development setup
+
+The **File Library Index** local environment configures dependencies for new
+Codex worktrees and provides Test, Lint and Check actions. It does not load cloud
+credentials or start services. See [local development](docs/local-development.md).
+
+```sh
+sh scripts/dev setup
+sh scripts/dev check -q
+```
