@@ -72,6 +72,7 @@ This is a local environment, separate from a published Codex Cloud environment.
 The primary-checkout setup package was validated in a fresh isolated worktree;
 existing primary-checkout dependencies and running services were left untouched.
 The environment configuration format and discovery path were checked against the
-installed desktop app. Direct UI verification remains separate: computer-use
-access to the app itself is unavailable to the agent. The complete commands can
-also be run directly using the instructions above.
+installed desktop app. On 2026-11-02, the user confirmed that File Library Index
+appears in the local Environment picker. App-driven automatic worktree setup has
+not been exercised by this validation; the exact setup and action commands passed
+directly. The complete commands can also be run using the instructions above.

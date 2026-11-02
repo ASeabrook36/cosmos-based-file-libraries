@@ -37,5 +37,5 @@ The user-requested [evidence pack](../docs/testing/2026-10-27/README.md) adds sa
 
 `local-environment-primary-20261102.json` records setup-only delivery to the primary
 local checkout, fresh and repeated dependency installation, 705 passing tests and
-the portable logging-test correction. Actual UI picker discovery remains a
-separate user confirmation; automatic cloud setup is excluded.
+the portable logging-test correction. The user subsequently confirmed that the
+environment appears in the local picker; automatic cloud setup is excluded.

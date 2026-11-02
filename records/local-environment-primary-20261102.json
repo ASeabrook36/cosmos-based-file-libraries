@@ -20,7 +20,8 @@
     "shellSyntax": "passed",
     "lint": "passed",
     "format": "passed",
-    "privacy": "passed"
+    "privacy": "passed",
+    "uiPickerDiscovery": "passed; user-confirmed"
   },
   "tests": {
     "command": "sh scripts/dev check -q",
@@ -40,7 +41,7 @@
   "automaticSetupStartsServices": false,
   "applicationOrInfrastructureChanged": false,
   "existingPrimaryCheckoutEnvironmentModified": false,
-  "uiPickerVerification": "Pending user confirmation; direct computer-use access to Codex is blocked.",
+  "uiPickerVerification": "User confirmed on 2026-11-02 that File Library Index appears in the local Environment picker.",
   "limitations": [
     "Other Python versions and operating systems untested.",
     "App-driven automatic worktree setup was not exercised; the exact configured commands passed directly.",
