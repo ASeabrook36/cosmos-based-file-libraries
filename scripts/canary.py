@@ -56,6 +56,7 @@ import asyncio
 import base64
 import hashlib
 import json
+import math
 import os
 import platform
 import random
@@ -714,9 +715,10 @@ async def run_query(
                 {
                     "error": error,
                     "knownRequestCharge": tally.request_charge if tally.responses else fallback.request_charge,
-                    "chargeComplete": bool(tally.responses)
+                    "visibleChargeComplete": bool(tally.responses)
                     and all(r["requestCharge"] is not None for r in tally.response_metrics)
                     and bool(routing),
+                    "chargeComplete": False,  # the hook cannot prove that no SDK/query-plan calls were hidden
                     "rawResponses": tally.response_metrics,
                     "fallbackPages": fallback.pages if not tally.responses else None,
                 }
@@ -771,7 +773,9 @@ async def run_query(
     ]
     if scored:
         measurement.scores = [item.get("score") for item in items]
-        measurement.null_scores = sum(1 for item in items if item.get("score") is None)
+        measurement.null_scores = sum(
+            1 for score in measurement.scores if type(score) not in (int, float) or not math.isfinite(score)
+        )
     return measurement
 
 
