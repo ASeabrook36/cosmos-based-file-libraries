@@ -198,6 +198,20 @@ def test_evaluate_fails_definition_and_crud_problems():
     assert not checks["container_definitions_match"].passed
 
 
+@pytest.mark.parametrize("group", ["vector", "exact_vector", "hybrid", "exact_hybrid"])
+def test_canary_requires_unique_complete_question_sets(group):
+    ids = [str(i) for i in range(10)]
+    measurements = [_ms(group, i, ids) for i in range(QUERIES_PER_KIND)]
+    measurements[-1].query = 0
+    assert not _passing(**{group: measurements})["searches_executed"].passed
+
+
+@pytest.mark.parametrize("count", [9, 11])
+def test_canary_rejects_partial_or_partition_appended_topk(count):
+    measurements = [_ms("vector", i, [str(j) for j in range(count)]) for i in range(QUERIES_PER_KIND)]
+    assert not _passing(vector=measurements)["no_empty_results"].passed
+
+
 def test_deployment_env_restores_mangled_output_names():
     from scripts.deployment_env import exports
 

@@ -31,7 +31,9 @@ def fake_vector(text: str) -> list[float]:
 
 class FakeEmbedder:
     def __init__(self, **kwargs):
-        self.usage = SimpleNamespace(prompt_tokens=0, throttled=0)
+        from fli.embedding import EmbeddingUsage
+
+        self.usage = EmbeddingUsage()
 
     async def embed(self, texts):
         self.usage.prompt_tokens += sum(len(t.split()) for t in texts)
@@ -318,3 +320,93 @@ def test_experimental_index_target_receipt_and_cleanup(fakes, tmp_path, index):
     assert record["targetFingerprint"] != canary.target_fingerprint(
         "https://fake.documents.azure.com:443/", "fli", index, "recreated"
     )
+
+
+def test_private_input_capture_is_hash_bound_and_reusable(fakes, tmp_path, monkeypatch):
+    monkeypatch.setenv("AOAI_EMBEDDING_MODEL_REVISION", "1")
+    capture = tmp_path / "private" / "inputs.json"
+    records = tmp_path / "receipts"
+    assert (
+        canary.main(
+            [
+                "--corpus",
+                str(REPO / "docs"),
+                "--index-wait-minutes",
+                "5",
+                "--records-dir",
+                str(records),
+                "--capture-inputs",
+                str(capture),
+                "--target-chunks",
+                "50",
+            ]
+        )
+        == 0
+    )
+    frozen = json.loads(capture.read_text())
+    [receipt] = records.glob("canary-*.json")
+    assert json.loads(receipt.read_text())["inputCaptureSha256"] == hashlib.sha256(capture.read_bytes()).hexdigest()
+    assert frozen["embedding"] == {"model": "text-embedding-3-large", "revision": "1", "dimensions": 3072}
+    assert len(frozen["chunks"]) >= 50 and len(frozen["queryVectors"]) == 40
+    assert all(len(row["embedding"]) == 3072 and row["text"] for row in frozen["chunks"])
+    assert capture.stat().st_mode & 0o777 == 0o600
+    with pytest.raises(canary.CanaryError, match="already exists"):
+        import asyncio
+        from argparse import Namespace
+
+        asyncio.run(canary.run(Namespace(capture_inputs=capture)))
+
+
+def test_query_preserves_failed_attempt_usage_and_all_response_ranges():
+    import asyncio
+    import base64
+
+    class Container:
+        calls = 0
+
+        def query_items(self, sql, **kwargs):
+            self.calls += 1
+            attempt = self.calls
+
+            async def values():
+                for range_id in ("0", "1"):
+                    report = {
+                        "UtilizedVectorIndexes": [
+                            {"IndexSpec": {"VectorIndexType": "QuantizedFlat", "ShardKeys": ["/libraryId"]}}
+                        ]
+                    }
+                    kwargs["raw_response_hook"](
+                        raw_response(
+                            {
+                                "x-ms-request-charge": "2.5",
+                                "x-ms-documentdb-partitionkeyrangeid": range_id,
+                                "x-ms-documentdb-query-metrics": "retrievedDocumentCount=5;outputDocumentCount=1",
+                                "x-ms-cosmos-index-utilization": base64.b64encode(json.dumps(report).encode()).decode(),
+                            }
+                        )
+                    )
+                if attempt == 1:
+                    raise throttled()
+                yield {"id": "one", "score": 0.2}
+
+            return values()
+
+    async def noop(_seconds):
+        pass
+
+    result = asyncio.run(
+        canary.run_query(
+            Container(),
+            "SELECT TOP 10 c.id FROM c WHERE c.libraryId = @libraryId",
+            [],
+            "lib",
+            canary.SearchMeasurement("vector", 0),
+            canary.Throttle(sleep=noop),
+            scored=True,
+        )
+    )
+    assert result.request_charge == 5 and result.known_attempt_charge == 10
+    assert len(result.attempts) == 2 and result.attempts[0]["error"] == "HTTP 429"
+    assert result.partition_ranges == ["0", "1"] and result.range_diagnostics_complete
+    assert len(result.index_utilizations) == 2 and result.retry_wait_ms == 100
+    assert result.scores == [0.2]

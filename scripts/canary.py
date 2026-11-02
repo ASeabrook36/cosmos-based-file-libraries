@@ -275,6 +275,16 @@ class SearchMeasurement:
     measured_by: str = "raw_response_hook"  # or "response_hook", which misses hybrid components
     milliseconds: float = 0.0
     error: str | None = None
+    # V3 additions preserve successful-attempt fields above for historical comparisons.
+    scores: list[float | None] = field(default_factory=list)
+    partition_ranges: list[str] = field(default_factory=list)
+    range_diagnostics_complete: bool = False
+    index_utilizations: list[Any] = field(default_factory=list)
+    attempts: list[dict[str, Any]] = field(default_factory=list)
+    known_attempt_charge: float = 0.0
+    attempt_charge_complete: bool = False
+    retry_wait_ms: float = 0.0
+    result_bindings: list[dict[str, Any]] = field(default_factory=list)
 
 
 @dataclass
@@ -313,17 +323,28 @@ def evaluate(
         return [f"{m.kind}[{m.query}]: {m.error}" for m in ms if m.error]
 
     ran = errors(vector) + errors(exact_vector) + errors(hybrid) + errors(exact_hybrid)
+    expected_queries = set(range(QUERIES_PER_KIND))
+    complete = all(
+        len(group) == QUERIES_PER_KIND and {m.query for m in group} == expected_queries
+        for group in (vector, exact_vector, hybrid, exact_hybrid)
+    )
     checks.append(
         Check(
             "searches_executed",
-            not ran and len(vector) == len(hybrid) == QUERIES_PER_KIND,
-            ran or "ok",
+            not ran and complete,
+            ran or ("ok" if complete else "missing or duplicate query/reference ordinals"),
             f"{QUERIES_PER_KIND} vector-only and {QUERIES_PER_KIND} hybrid searches, and their exact"
             " references, all ran",
         )
     )
-    empty = [f"{m.kind}[{m.query}]" for m in [*vector, *hybrid] if not m.error and not m.result_ids]
-    checks.append(Check("no_empty_results", not empty, empty or "ok", "every search returns results"))
+    empty = [
+        f"{m.kind}[{m.query}]"
+        for m in [*vector, *hybrid, *exact_vector, *exact_hybrid]
+        if not m.error and (len(m.result_ids) != K or len(set(m.result_ids)) != K)
+    ]
+    checks.append(
+        Check("no_empty_results", not empty, empty or "ok", f"every search returns exactly {K} unique results")
+    )
     nulls = sum(m.null_scores for m in vector)
     checks.append(Check("no_null_scores", nulls == 0, nulls, "every vector-only result has a distance"))
 
@@ -428,6 +449,8 @@ class RawTally:
         self.metrics: dict[str, float] = {}
         self.saw_metrics = False
         self.index_utilization: Any = None
+        self.index_utilizations: list[Any] = []
+        self.response_metrics: list[dict[str, Any]] = []
 
     def __call__(self, pipeline_response: Any) -> None:
         headers = pipeline_response.http_response.headers
@@ -438,8 +461,20 @@ class RawTally:
             self.saw_metrics = True
             for key, value in parse_query_metrics(raw).items():
                 self.metrics[key] = self.metrics.get(key, 0.0) + value
-        if self.index_utilization is None:
-            self.index_utilization = decode_index_utilization(headers.get("x-ms-cosmos-index-utilization"))
+        index = decode_index_utilization(headers.get("x-ms-cosmos-index-utilization"))
+        if index is not None:
+            self.index_utilizations.append(index)
+            if self.index_utilization is None:
+                self.index_utilization = index
+        self.response_metrics.append(
+            {
+                "range": headers.get("x-ms-documentdb-partitionkeyrangeid"),
+                "requestCharge": float(headers["x-ms-request-charge"]) if headers.get("x-ms-request-charge") else None,
+                "retrieved": parse_query_metrics(raw).get("retrievedDocumentCount"),
+                "status": getattr(pipeline_response.http_response, "status_code", None),
+                "indexUtilization": index,
+            }
+        )
 
 
 class Throttle:
@@ -451,6 +486,7 @@ class Throttle:
 
     def __init__(self, sleep: Callable[[float], Any] = asyncio.sleep) -> None:
         self.count = 0
+        self.wait_seconds = 0.0
         self._sleep = sleep
 
     async def run(self, call: Callable[[], Any]) -> Any:
@@ -470,7 +506,9 @@ class Throttle:
                     wait = float(hint) / 1000 if hint is not None else backoff_seconds(attempt)
                 except ValueError:
                     wait = backoff_seconds(attempt)
-                await self._sleep(min(MAX_THROTTLE_WAIT_SECONDS, max(wait, 0.1)))
+                wait = min(MAX_THROTTLE_WAIT_SECONDS, max(wait, 0.1))
+                self.wait_seconds += wait
+                await self._sleep(wait)
         raise CanaryError("unreachable")
 
 
@@ -630,8 +668,9 @@ async def run_query(
     *,
     scored: bool,
     prefix_partition_key: bool = True,
+    document_partition: str | None = None,
 ) -> SearchMeasurement:
-    """Run one search. Charge and metrics are those of the attempt that succeeded.
+    """Run one search, retaining all visible attempts as well as successful-attempt metrics.
 
     ``prefix_partition_key=False`` sends the same query with the library only in ``WHERE``,
     to tell whether routing by the hierarchical key's prefix changes how Cosmos runs it.
@@ -642,31 +681,61 @@ async def run_query(
     # A RANK-ordered (hybrid) query is never routed by partition key: it would run unranked (E27).
     key = partition_key_for(sql, library_id)
     routing = {"partition_key": key} if prefix_partition_key and key is not None else {}
+    if document_partition is not None:
+        params = {p["name"]: p["value"] for p in parameters}
+        if key is None or not prefix_partition_key or "c.documentId = @documentId" not in sql:
+            raise ValueError("full-key reference requires a vector query constrained to its document")
+        if params.get("@documentId") != document_partition or params.get("@libraryId") != library_id:
+            raise ValueError("full-key reference binding differs from its SQL filter")
+        routing = {"partition_key": [library_id, document_partition]}
 
     async def attempt() -> list[dict[str, Any]]:
         nonlocal tally, fallback
         tally, fallback = RawTally(), ResponseTally()
-        return [
-            item
-            async for item in container.query_items(
-                sql,
-                parameters=parameters,
-                populate_query_metrics=True,
-                populate_index_metrics=True,
-                raw_response_hook=tally,
-                response_hook=fallback,
-                **routing,
+        error = None
+        try:
+            return [
+                item
+                async for item in container.query_items(
+                    sql,
+                    parameters=parameters,
+                    populate_query_metrics=True,
+                    populate_index_metrics=True,
+                    raw_response_hook=tally,
+                    response_hook=fallback,
+                    **routing,
+                )
+            ]
+        except CosmosHttpResponseError as exc:
+            error = f"HTTP {exc.status_code}"
+            raise
+        finally:
+            measurement.attempts.append(
+                {
+                    "error": error,
+                    "knownRequestCharge": tally.request_charge if tally.responses else fallback.request_charge,
+                    "chargeComplete": bool(tally.responses)
+                    and all(r["requestCharge"] is not None for r in tally.response_metrics)
+                    and bool(routing),
+                    "rawResponses": tally.response_metrics,
+                    "fallbackPages": fallback.pages if not tally.responses else None,
+                }
             )
-        ]
 
     before = throttle.count
+    before_wait = throttle.wait_seconds
     started = time.perf_counter()
     try:
         items = await throttle.run(attempt)
     except CosmosHttpResponseError as exc:
-        measurement.error = f"HTTP {exc.status_code} {(exc.message or '')[:300]}"
+        measurement.error = f"HTTP {exc.status_code}"
         items = []
     measurement.throttled = throttle.count - before
+    measurement.retry_wait_ms = round((throttle.wait_seconds - before_wait) * 1000, 1)
+    measurement.known_attempt_charge = round(sum(a["knownRequestCharge"] for a in measurement.attempts), 2)
+    measurement.attempt_charge_complete = bool(measurement.attempts) and all(
+        a["chargeComplete"] for a in measurement.attempts
+    )
     measurement.milliseconds = round((time.perf_counter() - started) * 1000, 1)
     if tally.responses:
         charge, responses, metrics, saw_metrics = (
@@ -676,6 +745,11 @@ async def run_query(
             tally.saw_metrics,
         )
         measurement.index_utilization = tally.index_utilization
+        measurement.index_utilizations = tally.index_utilizations
+        measurement.partition_ranges = sorted({r["range"] for r in tally.response_metrics if r["range"] is not None})
+        measurement.range_diagnostics_complete = bool(tally.response_metrics) and all(
+            r["range"] is not None for r in tally.response_metrics
+        )
     else:  # the pipeline hook saw nothing: fall back, and say so in the record
         charge, responses, metrics, saw_metrics = (
             fallback.request_charge,
@@ -692,7 +766,11 @@ async def run_query(
     if not measurement.error and responses == 0:
         measurement.error = "no responses reached either hook; charges unmeasured"
     measurement.result_ids = [item["id"] for item in items]
+    measurement.result_bindings = [
+        {name: item[name] for name in ("id", "libraryId", "documentId", "generation") if name in item} for item in items
+    ]
     if scored:
+        measurement.scores = [item.get("score") for item in items]
         measurement.null_scores = sum(1 for item in items if item.get("score") is None)
     return measurement
 
@@ -741,7 +819,14 @@ async def wait_for_index(
             prefix_partition_key=False,
         )
         elapsed = clock() - start
-        engaged = prefix.retrieved_document_count is not None and prefix.retrieved_document_count < limit
+        engaged = (
+            prefix.error is None
+            and prefix.null_scores == 0
+            and len(prefix.result_ids) == K
+            and len(set(prefix.result_ids)) == K
+            and prefix.retrieved_document_count is not None
+            and 0 <= prefix.retrieved_document_count < limit
+        )
         done = engaged or elapsed >= minutes * 60
         polls.append(
             {
@@ -857,6 +942,15 @@ async def run(args: argparse.Namespace) -> int:
     from azure.identity.aio import DefaultAzureCredential
 
     from fli.embedding import AzureOpenAIEmbedder
+    from scripts.retrieval_r0_corpus import private_path
+
+    capture = getattr(args, "capture_inputs", None)
+    if capture is not None:
+        capture = private_path(capture)
+        if capture.exists():
+            raise CanaryError("private capture already exists; preserve it and choose a fresh path")
+        if os.environ.get("AOAI_EMBEDDING_MODEL_REVISION") != "1":
+            raise CanaryError("private capture requires verified text-embedding-3-large model revision 1")
 
     index_container = getattr(args, "index_container", "chunks")
     cosmos_endpoint = _require_env("COSMOS_ENDPOINT")
@@ -1016,6 +1110,24 @@ async def run(args: argparse.Namespace) -> int:
             )
 
             raw_vectors = await embedder.embed([*vector_queries, *hybrid_queries])
+            if capture is not None:
+                capture.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+                frozen = {
+                    "schema": "fli.canary-inputs.v1",
+                    "embedding": {"model": EMBEDDING_MODEL, "revision": "1", "dimensions": dimensions},
+                    "targetFingerprint": record["targetFingerprint"],
+                    "chunkingVersion": chunking_version,
+                    "documents": documents,
+                    "chunks": bodies,
+                    "vectorQueries": vector_queries,
+                    "hybridQueries": hybrid_queries,
+                    "queryVectors": raw_vectors,
+                    "embeddingUsage": asdict(embedder.usage),
+                }
+                serialized = json.dumps(frozen).encode()
+                with os.fdopen(os.open(capture, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600), "wb") as handle:
+                    handle.write(serialized)
+                record["inputCaptureSha256"] = hashlib.sha256(serialized).hexdigest()
             log(f"waiting for the vector index (up to {args.index_wait_minutes:g} minutes)")
             record["indexWait"] = await wait_for_index(
                 chunks_container, library_id, raw_vectors[0], len(bodies), search_throttle, args.index_wait_minutes
@@ -1261,6 +1373,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         "--index-wait-minutes", type=float, default=20, help="how long to wait for the vector index to engage"
     )
     parser.add_argument("--records-dir", type=Path, default=REPO / "records")
+    parser.add_argument(
+        "--capture-inputs",
+        type=Path,
+        help="opt-in fresh PRIVATE file outside every checkout for exact source/query/vector reuse",
+    )
     parser.add_argument("--keep", action="store_true", help="keep the canary library instead of deleting it")
     parser.add_argument("--cleanup", metavar="LIBRARY_ID", help="delete a kept canary library, then exit")
     parser.add_argument("--count-only", action="store_true", help="count the corpus's chunks without touching Azure")

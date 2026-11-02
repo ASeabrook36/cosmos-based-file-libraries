@@ -95,7 +95,7 @@ def _rows(ru, retrieved, ids_normal, ids_exact, index="QuantizedFlat"):
 def test_grade_scoped_when_cost_reads_and_recall_hold():
     ids = [str(i) for i in range(10)]
     base = summarize(_rows([15.0, 15.2, 14.8], 50, ids, ids), expected_queries=1)
-    later = summarize(_rows([15.1, 15.2, 15.0], 52, ids, ids), expected_queries=1)
+    later = summarize(_rows([15.1, 15.2, 15.0], 50, ids, ids), expected_queries=1)
     g = grade(base, later)
     assert g["scoped"] and all(g.values())
 
@@ -198,6 +198,29 @@ def test_readiness_probe_avoids_tiny_stage_three_shards():
     assert readiness_library(2).size >= 1000
     assert max(lib.size for lib in stage_libraries(3)) < 1000
     assert readiness_library(3) in stage_libraries(1)
+
+
+def test_retrieved_rows_also_require_the_predeclared_repeat_spread():
+    ids = [str(i) for i in range(10)]
+    base = summarize(_rows([15.0, 15.0, 15.0], 50, ids, ids), expected_queries=1)
+    later = summarize(_rows([15.0, 15.0, 15.0], 51, ids, ids), expected_queries=1)
+    result = grade(base, later)
+    assert result["retrievedWithinTolerance"]
+    assert not result["retrievedWithinBaselineSpread"] and not result["scoped"]
+
+
+@pytest.mark.parametrize("result_ids", [["same"] * 10, [str(i) for i in range(20)]])
+def test_duplicate_or_appended_partition_results_cannot_pass(result_ids):
+    rows = _rows([15.0, 15.0, 15.0], 50, result_ids, result_ids)
+    result = summarize(rows, expected_queries=1)
+    assert not result["complete"]
+    assert not grade(result, result)["scoped"]
+
+
+def test_boolean_cost_metric_is_not_a_measured_number():
+    ids = [str(i) for i in range(10)]
+    result = summarize(_rows([True, True, True], 50, ids, ids), expected_queries=1)
+    assert not result["metricsComplete"] and not grade(result, result)["scoped"]
 
 
 def test_report_does_not_treat_missing_baseline_or_probe_as_pass(tmp_path):
