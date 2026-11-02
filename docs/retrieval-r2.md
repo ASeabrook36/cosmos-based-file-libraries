@@ -213,3 +213,59 @@ its frozen vectors without any cloud calls.
 Use the exact committed measurement implementation in a separate worktree. Source,
 vector, model-window, code and original-result digests must all match. Rechecks
 create new receipts; they do not overwrite or re-embed completed artifacts.
+
+## Navigation result — stop this bounded summary-vector comparison
+
+[The exhaustive bound](../records/retrieval-r2-navigation-bound-20261101.json)
+first executes the frozen passage-only and filename-control arms on the five
+named-file tasks. It then evaluates **all 15 possible task/document choices** for
+the one-document slot, retaining the same seven passage hits and source expansion.
+Gold evaluates each possible result; it never selects the filename-control
+candidate. No generated summary is used in this bound.
+
+| Task | Passage-only gold regions | Filename-control gold regions |
+| --- | --- | --- |
+| r0-17, complete regulatory-principles section | 7/71 | 71/71 |
+| r0-22, complete representations/appeals section | 8/11 | 11/11 |
+| r0-25, complete civil-sanctions appeals section | 6/9 | 9/9 |
+| r0-27, complete consultation-exclusions section | 5/8 | 8/8 |
+| r0-30, cross-file representation/evidence comparison | 1/12 | 8/12 |
+
+There are **zero strictly improving, no-loss document choices** against the
+filename control. For the first four tasks, choosing the named document ties
+complete coverage and alternatives lose source regions. For r0-30, choosing the
+other relevant document gains four annex regions but loses seven policy regions;
+choosing the original document ties the control. Therefore even an oracle
+one-document summary ranker cannot pass the frozen positive-gain/no-loss gate.
+The coordinator accepted stopping cloud summary generation for this comparison.
+
+This is a source-expansion feasibility result, **not** measured summary quality or
+evidence that discovery vectors never help. The fixed first-filename control is
+not a claim that a complete agent must always pick the first file or can only read
+one document. An ordinary agent may read both requested files. Section discovery,
+vague file navigation, changed-source refresh, actual summary creation/embedding/
+omission provider costs, and model use of those summaries remain untested. Their
+costs are unavailable, not zero. The local bound itself made zero cloud calls.
+The optional generation/cache/omission driver has synthetic plumbing tests only.
+
+The filename control's whole-document source JSON estimates are 20,920–54,566
+tokens per task, versus 709–885 for passage-only. This confirms why an unmatched
+full-read comparison would conflate expanded source delivery with discovery-vector
+value. It supplies no provider-token, Cosmos/Blob latency or cost winner.
+
+```sh
+.venv/bin/python -m scripts.retrieval_r2_navigation_bound \
+  --source-dir "$R2_PRIVATE/pilot" --work-dir "$R2_PRIVATE/navigation" \
+  --output "$R2_PRIVATE/new-navigation-bound.json"
+```
+
+For this completed package, keep the current production representation/layout and
+existing catalogue/outline/full-read capabilities. Preserve the frozen granular
+and rejected coalesced vectors as reproducible experiment artifacts. Do not start
+R3 based on this package: no discovery level has demonstrated incremental value,
+and no physical-layout comparison follows from a failed representation gate.
+I1 should combine only independently justified candidates (for example a reviewed
+P1 response contract) with the unchanged foundation, then use the reserved held-out
+matrix and lifecycle checks. A future discovery experiment needs already frozen
+vague/selective development tasks and a matched existing-capability control;
+R2's named-file slice cannot settle that question.
