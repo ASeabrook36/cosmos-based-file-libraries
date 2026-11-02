@@ -1,0 +1,408 @@
+{
+  "schema": "fli.r2.local.v1",
+  "status": "complete",
+  "controls": {
+    "schema": "fli.r2.controls.v1",
+    "baseCommit": "a449dc01e5acde6391bfc1aa50ca07670d54097d",
+    "manifestSha256": "ef9e8ae4037903e8c18a1db09dbb7410030be53ab6c35e6549218ae6803ed1cf",
+    "tasksSha256": "997a7090c3cca5dacef760a5d0a241eeed4f90168ae427877ec70b4e51deaab5",
+    "caseIds": [
+      "r0-01",
+      "r0-02",
+      "r0-03",
+      "r0-04",
+      "r0-05",
+      "r0-06",
+      "r0-07",
+      "r0-08",
+      "r0-09",
+      "r0-10",
+      "r0-11",
+      "r0-12",
+      "r0-13",
+      "r0-14",
+      "r0-15",
+      "r0-16",
+      "r0-17",
+      "r0-18",
+      "r0-19",
+      "r0-20",
+      "r0-21",
+      "r0-22",
+      "r0-23",
+      "r0-24",
+      "r0-25",
+      "r0-26",
+      "r0-27",
+      "r0-28",
+      "r0-29",
+      "r0-30"
+    ],
+    "sourceIds": [
+      "d01",
+      "d02",
+      "d03",
+      "d04",
+      "d05",
+      "d06",
+      "d07",
+      "d08"
+    ],
+    "variants": [
+      "granular-zero-overlap-v1",
+      "coalesced-500-zero-overlap-v1"
+    ],
+    "targetTokens": 500,
+    "overlapTokens": 0,
+    "tokenizer": "cl100k_base",
+    "embeddingModel": "text-embedding-3-large",
+    "dimensions": 3072,
+    "dataType": "float16",
+    "top": 8,
+    "ranking": "independent exact cosine; float16 conversion as production helper",
+    "readExpansion": "complete canonical source blocks addressed by passage spans, source-order deduplicated",
+    "summaryVectors": false,
+    "heldoutExecuted": false,
+    "selectionGate": {
+      "minimumRelativeVectorCountReduction": 0.2,
+      "perTaskGoldRegionRegressionAllowed": 0,
+      "criterion": "baseline delivered-region set must be a subset of candidate delivered-region set"
+    },
+    "qualityScope": "direct original-source delivery; no answer-model or general accuracy claim",
+    "physicalPerformance": "unmeasured; no Cosmos/index changes",
+    "evidenceOnlyTokenAllowance": 200000,
+    "contextPolicy": "Source JSON above 200k makes selection inconclusive; this evidence-only bound excludes answering prompt/output reserves",
+    "codeSha256": {
+      "src/fli/structural_enrichment.py": "29bdc6325734802ae546b0040d218512d3131d05b08e8e6dbc85ece0f4bed8f3",
+      "src/fli/structure_representation.py": "1c9e02b96ac6d6535dcd9681f1606e4c0c4298aea49782bb342041578598a60e",
+      "src/fli/structure_lab.py": "50de9c0caa8d37f330b78afd8e9cf262aef3d0ba9b217664195c0fd8c30295fb",
+      "src/fli/chunking.py": "f799eceec274b3930a4aeb61a11347f7c86381c817b5f9323556b1fef272221e",
+      "src/fli/query.py": "bdbea3ca40f7d581f80431df0cd331ccfede09bae5d4354da725745bd782e6a1",
+      "src/fli/embedding.py": "7fc5e895ed2874233e8bb21b8638bf475e37e51e1fa43f59cba0307e60c6298f",
+      "scripts/retrieval_r2.py": "b6290d5ed7a5a9620c1e4c0e438bb8badf31d6a017a884ac7bfbf60a1390c7c0",
+      "scripts/structure_lab.py": "5e170b8833113639a2f0145658c34fb30afaa935f00332931835dd5019ce9ddc",
+      "scripts/retrieval_r0_corpus.py": "55dfa26084afce524729f3fd54bf61a9f7a1e3903aeff049b73d75b5fbc7753b",
+      "scripts/retrieval_controls.py": "596b5ae6f474abe5289db6b87681ff899783b019353814c2be44d70271e468d0"
+    }
+  },
+  "sourceArtifactDigest": "c353bbc59db6e2ad225567f6b0df07589651eedeb4c8bd328635d8340e7b8663",
+  "originalRegionsVerified": 256,
+  "rows": [
+    {
+      "variant": "granular-zero-overlap-v1",
+      "sourceId": "d01",
+      "sourceSha256": "b191349dc18aca3b074b56b50e940390a049687d5de03a306b601ad496bf9f78",
+      "canonicalTreeDigest": "9c782f4228f246c1e23a7cf991103c629228f87aebd91ca48c2179510d940f4e",
+      "passageTokensEstimate": {
+        "count": 317,
+        "total": 16067,
+        "min": 3,
+        "p50": 41,
+        "p95": 128,
+        "max": 186,
+        "under100": 274
+      },
+      "sourceBlocks": 523,
+      "nodes": 3,
+      "tableBlocks": 14,
+      "rowsDigest": "06b9c9c6ee3848e0aecb205a638cb9aecaf0f66764898142973e93f01049e8e1"
+    },
+    {
+      "variant": "granular-zero-overlap-v1",
+      "sourceId": "d02",
+      "sourceSha256": "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e",
+      "canonicalTreeDigest": "ada61d6ad6ca88cae9e551d31e963683bdbc155264c004bd3eb0426a0985b0ff",
+      "passageTokensEstimate": {
+        "count": 54,
+        "total": 3573,
+        "min": 7,
+        "p50": 61,
+        "p95": 151,
+        "max": 161,
+        "under100": 41
+      },
+      "sourceBlocks": 104,
+      "nodes": 2,
+      "tableBlocks": 0,
+      "rowsDigest": "af08a62799b7dc87055af7d950eedf10655cf91f01bf035adc3dd247fbaab7f7"
+    },
+    {
+      "variant": "granular-zero-overlap-v1",
+      "sourceId": "d03",
+      "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+      "canonicalTreeDigest": "7da2acbf470e8a0387f383d03400bedb5fdfc0d58e96130ec35230152be033f5",
+      "passageTokensEstimate": {
+        "count": 4,
+        "total": 439,
+        "min": 22,
+        "p50": 25,
+        "p95": 360,
+        "max": 360,
+        "under100": 3
+      },
+      "sourceBlocks": 8,
+      "nodes": 1,
+      "tableBlocks": 1,
+      "rowsDigest": "14e5ecd9a83db44b9c16d46c7670c08b8ef52c74072389d2bf1aaa73919c71b3"
+    },
+    {
+      "variant": "granular-zero-overlap-v1",
+      "sourceId": "d04",
+      "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+      "canonicalTreeDigest": "97813403d0ee09ffa84f78541d080e3b0300f0bd2f2754a09af12a0f5f45858c",
+      "passageTokensEstimate": {
+        "count": 48,
+        "total": 1070,
+        "min": 8,
+        "p50": 12,
+        "p95": 60,
+        "max": 117,
+        "under100": 46
+      },
+      "sourceBlocks": 62,
+      "nodes": 3,
+      "tableBlocks": 3,
+      "rowsDigest": "c5bd7fe78591407dcf4c4097272b6911c00c2a74c5b0450b14c471e91a5ab5e8"
+    },
+    {
+      "variant": "granular-zero-overlap-v1",
+      "sourceId": "d05",
+      "sourceSha256": "6d630d556448c43197bcd820241c996141e166592c140cac094de5b8014a83b1",
+      "canonicalTreeDigest": "5d790064bd9414b59441a1c5a68d03778ee4791333b768bd096c72e31fc56b70",
+      "passageTokensEstimate": {
+        "count": 6770,
+        "total": 383333,
+        "min": 4,
+        "p50": 41,
+        "p95": 138,
+        "max": 499,
+        "under100": 6048
+      },
+      "sourceBlocks": 12903,
+      "nodes": 141,
+      "tableBlocks": 2625,
+      "rowsDigest": "4905427ffed8e282bd59e20da0426ecf97351105af2c68d0804340f3c451c867"
+    },
+    {
+      "variant": "granular-zero-overlap-v1",
+      "sourceId": "d06",
+      "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+      "canonicalTreeDigest": "a35ec751f73da9d3b1bcf63976272ccfdd25533bb6c779008557e433dd86f8da",
+      "passageTokensEstimate": {
+        "count": 494,
+        "total": 12866,
+        "min": 2,
+        "p50": 22,
+        "p95": 59,
+        "max": 103,
+        "under100": 493
+      },
+      "sourceBlocks": 687,
+      "nodes": 64,
+      "tableBlocks": 0,
+      "rowsDigest": "dbc684ff1ac30f3256c40d3f2d5140e95a2967e64dd9d41b8536bc96f2b7bd1e"
+    },
+    {
+      "variant": "granular-zero-overlap-v1",
+      "sourceId": "d07",
+      "sourceSha256": "b44961e2ca8a6f17304aca249e540e2a01527ac5609034d2efccff24c0ede50f",
+      "canonicalTreeDigest": "2e9f35380a12ef69fe8084269affc70b9317715465fafece753359f9b624c060",
+      "passageTokensEstimate": {
+        "count": 170,
+        "total": 4879,
+        "min": 2,
+        "p50": 21,
+        "p95": 71,
+        "max": 122,
+        "under100": 167
+      },
+      "sourceBlocks": 261,
+      "nodes": 24,
+      "tableBlocks": 0,
+      "rowsDigest": "f91a60a1ed15e5064ad032a627553ede4e25659eb166cb7e2e55d224bb72c82b"
+    },
+    {
+      "variant": "granular-zero-overlap-v1",
+      "sourceId": "d08",
+      "sourceSha256": "d75d314e01abf6f15bd46672b376d7664c32c1a2f4c371b71b1ad1bb6f377317",
+      "canonicalTreeDigest": "c5053cb0da5136bdda01c8ee73991a1d5fef4f9dca265aa4284dd13160460c0c",
+      "passageTokensEstimate": {
+        "count": 578,
+        "total": 14495,
+        "min": 4,
+        "p50": 14,
+        "p95": 63,
+        "max": 137,
+        "under100": 571
+      },
+      "sourceBlocks": 616,
+      "nodes": 50,
+      "tableBlocks": 1,
+      "rowsDigest": "fbe3be0419cde3fbd234e54f558faf7a97f9f6207903835420fc823927d4f34b"
+    },
+    {
+      "variant": "coalesced-500-zero-overlap-v1",
+      "sourceId": "d01",
+      "sourceSha256": "b191349dc18aca3b074b56b50e940390a049687d5de03a306b601ad496bf9f78",
+      "canonicalTreeDigest": "9c782f4228f246c1e23a7cf991103c629228f87aebd91ca48c2179510d940f4e",
+      "passageTokensEstimate": {
+        "count": 53,
+        "total": 15143,
+        "min": 6,
+        "p50": 412,
+        "p95": 497,
+        "max": 500,
+        "under100": 19
+      },
+      "sourceBlocks": 523,
+      "nodes": 3,
+      "tableBlocks": 14,
+      "rowsDigest": "cf568ea59d08191dec4797daf7ec74c2411079e00128246cd9fe61b783a9e657"
+    },
+    {
+      "variant": "coalesced-500-zero-overlap-v1",
+      "sourceId": "d02",
+      "sourceSha256": "ba0b81f5ff29d6eb24f0b6458a2e0f2843abb29109ca431313590317e5bcfd7e",
+      "canonicalTreeDigest": "ada61d6ad6ca88cae9e551d31e963683bdbc155264c004bd3eb0426a0985b0ff",
+      "passageTokensEstimate": {
+        "count": 8,
+        "total": 3343,
+        "min": 318,
+        "p50": 413,
+        "p95": 488,
+        "max": 488,
+        "under100": 0
+      },
+      "sourceBlocks": 104,
+      "nodes": 2,
+      "tableBlocks": 0,
+      "rowsDigest": "09fba5522577a9da54b0fc56006453b7a1599eedc46a7a6b0c3c6e890a22414f"
+    },
+    {
+      "variant": "coalesced-500-zero-overlap-v1",
+      "sourceId": "d03",
+      "sourceSha256": "00a718302a8ad2b60bd283f6eabb2e9db4074c1d0a4d761b89cfd3758ae5dd7a",
+      "canonicalTreeDigest": "7da2acbf470e8a0387f383d03400bedb5fdfc0d58e96130ec35230152be033f5",
+      "passageTokensEstimate": {
+        "count": 3,
+        "total": 439,
+        "min": 22,
+        "p50": 57,
+        "p95": 360,
+        "max": 360,
+        "under100": 2
+      },
+      "sourceBlocks": 8,
+      "nodes": 1,
+      "tableBlocks": 1,
+      "rowsDigest": "fcc1198258e0b2ee01e16314f9723371540a434fd6057b41a83fe22ab4680c28"
+    },
+    {
+      "variant": "coalesced-500-zero-overlap-v1",
+      "sourceId": "d04",
+      "sourceSha256": "f9c28875993e373d3e3af45f8cdb9e711f1c9e99abc6e2413b646662bf9a2c6f",
+      "canonicalTreeDigest": "97813403d0ee09ffa84f78541d080e3b0300f0bd2f2754a09af12a0f5f45858c",
+      "passageTokensEstimate": {
+        "count": 8,
+        "total": 795,
+        "min": 46,
+        "p50": 104,
+        "p95": 145,
+        "max": 145,
+        "under100": 3
+      },
+      "sourceBlocks": 62,
+      "nodes": 3,
+      "tableBlocks": 3,
+      "rowsDigest": "c32afd115389289fdc1b0ac072b60fddc732c2f5a29704fc3135fda58e86ac7e"
+    },
+    {
+      "variant": "coalesced-500-zero-overlap-v1",
+      "sourceId": "d05",
+      "sourceSha256": "6d630d556448c43197bcd820241c996141e166592c140cac094de5b8014a83b1",
+      "canonicalTreeDigest": "5d790064bd9414b59441a1c5a68d03778ee4791333b768bd096c72e31fc56b70",
+      "passageTokensEstimate": {
+        "count": 3147,
+        "total": 360177,
+        "min": 4,
+        "p50": 49,
+        "p95": 487,
+        "max": 500,
+        "under100": 2386
+      },
+      "sourceBlocks": 12903,
+      "nodes": 141,
+      "tableBlocks": 2625,
+      "rowsDigest": "0747203c597492d215494b9b6de052c49ac5488bb5fa6968d1cfc68b7ff793aa"
+    },
+    {
+      "variant": "coalesced-500-zero-overlap-v1",
+      "sourceId": "d06",
+      "sourceSha256": "265ebf61664164930c8804f6143454a88680aac53e9aecd348abc31d21a347b1",
+      "canonicalTreeDigest": "a35ec751f73da9d3b1bcf63976272ccfdd25533bb6c779008557e433dd86f8da",
+      "passageTokensEstimate": {
+        "count": 67,
+        "total": 9947,
+        "min": 8,
+        "p50": 119,
+        "p95": 474,
+        "max": 499,
+        "under100": 29
+      },
+      "sourceBlocks": 687,
+      "nodes": 64,
+      "tableBlocks": 0,
+      "rowsDigest": "000e7d599cffdbd03d24d5b0d42ae9775fc6334a79c299c75098c76514d53f1c"
+    },
+    {
+      "variant": "coalesced-500-zero-overlap-v1",
+      "sourceId": "d07",
+      "sourceSha256": "b44961e2ca8a6f17304aca249e540e2a01527ac5609034d2efccff24c0ede50f",
+      "canonicalTreeDigest": "2e9f35380a12ef69fe8084269affc70b9317715465fafece753359f9b624c060",
+      "passageTokensEstimate": {
+        "count": 26,
+        "total": 4081,
+        "min": 27,
+        "p50": 120,
+        "p95": 453,
+        "max": 458,
+        "under100": 11
+      },
+      "sourceBlocks": 261,
+      "nodes": 24,
+      "tableBlocks": 0,
+      "rowsDigest": "55b46f77b655f515b3555aa9dccf89160d3cf25431e763d9850f8f6217cf6f9a"
+    },
+    {
+      "variant": "coalesced-500-zero-overlap-v1",
+      "sourceId": "d08",
+      "sourceSha256": "d75d314e01abf6f15bd46672b376d7664c32c1a2f4c371b71b1ad1bb6f377317",
+      "canonicalTreeDigest": "c5053cb0da5136bdda01c8ee73991a1d5fef4f9dca265aa4284dd13160460c0c",
+      "passageTokensEstimate": {
+        "count": 56,
+        "total": 11036,
+        "min": 10,
+        "p50": 158,
+        "p95": 479,
+        "max": 491,
+        "under100": 17
+      },
+      "sourceBlocks": 616,
+      "nodes": 50,
+      "tableBlocks": 1,
+      "rowsDigest": "67b5172948496c5542f1b31a36f78e2ed857df0d400629b0012d4fb06477724d"
+    }
+  ],
+  "uniqueEmbeddingTexts": 8717,
+  "uniqueEmbeddingTokensEstimate": 642547,
+  "rowsByVariant": {
+    "granular-zero-overlap-v1": 8435,
+    "coalesced-500-zero-overlap-v1": 3368
+  },
+  "validation": {
+    "allEightCanonicalTreesEqualR0": true,
+    "focusedTestsPassed": 49,
+    "fullSuiteBeforeGateTightening": 991,
+    "cloudExecuted": false
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "schema": "fli.r2.offline-recheck.v1",
+  "status": "complete",
+  "attestationDigest": "6596410d5a81f1d5bdc6b2bb9f25acedb75ec029687f5ab9db2ca8e97380a5a9",
+  "verifiedMeasurements": 60,
+  "heldoutExecuted": false,
+  "cloudCalls": 0,
+  "allFrozenResultsReproduced": true,
+  "selectionGrade": {
+    "pairedTasks": 30,
+    "regressedTasks": [
+      "r0-01",
+      "r0-02",
+      "r0-09",
+      "r0-10"
+    ],
+    "improvedTasks": [
+      "r0-02",
+      "r0-07",
+      "r0-11",
+      "r0-15",
+      "r0-17",
+      "r0-18",
+      "r0-20",
+      "r0-22",
+      "r0-24",
+      "r0-25",
+      "r0-27",
+      "r0-29",
+      "r0-30"
+    ],
+    "lostRegionIdsByCase": {
+      "r0-01": [
+        "d01:p30"
+      ],
+      "r0-02": [
+        "d01:p63"
+      ],
+      "r0-09": [
+        "d02:p59"
+      ],
+      "r0-10": [
+        "d02:p59"
+      ]
+    },
+    "gainedRegionIdsByCase": {
+      "r0-02": [
+        "d01:p32",
+        "d01:p75",
+        "d02:p26"
+      ],
+      "r0-07": [
+        "d01:p391",
+        "d01:p507"
+      ],
+      "r0-11": [
+        "d03:p5"
+      ],
+      "r0-15": [
+        "d05:p276"
+      ],
+      "r0-17": [
+        "d06:p154",
+        "d06:p156",
+        "d06:p157",
+        "d06:p158",
+        "d06:p160",
+        "d06:p85",
+        "d06:p86",
+        "d06:p87"
+      ],
+      "r0-18": [
+        "d06:p95",
+        "d06:p96"
+      ],
+      "r0-20": [
+        "d06:p508"
+      ],
+      "r0-22": [
+        "d06:p574",
+        "d06:p579",
+        "d06:p580"
+      ],
+      "r0-24": [
+        "d07:p203"
+      ],
+      "r0-25": [
+        "d07:p253",
+        "d07:p255",
+        "d07:p256"
+      ],
+      "r0-27": [
+        "d08:p126",
+        "d08:p127",
+        "d08:p128"
+      ],
+      "r0-29": [
+        "d08:p584",
+        "d08:p598"
+      ],
+      "r0-30": [
+        "d07:p49",
+        "d07:p53",
+        "d07:p55",
+        "d07:p56"
+      ]
+    },
+    "evidenceContextLimitedCases": [],
+    "relativeVectorCountReduction": 0.6007113218731476,
+    "candidatePassedPredeclaredGate": false
+  }
+}
