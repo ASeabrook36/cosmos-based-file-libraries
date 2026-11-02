@@ -1,0 +1,84 @@
+{
+  "schema": "fli.r2.completion.v1",
+  "status": "complete-bounded-experiment",
+  "recordedAt": "2026-11-02T03:20:45.026771+00:00",
+  "baseCommit": "a449dc01e5acde6391bfc1aa50ca07670d54097d",
+  "branch": "codex/retrieval-r2",
+  "decisions": {
+    "productionFoundation": "unchanged",
+    "controlledPassageReference": "granular-zero-overlap-v1",
+    "coalescedCandidate": "reject under predeclared zero-region-loss gate",
+    "documentDiscovery": "stop bounded named-file comparison; oracle expansion bound cannot pass gate",
+    "r3": "not justified by R2"
+  },
+  "passageComparison": {
+    "developmentDocuments": 8,
+    "developmentTasks": 30,
+    "pairedMeasurements": 60,
+    "granularRows": 8435,
+    "coalescedRows": 3368,
+    "granularAllGoldTasks": 14,
+    "coalescedAllGoldTasks": 19,
+    "lostRegionTasks": [
+      "r0-01",
+      "r0-02",
+      "r0-09",
+      "r0-10"
+    ],
+    "maxExpandedSourceJsonTokensEstimate": 23134
+  },
+  "navigationBound": {
+    "developmentDocuments": 3,
+    "developmentTasks": 5,
+    "possibleDocumentChoicesChecked": 15,
+    "strictlyImprovingNoLossChoices": 0,
+    "summaryGenerationAttempted": false,
+    "summaryCreationCost": "unmeasured",
+    "scope": "named-file full-document expansion only; no claim for vague/section discovery"
+  },
+  "measuredEmbeddingUsage": {
+    "requests": 589,
+    "promptTokens": 642547,
+    "retries": 0,
+    "throttles": 0,
+    "retryWaitMs": 0,
+    "elapsedMs": 402837.0671250159,
+    "timingComparison": "not a strategy performance measurement"
+  },
+  "cloudScope": {
+    "embeddingCallsOnly": true,
+    "cosmosQueriesOrWrites": false,
+    "r0LibrariesModified": false,
+    "scaleResourcesUsed": false,
+    "temporaryDeploymentCleanupOwner": "coordinator"
+  },
+  "validation": {
+    "testsPassed": 997,
+    "existingWarnings": 14,
+    "suiteSeconds": 134.71,
+    "lint": "passed",
+    "format": "passed",
+    "privacy": "passed",
+    "allEightCanonicalTreesEqualR0": true,
+    "distinctOriginalDevelopmentRegionsVerified": 256,
+    "offlineSourceMeasurementsReproduced": 60,
+    "offlineCloudCalls": 0,
+    "heldoutExecuted": false
+  },
+  "artifacts": {
+    "local": "retrieval-r2-local-20261101.json",
+    "passages": "retrieval-r2-passages-20261101.json",
+    "navigation": "retrieval-r2-navigation-bound-20261101.json",
+    "offline": "retrieval-r2-offline-recheck-20261101.json"
+  },
+  "remainingGates": [
+    "Cosmos ANN/corpus readiness and physical ranking/cost with R1",
+    "Live ingestion/write/read RU and source artifact costs",
+    "Answer-model use of changed representation",
+    "Actual document/section summaries and vague navigation",
+    "Changed-source summary refresh/provider omission cost",
+    "Production metadata/permission/retry/replacement/deletion integration for any future changed recipe",
+    "Held-out confirmation reserved for I1"
+  ],
+  "nextIntegration": "Keep the current production foundation and layout; integrate only an independently accepted P1 opt-in contract, then run planned held-out/lifecycle confirmation. No R3 without specific R1/R2 evidence."
+}

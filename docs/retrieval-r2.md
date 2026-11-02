@@ -269,3 +269,21 @@ P1 response contract) with the unchanged foundation, then use the reserved held-
 matrix and lifecycle checks. A future discovery experiment needs already frozen
 vague/selective development tasks and a matched existing-capability control;
 R2's named-file slice cannot settle that question.
+
+## Final validation and handoff
+
+[The completion receipt](../records/retrieval-r2-completion-20261101.json) records
+**997 passing tests**, 14 existing warnings, and passing lint, formatting and
+reference-privacy checks. The actual local environment was installed from the
+pinned lockfile in this isolated worktree. Frozen source/vector files, provider
+attempt receipts, historical management-plane attestations and every earlier
+unrun local plan remain private. The coordinator owns temporary model cleanup.
+R2 issued embedding requests only; it made no Cosmos query/write and did not load
+or modify frozen R0 libraries or scaling resources.
+
+The R1 dependency is physical correctness/readiness/cost for the intended scope;
+this exact-vector experiment cannot substitute for it. The P1 dependency is an
+independently reviewed response/selector result, kept separate from these source
+representations. I1 acceptance still requires the planned held-out confirmation,
+permissions, metadata, provenance, retries, replacement/deletion and stale-source
+checks. No integration or production promotion is implied by these local tests.
