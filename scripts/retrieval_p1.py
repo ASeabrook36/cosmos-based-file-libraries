@@ -16,7 +16,7 @@ from pathlib import Path
 
 from fli.chunking import default_tokenizer
 from fli.presentation import evidence_json
-from fli.reference_format import CONTRACT, pack, unpack
+from fli.reference_format import CONTRACT, expanded, pack, unpack
 from fli.selector_hints import add_hints, tool_hints
 from fli.structure_lab import digest
 from fli_demo.client import IndexClient
@@ -299,6 +299,30 @@ def finalize(directory, after_receipt):
     return status
 
 
+def verify_wire_sources(captured_calls, results):
+    """Bind scored source delivery to the actual provider input for each task.
+
+    P1's three tasks are independent single turns. Source snapshots establish
+    source identity, while these receipts establish what the model was sent.
+    """
+    by_question = {row["question"]: row for row in results}
+    if len(by_question) != len(results):
+        raise ValueError("ambiguous P1 wire question binding")
+    latest = {}
+    for call in captured_calls:
+        messages = call["messages"]
+        questions = [m.get("content") for m in messages if m.get("role") == "user"]
+        if not questions or not isinstance(questions[0], str) or questions[0] not in by_question:
+            raise ValueError("wire input differs from frozen task question")
+        latest[questions[0]] = [expanded(json.loads(m["content"])) for m in messages if m.get("role") == "tool"]
+    if set(latest) != set(by_question):
+        raise ValueError("a task has no actual provider input receipt")
+    for question, result in by_question.items():
+        if latest[question] != result["toolReplies"]:
+            raise ValueError("captured source replies differ from actual final provider input")
+    return {row["case"]: latest[question] for question, row in by_question.items()}
+
+
 def score(directory, gold, reviews):
     """Export only allowlisted counters and separately reviewed source quality."""
     root = private_path(directory)
@@ -347,8 +371,10 @@ def score(directory, gold, reviews):
             wires = read(root / f"wire-r{repeat}-{cell}/wire-receipts.json")
             if len(wires) != sum(len(r["metrics"]["modelCalls"]) for r in results):
                 raise ValueError("wire/model call receipts are incomplete")
+            captured_calls = []
             for ordinal, wire in enumerate(wires, 1):
                 captured = read(root / f"wire-r{repeat}-{cell}/wire-{ordinal:03}.json")
+                captured_calls.append(captured)
                 if wire["call"] != ordinal or digest(captured["messages"]) != wire["wireSha256"]:
                     raise ValueError("wire evidence changed or is missing")
                 wire_rows.append(
@@ -367,6 +393,7 @@ def score(directory, gold, reviews):
                         },
                     }
                 )
+            delivered = verify_wire_sources(captured_calls, results)
             for result in results:
                 key = repeat, cell, result["case"], result["turn"]
                 review, case = judgments[key], by_case[result["case"]]
@@ -396,7 +423,8 @@ def score(directory, gold, reviews):
                         "cell": cell,
                         "case": result["case"],
                         "turn": result["turn"],
-                        "sourceDelivery": coverage(case, result["toolReplies"], gold),
+                        "sourceDelivery": coverage(case, delivered[result["case"]], gold),
+                        "providerSourceSequenceVerified": True,
                         "relevantSourceCoverage": relevant_source_coverage(case, review["relevantSourceCoverage"]),
                         "quality": {field: review[field] for field in QUALITY},
                         "failureCategories": review.get("failureCategories", []),

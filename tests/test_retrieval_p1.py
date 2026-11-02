@@ -99,3 +99,27 @@ def test_wire_recording_checks_actual_format_and_keeps_only_private_capture(tmp_
     assert "Exact original" not in json.dumps(record)
     with pytest.raises(ValueError, match="format differs"):
         chat(plain, [])
+
+
+def test_wire_sources_bind_each_frozen_question_to_exact_delivered_sequence():
+    from fli.reference_format import pack
+
+    evidence = {"text": "Source evidence", "location": {"paragraph": 1}}
+    results = [{"case": "task", "turn": 1, "question": "Frozen question?", "toolReplies": [evidence]}]
+    wire = [
+        {
+            "messages": [
+                {"role": "user", "content": "Frozen question?"},
+                {"role": "tool", "content": json.dumps(pack(evidence))},
+            ]
+        }
+    ]
+    assert p1.verify_wire_sources(wire, results) == {"task": [evidence]}
+    bad = copy.deepcopy(results)
+    bad[0]["toolReplies"][0]["text"] = "Never sent to model"
+    with pytest.raises(ValueError, match="actual final provider input"):
+        p1.verify_wire_sources(wire, bad)
+    changed = copy.deepcopy(wire)
+    changed[0]["messages"][0]["content"] = "Different question?"
+    with pytest.raises(ValueError, match="frozen task question"):
+        p1.verify_wire_sources(changed, results)
