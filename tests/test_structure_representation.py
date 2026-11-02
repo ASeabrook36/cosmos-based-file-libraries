@@ -164,3 +164,22 @@ def test_binary_vector_cache_keeps_completed_batches_and_rejects_conflicts(tmp_p
     with pytest.raises(ValueError, match="invalid"):
         cache.put_batch({"c": [float("nan")] * 3072})
     cache.close()
+
+
+def test_selection_cannot_hide_lost_region_with_an_equal_count_replacement():
+    from scripts.retrieval_r2 import selection_grade
+
+    rows = [
+        {"case": "case", "variant": v, "deliveredRegionIds": ids, "evidenceContextLimited": False}
+        for v, ids in zip(VARIANTS, (["a", "b"], ["b", "c"]), strict=True)
+    ]
+    grade = selection_grade(rows, {VARIANTS[0]: 10, VARIANTS[1]: 5})
+    assert not grade["candidatePassedPredeclaredGate"]
+    assert grade["lostRegionIdsByCase"] == {"case": ["a"]}
+    assert grade["gainedRegionIdsByCase"] == {"case": ["c"]}
+    rows[1]["deliveredRegionIds"] = ["a", "b", "c"]
+    assert selection_grade(rows, {VARIANTS[0]: 10, VARIANTS[1]: 5})["candidatePassedPredeclaredGate"]
+    rows[1]["evidenceContextLimited"] = True
+    assert not selection_grade(rows, {VARIANTS[0]: 10, VARIANTS[1]: 5})["candidatePassedPredeclaredGate"]
+    with pytest.raises(ValueError, match="missing"):
+        selection_grade(rows[:1], {VARIANTS[0]: 10, VARIANTS[1]: 5})

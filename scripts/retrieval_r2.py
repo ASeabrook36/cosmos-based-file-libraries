@@ -119,9 +119,18 @@ def local(args, directory: Path):
         "readExpansion": "complete canonical source blocks addressed by passage spans, source-order deduplicated",
         "summaryVectors": False,
         "heldoutExecuted": False,
-        "selectionGate": {"minimumRelativeVectorCountReduction": 0.2, "perTaskGoldRegionRegressionAllowed": 0},
+        "selectionGate": {
+            "minimumRelativeVectorCountReduction": 0.2,
+            "perTaskGoldRegionRegressionAllowed": 0,
+            "criterion": "baseline delivered-region set must be a subset of candidate delivered-region set",
+        },
         "qualityScope": "direct original-source delivery; no answer-model or general accuracy claim",
         "physicalPerformance": "unmeasured; no Cosmos/index changes",
+        "evidenceOnlyTokenAllowance": 200000,
+        "contextPolicy": (
+            "Source JSON above 200k makes selection inconclusive; "
+            "this evidence-only bound excludes answering prompt/output reserves"
+        ),
         "codeSha256": code_hashes(),
     }
     artifact = {
@@ -295,6 +304,36 @@ def exact_rank(rows: list[dict], vectors: dict, query: list[float], top: int = 8
     return [rows[i] for i in selected]
 
 
+def selection_grade(measurements, row_counts):
+    pairs = {}
+    for m in measurements:
+        if m["variant"] in pairs.setdefault(m["case"], {}):
+            raise ValueError("duplicate comparison member")
+        pairs[m["case"]][m["variant"]] = m
+    if any(set(pair) != set(VARIANTS) for pair in pairs.values()):
+        raise ValueError("missing comparison member")
+    lost, gained = {}, {}
+    for case, pair in pairs.items():
+        baseline = set(pair[VARIANTS[0]]["deliveredRegionIds"])
+        candidate = set(pair[VARIANTS[1]]["deliveredRegionIds"])
+        if baseline - candidate:
+            lost[case] = sorted(baseline - candidate)
+        if candidate - baseline:
+            gained[case] = sorted(candidate - baseline)
+    limited = sorted({m["case"] for m in measurements if m["evidenceContextLimited"]})
+    reduction = 1 - row_counts[VARIANTS[1]] / row_counts[VARIANTS[0]]
+    return {
+        "pairedTasks": len(pairs),
+        "regressedTasks": sorted(lost),
+        "improvedTasks": sorted(gained),
+        "lostRegionIdsByCase": lost,
+        "gainedRegionIdsByCase": gained,
+        "evidenceContextLimitedCases": limited,
+        "relativeVectorCountReduction": reduction,
+        "candidatePassedPredeclaredGate": reduction >= 0.2 and not lost and not limited,
+    }
+
+
 def evaluate(args, directory):
     artifact = load_source(directory)
     vectors = json.loads((directory / "r2-vectors.json").read_text())
@@ -335,12 +374,20 @@ def evaluate(args, directory):
             selected = sorted(range(len(rows)), key=lambda i: (-float(scores[i]), rows[i]["id"]))[:8]
             hits = [rows[i] for i in selected]
             measurement = source_relevance(task, documents, hits, tokenizer)
-            measurements.append(measurement | {"variant": variant, "resultIds": [r["id"] for r in hits]})
-    pairs = {task["case"]: [m for m in measurements if m["case"] == task["case"]] for task in artifact["tasks"]}
-    regressed = [case for case, pair in pairs.items() if pair[1]["deliveredRegions"] < pair[0]["deliveredRegions"]]
-    improved = [case for case, pair in pairs.items() if pair[1]["deliveredRegions"] > pair[0]["deliveredRegions"]]
-    reduction = 1 - len(artifact["variants"][VARIANTS[1]]) / len(artifact["variants"][VARIANTS[0]])
-    candidate_passed = reduction >= 0.2 and not regressed
+            measurements.append(
+                measurement
+                | {
+                    "variant": variant,
+                    "resultIds": [r["id"] for r in hits],
+                    "evidenceOnlyTokenAllowance": 200000,
+                    "evidenceContextLimited": measurement["expandedSourceJsonTokensEstimate"] > 200000,
+                    "answeringContextFit": (
+                        "unassessed; prompt/tool/output reserves are not measured by direct retrieval"
+                    ),
+                }
+            )
+    grade = selection_grade(measurements, {variant: len(rows) for variant, rows in artifact["variants"].items()})
+    candidate_passed = grade["candidatePassedPredeclaredGate"]
     report = {
         "schema": "fli.r2.exact-source-relevance.v1",
         "status": "complete",
@@ -349,11 +396,7 @@ def evaluate(args, directory):
         "embeddingIdentity": vectors["embeddingIdentity"],
         "controls": artifact["controls"],
         "measurements": measurements,
-        "pairedTasks": len(pairs),
-        "regressedTasks": regressed,
-        "improvedTasks": improved,
-        "relativeVectorCountReduction": reduction,
-        "candidatePassedPredeclaredGate": candidate_passed,
+        **grade,
         "recommendation": "coalesced-candidate-for-integration" if candidate_passed else "retain-granular-baseline",
         "allGoldTasks": {v: sum(m["allGoldDelivered"] for m in measurements if m["variant"] == v) for v in VARIANTS},
         "limitations": [

@@ -50,13 +50,18 @@ account/deployment receipts before and after the embedding window and verifies
 endpoint, deployment, model, upgrade policy and SKU.
 
 The predeclared selection gate is at least 20% fewer passage vectors and **zero
-per-task loss** of delivered original gold regions. Averages cannot hide a task
-regression. This is a provisional engineering gate, not statistical equivalence.
+per-task loss** of delivered original gold region IDs: the baseline-delivered set
+must be a subset of the candidate set. Equal counts with exchanged regions fail.
+Averages cannot hide a task regression. This is a provisional engineering gate, not statistical equivalence.
 Complete-section gold, table blank cells, exact facts and cross-file labels remain
 separate task rows. Blank-cell coverage needs an expanded complete table block and
 original grid; an empty substring cannot earn coverage. Whole-block expansion is
 the same for both candidates and can amplify the evidence from long table hits.
-Source delivery is scored separately from answering quality; no answering model
+Expanded source JSON estimates are reported per case. A selection requiring more
+than 200k evidence-only tokens makes the gate inconclusive, not an index-quality
+failure. That bound excludes answering prompt/tool/output reserves and cannot
+prove a real answering conversation fits. Source delivery is scored separately
+from answering quality; no answering model
 is invoked by this direct retrieval comparison.
 
 ## Reproduction
