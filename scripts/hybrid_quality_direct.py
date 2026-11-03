@@ -330,6 +330,8 @@ def validate_snapshot(snapshot, manifest, config):
         if job.get("profile") != recipe or job.get("generation") != 1 or job.get("sourceSha256") != source["sha256"]:
             raise ValueError("ingestion provenance differs from frozen source")
         for key, value in source.get("metadata", {}).items():
+            if key == "tags":
+                value = [{**tag, "source": "user"} for tag in value]
             if key in {"author", "periodStart", "periodEnd", "tags"} and doc.get(key) != value:
                 raise ValueError("source metadata differs from manifest")
     chunks = snapshot.get("chunks", [])

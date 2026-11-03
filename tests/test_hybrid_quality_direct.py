@@ -339,6 +339,34 @@ def test_delivery_requires_compact_wire_same_as_raw_and_correct_generation(recei
         h.validate_delivery(row, task, snapshot, cache)
 
 
+def test_snapshot_preserves_upload_tag_provenance_and_literal_filename(receipt):
+    path, root, _ = receipt
+    manifest, snapshot, config = (
+        h.read(path / "manifest.json"),
+        h.read(root / "source-before.json"),
+        h.read(root / "config-private.json"),
+    )
+    manifest["documents"][0]["metadata"] = {
+        "author": "Public authority",
+        "tags": [{"key": "domain", "value": "contracts"}],
+    }
+    snapshot["documents"][0].update(
+        author="Public authority", tags=[{"key": "domain", "value": "contracts", "source": "user"}]
+    )
+    h.validate_snapshot(snapshot, manifest, config)
+    snapshot["documents"][0]["tags"][0]["source"] = "generated"
+    with pytest.raises(ValueError, match="metadata"):
+        h.validate_snapshot(snapshot, manifest, config)
+    snapshot["documents"][0]["tags"][0]["source"] = "user"
+    snapshot["documents"][0]["tags"][0]["value"] = "changed"
+    with pytest.raises(ValueError, match="metadata"):
+        h.validate_snapshot(snapshot, manifest, config)
+    snapshot["documents"][0]["tags"][0]["value"] = "contracts"
+    snapshot["documents"][0]["fileName"] = "EXAMPLE.DOCX"
+    with pytest.raises(ValueError, match="source bytes"):
+        h.validate_snapshot(snapshot, manifest, config)
+
+
 async def test_real_api_capture_schedule_snapshot_and_query_cache(receipt, monkeypatch):
     """Real API/Searcher/CosmosChunkReader, fake stores only; no cloud ranking claim."""
     from fli.api import create_app
