@@ -337,3 +337,208 @@ def test_delivery_requires_compact_wire_same_as_raw_and_correct_generation(recei
     row["wire"] = compact_response(row["rawResponse"], 200000, selectors="handles")
     with pytest.raises(ValueError, match="invisible"):
         h.validate_delivery(row, task, snapshot, cache)
+
+
+async def test_real_api_capture_schedule_snapshot_and_query_cache(receipt, monkeypatch):
+    """Real API/Searcher/CosmosChunkReader, fake stores only; no cloud ranking claim."""
+    from fli.api import create_app
+    from fli.search import CosmosChunkReader, Searcher
+    from tests.fakes import Services, settings
+
+    path, root, _ = receipt
+    services = Services()
+    configured = settings(AOAI_EMBEDDING_MODEL_REVISION="1")
+    recipe = profile("microsoft-indexer-layout-v1")
+    recipe["embedding"]["modelRevision"] = "1"
+    await services.libraries.create(
+        {
+            "id": "owned",
+            "libraryId": "owned",
+            "kind": "shared",
+            "status": "active",
+            "name": "Owned",
+            "description": "Isolated fixture",
+            "ingestionProfile": recipe,
+            "stats": {"documentCount": 8, "chunkCount": 24},
+        }
+    )
+    manifest, mapping, chunks = {"documents": []}, {}, []
+    for number in range(8):
+        doc_id, source_id = f"doc-{number}", "source" if number == 0 else f"source-{number}"
+        source = {"id": source_id, "fileName": f"fixture-{number}.docx", "sha256": "a" * 64}
+        manifest["documents"].append(source)
+        mapping[doc_id] = source_id
+        await services.documents.create(
+            {
+                "id": doc_id,
+                "libraryId": "owned",
+                "fileName": source["fileName"],
+                "sha256": source["sha256"],
+                "activeGeneration": 1,
+                "status": "ready",
+                "contentRevision": 0,
+                "ingestionJob": {"profile": recipe, "generation": 1, "sourceSha256": source["sha256"]},
+            }
+        )
+        for index in range(3):
+            chunks.append(
+                {
+                    "id": f"{doc_id}:1:{index}",
+                    "documentId": doc_id,
+                    "generation": 1,
+                    "chunkIndex": index,
+                    "contentKind": "text",
+                    "text": f"Fixture source {number} paragraph {index}",
+                    "fileName": source["fileName"],
+                    "fileType": "docx",
+                    "location": {"paragraph": index},
+                    "heading": None,
+                    "_etag": "immutable",
+                    "contentHash": f"content-{number}-{index}",
+                    "embeddingModel": "text-embedding-3-large",
+                }
+            )
+
+    class Container:
+        def __init__(self):
+            self.calls = []
+
+        def query_items(self, sql, **kwargs):
+            self.calls.append((sql, copy.deepcopy(kwargs["parameters"]), kwargs.get("partition_key")))
+            params = {p["name"]: p["value"] for p in kwargs["parameters"]}
+            if callback := kwargs.get("raw_response_hook"):
+                callback(
+                    SimpleNamespace(
+                        http_response=SimpleNamespace(status_code=200, headers={"x-ms-request-charge": "1"})
+                    )
+                )
+            selected = chunks
+            if "@documentId" in params:
+                selected = [
+                    c
+                    for c in chunks
+                    if c["documentId"] == params["@documentId"]
+                    and c["chunkIndex"] in [v for k, v in params.items() if k.startswith("@i")]
+                ]
+            fields = [s.strip().removeprefix("c.") for s in sql.split(" FROM c ")[0].split(" ", 3)[3].split(",")]
+
+            async def iterator():
+                for item in selected[: int(sql.split()[2])]:
+                    yield {key: item[key] for key in fields if key in item}
+
+            return iterator()
+
+    actual = Container()
+    searcher = Searcher(services.libraries, services.documents, CosmosChunkReader(actual), services.embedder)
+    app = create_app(
+        configured,
+        libraries=services.libraries,
+        documents=services.documents,
+        queue=services.queue,
+        blobs=services.blobs,
+        searcher=searcher,
+    )
+    monkeypatch.setattr(h.Settings, "from_env", lambda: configured)
+    monkeypatch.setattr(h, "create_app", lambda settings: app)
+    monkeypatch.setattr(h, "model_binding", lambda *args, **kwargs: {"same": "deployment"})
+    save(path / "manifest.json", manifest)
+    plan = h.read(root / "plan.json")
+    plan["manifestSha256"] = h.sha(path / "manifest.json")
+    save(path / "plan.json", plan)
+    config = {
+        "libraryId": "owned",
+        "agentId": "agent",
+        "sourceMap": mapping,
+        "executionLedger": str(path / "exclusive-ledger.json"),
+    }
+    save(path / "config.json", config)
+    before = await h.with_snapshot(config)
+    h.validate_snapshot(before, manifest, config)
+    assert before["tools"] and "Copy returned documentSelector" in before["tools"][0]["function"]["description"]
+    cache_dir = path / "cache"
+    cache_dir.mkdir()
+    cache = h.read(root / "query-cache-private.json")
+    save(cache_dir / "deployment-before.json", {})
+    save(cache_dir / "deployment-after.json", {})
+    cache.update(
+        status="complete",
+        tasksSha256=h.sha(path / "tasks.json"),
+        deploymentBinding={"same": "deployment"},
+        deploymentReceiptsSha256={
+            name: h.sha(cache_dir / name) for name in ("deployment-before.json", "deployment-after.json")
+        },
+    )
+    save(cache_dir / "cache.json", cache)
+    save(
+        path / "preflight.json",
+        {
+            "planSha256": h.sha(path / "plan.json"),
+            "settingsBindingSha256": digest(h.settings_binding(configured)),
+            "ownedLibraryId": "owned",
+            "sourceSnapshotSha256": digest(before),
+            "preparationAccepted": True,
+            "inheritedCanaryPassed": True,
+            "incarnationAndPoliciesMatch": True,
+            "hybridRanksMeaningfully": True,
+            "actualCorpusReadiness": {
+                "documents": 8,
+                "chunks": 24,
+                "documentsWithMultipleChunks": 8,
+                "prospectiveCorpusAdequacyPassed": True,
+            },
+        },
+    )
+    output = path / "live-fake-capture"
+    args = (
+        path / "config.json",
+        path / "plan.json",
+        path / "manifest.json",
+        path / "tasks.json",
+        cache_dir,
+        path / "preflight.json",
+        output,
+    )
+    assert (await h.capture(*args))["completedSearches"] == 80
+    rows = h.read(output / "captures-private.json")
+    assert [r["arm"] for r in rows[:4]] == ["vector", "hybrid", "hybrid", "vector"]
+    assert all(r["status"] == "complete" for r in rows)
+    assert all(r["wire"]["contract"] == "fli.compact.v1" for r in rows)
+    assert services.embedder.calls == 0
+    ranked = [c for c in actual.calls if "VectorDistance" in c[0]]
+    assert len(ranked) == 80
+    assert all(
+        next(p["value"] for p in params if p["name"] == "@queryVector") == [0.25] * 3072 for _, params, _ in ranked
+    )
+    assert [route for _, _, route in ranked[:4]] == [["owned"], None, None, ["owned"]]
+    with pytest.raises(FileExistsError):
+        await h.capture(*args[:-1], path / "forbidden-second-pass")
+    assert len([c for c in actual.calls if "VectorDistance" in c[0]]) == 80
+    # Preparation is disjoint from confirmation and must not accept a fake reader's
+    # invariant insertion order as proof of meaningful hybrid ranking.
+    from fli.embedding import EmbeddingUsage
+
+    class PrepEmbedder:
+        usage = EmbeddingUsage()
+
+        async def embed(self, texts):
+            self.usage.requests += 1
+            return [[0.25] * 3072 for _ in texts]
+
+    plan["preparationQueries"] = [
+        {"id": "prep-a", "question": "Separate preparation alpha", "expectedSourceIds": ["source"]},
+        {"id": "prep-b", "question": "Separate preparation beta", "expectedSourceIds": ["source"]},
+    ]
+    save(path / "plan.json", plan)
+    prep_embedder = PrepEmbedder()
+    searcher.embedder = prep_embedder
+    searcher.chunks = CosmosChunkReader(actual)
+    searcher.search = Searcher.search.__get__(searcher, Searcher)
+    result = await h.prepare(
+        path / "config.json", path / "plan.json", path / "manifest.json", path / "tasks.json", path / "preparation"
+    )
+    assert result["status"] == "complete"
+    assert result["actualCorpusReadiness"]["prospectiveCorpusAdequacyPassed"] is True
+    assert result["hybridRankingSanity"]["passed"] is False
+    assert result["actualCorpusReadiness"]["indexExecutionMode"] == "unknown"
+    assert prep_embedder.usage.requests == 2
+    assert len(h.read(path / "preparation/preparation-private.json")["queries"]) == 4
