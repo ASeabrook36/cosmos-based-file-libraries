@@ -25,6 +25,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from fli.config import Settings  # noqa: E402
 from scripts.canary import definition_mismatches, target_fingerprint  # noqa: E402
 from scripts.hybrid_quality_corpus import PACK, load_pack, serialized, verify  # noqa: E402
+from scripts.hybrid_quality_restart import requires_fresh_ingest, validate_restart  # noqa: E402
 from scripts.retrieval_controls import private_path  # noqa: E402
 from scripts.retrieval_i1_lifecycle import BINDING_KEYS, PROFILE, api_instance, library_chunks  # noqa: E402
 
@@ -454,6 +455,22 @@ async def run(args):
         require(args.action == "ingest" or (root / "ownership.json").exists(), "existing ownership ledger required")
         scope = Scope(root, manifest, binding(settings), protected, sha(args.manifest))
         try:
+            if args.action == "ingest" and requires_fresh_ingest(scope.state, manifest):
+                accepted = validate_restart(
+                    getattr(args, "restart_preflight", None),
+                    root=root,
+                    settings=settings,
+                    binding=binding(settings),
+                    preflight=preflight,
+                    canary_path=args.canary,
+                    protected=protected,
+                    manifest=manifest,
+                    manifest_sha=sha(args.manifest),
+                    evaluation_library=scope.state.get("library", {}).get("id"),
+                    max_age=getattr(args, "restart_max_age", 3600),
+                )
+                scope.state.setdefault("restartPreflights", []).append(accepted)
+                scope.persist()
             async with api_instance(settings) as (app, client):
                 client.headers["X-Agent-Id"] = "hybrid-quality-owner"
                 await check_incarnation(app, settings, preflight)
@@ -478,6 +495,8 @@ def main():
     parser.add_argument("--manifest", type=Path, default=PACK / "manifest.json")
     parser.add_argument("--tasks", type=Path, default=PACK / "tasks.json")
     parser.add_argument("--source-dir", type=Path)
+    parser.add_argument("--restart-preflight", type=Path)
+    parser.add_argument("--restart-max-age", type=int, default=3600)
     parser.add_argument("--timeout", type=float, default=1800)
     parser.add_argument("--poll-interval", type=float, default=10)
     parser.add_argument("--late-recheck", type=float, default=30)

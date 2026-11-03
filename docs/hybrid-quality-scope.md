@@ -15,6 +15,12 @@ ready at generation 1 with no pending generation. It does not use a filename glo
 so uppercase `.DOCX` downloads are included. A local API instance uses the supplied
 private settings and the existing authorized worker processes the queue normally.
 
+Before new ingestion mutations, the [fresh-health restart gate](hybrid-quality-restart.md)
+requires current owned smoke, mounted-workflow and partial-cleanup receipts.
+An inherited canary alone cannot authorize another upload. Status, cleanup and
+pure polling after every upload acknowledgement remain available without fresh
+restart evidence.
+
 Before any request, the helper checks the actual three container policies and
 binds the chunks-container incarnation to the passing canary and coordinator
 preflight. It requires local dev authentication, 3072-dimensional embedding
@@ -43,6 +49,7 @@ For example, with private shell variables already set by the coordinator:
   --canary "$HYBRID_CANARY_PRIVATE" \
   --protected-scope "$HYBRID_PRIVATE/protected-scopes.json" \
   --source-dir "$HYBRID_CORPUS_PRIVATE/sources" \
+  --restart-preflight "$HYBRID_PRIVATE/restart-preflight.json" \
   --timeout 1800 --poll-interval 10
 ```
 
