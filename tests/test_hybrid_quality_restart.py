@@ -404,3 +404,48 @@ def test_resealed_structured_evidence_must_still_match_actual_inventory_and_cont
     health["ownershipReceipt"] = put(restart.root, "smoke-ownership.json", ledger)
     with pytest.raises(ValueError):
         gate.validate_restart(restart.write(), **restart.args)
+
+
+async def test_missing_restart_stops_before_api_startup_or_creation(tmp_path, monkeypatch):
+    from scripts import hybrid_quality_scope as scope
+
+    manifest = {
+        "documents": [{"id": "source", "sha256": digest(b"source")}],
+        "tasksSha256": digest(b"tasks"),
+        "goldSha256": digest(scope.serialized({})),
+    }
+    manifest_ref = put(tmp_path, "manifest.json", manifest)
+    protected_ref = put(tmp_path, "protected.json", {"libraryIds": ["protected"]})
+    env_ref = put(tmp_path, "env.json", {})
+    preflight_ref = put(tmp_path, "preflight.json", {})
+    monkeypatch.setattr(scope, "load_pack", lambda *_args: (manifest, {}))
+    monkeypatch.setattr(scope, "verify", lambda *_args: {})
+    monkeypatch.setattr(scope, "checked_preflight", lambda *_args: None)
+    monkeypatch.setattr(scope, "binding", lambda *_args: {"target": "fixed"})
+    monkeypatch.setattr(scope.Settings, "from_env", lambda: SimpleNamespace())
+    opened = []
+
+    def forbidden_api(*_args):
+        opened.append(True)
+        raise AssertionError("must reject missing restart before opening cloud services")
+
+    monkeypatch.setattr(scope, "api_instance", forbidden_api)
+    args = SimpleNamespace(
+        action="ingest",
+        state_dir=tmp_path / "owned",
+        manifest=manifest_ref["path"],
+        tasks=tmp_path / "tasks.json",
+        protected_scope=protected_ref["path"],
+        env=env_ref["path"],
+        preflight=preflight_ref["path"],
+        canary=tmp_path / "canary.json",
+        source_dir=tmp_path / "sources",
+        timeout=30,
+        poll_interval=1,
+    )
+    with pytest.raises(RuntimeError, match="scope action failed"):
+        await scope.run(args)
+    assert not opened
+    state = gate.read(args.state_dir / "ownership.json")
+    assert "createAttempted" not in state and not state["sources"] and "httpReceipts" not in state
+    assert "--restart-preflight" in gate.read(args.state_dir / "failure-private.json")["message"]
