@@ -28,7 +28,10 @@ dependencies = [
 [project.optional-dependencies]
 reuse-lab = ["reportlab>=4.4,<5"]  # opt-in compatibility fixtures only; no application dependency
 samples = ["Pillow>=10.1,<14"]
-comparison = ["openai>=3.37,<4"]  # tested Responses transport; normal demo requirements remain compatible
+comparison = [
+  "openai>=3.37,<4",  # tested Responses transport; normal demo requirements remain compatible
+  "numpy>=2,<3",  # independent exact-cosine reference in the retrieval comparison
+]
 demo = [
   "streamlit>=1.40,<2",
   "openai>=1.50,<4",
@@ -37,6 +40,7 @@ dev = [
   "pytest>=8,<9",
   "ruff>=0.6",
   "openai>=1.50,<4",  # unit tests exercise the optional demo's chat transport and usage accounting
+  "numpy>=2,<3",  # tests exercise the retrieval comparison's exact-cosine reference
 ]
 
 [project.scripts]
