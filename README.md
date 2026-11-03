@@ -77,8 +77,10 @@ preserve reviewed source quality, with fewer selector errors.
 The subsequent [selector-only I1 confirmation](docs/retrieval-i1.md) passes all
 13 live lifecycle gates and completes 64 reserved held-out turns. Both cells pass
 source/answer review; selectors eliminate four recovered scope errors and reduce
-provider input by 18.85%, below the frozen 20% target. Selectors remain opt-in,
-defaults stay unchanged, and R3 has not started. The held-out set is now consumed;
+provider input by 18.85%, below the frozen 20% target. The user accepted that
+bounded improvement. The [normal-adapter integration](docs/i1-selector-integration.md)
+now enables selector handles with compact evidence and an explicit legacy fallback;
+REST defaults and physical policies remain unchanged. R3 has not started. The held-out set is now consumed;
 production authentication, broker redelivery and broader concurrency/scale gates
 remain open.
 
@@ -307,6 +309,11 @@ eval "$(.venv/bin/python scripts/deployment_env.py -g "$RG")" && .venv/bin/strea
 
 The corpus folder holds `groups/<library name>/` subfolders, one shared library each. Agents and their attachments are stored in `~/.fli-demo/state.json` (`DEMO_STATE_FILE` to change it), never in the index. Newly published content is searchable immediately; load documents a few minutes before measuring steady-state search cost because the vector index engages minutes after writes (`docs/evidence.md` E25).
 
+The normal agent client uses the accepted snapshot-bound selector handles.
+Set `DEMO_SELECTOR_MODE=legacy` and restart the demo to explicitly restore the
+previous selector behavior. The default is `handles`; invalid settings fail
+at startup. See [adapter controls and compatibility](docs/agent-retrieval.md).
+
 ## Synthetic upload fixtures
 
 The existing sample-document generator is included for functional hand-testing of uploads, formats, metadata and failure handling. Install with `python -m pip install -e '.[samples]'`, then run `python -m scripts.sample_docs.build`. It writes an ignored `sample-docs/` directory with a manifest and answer key. An optional output-directory argument is supported; **the generator replaces that directory if it already exists**. Use a dedicated disposable directory.
@@ -333,7 +340,19 @@ When deploying Python changes to the API or demo adapter, restart the affected A
 The existing Admin demo now offers current processing, a Markdown/DOCX structural
 vertical slice, adapted Microsoft Document Indexer and matched custom/Microsoft
 pair creation. Complete strategies and controlled shared-extraction/500-token
-boundary comparisons are explicit. This is locally tested integration with offline
-hosting preparation; cloud workflow/authentication and broader structure/visual
-parity remain pending. See [modular ingestion](docs/modular-ingestion.md) for API,
+boundary comparisons are explicit. Prior isolated custom-worker and Microsoft
+workflow/denial checks are recorded in E61–E62; broader structure/visual parity,
+production hosting/authentication and the provider decision remain open.
+See [modular ingestion](docs/modular-ingestion.md) for API,
 recovery, measurements, replay, configuration and exact cloud gates.
+
+## Local development setup
+
+The **File Library Index** local environment configures dependencies for new
+Codex worktrees and provides Test, Lint and Check actions. It does not load cloud
+credentials or start services. See [local development](docs/local-development.md).
+
+```sh
+sh scripts/dev setup
+sh scripts/dev check -q
+```

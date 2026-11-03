@@ -7,6 +7,11 @@ inputs, source-based scoring and matched diagnostic controls. It changes no
 application architecture, profile recipe, query policy, permission or lifecycle
 contract in this specification. Production and foundation gates remain open.
 
+The [I1 normal-adapter integration](i1-selector-integration.md) enables accepted
+selector handles in the consuming `IndexClient`, with explicit legacy rollback.
+The service's REST defaults, compact evidence format, query policies and ingestion
+profiles retain their existing behavior. This is not a provider or storage choice.
+
 ## 1. Scope
 
 The File Library Index (the **index**) replaces Azure AI Search as the store and search engine behind the platform's file libraries. It:

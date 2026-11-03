@@ -1434,3 +1434,15 @@ advances selector handles to consuming-agent integration. The frozen numerical
 This supersedes the earlier efficiency-based recommendation to retain opt-in
 status indefinitely. No runtime default, measurement or architecture changes in
 this decision update.
+
+### E66 normal-agent integration follow-through
+
+The [merge candidate](i1-selector-integration.md) enables the already measured
+selector-handles behavior in the normal consuming client, retaining compact
+evidence and an explicit legacy fallback. Historical replay entry points pin
+their previous selector mode; consumed I1 questions and frozen receipts remain
+unchanged. Local HTTP/adapter tests exercise copied selectors, source pins,
+authorization, deletion, budget refusal and legacy compatibility. They establish
+integration mechanics, not a new answering-quality or efficiency measurement.
+The original 18.8542783% result and unmet 20% target remain unchanged. Live cloud,
+production and broader provider/format gates are not closed by this integration.

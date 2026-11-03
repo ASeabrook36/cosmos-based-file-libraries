@@ -533,17 +533,21 @@ async def test_one_question_can_mix_multiple_full_files_with_passages_from_anoth
     assert {c.file_name for c in turn.searches[0].citations} == {"Standard-0.md", "Standard-1.md"}
 
 
-async def test_parallel_full_read_calls_share_the_remaining_turn_budget(ctx):
+@pytest.mark.parametrize("selector_mode", ["legacy", "handles"])
+async def test_parallel_full_read_calls_share_the_remaining_turn_budget(ctx, selector_mode):
     from fli_demo.agent import Reply, ToolCall, run_turn
     from fli_demo.client import IndexClient
 
     client, s, lib, worker = ctx
+    # Leave room for a bounded recovery reply after the first complete file,
+    # while the second full file still cannot fit. Equal 700-repeat files put
+    # selector overhead plus random UUID tokenization on the recovery threshold.
     ids = [
-        upload(client, lib, name=f"Large-{i}.md", text="Record the measured pressure at each inspection. " * 700)
-        for i in range(2)
+        upload(client, lib, name=f"Large-{i}.md", text="Record the measured pressure at each inspection. " * repeats)
+        for i, repeats in enumerate((500, 1000))
     ]
     await drain(s, worker)
-    index = IndexClient("http://testserver", "k", http=client)
+    index = IndexClient("http://testserver", "k", http=client, selector_mode=selector_mode)
     seen_budgets = []
     read_call = index.read_documents
 
@@ -567,6 +571,8 @@ async def test_parallel_full_read_calls_share_the_remaining_turn_budget(ctx):
         assert first["complete"] and not second["complete"]
         assert second["disposition"] == "budget_exceeded"
         assert "sections" not in second["documents"][0]
+        assert second["automaticRecovery"] == "document_scoped_passages"
+        assert second["results"] and all(row["documentId"] == ids[1] for row in second["results"])
         return Reply("One file was read completely; the second needs additional context capacity.")
 
     turn = run_turn(

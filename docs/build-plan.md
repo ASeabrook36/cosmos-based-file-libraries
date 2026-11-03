@@ -1,16 +1,30 @@
 # Build plan
 
+**Normal-agent selector integration, 2026-11-02 (E66 follow-through):** the
+[merge candidate](i1-selector-integration.md) enables handles in the normal client
+with compact evidence and explicit legacy rollback. Historical replay entry points
+retain explicit controls. Main's independent local-setup documentation is retained.
+This local integration does not rerun consumed confirmation questions, touch the
+hybrid comparison, change ingestion ownership, or include index versioning.
+
 **Selector-only I1 complete, 2026-11-02 (E66):** the
 [coordinator result](retrieval-i1.md) records 13 live lifecycle gates passed
 before all 64 reserved held-out turns. Both cells retain reviewed source and
 answer quality; selector handles avoid four recovered scope errors. Provider
 input falls 18.8542783%, below the frozen 20% target. The user accepts this as
 a meaningful improvement and advances selectors to consuming-agent integration.
-Runtime defaults, representation and physical policies are currently unchanged. No R3
+Runtime defaults were unchanged by that decision record; the integration above
+now changes only the consuming client's selector default. No R3
 comparison follows. The held-out set is now consumed; production authentication,
 broker redelivery, broader concurrency/scale and controlled cost/latency remain
 open. The merged suite passes 1,089 tests; isolated cleanup and R0/P1 preservation
 are verified.
+
+**Local setup, 2026-11-02:** [reusable development setup](local-development.md)
+is available on the primary branch for Codex environment discovery. A fresh
+isolated checkout passes all 705 local tests, lint and privacy checks. Setup
+loads no cloud credentials and starts no services; this does not change the
+application or advance the cloud/retrieval milestones below.
 
 **R1/R2/P1 bounded stage complete, 2026-11-01 (E65):** the
 [coordinator decision and integration gates](retrieval-stage1.md) retain current

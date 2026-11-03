@@ -404,7 +404,7 @@ def main():
     args = parser.parse_args()
     if args.experiment_id:
         replay_pair(
-            IndexClient.from_env(),
+            IndexClient.from_env(selector_mode="legacy"),
             lambda: azure_chat(os.environ["AOAI_ENDPOINT"], os.environ["AOAI_CHAT_DEPLOYMENT"]),
             Registry().get(args.agent_id),
             args.experiment_id,
@@ -418,7 +418,7 @@ def main():
         )
         return
     replay(
-        IndexClient.from_env(),
+        IndexClient.from_env(selector_mode="legacy"),
         azure_chat(os.environ["AOAI_ENDPOINT"], os.environ["AOAI_CHAT_DEPLOYMENT"]),
         Registry().get(args.agent_id),
         json.loads(args.cases.read_text()),

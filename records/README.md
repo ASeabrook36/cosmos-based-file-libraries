@@ -96,3 +96,12 @@ I1 changes no production default or architecture and starts no R3 comparison.
 The current held-out answers cannot guide tuning and then be counted as fresh
 confirmation. Private captures are required for offline scoring from the exact
 measured implementation; the single-execution ledger remains consumed.
+
+`i1-selector-integration-20261102.json` records subsequent normal-client adoption,
+local regression checks and merge integration. It is not a new cloud/model replay
+or an amendment of I1's measured scores or frozen controls.
+
+`local-environment-primary-20261102.json` records setup-only delivery to the primary
+local checkout, fresh and repeated dependency installation, 705 passing tests and
+the portable logging-test correction. The user subsequently confirmed that the
+environment appears in the local picker; automatic cloud setup is excluded.

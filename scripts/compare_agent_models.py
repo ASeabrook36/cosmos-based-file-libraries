@@ -279,7 +279,7 @@ def main():
     ]
     revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO, text=True).strip()
     config.setdefault("controls", {})["gitRevision"] = revision
-    compare(IndexClient.from_env(), config, original, heldout, args.output, repeats=args.repeats)
+    compare(IndexClient.from_env(selector_mode="legacy"), config, original, heldout, args.output, repeats=args.repeats)
 
 
 if __name__ == "__main__":

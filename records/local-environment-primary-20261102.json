@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-02",
+  "scope": "Setup-only delivery to the primary local project checkout",
+  "baseCommit": "02c218baebb67d851aea45c6936c59bbf6f976e5",
+  "setupSourceCommit": "a449dc01e5acde6391bfc1aa50ca07670d54097d",
+  "environmentName": "File Library Index",
+  "configurationPath": ".codex/environments/environment.toml",
+  "configurationSha256": "1db6a324cddb49e7fb5019f432238ba41264550d60c1bf49e86f3bcad46ea714",
+  "lockSha256": "2efc8992e6413ffbd49c686779b406b4cd329c1f33b3d4962e6ec642b158ba67",
+  "pinnedDistributions": 92,
+  "platform": "macOS arm64",
+  "python": "3.14.3",
+  "checks": {
+    "freshInstall": "passed",
+    "repeatedSetup": "passed",
+    "allPinnedVersionsMatch": "passed",
+    "editableSourceIsolation": "passed",
+    "tomlAndInstalledAppDiscoveryPath": "checked",
+    "shellSyntax": "passed",
+    "lint": "passed",
+    "format": "passed",
+    "privacy": "passed",
+    "uiPickerDiscovery": "passed; user-confirmed"
+  },
+  "tests": {
+    "command": "sh scripts/dev check -q",
+    "passed": 705,
+    "warnings": 14,
+    "seconds": 116.94,
+    "privateLogSha256": "8f985d00949b49cc6637525956734d0605d65902d5d25e3a2f072d3554f8abbb"
+  },
+  "initialFailure": {
+    "passed": 704,
+    "failed": 1,
+    "cause": "Existing privacy assertion matched a standard logging pathname containing its generic forbidden word.",
+    "resolution": "Backport the research branch test correction: check rendered messages and custom fields, excluding standard logging metadata. Application logging unchanged."
+  },
+  "automaticSetupLoadsCredentials": false,
+  "automaticSetupProvisionsCloud": false,
+  "automaticSetupStartsServices": false,
+  "applicationOrInfrastructureChanged": false,
+  "existingPrimaryCheckoutEnvironmentModified": false,
+  "uiPickerVerification": "User confirmed on 2026-11-02 that File Library Index appears in the local Environment picker.",
+  "limitations": [
+    "Other Python versions and operating systems untested.",
+    "App-driven automatic worktree setup was not exercised; the exact configured commands passed directly.",
+    "Dependency snapshot is version-pinned, not hash-locked."
+  ]
+}
