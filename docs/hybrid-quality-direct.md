@@ -25,7 +25,29 @@ There are 40–60 fresh confirmation questions; the selected corpus has 48. One 
 
 A private config supplies `libraryId`, `agentId`, `sourceMap` from actual document IDs to public source IDs, and an `executionLedger` path outside the capture output. Capture requires an exclusively created ledger and new output directory. Local authenticated dev-mode ASGI is required; actual data-plane access uses the application's normal Entra/managed-identity credentials. Cloud steps are announced and scheduled centrally. No provisioning, ingestion, deletion or credential configuration is automatic.
 
-The private coordinator preflight must bind `planSha256`, `settingsBindingSha256`, `sourceSnapshotSha256`, `ownedLibraryId`, and explicitly accept `preparationAccepted`, `inheritedCanaryPassed`, `incarnationAndPoliciesMatch`, `hybridRanksMeaningfully`. Its `actualCorpusReadiness` object records observed indexed document/chunk counts, index diagnostics or their unavailability, probe evidence and unresolved limits. The runner requires the acceptance; the coordinator must independently inspect the evidence behind it. A bare boolean is not evidence of index readiness.
+The private coordinator preflight must bind `planSha256`, `settingsBindingSha256`,
+`sourceSnapshotSha256`, `ownedLibraryId`, and explicitly accept
+`preparationAccepted`, `incarnationAndPoliciesMatch`, `hybridRanksMeaningfully`.
+It records `scaleResourcesAccessed=false`, `canaryReceiptPath` outside all Git
+checkouts, exact receipt byte `canarySha256` and `targetFingerprint`. The canary
+provenance must be one of these mutually exclusive cases:
+
+- Existing verified incarnation: `newContainerCreated=false`,
+  `inheritedCanaryPassed=true`, `freshCanaryPassed=false` (the last field may be omitted).
+- Newly created isolated incarnation: `newContainerCreated=true`,
+  `freshCanaryPassed=true`, `inheritedCanaryPassed=false`, with its own passed canary.
+
+Both paths re-open the bound passing canary and check the live container policies
+and endpoint/database/container RID fingerprint before confirmation searches.
+An old receipt cannot authorize a recreated container. The raw receipt is copied
+into `canary-private.json` and included in the capture artifact hashes. Recovery
+does not relax the cache's actual embedding deployment/model/revision/SKU binding.
+
+The preflight's `actualCorpusReadiness` object records observed indexed
+document/chunk counts, index diagnostics or their unavailability, probe evidence
+and unresolved limits. The runner requires the acceptance; the coordinator must
+independently inspect the evidence behind it. A bare boolean is not evidence of
+index readiness.
 
 The source snapshot contains actual API `library`, sorted `documents`, agent-bound `tools`, and an owned-library `SELECT TOP 1000` chunk inventory containing only IDs, generation, chunk index, content hash, ETag, embedding model and metadata version. Empty/truncated inventories or missing hashes/ETags fail. Every original must have ready generation 1 with exact source bytes, metadata and Microsoft ingestion-job recipe. Before/after snapshots must be identical. Unchanged row ETags bind stored vectors without selecting embeddings. The snapshot hash covers the entire four-field object; compare its first three fields to replay's library snapshot and retain the chunk inventory alongside it.
 

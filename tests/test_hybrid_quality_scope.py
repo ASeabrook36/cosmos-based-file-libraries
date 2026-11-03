@@ -180,14 +180,16 @@ def test_changed_runtime_binding_and_manifest_are_refused(tmp_path):
             scope.Scope(owner.root, owner.manifest, arguments[0], ["protected-library"], arguments[1])
 
 
-def test_preflight_requires_passing_bound_canary_and_matching_controls(tmp_path):
+@pytest.mark.parametrize("fresh", [False, True])
+def test_preflight_requires_passing_bound_canary_and_matching_controls(tmp_path, fresh):
     canary_path = tmp_path / "canary.json"
     canary = {"passed": True, "checks": [{"passed": True}], "targetFingerprint": "target"}
     canary_path.write_text(json.dumps(canary))
     preflight = {
-        "inheritedCanaryPassed": True,
+        "inheritedCanaryPassed": not fresh,
+        "freshCanaryPassed": fresh,
         "incarnationAndPoliciesMatch": True,
-        "newContainerCreated": False,
+        "newContainerCreated": fresh,
         "scaleResourcesAccessed": False,
         "canarySha256": scope.sha(canary_path),
         "targetFingerprint": "target",
@@ -205,6 +207,105 @@ def test_preflight_requires_passing_bound_canary_and_matching_controls(tmp_path)
     wrong["targetFingerprint"] = "other"
     with pytest.raises(ValueError, match="canary binding"):
         scope.checked_preflight(settings, wrong, canary_path)
+
+
+@pytest.mark.parametrize(
+    "damage",
+    [
+        "inherited-label",
+        "missing-fresh-pass",
+        "legacy-hash-only",
+        "wrong-receipt",
+        "failed-canary",
+        "empty-checks",
+        "failed-check",
+        "different-incarnation",
+        "policies-unverified",
+        "scaling-access",
+        "not-boolean",
+    ],
+)
+def test_fresh_container_requires_its_own_unambiguous_passing_canary(tmp_path, damage):
+    path = tmp_path / "canary.json"
+    canary = {"passed": True, "checks": [{"passed": True}], "targetFingerprint": "fresh-target"}
+    settings = SimpleNamespace(
+        environment="local",
+        auth_mode="dev",
+        aoai_embedding_dimensions=3072,
+        aoai_embedding_model_revision="1",
+        search_default_top=8,
+        search_max_top=20,
+    )
+    preflight = {
+        "newContainerCreated": True,
+        "freshCanaryPassed": True,
+        "inheritedCanaryPassed": False,
+        "incarnationAndPoliciesMatch": True,
+        "scaleResourcesAccessed": False,
+        "targetFingerprint": "fresh-target",
+    }
+    if damage == "inherited-label":
+        preflight["inheritedCanaryPassed"] = True
+    elif damage == "missing-fresh-pass":
+        preflight.pop("freshCanaryPassed")
+    elif damage == "failed-canary":
+        canary["passed"] = False
+    elif damage == "empty-checks":
+        canary["checks"] = []
+    elif damage == "failed-check":
+        canary["checks"][0]["passed"] = False
+    elif damage == "different-incarnation":
+        preflight["targetFingerprint"] = "old-target"
+    elif damage == "policies-unverified":
+        preflight["incarnationAndPoliciesMatch"] = False
+    elif damage == "scaling-access":
+        preflight["scaleResourcesAccessed"] = True
+    elif damage == "not-boolean":
+        preflight["newContainerCreated"] = 1
+    path.write_text(json.dumps(canary))
+    preflight["canarySha256"] = scope.sha(path)
+    if damage == "wrong-receipt":
+        path.write_text(json.dumps({**canary, "changed": True}))
+    elif damage == "legacy-hash-only":
+        preflight["inheritedCanarySha256"] = preflight.pop("canarySha256")
+    with pytest.raises(ValueError, match="canary binding"):
+        scope.checked_preflight(settings, preflight, path)
+
+
+@pytest.mark.parametrize("damage", [None, "incarnation", "libraries-policy", "documents-policy", "chunks-policy"])
+async def test_live_incarnation_and_all_actual_policies_still_gate_new_containers(damage):
+    class Container:
+        def __init__(self, name):
+            self.actual = json.loads((scope.REPO / "cosmos" / f"{name}.container.json").read_text())
+            self.actual["_rid"] = "fresh-" + name
+
+        async def read(self):
+            return self.actual
+
+    containers = {name: Container(name) for name in ("libraries", "documents", "chunks")}
+    settings = SimpleNamespace(cosmos_endpoint="https://isolated.example.test", cosmos_database="evaluation")
+    preflight = {
+        "newContainerCreated": True,
+        "targetFingerprint": scope.target_fingerprint(
+            settings.cosmos_endpoint, settings.cosmos_database, "chunks", containers["chunks"].actual["_rid"]
+        ),
+    }
+    app = SimpleNamespace(
+        state=SimpleNamespace(
+            searcher=SimpleNamespace(chunks=SimpleNamespace(_c=containers["chunks"])),
+            libraries=SimpleNamespace(_c=SimpleNamespace(_c=containers["libraries"])),
+            documents=SimpleNamespace(_c=SimpleNamespace(_c=containers["documents"])),
+        )
+    )
+    if damage == "incarnation":
+        containers["chunks"].actual["_rid"] = "recreated-chunks"
+    elif damage:
+        containers[damage.removesuffix("-policy")].actual["indexingPolicy"]["indexingMode"] = "none"
+    if damage is None:
+        await scope.check_incarnation(app, settings, preflight)
+    else:
+        with pytest.raises(ValueError, match="incarnation differs" if damage == "incarnation" else "policy differs"):
+            await scope.check_incarnation(app, settings, preflight)
 
 
 def test_operation_lock_prevents_parallel_create_attempts(tmp_path):

@@ -225,11 +225,13 @@ def receipt(tmp_path):
         ("config-private.json", config),
         ("settings-private.json", {}),
         ("preflight-private.json", {}),
+        ("canary-private.json", {"passed": True}),
         ("source-before.json", snapshot),
         ("source-after.json", snapshot),
         ("captures-private.json", captures),
     ):
         save(root / name, value)
+    save(root / "preflight-private.json", {"canarySha256": h.sha(root / "canary-private.json")})
     controls = {
         "codeSha256": h.code_hashes(),
         "manifestSha256": plan["manifestSha256"],
@@ -324,6 +326,16 @@ def test_changed_or_incomplete_evidence_is_rejected(receipt, mutation):
         run_score(receipt)
 
 
+def test_rehashed_canary_still_must_match_accepted_preflight(receipt):
+    _path, root, _reviews = receipt
+    save(root / "canary-private.json", {"passed": False})
+    capture = h.read(root / "capture-receipt.json")
+    capture["artifactsSha256"]["canary-private.json"] = h.sha(root / "canary-private.json")
+    save(root / "capture-receipt.json", capture)
+    with pytest.raises(ValueError, match="captured canary differs"):
+        run_score(receipt)
+
+
 def test_delivery_requires_compact_wire_same_as_raw_and_correct_generation(receipt):
     path, root, _ = receipt
     row = h.read(root / "captures-private.json")[0]
@@ -367,7 +379,8 @@ def test_snapshot_preserves_upload_tag_provenance_and_literal_filename(receipt):
         h.validate_snapshot(snapshot, manifest, config)
 
 
-async def test_real_api_capture_schedule_snapshot_and_query_cache(receipt, monkeypatch):
+@pytest.mark.parametrize("fresh", [False, True])
+async def test_real_api_capture_schedule_snapshot_and_query_cache(receipt, monkeypatch, fresh):
     """Real API/Searcher/CosmosChunkReader, fake stores only; no cloud ranking claim."""
     from fli.api import create_app
     from fli.search import CosmosChunkReader, Searcher
@@ -469,6 +482,14 @@ async def test_real_api_capture_schedule_snapshot_and_query_cache(receipt, monke
     monkeypatch.setattr(h.Settings, "from_env", lambda: configured)
     monkeypatch.setattr(h, "create_app", lambda settings: app)
     monkeypatch.setattr(h, "model_binding", lambda *args, **kwargs: {"same": "deployment"})
+    canary_checks = []
+
+    async def incarnation(_app, _settings, preflight):
+        assert not any("VectorDistance" in c[0] for c in actual.calls)
+        assert preflight["targetFingerprint"] == "same-canary-target"
+        canary_checks.append(True)
+
+    monkeypatch.setattr(h, "check_incarnation", incarnation)
     save(path / "manifest.json", manifest)
     plan = h.read(root / "plan.json")
     plan["manifestSha256"] = h.sha(path / "manifest.json")
@@ -498,6 +519,9 @@ async def test_real_api_capture_schedule_snapshot_and_query_cache(receipt, monke
     )
     save(cache_dir / "cache.json", cache)
     save(
+        path / "canary.json", {"passed": True, "checks": [{"passed": True}], "targetFingerprint": "same-canary-target"}
+    )
+    save(
         path / "preflight.json",
         {
             "planSha256": h.sha(path / "plan.json"),
@@ -505,7 +529,13 @@ async def test_real_api_capture_schedule_snapshot_and_query_cache(receipt, monke
             "ownedLibraryId": "owned",
             "sourceSnapshotSha256": digest(before),
             "preparationAccepted": True,
-            "inheritedCanaryPassed": True,
+            "inheritedCanaryPassed": not fresh,
+            "freshCanaryPassed": fresh,
+            "newContainerCreated": fresh,
+            "scaleResourcesAccessed": False,
+            "canaryReceiptPath": str(path / "canary.json"),
+            "canarySha256": h.sha(path / "canary.json"),
+            "targetFingerprint": "same-canary-target",
             "incarnationAndPoliciesMatch": True,
             "hybridRanksMeaningfully": True,
             "actualCorpusReadiness": {
@@ -527,6 +557,8 @@ async def test_real_api_capture_schedule_snapshot_and_query_cache(receipt, monke
         output,
     )
     assert (await h.capture(*args))["completedSearches"] == 80
+    assert canary_checks == [True]
+    assert (output / "canary-private.json").read_bytes() == (path / "canary.json").read_bytes()
     rows = h.read(output / "captures-private.json")
     assert [r["arm"] for r in rows[:4]] == ["vector", "hybrid", "hybrid", "vector"]
     assert all(r["status"] == "complete" for r in rows)

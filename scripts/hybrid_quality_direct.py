@@ -28,6 +28,7 @@ from fli.ingestion import profile
 from fli.presentation import compact_response
 from fli.query import check_query, lexical_terms, partition_key_for, to_float16_query
 from fli.structure_lab import digest
+from scripts.hybrid_quality_scope import check_incarnation, checked_preflight
 from scripts.retrieval_controls import deployment_binding, private_path, read
 from scripts.retrieval_i1 import BINDING_KEYS
 from scripts.score_retrieval_benchmark import normalize, validate_gold
@@ -56,6 +57,7 @@ CAPTURE_FILES = (
     "config-private.json",
     "plan.json",
     "preflight-private.json",
+    "canary-private.json",
     "settings-private.json",
     "query-cache-private.json",
     "source-before.json",
@@ -73,7 +75,13 @@ def question_sha(text):
 
 
 def code_hashes():
-    paths = [Path(__file__), *sorted((REPO / "src").rglob("*.py")), *sorted((REPO / "cosmos").glob("*.json"))]
+    paths = [
+        Path(__file__),
+        REPO / "scripts/hybrid_quality_scope.py",
+        REPO / "scripts/canary.py",
+        *sorted((REPO / "src").rglob("*.py")),
+        *sorted((REPO / "cosmos").glob("*.json")),
+    ]
     return {str(p.relative_to(REPO)): sha(p) for p in paths}
 
 
@@ -573,6 +581,8 @@ async def capture(config_path, plan_path, manifest_path, tasks_path, cache_dir, 
     manifest, tasks = validate_plan(plan, manifest_path, tasks_path)
     settings = Settings.from_env()
     binding = settings_binding(settings)
+    canary_path = private_path(preflight["canaryReceiptPath"])
+    checked_preflight(settings, preflight, canary_path)
     cache_root = private_path(cache_dir)
     cache = read(cache_root / "cache.json")
     if cache["status"] != "complete" or cache["tasksSha256"] != sha(tasks_path):
@@ -592,7 +602,6 @@ async def capture(config_path, plan_path, manifest_path, tasks_path, cache_dir, 
             preflight.get(k) is not True
             for k in (
                 "preparationAccepted",
-                "inheritedCanaryPassed",
                 "incarnationAndPoliciesMatch",
                 "hybridRanksMeaningfully",
             )
@@ -631,9 +640,11 @@ async def capture(config_path, plan_path, manifest_path, tasks_path, cache_dir, 
         ("config-private.json", config_path),
         ("plan.json", plan_path),
         ("preflight-private.json", preflight_path),
+        ("canary-private.json", canary_path),
         ("query-cache-private.json", cache_root / "cache.json"),
     ):
         (root / name).write_bytes(Path(path).read_bytes())
+    checked_preflight(settings, preflight, root / "canary-private.json")
     rows = []
     app = create_app(settings)
     try:
@@ -646,6 +657,7 @@ async def capture(config_path, plan_path, manifest_path, tasks_path, cache_dir, 
                 timeout=180,
             ) as client,
         ):
+            await check_incarnation(app, settings, preflight)
             before = await source_snapshot(client, config["libraryId"], config["agentId"], app.state.searcher.chunks._c)
             validate_snapshot(before, manifest, config)
             actual_counts = Counter(c["documentId"] for c in before["chunks"])
@@ -785,6 +797,9 @@ def score(root, manifest_path, tasks_path, gold_path, reviews_path, output):
     ):
         if controls[key] != sha(root / name):
             raise ValueError("capture control binding changed")
+    preflight = read(root / "preflight-private.json")
+    if sha(root / "canary-private.json") != preflight.get("canarySha256", preflight.get("inheritedCanarySha256")):
+        raise ValueError("captured canary differs from accepted preflight receipt")
     before, after = read(root / "source-before.json"), read(root / "source-after.json")
     config = read(root / "config-private.json")
     cache = read(root / "query-cache-private.json")
@@ -917,21 +932,7 @@ def score(root, manifest_path, tasks_path, gold_path, reviews_path, output):
                 for prefix in ("initial", "expanded")
             },
         }
-    artifact_paths = {
-        n: str(root / n)
-        for n in (
-            "controls.json",
-            "config-private.json",
-            "plan.json",
-            "preflight-private.json",
-            "settings-private.json",
-            "query-cache-private.json",
-            "source-before.json",
-            "source-after.json",
-            "captures-private.json",
-            "capture-receipt.json",
-        )
-    }
+    artifact_paths = {n: str(root / n) for n in (*CAPTURE_FILES, "capture-receipt.json")}
     artifact_paths["reviews-private.json"] = str(private_path(reviews_path))
     result = {
         "schema": "fli.hybrid-quality.direct.v1",

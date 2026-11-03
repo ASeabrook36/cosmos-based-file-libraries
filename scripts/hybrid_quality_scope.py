@@ -94,12 +94,29 @@ def binding(settings):
 
 def checked_preflight(settings, preflight, canary_path):
     canary = json.loads(private_path(canary_path).read_text())
+    inherited = (
+        preflight.get("newContainerCreated") is False
+        and preflight.get("inheritedCanaryPassed") is True
+        and preflight.get("freshCanaryPassed", False) is False
+    )
+    fresh = (
+        preflight.get("newContainerCreated") is True
+        and preflight.get("freshCanaryPassed") is True
+        and preflight.get("inheritedCanaryPassed") is False
+    )
+    # A fresh incarnation must name its new receipt explicitly. An inherited
+    # receipt can never authorize it: check_incarnation also compares the live
+    # endpoint/database/container RID fingerprint before every scope action.
+    canary_hash = (
+        preflight.get("canarySha256")
+        if fresh
+        else preflight.get("canarySha256", preflight.get("inheritedCanarySha256"))
+    )
     require(
-        preflight.get("inheritedCanaryPassed") is True
+        (inherited or fresh)
         and preflight.get("incarnationAndPoliciesMatch") is True
-        and preflight.get("newContainerCreated") is False
         and preflight.get("scaleResourcesAccessed") is False
-        and preflight.get("canarySha256", preflight.get("inheritedCanarySha256")) == sha(canary_path)
+        and canary_hash == sha(canary_path)
         and canary.get("passed") is True
         and all(row.get("passed") is True for row in canary.get("checks", []))
         and bool(canary.get("checks"))
