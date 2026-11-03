@@ -1,0 +1,1574 @@
+{
+  "schema": "fli.hybrid-quality.manifest.v1",
+  "benchmark": "hybrid-quality-v1",
+  "baseCommit": "3980333ee8453af48c7133cab24522868701d1cc",
+  "frozenOn": "2026-11-02",
+  "documents": [
+    {
+      "id": "hq-01",
+      "fileName": "MSC_-_Core_Terms_-_E_W_-_Word_v2.2A_2025.DOCX",
+      "sha256": "43c7e8b70daf21779253921143b6bc71419ec3b59dba1071469cdc5f557a7f8e",
+      "sizeBytes": 177274,
+      "provenance": {
+        "landingUrl": "https://www.gov.uk/government/publications/the-model-services-contract-core-terms-england-wales",
+        "downloadUrl": "https://assets.publishing.service.gov.uk/media/68af256b969253904d1558e5/MSC_-_Core_Terms_-_E_W_-_Word_v2.2A_2025.DOCX",
+        "license": "Open Government Licence v3.0",
+        "publisher": "Cabinet Office and Government Legal Department",
+        "title": "Model Services Contract Core Terms England and Wales v2.2A",
+        "sourceForm": "Original public DOCX bytes and original published download filename",
+        "acquiredOn": "2026-11-02"
+      },
+      "split": "confirmation",
+      "fileType": "docx",
+      "regression": false,
+      "expectedInitialGeneration": 1,
+      "metadata": {
+        "author": "Cabinet Office and Government Legal Department",
+        "tags": [
+          {
+            "key": "corpus",
+            "value": "hybrid-quality-v1"
+          },
+          {
+            "key": "split",
+            "value": "confirmation"
+          },
+          {
+            "key": "domain",
+            "value": "public-procurement-contracts"
+          },
+          {
+            "key": "document-title",
+            "value": "Model Services Contract Core Terms England and Wales v2.2A"
+          }
+        ]
+      },
+      "sourceStructure": {
+        "topLevelParagraphs": 1154,
+        "tables": 3,
+        "cl100kBodyTokenEstimate": 37154,
+        "tokenEstimateMethod": "Each original OOXML body w:t once; paragraph, tab and line-break separators; cl100k_base; not provider extraction",
+        "fiveThousandTokenUnitsCeiling": 8,
+        "actualMicrosoftChunks": null
+      }
+    },
+    {
+      "id": "hq-03",
+      "fileName": "Short_Form_Contract_-_Word_v1.5A_2025__1_.docx",
+      "sha256": "88c177fe3a74dec53005df61a4aaecf163ed1c22731980fbefbd061da604e196",
+      "sizeBytes": 292704,
+      "provenance": {
+        "landingUrl": "https://www.gov.uk/government/publications/the-short-form-contract",
+        "downloadUrl": "https://assets.publishing.service.gov.uk/media/68aedca0969253904d155891/Short_Form_Contract_-_Word_v1.5A_2025__1_.docx",
+        "license": "Open Government Licence v3.0",
+        "publisher": "Cabinet Office and Government Legal Department",
+        "title": "Short Form Contract v1.5A",
+        "sourceForm": "Original public DOCX bytes and original published download filename",
+        "acquiredOn": "2026-11-02"
+      },
+      "split": "confirmation",
+      "fileType": "docx",
+      "regression": false,
+      "expectedInitialGeneration": 1,
+      "metadata": {
+        "author": "Cabinet Office and Government Legal Department",
+        "tags": [
+          {
+            "key": "corpus",
+            "value": "hybrid-quality-v1"
+          },
+          {
+            "key": "split",
+            "value": "confirmation"
+          },
+          {
+            "key": "domain",
+            "value": "public-procurement-contracts"
+          },
+          {
+            "key": "document-title",
+            "value": "Short Form Contract v1.5A"
+          }
+        ]
+      },
+      "sourceStructure": {
+        "topLevelParagraphs": 1082,
+        "tables": 7,
+        "cl100kBodyTokenEstimate": 38370,
+        "tokenEstimateMethod": "Each original OOXML body w:t once; paragraph, tab and line-break separators; cl100k_base; not provider extraction",
+        "fiveThousandTokenUnitsCeiling": 8,
+        "actualMicrosoftChunks": null
+      }
+    },
+    {
+      "id": "hq-04",
+      "fileName": "Mid-Tier_Core_Terms_Word_v1.3A_2025.docx",
+      "sha256": "c3d056e64cac0fe18a00dc1cb0ff3a1d838b9b9391931fea0c4c505f5d7197e4",
+      "sizeBytes": 99717,
+      "provenance": {
+        "landingUrl": "https://www.gov.uk/government/publications/the-mid-tier-contract-core-terms",
+        "downloadUrl": "https://assets.publishing.service.gov.uk/media/68aeee2b960e2d135b4c8e85/Mid-Tier_Core_Terms_Word_v1.3A_2025.docx",
+        "license": "Open Government Licence v3.0",
+        "publisher": "Cabinet Office and Government Legal Department",
+        "title": "Mid-Tier Contract Core Terms v1.3A",
+        "sourceForm": "Original public DOCX bytes and original published download filename",
+        "acquiredOn": "2026-11-02"
+      },
+      "split": "confirmation",
+      "fileType": "docx",
+      "regression": false,
+      "expectedInitialGeneration": 1,
+      "metadata": {
+        "author": "Cabinet Office and Government Legal Department",
+        "tags": [
+          {
+            "key": "corpus",
+            "value": "hybrid-quality-v1"
+          },
+          {
+            "key": "split",
+            "value": "confirmation"
+          },
+          {
+            "key": "domain",
+            "value": "public-procurement-contracts"
+          },
+          {
+            "key": "document-title",
+            "value": "Mid-Tier Contract Core Terms v1.3A"
+          }
+        ]
+      },
+      "sourceStructure": {
+        "topLevelParagraphs": 510,
+        "tables": 0,
+        "cl100kBodyTokenEstimate": 14083,
+        "tokenEstimateMethod": "Each original OOXML body w:t once; paragraph, tab and line-break separators; cl100k_base; not provider extraction",
+        "fiveThousandTokenUnitsCeiling": 3,
+        "actualMicrosoftChunks": null
+      }
+    },
+    {
+      "id": "hq-05",
+      "fileName": "Mid-Tier_Schedule_01__Definitions__Word_v1.3A_2025.docx",
+      "sha256": "0970916cdf0ca2ffb314a282e9a2d308f41dc048ead33df0d4ec1825305d4dad",
+      "sizeBytes": 106942,
+      "provenance": {
+        "landingUrl": "https://www.gov.uk/government/publications/the-mid-tier-contract-schedule-1-definitions",
+        "downloadUrl": "https://assets.publishing.service.gov.uk/media/68aeefedbceafd8d0d96a21a/Mid-Tier_Schedule_01__Definitions__Word_v1.3A_2025.docx",
+        "license": "Open Government Licence v3.0",
+        "publisher": "Cabinet Office and Government Legal Department",
+        "title": "Mid-Tier Schedule 1 Definitions v1.3A",
+        "sourceForm": "Original public DOCX bytes and original published download filename",
+        "acquiredOn": "2026-11-02"
+      },
+      "split": "confirmation",
+      "fileType": "docx",
+      "regression": false,
+      "expectedInitialGeneration": 1,
+      "metadata": {
+        "author": "Cabinet Office and Government Legal Department",
+        "tags": [
+          {
+            "key": "corpus",
+            "value": "hybrid-quality-v1"
+          },
+          {
+            "key": "split",
+            "value": "confirmation"
+          },
+          {
+            "key": "domain",
+            "value": "public-procurement-contracts"
+          },
+          {
+            "key": "document-title",
+            "value": "Mid-Tier Schedule 1 Definitions v1.3A"
+          }
+        ]
+      },
+      "sourceStructure": {
+        "topLevelParagraphs": 20,
+        "tables": 1,
+        "cl100kBodyTokenEstimate": 13811,
+        "tokenEstimateMethod": "Each original OOXML body w:t once; paragraph, tab and line-break separators; cl100k_base; not provider extraction",
+        "fiveThousandTokenUnitsCeiling": 3,
+        "actualMicrosoftChunks": null
+      }
+    },
+    {
+      "id": "hq-06",
+      "fileName": "Mid-Tier_Schedule_28__ICT_Services__Word_v1.3_2025.DOCX",
+      "sha256": "e0b9f64fa441ff89a7dfec04d4e6191083b4ec8a05c0116e1baf95603399febb",
+      "sizeBytes": 58705,
+      "provenance": {
+        "landingUrl": "https://www.gov.uk/government/publications/the-mid-tier-contract-schedule-28-ict-services",
+        "downloadUrl": "https://assets.publishing.service.gov.uk/media/67b491d74e79a175a4c2fe4c/Mid-Tier_Schedule_28__ICT_Services__Word_v1.3_2025.DOCX",
+        "license": "Open Government Licence v3.0",
+        "publisher": "Cabinet Office and Government Legal Department",
+        "title": "Mid-Tier Schedule 28 ICT Services v1.3",
+        "sourceForm": "Original public DOCX bytes and original published download filename",
+        "acquiredOn": "2026-11-02"
+      },
+      "split": "confirmation",
+      "fileType": "docx",
+      "regression": false,
+      "expectedInitialGeneration": 1,
+      "metadata": {
+        "author": "Cabinet Office and Government Legal Department",
+        "tags": [
+          {
+            "key": "corpus",
+            "value": "hybrid-quality-v1"
+          },
+          {
+            "key": "split",
+            "value": "confirmation"
+          },
+          {
+            "key": "domain",
+            "value": "public-procurement-contracts"
+          },
+          {
+            "key": "document-title",
+            "value": "Mid-Tier Schedule 28 ICT Services v1.3"
+          }
+        ]
+      },
+      "sourceStructure": {
+        "topLevelParagraphs": 57,
+        "tables": 1,
+        "cl100kBodyTokenEstimate": 1826,
+        "tokenEstimateMethod": "Each original OOXML body w:t once; paragraph, tab and line-break separators; cl100k_base; not provider extraction",
+        "fiveThousandTokenUnitsCeiling": 1,
+        "actualMicrosoftChunks": null
+      }
+    },
+    {
+      "id": "hq-07",
+      "fileName": "Mid-Tier_Schedule_20__Processing_Data__Word_v1.3_2025.DOCX",
+      "sha256": "8597feb7e1f2313de19025bdf2cb7fa63b11b3415c595149e8ee6da659bf6e49",
+      "sizeBytes": 132311,
+      "provenance": {
+        "landingUrl": "https://www.gov.uk/government/publications/the-mid-tier-contract-schedule-20-processing-data",
+        "downloadUrl": "https://assets.publishing.service.gov.uk/media/67b490bf4e79a175a4c2fe45/Mid-Tier_Schedule_20__Processing_Data__Word_v1.3_2025.DOCX",
+        "license": "Open Government Licence v3.0",
+        "publisher": "Cabinet Office and Government Legal Department",
+        "title": "Mid-Tier Schedule 20 Processing Data v1.3",
+        "sourceForm": "Original public DOCX bytes and original published download filename",
+        "acquiredOn": "2026-11-02"
+      },
+      "split": "confirmation",
+      "fileType": "docx",
+      "regression": false,
+      "expectedInitialGeneration": 1,
+      "metadata": {
+        "author": "Cabinet Office and Government Legal Department",
+        "tags": [
+          {
+            "key": "corpus",
+            "value": "hybrid-quality-v1"
+          },
+          {
+            "key": "split",
+            "value": "confirmation"
+          },
+          {
+            "key": "domain",
+            "value": "public-procurement-contracts"
+          },
+          {
+            "key": "document-title",
+            "value": "Mid-Tier Schedule 20 Processing Data v1.3"
+          }
+        ]
+      },
+      "sourceStructure": {
+        "topLevelParagraphs": 234,
+        "tables": 1,
+        "cl100kBodyTokenEstimate": 9037,
+        "tokenEstimateMethod": "Each original OOXML body w:t once; paragraph, tab and line-break separators; cl100k_base; not provider extraction",
+        "fiveThousandTokenUnitsCeiling": 2,
+        "actualMicrosoftChunks": null
+      }
+    },
+    {
+      "id": "hq-08-1",
+      "fileName": "Mid-Tier_Schedule_16__Security___Buyer-led_Assurance__Word_v1.3_2025.DOCX",
+      "sha256": "2cc19a1f0015badd3de9bd05a1f7c8ec38f08a4716f65f320227e9e38017c665",
+      "sizeBytes": 194981,
+      "provenance": {
+        "landingUrl": "https://www.gov.uk/government/publications/the-mid-tier-contract-schedule-16-security",
+        "downloadUrl": "https://assets.publishing.service.gov.uk/media/67b48f613e77ca8b737d37fd/Mid-Tier_Schedule_16__Security___Buyer-led_Assurance__Word_v1.3_2025.DOCX",
+        "license": "Open Government Licence v3.0",
+        "publisher": "Cabinet Office and Government Legal Department",
+        "title": "Mid-Tier Schedule 16 Security Buyer-led Assurance v1.3",
+        "sourceForm": "Original public DOCX bytes and original published download filename",
+        "acquiredOn": "2026-11-02"
+      },
+      "split": "confirmation",
+      "fileType": "docx",
+      "regression": false,
+      "expectedInitialGeneration": 1,
+      "metadata": {
+        "author": "Cabinet Office and Government Legal Department",
+        "tags": [
+          {
+            "key": "corpus",
+            "value": "hybrid-quality-v1"
+          },
+          {
+            "key": "split",
+            "value": "confirmation"
+          },
+          {
+            "key": "domain",
+            "value": "public-procurement-contracts"
+          },
+          {
+            "key": "document-title",
+            "value": "Mid-Tier Schedule 16 Security Buyer-led Assurance v1.3"
+          }
+        ]
+      },
+      "sourceStructure": {
+        "topLevelParagraphs": 1120,
+        "tables": 4,
+        "cl100kBodyTokenEstimate": 24663,
+        "tokenEstimateMethod": "Each original OOXML body w:t once; paragraph, tab and line-break separators; cl100k_base; not provider extraction",
+        "fiveThousandTokenUnitsCeiling": 5,
+        "actualMicrosoftChunks": null
+      }
+    },
+    {
+      "id": "hq-09",
+      "fileName": "Mid-Tier_Schedule_30__Exit_Management__Word_v1.3A_2025.DOCX",
+      "sha256": "138d52f79edbdc0d5230175c99fc2fb08766899f0a9b711f3ba79823174ce677",
+      "sizeBytes": 76838,
+      "provenance": {
+        "landingUrl": "https://www.gov.uk/government/publications/the-mid-tier-contract-schedule-30-exit-management",
+        "downloadUrl": "https://assets.publishing.service.gov.uk/media/69381b836a12691d48491c5f/Mid-Tier_Schedule_30__Exit_Management__Word_v1.3A_2025.DOCX",
+        "license": "Open Government Licence v3.0",
+        "publisher": "Cabinet Office and Government Legal Department",
+        "title": "Mid-Tier Schedule 30 Exit Management v1.3A",
+        "sourceForm": "Original public DOCX bytes and original published download filename",
+        "acquiredOn": "2026-11-02"
+      },
+      "split": "confirmation",
+      "fileType": "docx",
+      "regression": false,
+      "expectedInitialGeneration": 1,
+      "metadata": {
+        "author": "Cabinet Office and Government Legal Department",
+        "tags": [
+          {
+            "key": "corpus",
+            "value": "hybrid-quality-v1"
+          },
+          {
+            "key": "split",
+            "value": "confirmation"
+          },
+          {
+            "key": "domain",
+            "value": "public-procurement-contracts"
+          },
+          {
+            "key": "document-title",
+            "value": "Mid-Tier Schedule 30 Exit Management v1.3A"
+          }
+        ]
+      },
+      "sourceStructure": {
+        "topLevelParagraphs": 295,
+        "tables": 5,
+        "cl100kBodyTokenEstimate": 9919,
+        "tokenEstimateMethod": "Each original OOXML body w:t once; paragraph, tab and line-break separators; cl100k_base; not provider extraction",
+        "fiveThousandTokenUnitsCeiling": 2,
+        "actualMicrosoftChunks": null
+      }
+    }
+  ],
+  "facts": {
+    "hq-01-f01": {
+      "sourceRegionIds": [
+        "hq-01:p368",
+        "hq-01:p369",
+        "hq-01:p370"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-01:p368",
+          "start": 0,
+          "end": 205,
+          "normalizedTextSha256": "a757f647b6cdc4313413b1643c660f6672df1172322fcb3a8dce435aa3b418d8"
+        },
+        {
+          "regionId": "hq-01:p369",
+          "start": 0,
+          "end": 27,
+          "normalizedTextSha256": "e78cad7f8935cd43f439e7505ccdbec61ad210d37feae0a0104f3dbf4b0c85bf"
+        },
+        {
+          "regionId": "hq-01:p370",
+          "start": 0,
+          "end": 137,
+          "normalizedTextSha256": "6265276abf9df18c73e57cc16c9eb8591394784cd930ba55473ede487519bc9b"
+        }
+      ]
+    },
+    "hq-02-f01": {
+      "sourceRegionIds": [
+        "hq-01:p408"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-01:p408",
+          "start": 0,
+          "end": 75,
+          "normalizedTextSha256": "d892223989d0db1dde56a3dad727aecfb11ff93e198a11696fb49d5aaf910421"
+        }
+      ]
+    },
+    "hq-02-f02": {
+      "sourceRegionIds": [
+        "hq-01:p409"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-01:p409",
+          "start": 0,
+          "end": 285,
+          "normalizedTextSha256": "2bf333d137123db32f5e1d4a9e8a69cf935de51f5a17d28648e3fdbdfd43e418"
+        }
+      ]
+    },
+    "hq-03-f01": {
+      "sourceRegionIds": [
+        "hq-01:p822"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-01:p822",
+          "start": 0,
+          "end": 553,
+          "normalizedTextSha256": "c98283cb5c1d83b5e91a44a90ff33f0ae9437d48a2441743c3deacaadee9c34e"
+        }
+      ]
+    },
+    "hq-03-f02": {
+      "sourceRegionIds": [
+        "hq-01:p830"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-01:p830",
+          "start": 0,
+          "end": 412,
+          "normalizedTextSha256": "b2f1e22317d5f5bbb958acf96298939fc6291ef675fb0ec6e55dd83239e44b11"
+        }
+      ]
+    },
+    "hq-04-f01": {
+      "sourceRegionIds": [
+        "hq-01:p233"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-01:p233",
+          "start": 0,
+          "end": 328,
+          "normalizedTextSha256": "aa20a48a905be7c7ccde2ca5a6484a9397af2029f2ad2edda0095eb7dfeda963"
+        }
+      ]
+    },
+    "hq-05-f01": {
+      "sourceRegionIds": [
+        "hq-01:p953",
+        "hq-01:p954",
+        "hq-01:p955",
+        "hq-01:p956"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-01:p953",
+          "start": 0,
+          "end": 169,
+          "normalizedTextSha256": "fa4661cf0dac2736efce5ad6707de01e66116e882a3d259b26dd4f898421e50f"
+        },
+        {
+          "regionId": "hq-01:p954",
+          "start": 0,
+          "end": 69,
+          "normalizedTextSha256": "6b6ea73a4125811c4651ab3c92e5cccdd7fcd1443e1f43fb2b30c415e493c404"
+        },
+        {
+          "regionId": "hq-01:p955",
+          "start": 0,
+          "end": 166,
+          "normalizedTextSha256": "a3d0a5408ae0a17046d5781662cf7a7d1a59cfe32bb7f38e287f1d00f6a40e76"
+        },
+        {
+          "regionId": "hq-01:p956",
+          "start": 0,
+          "end": 220,
+          "normalizedTextSha256": "9ffad4ca8230e9ac75adb9f1d6fa30ee6faba7058ef567fec5890d8c58b90e13"
+        }
+      ]
+    },
+    "hq-06-f01": {
+      "sourceRegionIds": [
+        "hq-01:p356"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-01:p356",
+          "start": 0,
+          "end": 299,
+          "normalizedTextSha256": "915877da2947338be0a806652cf24c987e2b2e38e1819b0766b8ac9ab8ade357"
+        }
+      ]
+    },
+    "hq-07-f01": {
+      "sourceRegionIds": [
+        "hq-03:p140"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-03:p140",
+          "start": 0,
+          "end": 194,
+          "normalizedTextSha256": "7ad8c32698601f3bc9f0ae81de8bd8192ccd0ec01111fd64c83ff013b70f2dd1"
+        }
+      ]
+    },
+    "hq-08-f01": {
+      "sourceRegionIds": [
+        "hq-03:p144"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-03:p144",
+          "start": 0,
+          "end": 192,
+          "normalizedTextSha256": "a55cbb92c84370e4df85ec62775631d54b7aec087487c1172a45280635ba0a7f"
+        }
+      ]
+    },
+    "hq-09-f01": {
+      "sourceRegionIds": [
+        "hq-03:p177"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-03:p177",
+          "start": 0,
+          "end": 406,
+          "normalizedTextSha256": "c6cf9ddb1e23cffbe95fc4069a41ffd7d12bcf829589a32ddf757ad7358cdf62"
+        }
+      ]
+    },
+    "hq-10-f01": {
+      "sourceRegionIds": [
+        "hq-03:p197"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-03:p197",
+          "start": 0,
+          "end": 255,
+          "normalizedTextSha256": "c3bc4f1c8f133ad6688972872a368319920a8eb2c552ff83c01bb0e9c628cb2a"
+        }
+      ]
+    },
+    "hq-11-f01": {
+      "sourceRegionIds": [
+        "hq-03:p434"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-03:p434",
+          "start": 0,
+          "end": 90,
+          "normalizedTextSha256": "0a742b26b8ad9a5456a67f6f786bcf9c757ee424841600a05245ba380dd1860b"
+        }
+      ]
+    },
+    "hq-11-f02": {
+      "sourceRegionIds": [
+        "hq-03:p435",
+        "hq-03:p436",
+        "hq-03:p437",
+        "hq-03:p438"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-03:p435",
+          "start": 0,
+          "end": 224,
+          "normalizedTextSha256": "e0807ff711a6b2c5742a002493bcb3946646e1cb1a7dc56a3af248ed0c7e424b"
+        },
+        {
+          "regionId": "hq-03:p436",
+          "start": 0,
+          "end": 44,
+          "normalizedTextSha256": "b7c7768d11ace541f1dc34ace25b554461d3136907dc474714a944ef46ef6859"
+        },
+        {
+          "regionId": "hq-03:p437",
+          "start": 0,
+          "end": 86,
+          "normalizedTextSha256": "304a72ea73b7a383d85d9812a17c5a1721bdcf7ab4b84ff77f51069b53615fe7"
+        },
+        {
+          "regionId": "hq-03:p438",
+          "start": 0,
+          "end": 99,
+          "normalizedTextSha256": "2de978403783ea12c19acd5aeaf0f8ee6576de15702e9a5868d928d4b5ff2470"
+        }
+      ]
+    },
+    "hq-12-f01": {
+      "sourceRegionIds": [
+        "hq-03:p287"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-03:p287",
+          "start": 0,
+          "end": 327,
+          "normalizedTextSha256": "4ae67aad6515781d39ffe33bf2a545b1d13f921dfab7cb51bd0518d6cb34496d"
+        }
+      ]
+    },
+    "hq-13-f01": {
+      "sourceRegionIds": [
+        "hq-03:p496"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-03:p496",
+          "start": 0,
+          "end": 219,
+          "normalizedTextSha256": "db7066f123cd4c6fac3e0fe400dc4e2a8ff2a631e6fa508b85ae629545cbb5ad"
+        }
+      ]
+    },
+    "hq-13-f02": {
+      "sourceRegionIds": [
+        "hq-03:p497"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-03:p497",
+          "start": 0,
+          "end": 507,
+          "normalizedTextSha256": "3c6b9158340a05422a9778dec7e6fa0e3b63240a09fa8377ff478e7e901d2020"
+        }
+      ]
+    },
+    "hq-14-f01": {
+      "sourceRegionIds": [
+        "hq-03:p452"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-03:p452",
+          "start": 0,
+          "end": 261,
+          "normalizedTextSha256": "dfc45bbca12950f4f981b8c0233319f0bc1be84c3d5bdfca114b33ea6e4ff874"
+        }
+      ]
+    },
+    "hq-15-f01": {
+      "sourceRegionIds": [
+        "hq-04:p34"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-04:p34",
+          "start": 0,
+          "end": 173,
+          "normalizedTextSha256": "8dc0cebd4bb1911b0d966fe0b025d5af361253fe1af8ea494e24960386289b0c"
+        }
+      ]
+    },
+    "hq-16-f01": {
+      "sourceRegionIds": [
+        "hq-04:p78",
+        "hq-04:p79",
+        "hq-04:p80",
+        "hq-04:p81"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-04:p78",
+          "start": 0,
+          "end": 39,
+          "normalizedTextSha256": "69a95780f1375b5711b885922e4c5794f96cbba12e2052ee59e467a433171810"
+        },
+        {
+          "regionId": "hq-04:p79",
+          "start": 0,
+          "end": 95,
+          "normalizedTextSha256": "dc614218d8e3680fa5bda808087f078c67dbafcaf992698e99ba868d4023e9e4"
+        },
+        {
+          "regionId": "hq-04:p80",
+          "start": 0,
+          "end": 133,
+          "normalizedTextSha256": "063ecb9b50e4769d23ff59ce3fc8cd925015dc266019a87175783a1537628c14"
+        },
+        {
+          "regionId": "hq-04:p81",
+          "start": 0,
+          "end": 82,
+          "normalizedTextSha256": "8d27f9de97b377ebb037946995a5e614801d6b655cdae7ca3ae5460c4ffbb701"
+        }
+      ]
+    },
+    "hq-17-f01": {
+      "sourceRegionIds": [
+        "hq-04:p43"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-04:p43",
+          "start": 0,
+          "end": 107,
+          "normalizedTextSha256": "665b35beab37ac5d518725b0f9d038e04156171633fc2e1deb73caad3fa46ddb"
+        }
+      ]
+    },
+    "hq-17-f02": {
+      "sourceRegionIds": [
+        "hq-04:p44"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-04:p44",
+          "start": 0,
+          "end": 213,
+          "normalizedTextSha256": "eb647c8ef659b7bf68261471ecd5aac917bff4aeebb26ec538c53b16e0b22f0a"
+        }
+      ]
+    },
+    "hq-18-f01": {
+      "sourceRegionIds": [
+        "hq-04:p35",
+        "hq-04:p36"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-04:p35",
+          "start": 0,
+          "end": 291,
+          "normalizedTextSha256": "471da43be0ebd989b27045f71462219514ddc7623e1c4a4b16c778cf6a1d2d4f"
+        },
+        {
+          "regionId": "hq-04:p36",
+          "start": 0,
+          "end": 206,
+          "normalizedTextSha256": "2adfee2317a952ad96ffc4487df638620087c09346f6a0b6300ee50f018ac55c"
+        }
+      ]
+    },
+    "hq-19-f01": {
+      "sourceRegionIds": [
+        "hq-04:p106"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-04:p106",
+          "start": 0,
+          "end": 320,
+          "normalizedTextSha256": "41f15b9bdf2b1e142c965ebfe3b55afaf85ec45fdc20d103bfe6f37e95209db5"
+        }
+      ]
+    },
+    "hq-20-f01": {
+      "sourceRegionIds": [
+        "hq-05:t0:r70:c0",
+        "hq-05:t0:r70:c1"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-05:t0:r70:c0",
+          "start": 0,
+          "end": 5,
+          "normalizedTextSha256": "dd6ad53cd0497ad699d1c575acce7a84d03417ce7daf7a4157c3f9e99587c64e"
+        },
+        {
+          "regionId": "hq-05:t0:r70:c1",
+          "start": 0,
+          "end": 47,
+          "normalizedTextSha256": "7158fbf963fe536e97f0c67e0ccbc8e275ce397c35a1d9c272b205e6a3e12b23"
+        }
+      ]
+    },
+    "hq-20-f02": {
+      "sourceRegionIds": [
+        "hq-05:t0:r89:c0",
+        "hq-05:t0:r89:c1"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-05:t0:r89:c0",
+          "start": 0,
+          "end": 6,
+          "normalizedTextSha256": "788014e914c0abd6aff17304058dd920aeb24305c3f6902253a208bb6f87807b"
+        },
+        {
+          "regionId": "hq-05:t0:r89:c1",
+          "start": 0,
+          "end": 263,
+          "normalizedTextSha256": "d3e2e3e3120c052e58821b34bb27c1643dc112c4226f53d1dd3d1694e1af23b1"
+        }
+      ]
+    },
+    "hq-21-f01": {
+      "sourceRegionIds": [
+        "hq-05:t0:r233:c0",
+        "hq-05:t0:r233:c1"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-05:t0:r233:c0",
+          "start": 0,
+          "end": 10,
+          "normalizedTextSha256": "4418dba8bc68790c5dc16ce442ebf9055d67167f0013215c8cac1bc0444f1ebc"
+        },
+        {
+          "regionId": "hq-05:t0:r233:c1",
+          "start": 0,
+          "end": 118,
+          "normalizedTextSha256": "4c7d9ee42f6590bd2d7cf84dcda14b946da93dd2716af210b3bffa0c195a0c71"
+        }
+      ]
+    },
+    "hq-21-f02": {
+      "sourceRegionIds": [
+        "hq-05:t0:r234:c0",
+        "hq-05:t0:r234:c1"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-05:t0:r234:c0",
+          "start": 0,
+          "end": 12,
+          "normalizedTextSha256": "11d4db2faf0170d325f985fc182217ef5cea007a2884dcb647797b476e193ba6"
+        },
+        {
+          "regionId": "hq-05:t0:r234:c1",
+          "start": 0,
+          "end": 225,
+          "normalizedTextSha256": "32d0a0dffe9f268bc60c07673efb35753893695ab0beeb32fda6b4731e81d72e"
+        }
+      ]
+    },
+    "hq-21-f03": {
+      "sourceRegionIds": [
+        "hq-05:t0:r236:c0",
+        "hq-05:t0:r236:c1"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-05:t0:r236:c0",
+          "start": 0,
+          "end": 13,
+          "normalizedTextSha256": "66bff489dc99e29b1a652b6f27436950052439951f122a2727d1dc2160e5dccf"
+        },
+        {
+          "regionId": "hq-05:t0:r236:c1",
+          "start": 0,
+          "end": 139,
+          "normalizedTextSha256": "05778b591218746282490a815dbcb9c0137e6a5add4635db187448bbde4ebf2a"
+        }
+      ]
+    },
+    "hq-22-f01": {
+      "sourceRegionIds": [
+        "hq-05:t0:r128:c0",
+        "hq-05:t0:r128:c1"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-05:t0:r128:c0",
+          "start": 0,
+          "end": 20,
+          "normalizedTextSha256": "b5090e362d0e00b12b6795d0e46a6570d11032a2ce505791247485c3420fc093"
+        },
+        {
+          "regionId": "hq-05:t0:r128:c1",
+          "start": 0,
+          "end": 358,
+          "normalizedTextSha256": "0c532837de8f2f9a9580e3772327f9ae36ad03b0dc3335773b257ade27811bc7"
+        }
+      ]
+    },
+    "hq-23-f01": {
+      "sourceRegionIds": [
+        "hq-06:p25"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-06:p25",
+          "start": 0,
+          "end": 398,
+          "normalizedTextSha256": "f1716fa6f28535dbbfffbab65db4fad2dfbf786ac2948cb3154edbce3b34cb3e"
+        }
+      ]
+    },
+    "hq-24-f01": {
+      "sourceRegionIds": [
+        "hq-06:p31"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-06:p31",
+          "start": 0,
+          "end": 320,
+          "normalizedTextSha256": "a9808a667def9a7ff6a5cd2c0c656da23fa32a4ce90287385a07c657863f1966"
+        }
+      ]
+    },
+    "hq-24-f02": {
+      "sourceRegionIds": [
+        "hq-06:p32"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-06:p32",
+          "start": 0,
+          "end": 331,
+          "normalizedTextSha256": "3f7b9c4018876c88dd6a6ab154b2d03045a305a3d8b08d160ad2db2c10f925a6"
+        }
+      ]
+    },
+    "hq-25-f01": {
+      "sourceRegionIds": [
+        "hq-06:p44",
+        "hq-06:p45"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-06:p44",
+          "start": 0,
+          "end": 295,
+          "normalizedTextSha256": "872b043ddbb78d486236b4b30139483e39cf9587eac7c00f0f6abb702e83e2f0"
+        },
+        {
+          "regionId": "hq-06:p45",
+          "start": 0,
+          "end": 202,
+          "normalizedTextSha256": "9cdce28605a30f8ba1aca2348b591426d34c7186006a2fb1f2ce721a16eaa0d2"
+        }
+      ]
+    },
+    "hq-25-f02": {
+      "sourceRegionIds": [
+        "hq-06:p46",
+        "hq-06:p47"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-06:p46",
+          "start": 0,
+          "end": 129,
+          "normalizedTextSha256": "680add2011a90d775d22a0d9e8dc177c859b36b13148f108effeee62151dca41"
+        },
+        {
+          "regionId": "hq-06:p47",
+          "start": 0,
+          "end": 455,
+          "normalizedTextSha256": "3738ff807535c6410a89686057f9862e4720ffe68859f5047b7032661c8ddbc4"
+        }
+      ]
+    },
+    "hq-26-f01": {
+      "sourceRegionIds": [
+        "hq-07:p10"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-07:p10",
+          "start": 0,
+          "end": 187,
+          "normalizedTextSha256": "a2ef69dbc34127cb746badefafc7f3a11315f53feec53026aa89d9dfcd997f51"
+        }
+      ]
+    },
+    "hq-26-f02": {
+      "sourceRegionIds": [
+        "hq-07:p11"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-07:p11",
+          "start": 0,
+          "end": 153,
+          "normalizedTextSha256": "386ce1d6f516c2d8f2c8764b27841770ed01521b4f396356f5992a88dcb17926"
+        }
+      ]
+    },
+    "hq-27-f01": {
+      "sourceRegionIds": [
+        "hq-07:p51"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-07:p51",
+          "start": 0,
+          "end": 216,
+          "normalizedTextSha256": "3ac073a645eecf43d439c62267a03e8125beb1289363562d719de2babcc49d8d"
+        }
+      ]
+    },
+    "hq-28-f01": {
+      "sourceRegionIds": [
+        "hq-07:p72",
+        "hq-07:p73",
+        "hq-07:p74",
+        "hq-07:p75",
+        "hq-07:p76"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-07:p72",
+          "start": 0,
+          "end": 107,
+          "normalizedTextSha256": "200fdb530fecf27f74ad872fe984f6d311da1a7172d88cbc4ec6ea66334fbf33"
+        },
+        {
+          "regionId": "hq-07:p73",
+          "start": 0,
+          "end": 77,
+          "normalizedTextSha256": "9ddac580c40a25b39aeaf433b4020d0dcf3fdab5f21e3cde481a3621b467a783"
+        },
+        {
+          "regionId": "hq-07:p74",
+          "start": 0,
+          "end": 45,
+          "normalizedTextSha256": "67ad146e33e3e027918b937027eb98b340cff2431f7c6b5b9a210cd6ab108afb"
+        },
+        {
+          "regionId": "hq-07:p75",
+          "start": 0,
+          "end": 158,
+          "normalizedTextSha256": "1ae28ddbe3c1fabde5e24a97d5042cecfdac02ee2e8c19c4223d7d67e4911994"
+        },
+        {
+          "regionId": "hq-07:p76",
+          "start": 0,
+          "end": 113,
+          "normalizedTextSha256": "26c83423801e6b64ff373aab9b2c8372fcadbf75ab4e7bc90183b2371ba4f16f"
+        }
+      ]
+    },
+    "hq-28-f02": {
+      "sourceRegionIds": [
+        "hq-07:p77"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-07:p77",
+          "start": 0,
+          "end": 94,
+          "normalizedTextSha256": "5c0cd3c0e85e15e8e57e95eb00104f6c0a3e87b9e0f507bdd31ec5bbda103d53"
+        }
+      ]
+    },
+    "hq-29-f01": {
+      "sourceRegionIds": [
+        "hq-07:p66",
+        "hq-07:p67",
+        "hq-07:p68",
+        "hq-07:p69"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-07:p66",
+          "start": 0,
+          "end": 241,
+          "normalizedTextSha256": "8b9ddd1aa5d03775dacc60192900498e2ee28d9d3c5c14674a7d5ab4375d3af1"
+        },
+        {
+          "regionId": "hq-07:p67",
+          "start": 0,
+          "end": 64,
+          "normalizedTextSha256": "0c8a2ad23dbaa67681ce21f2fffeeb35d2f230a6669a966c7cac71cd16598bf0"
+        },
+        {
+          "regionId": "hq-07:p68",
+          "start": 0,
+          "end": 230,
+          "normalizedTextSha256": "3d09dfa3c0ca5462346c702f7da33b6f39b79872ac264af00f0af7be719d5bea"
+        },
+        {
+          "regionId": "hq-07:p69",
+          "start": 0,
+          "end": 120,
+          "normalizedTextSha256": "554ac3bf40c63ce0ef1fb3d5a0ec1f029b58284591dd9149307bfaf72d6ae252"
+        }
+      ]
+    },
+    "hq-30-f01": {
+      "sourceRegionIds": [
+        "hq-08-1:p71",
+        "hq-08-1:p72",
+        "hq-08-1:p73",
+        "hq-08-1:p74",
+        "hq-08-1:p75",
+        "hq-08-1:p76",
+        "hq-08-1:p77"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-08-1:p71",
+          "start": 0,
+          "end": 64,
+          "normalizedTextSha256": "050c6fd2300af165663a2acd0b59dabffeb8c9a965c19166959b55ea74fca20b"
+        },
+        {
+          "regionId": "hq-08-1:p72",
+          "start": 0,
+          "end": 42,
+          "normalizedTextSha256": "2a0a194a2bf8463bfa9bd2b50d1a973565fd3684ddc7ed38501b82321e2eb713"
+        },
+        {
+          "regionId": "hq-08-1:p73",
+          "start": 0,
+          "end": 76,
+          "normalizedTextSha256": "d93f28a662c91f2ce13c00ce9a6a5ed6e4d76aec0af40856d45321569a9ef0d6"
+        },
+        {
+          "regionId": "hq-08-1:p74",
+          "start": 0,
+          "end": 6,
+          "normalizedTextSha256": "c8a69f69754487458ba1b8ff473d119702d7e43925fae45475156780939bc606"
+        },
+        {
+          "regionId": "hq-08-1:p75",
+          "start": 0,
+          "end": 112,
+          "normalizedTextSha256": "69599793c2ca03069f970f0dddf6ae9459a5d802c581203a79811f8f03a0cd2d"
+        },
+        {
+          "regionId": "hq-08-1:p76",
+          "start": 0,
+          "end": 111,
+          "normalizedTextSha256": "bfa21109a53fa0bbdafac99d65eaa4b04728f32accebaafc42bda1f6ef4c0883"
+        },
+        {
+          "regionId": "hq-08-1:p77",
+          "start": 0,
+          "end": 81,
+          "normalizedTextSha256": "3d445f65f711dba56d8868174d40ed641c3c000fddfe2f98db7b74c784e99d37"
+        }
+      ]
+    },
+    "hq-31-f01": {
+      "sourceRegionIds": [
+        "hq-08-1:p79",
+        "hq-08-1:p80",
+        "hq-08-1:p81",
+        "hq-08-1:p82",
+        "hq-08-1:p83",
+        "hq-08-1:p84"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-08-1:p79",
+          "start": 0,
+          "end": 211,
+          "normalizedTextSha256": "ab870d8e8b10d5fc47029dc24b493366dbd9cc85e7dcc3dfb2294fca6e4a83b5"
+        },
+        {
+          "regionId": "hq-08-1:p80",
+          "start": 0,
+          "end": 159,
+          "normalizedTextSha256": "8dc00f39fd250f80dbab0a5485d30214761c852e5cf06b40feec511fe3eea23b"
+        },
+        {
+          "regionId": "hq-08-1:p81",
+          "start": 0,
+          "end": 25,
+          "normalizedTextSha256": "826f0e43abf8a770c7eafb4a406568bd7ca30e1ab111b5cfda026a518990bb7f"
+        },
+        {
+          "regionId": "hq-08-1:p82",
+          "start": 0,
+          "end": 79,
+          "normalizedTextSha256": "b18b95ccd9305f7ad73f54629e9bb29f270d335b7f360fce4a92b2f7a6dd15bc"
+        },
+        {
+          "regionId": "hq-08-1:p83",
+          "start": 0,
+          "end": 144,
+          "normalizedTextSha256": "4533d2cd042b90401ed0bc624e8474d0a937fa8bce4a76f67372df7d08834b97"
+        },
+        {
+          "regionId": "hq-08-1:p84",
+          "start": 0,
+          "end": 89,
+          "normalizedTextSha256": "1194136078069c692983e07cf5eaf8c2e070f7f6adad0f051e481ad1c9b4bb2a"
+        }
+      ]
+    },
+    "hq-31-f02": {
+      "sourceRegionIds": [
+        "hq-08-1:p85",
+        "hq-08-1:p86",
+        "hq-08-1:p87"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-08-1:p85",
+          "start": 0,
+          "end": 234,
+          "normalizedTextSha256": "88ac8264a1dd0eb21e0acd3c4713f8af330ed5502714c5f17d5cfe1d4d72b1ab"
+        },
+        {
+          "regionId": "hq-08-1:p86",
+          "start": 0,
+          "end": 67,
+          "normalizedTextSha256": "2a2143635390a0e5786822dd7244a1343dc8b7af9e63db548ac56c00c587071d"
+        },
+        {
+          "regionId": "hq-08-1:p87",
+          "start": 0,
+          "end": 76,
+          "normalizedTextSha256": "a4eb0f842655731aca5014b9e8f9593d218e650cd58c177b948c4a6a399cdbd5"
+        }
+      ]
+    },
+    "hq-32-f01": {
+      "sourceRegionIds": [
+        "hq-08-1:p662"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-08-1:p662",
+          "start": 0,
+          "end": 208,
+          "normalizedTextSha256": "72bcafe3a760566df957e6fe18671c0ef9a9378da464c5ebe4f6e414de75c12c"
+        }
+      ]
+    },
+    "hq-32-f02": {
+      "sourceRegionIds": [
+        "hq-08-1:p663"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-08-1:p663",
+          "start": 0,
+          "end": 184,
+          "normalizedTextSha256": "52bed02acfd57ee98869402a65161f34600476727c23e153e201f9968274638a"
+        }
+      ]
+    },
+    "hq-33-f01": {
+      "sourceRegionIds": [
+        "hq-09:p7",
+        "hq-09:p8",
+        "hq-09:p9",
+        "hq-09:p10"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-09:p7",
+          "start": 0,
+          "end": 201,
+          "normalizedTextSha256": "afec00687b2541273f2599d5ae40122620a4817c63fa7215ba14ccd51007c056"
+        },
+        {
+          "regionId": "hq-09:p8",
+          "start": 0,
+          "end": 291,
+          "normalizedTextSha256": "b92bdabfff9da65144bd4ec80d0103f56cbff7ce5806504f493f2563a062a91b"
+        },
+        {
+          "regionId": "hq-09:p9",
+          "start": 0,
+          "end": 582,
+          "normalizedTextSha256": "0ce39ad63fa4b728c1dd99cf03784dc3f0039f9f47fee011ae6dda0fe8d5c5c4"
+        },
+        {
+          "regionId": "hq-09:p10",
+          "start": 0,
+          "end": 372,
+          "normalizedTextSha256": "2de0265f13bb056ee8ba22422c78cc683cc04b6f318876c126425fb34ed5018a"
+        }
+      ]
+    },
+    "hq-34-f01": {
+      "sourceRegionIds": [
+        "hq-09:p24"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-09:p24",
+          "start": 0,
+          "end": 245,
+          "normalizedTextSha256": "32431864208b0101fb665c403ef9fbc68af10a88b26c027cefad1e5e25e1fab4"
+        }
+      ]
+    },
+    "hq-34-f02": {
+      "sourceRegionIds": [
+        "hq-09:p25"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-09:p25",
+          "start": 0,
+          "end": 334,
+          "normalizedTextSha256": "44cadf1bb2f84336b44c1b692c7258df21aac440ea8a77bc72d4406ff9ca1633"
+        }
+      ]
+    },
+    "hq-35-f01": {
+      "sourceRegionIds": [
+        "hq-09:p54",
+        "hq-09:p55",
+        "hq-09:p56"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-09:p54",
+          "start": 0,
+          "end": 442,
+          "normalizedTextSha256": "78d676c0e25b8483d22ab370ab24cbcbce85b0376ff2c1d880155ef87e265305"
+        },
+        {
+          "regionId": "hq-09:p55",
+          "start": 0,
+          "end": 54,
+          "normalizedTextSha256": "0296da65707722ffa5b06d68477f0fe77358bb7c7a3e9f6d1542dee8d585154f"
+        },
+        {
+          "regionId": "hq-09:p56",
+          "start": 0,
+          "end": 177,
+          "normalizedTextSha256": "08fa56d3e68651a1e88b8ec9b668399b11f27d208763812734acbc0e7b520f7b"
+        }
+      ]
+    },
+    "hq-35-f02": {
+      "sourceRegionIds": [
+        "hq-09:p57",
+        "hq-09:p58",
+        "hq-09:p59"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-09:p57",
+          "start": 0,
+          "end": 202,
+          "normalizedTextSha256": "4c8c68a708b55141c2dd460e83a5608acc5e829bd3c2666aae4e87616ac5a8e8"
+        },
+        {
+          "regionId": "hq-09:p58",
+          "start": 0,
+          "end": 125,
+          "normalizedTextSha256": "b8307026b7905ec93c7836279a9250ea56662a6903bb447ae80393db7004b1c7"
+        },
+        {
+          "regionId": "hq-09:p59",
+          "start": 0,
+          "end": 142,
+          "normalizedTextSha256": "1d425e3dcf2d9c4e10b29509e7b7e49f7f9e262c45b72b862d63b1d3ca2d076d"
+        }
+      ]
+    },
+    "hq-36-f01": {
+      "sourceRegionIds": [
+        "hq-03:p197"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-03:p197",
+          "start": 0,
+          "end": 255,
+          "normalizedTextSha256": "c3bc4f1c8f133ad6688972872a368319920a8eb2c552ff83c01bb0e9c628cb2a"
+        }
+      ]
+    },
+    "hq-36-f02": {
+      "sourceRegionIds": [
+        "hq-04:p106"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-04:p106",
+          "start": 0,
+          "end": 320,
+          "normalizedTextSha256": "41f15b9bdf2b1e142c965ebfe3b55afaf85ec45fdc20d103bfe6f37e95209db5"
+        }
+      ]
+    },
+    "hq-37-f01": {
+      "sourceRegionIds": [
+        "hq-01:p233"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-01:p233",
+          "start": 0,
+          "end": 328,
+          "normalizedTextSha256": "aa20a48a905be7c7ccde2ca5a6484a9397af2029f2ad2edda0095eb7dfeda963"
+        }
+      ]
+    },
+    "hq-37-f02": {
+      "sourceRegionIds": [
+        "hq-06:p31"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-06:p31",
+          "start": 0,
+          "end": 320,
+          "normalizedTextSha256": "a9808a667def9a7ff6a5cd2c0c656da23fa32a4ce90287385a07c657863f1966"
+        }
+      ]
+    },
+    "hq-38-f01": {
+      "sourceRegionIds": [
+        "hq-07:p51"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-07:p51",
+          "start": 0,
+          "end": 216,
+          "normalizedTextSha256": "3ac073a645eecf43d439c62267a03e8125beb1289363562d719de2babcc49d8d"
+        }
+      ]
+    },
+    "hq-38-f02": {
+      "sourceRegionIds": [
+        "hq-09:p74",
+        "hq-09:p75"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-09:p74",
+          "start": 0,
+          "end": 223,
+          "normalizedTextSha256": "38143e4c6bcc2cdb0f8f3db677ec76d2a4b3ab2ba1132d5e39ba3b0933a4aa13"
+        },
+        {
+          "regionId": "hq-09:p75",
+          "start": 0,
+          "end": 307,
+          "normalizedTextSha256": "2c6dbf6aff4ac0c3a95a48b2460a62c484e427844d03b4520584ac7d4f7c3593"
+        }
+      ]
+    },
+    "hq-38-f03": {
+      "sourceRegionIds": [
+        "hq-09:p81"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-09:p81",
+          "start": 0,
+          "end": 790,
+          "normalizedTextSha256": "a6da05a2a4218f4e6935a28bdf77e7dbbc3279ee535438c27d84b2b3133150e2"
+        }
+      ]
+    },
+    "hq-39-f01": {
+      "sourceRegionIds": [
+        "hq-05:t0:r128:c0",
+        "hq-05:t0:r128:c1"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-05:t0:r128:c0",
+          "start": 0,
+          "end": 20,
+          "normalizedTextSha256": "b5090e362d0e00b12b6795d0e46a6570d11032a2ce505791247485c3420fc093"
+        },
+        {
+          "regionId": "hq-05:t0:r128:c1",
+          "start": 0,
+          "end": 358,
+          "normalizedTextSha256": "0c532837de8f2f9a9580e3772327f9ae36ad03b0dc3335773b257ade27811bc7"
+        }
+      ]
+    },
+    "hq-39-f02": {
+      "sourceRegionIds": [
+        "hq-06:p25"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-06:p25",
+          "start": 0,
+          "end": 398,
+          "normalizedTextSha256": "f1716fa6f28535dbbfffbab65db4fad2dfbf786ac2948cb3154edbce3b34cb3e"
+        }
+      ]
+    },
+    "hq-40-f01": {
+      "sourceRegionIds": [
+        "hq-04:p386"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-04:p386",
+          "start": 0,
+          "end": 191,
+          "normalizedTextSha256": "ae3e98936d89b30ee052fb03e8280916918c1bc41ea8db99359e7483a27cc30f"
+        }
+      ]
+    },
+    "hq-40-f02": {
+      "sourceRegionIds": [
+        "hq-05:t0:r90:c0",
+        "hq-05:t0:r90:c1"
+      ],
+      "anchorSpans": [
+        {
+          "regionId": "hq-05:t0:r90:c0",
+          "start": 0,
+          "end": 21,
+          "normalizedTextSha256": "8f410548d4a27aa6d738ec5653faccddc55cfec1eb40b3878f32086826758bdd"
+        },
+        {
+          "regionId": "hq-05:t0:r90:c1",
+          "start": 0,
+          "end": 1195,
+          "normalizedTextSha256": "e25afd76ed96eadad2c0890672a3629cfe0392afeb89de64e988b95a0239ecc6"
+        }
+      ]
+    }
+  },
+  "tasksSha256": "f83b892a71efe5ba7fb97843b10fa451cbf8b45e663fef0a7f61a5789968dfff",
+  "sourceSelection": "Eight complete original public procurement-contract DOCX templates, selected before retrieval and answering. Combined MSC schedules excluded for 255171-token single-source size; unused alternative security options excluded for scope and variant ambiguity.",
+  "normalization": "Unicode NFKC; whitespace collapsed with split/join; preserve case and punctuation. Anchor positions count Python Unicode code points in normalized original region text.",
+  "domainLimitation": "Purposeful UK public procurement contract pilot; not a representative enterprise accuracy estimate. Contract templates contain genuine unresolved placeholders and drafting options.",
+  "precisionRule": "Required labels define recall. An unmatched retrieved passage is unjudged, not automatically irrelevant; only independent original-source review can establish general precision.",
+  "sourceTokenEstimate": 148863,
+  "fiveThousandTokenUnitsCeilingSum": 32,
+  "actualMicrosoftChunks": null,
+  "confirmationCases": 48,
+  "answerableCases": 40,
+  "unanswerableCases": 8,
+  "familyCounts": {
+    "acronym": 7,
+    "concept": 19,
+    "cross-document": 5,
+    "exact-term": 24,
+    "exception": 20,
+    "identifier": 12,
+    "name": 9,
+    "paraphrase": 16,
+    "section-reference": 7,
+    "unanswerable": 8
+  },
+  "goldSha256": "dc820285a855af9282d4e770134cb8f1a0058d435474c1844fcc323bf106c077"
+}
