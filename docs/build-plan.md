@@ -1,12 +1,25 @@
 # Build plan
 
+**Hybrid quality comparison complete, 2026-11-03 (E67):** the
+[accepted result](hybrid-quality-results-20261103.md) completes 96 direct searches
+and 192 fixed-model answer turns without rebasing onto main. Hybrid improves
+all-required initial retrieval from 24/40 to 36/40 and expanded retrieval from
+30/40 to 37/40. Final supported completion is 80/80 vector and 79/80 hybrid; the
+single strict difference has a documented lenient sensitivity. Both abstain
+appropriately on 16/16 absent-value turns. No final-answer gain is established.
+Keep defaults, retain hybrid as a quality candidate, and investigate shared source
+structure/numbering fidelity before a broader, newly frozen quality confirmation.
+This pack is consumed; no R3 or efficiency tuning starts. Successful-scope cleanup
+and protected snapshots are verified; the old fenced scope and production/scale
+gates remain open. See the linked report for receipts and exact limitations.
+
 **Hybrid quality restart gates passed, 2026-11-03 (E67):** the same isolated
 container now serves the previously failing reads. Fresh owned real-text
 writes/reads/vector/hybrid queries and exact cleanup passed, as did all 19
 mounted workflow/worker/model binding checks. An executable gate now enforces
 fresh evidence and a partial-ingestion cleanup declaration before uploads.
-The frozen comparison remains unchanged and has not yet consumed confirmation
-questions. Proceed with corpus readiness, then source recall and answer quality;
+At that restart checkpoint the frozen comparison was unchanged and confirmation
+questions were unconsumed. Corpus readiness, source recall and answer quality followed;
 no efficiency tuning or main-branch rebase is included.
 
 **Hybrid quality confirmation prepared, execution blocked, 2026-11-02 (E67):**

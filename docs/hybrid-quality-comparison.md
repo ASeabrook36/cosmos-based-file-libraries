@@ -7,7 +7,23 @@ format, representation, model or efficiency tuning belongs in this comparison.
 R0/I1 questions are consumed development/regression evidence; confirmation uses
 new original sources and questions frozen before measured retrieval or answering.
 
-## Restart status: fresh health gates passed
+## Completed result, 2026-11-03
+
+The [completed comparison](hybrid-quality-results-20261103.md) records all 96 direct
+searches and 192 answer turns under the unchanged controls. Hybrid retrieved all
+required initial evidence for 36/40 answerable questions versus vector's 24/40;
+after neighbors, 37/40 versus 30/40. Final supported completion was 79/80 hybrid
+versus 80/80 vector, with 16/16 missing-value abstentions in each arm. The single
+strict completion difference has a documented lenient sensitivity. No final-answer
+quality gain is established; both arms share a source-structure limitation.
+
+Keep defaults unchanged and hybrid available as a bounded retrieval-quality
+candidate. Follow source-fidelity and broader quality confirmation before efficiency
+or R3. All 48 questions are now consumed. The result report links accepted receipts,
+cleanup, limitations and offline rescoring; the sections below retain preparation
+history and the original execution contract.
+
+## Restart checkpoint: fresh health gates passed
 
 On 2026-11-03 the bounded [read-only recheck](../records/hybrid-quality-health-recheck-20261103.json)
 succeeded on both the formerly failing scoped query and the exact formerly failing
@@ -23,19 +39,19 @@ and a predeclared partial-ingestion cleanup plan before any new source upload.
 Application code, policies, dependency lock and frozen comparison controls remain
 unchanged; main's selector integration was not rebased into this branch.
 
-Confirmation has not started at this checkpoint. The smoke used separate real
-text and does not establish corpus readiness, recall, answer quality or steady-state
-performance. The next step is the unchanged eight-source ingestion and preparation
+At this earlier checkpoint, confirmation had not started. The smoke used separate
+real text and does not establish corpus readiness, recall, answer quality or steady-state
+performance. The next step was the unchanged eight-source ingestion and preparation
 gate, followed by the 96-search direct comparison and 192-turn answering schedule.
 
-## Initial preparation: blocked before confirmation
+## Initial preparation, 2026-11-02: blocked before confirmation
 
 The [sanitized receipt](../records/hybrid-quality-preparation-20261102.json)
 records **zero of 96 planned direct searches and zero of 192 planned answering
-turns**. All 48 questions remain unconsumed confirmation data. There are no paired
-quality wins, losses or ties, and no evidence here selecting either ranking mode.
-The next step is to restore a healthy instance of the same foundation and execute
-this unchanged pack. No R3 or efficiency-tuning comparison was started.
+turns** at that checkpoint. All 48 questions were still unconsumed. There were no
+paired quality wins, losses or ties, and no evidence selecting either ranking mode.
+The next step at that checkpoint was to restore a healthy instance of the same
+foundation and execute this unchanged pack. No R3 or efficiency-tuning comparison was started.
 
 Preparation encountered two service failure types across these attempts:
 
@@ -216,17 +232,18 @@ Meaningful original filenames and supported title tags are retained as normal
 metadata. The corpus is a purposeful procurement-contract pilot, not a broad
 enterprise accuracy estimate.
 
-Two distinct preparation queries are frozen separately. Actual publication must
+Two distinct preparation queries were frozen separately. Actual publication had to
 yield more than 16 chunks, with at least six of eight documents having multiple
 chunks. These gates prevent top eight from trivially covering the entire library.
 The local estimate of 148,863 source tokens and 32 five-thousand-token units is
 not a provider chunk count. Missing index-execution evidence prevents a
 steady-state performance claim.
 
-The coordinator created one new evaluation library. It will create one
-exact-revision temporary Sol deployment only when answering is ready to run;
-none was created during this preparation. An external ownership ledger precedes
-creation/uploads. Cleanup uses ordinary deletion and verifies scoped records,
+The blocked initial preparation created one evaluation library, now fenced. The
+successful restart used a separate owned library and one exact-revision temporary
+Sol deployment. Their verified cleanup is recorded in the completed report. No
+answering deployment had been created at the initial blocked checkpoint. An external
+ownership ledger preceded creation/uploads. Cleanup uses ordinary deletion and verifies scoped records,
 chunks and live Blob prefix absence twice after ingestion has completed; soft
 delete retention remains. Existing libraries, deployments, worker and scheduled
 jobs remain unchanged. Raw sources and failed attempts remain private.
@@ -234,14 +251,17 @@ jobs remain unchanged. Raw sources and failed attempts remain private.
 The historical Phase 5 suggestion to add a stop list is deliberately deferred:
 this experiment compares the existing implementation under the user-requested
 frozen controls. No stop list, weights, physical index, representation or
-application-default change is included. The service failures above occurred before those execution windows. The fixed
-questions, gold, controls and unused execution ledgers remain ready for a healthy
-replacement environment.
+application-default change is included. The service failures above occurred before
+those execution windows. The fixed
+questions, gold and controls were preserved for restart. The successful schedule
+now consumed the execution ledgers; do not reset them.
 
-## Executable restart handoff
+## Historical executable restart handoff
 
-Keep this branch's source pack and plan byte-for-byte. Keep raw runtime material
-outside every checkout. Local setup remains free of cloud provisioning and
+These commands document the completed protocol; they are not a fresh-confirmation
+rerun instruction. See the result report for offline rescoring and the next research
+handoff. Keep this branch's source pack and plan byte-for-byte. Keep raw runtime
+material outside every checkout. Local setup remains free of cloud provisioning and
 credentials:
 
 ```sh
@@ -306,6 +326,7 @@ order:
    worker cleanup, broker redelivery or the open M1 scheduled-reconciliation gate.
 
 Acceptance requires the complete source/query/answer matrices and fixed controls,
-not a preselected winner or a 20% efficiency threshold. Until these gates run,
-required-region recall, useful-hit precision, answer quality, paired outcomes and
-comparative cost/latency remain **untested**.
+not a preselected winner or a 20% efficiency threshold. The completed report now
+supplies source recall, partially judged usefulness,
+answer quality and paired outcomes. Complete precision, billed costs and controlled
+production latency remain unavailable.

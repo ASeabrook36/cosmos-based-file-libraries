@@ -1,0 +1,710 @@
+{
+  "schema": "fli.hybrid-quality.direct.audit-candidate.v1",
+  "status": "verified_local_direct_receipt",
+  "scope": {
+    "questions": 48,
+    "answerableQuestions": 40,
+    "unanswerableQuestions": 8,
+    "arms": 2,
+    "directRepeats": 1,
+    "searches": 96,
+    "originalDocuments": 8,
+    "publishedChunks": 36,
+    "documentsWithMultipleChunks": 7,
+    "sourceReviewRows": 96
+  },
+  "primaryMacroMeansOverAnswerableQuestions": {
+    "vector": {
+      "answerableQuestions": 40,
+      "initialRegionRecall": 0.6208333333333333,
+      "initialFactRecall": 0.625,
+      "initialAllRequiredEvidence": 0.6,
+      "expandedRegionRecall": 0.7583333333333333,
+      "expandedFactRecall": 0.7625,
+      "expandedAllRequiredEvidence": 0.75
+    },
+    "hybrid": {
+      "answerableQuestions": 40,
+      "initialRegionRecall": 0.9083333333333333,
+      "initialFactRecall": 0.9125,
+      "initialAllRequiredEvidence": 0.9,
+      "expandedRegionRecall": 0.9333333333333333,
+      "expandedFactRecall": 0.9375,
+      "expandedAllRequiredEvidence": 0.925
+    }
+  },
+  "pairedSourceOutcomes": {
+    "initialRegion": {
+      "counts": {
+        "hybrid_win": 12,
+        "tie": 28,
+        "not_applicable": 8
+      },
+      "hybridWinCases": [
+        "hq-01",
+        "hq-06",
+        "hq-07",
+        "hq-08",
+        "hq-10",
+        "hq-11",
+        "hq-19",
+        "hq-22",
+        "hq-31",
+        "hq-32",
+        "hq-36",
+        "hq-37"
+      ],
+      "vectorWinCases": []
+    },
+    "initialFact": {
+      "counts": {
+        "hybrid_win": 12,
+        "tie": 28,
+        "not_applicable": 8
+      },
+      "hybridWinCases": [
+        "hq-01",
+        "hq-06",
+        "hq-07",
+        "hq-08",
+        "hq-10",
+        "hq-11",
+        "hq-19",
+        "hq-22",
+        "hq-31",
+        "hq-32",
+        "hq-36",
+        "hq-37"
+      ],
+      "vectorWinCases": []
+    },
+    "expandedRegion": {
+      "counts": {
+        "hybrid_win": 7,
+        "tie": 33,
+        "not_applicable": 8
+      },
+      "hybridWinCases": [
+        "hq-01",
+        "hq-10",
+        "hq-11",
+        "hq-19",
+        "hq-22",
+        "hq-31",
+        "hq-32"
+      ],
+      "vectorWinCases": []
+    },
+    "expandedFact": {
+      "counts": {
+        "hybrid_win": 7,
+        "tie": 33,
+        "not_applicable": 8
+      },
+      "hybridWinCases": [
+        "hq-01",
+        "hq-10",
+        "hq-11",
+        "hq-19",
+        "hq-22",
+        "hq-31",
+        "hq-32"
+      ],
+      "vectorWinCases": []
+    }
+  },
+  "overlappingFamilies": {
+    "acronym": {
+      "questions": 7,
+      "initial": {
+        "tie": 4,
+        "hybrid_win": 2,
+        "not_applicable": 1
+      },
+      "expanded": {
+        "tie": 4,
+        "hybrid_win": 2,
+        "not_applicable": 1
+      }
+    },
+    "concept": {
+      "questions": 19,
+      "initial": {
+        "hybrid_win": 2,
+        "tie": 16,
+        "not_applicable": 1
+      },
+      "expanded": {
+        "hybrid_win": 2,
+        "tie": 16,
+        "not_applicable": 1
+      }
+    },
+    "cross-document": {
+      "questions": 5,
+      "initial": {
+        "hybrid_win": 2,
+        "tie": 3
+      },
+      "expanded": {
+        "tie": 5
+      }
+    },
+    "exact-term": {
+      "questions": 24,
+      "initial": {
+        "tie": 15,
+        "hybrid_win": 5,
+        "not_applicable": 4
+      },
+      "expanded": {
+        "tie": 17,
+        "hybrid_win": 3,
+        "not_applicable": 4
+      }
+    },
+    "exception": {
+      "questions": 20,
+      "initial": {
+        "hybrid_win": 6,
+        "tie": 14
+      },
+      "expanded": {
+        "hybrid_win": 4,
+        "tie": 16
+      }
+    },
+    "identifier": {
+      "questions": 12,
+      "initial": {
+        "tie": 8,
+        "hybrid_win": 1,
+        "not_applicable": 3
+      },
+      "expanded": {
+        "tie": 9,
+        "not_applicable": 3
+      }
+    },
+    "name": {
+      "questions": 9,
+      "initial": {
+        "tie": 2,
+        "hybrid_win": 4,
+        "not_applicable": 3
+      },
+      "expanded": {
+        "tie": 4,
+        "hybrid_win": 2,
+        "not_applicable": 3
+      }
+    },
+    "paraphrase": {
+      "questions": 16,
+      "initial": {
+        "hybrid_win": 6,
+        "tie": 7,
+        "not_applicable": 3
+      },
+      "expanded": {
+        "hybrid_win": 4,
+        "tie": 9,
+        "not_applicable": 3
+      }
+    },
+    "section-reference": {
+      "questions": 7,
+      "initial": {
+        "tie": 5,
+        "hybrid_win": 1,
+        "not_applicable": 1
+      },
+      "expanded": {
+        "tie": 5,
+        "hybrid_win": 1,
+        "not_applicable": 1
+      }
+    },
+    "unanswerable": {
+      "questions": 8,
+      "initial": {
+        "not_applicable": 8
+      },
+      "expanded": {
+        "not_applicable": 8
+      }
+    }
+  },
+  "initialUsefulnessReviewCoverage": {
+    "vector": {
+      "answerableRows": 40,
+      "answerableInitialHits": 320,
+      "usefulHits": 43,
+      "irrelevantHits": 224,
+      "unjudgedHits": 53,
+      "fullyJudgedAnswerableRows": 23,
+      "answerableRowsWithUnknownUsefulPrecision": 17,
+      "overallUsefulHitPrecision": null,
+      "unanswerableRows": 8,
+      "unanswerableRecallAndPrecision": null,
+      "unanswerableHelpfulContextCounts": {
+        "helpful_absence_context": 6,
+        "not_helpful": 2
+      }
+    },
+    "hybrid": {
+      "answerableRows": 40,
+      "answerableInitialHits": 320,
+      "usefulHits": 54,
+      "irrelevantHits": 218,
+      "unjudgedHits": 48,
+      "fullyJudgedAnswerableRows": 24,
+      "answerableRowsWithUnknownUsefulPrecision": 16,
+      "overallUsefulHitPrecision": null,
+      "unanswerableRows": 8,
+      "unanswerableRecallAndPrecision": null,
+      "unanswerableHelpfulContextCounts": {
+        "helpful_absence_context": 7,
+        "not_helpful": 1
+      }
+    }
+  },
+  "instrumentation": {
+    "vector": {
+      "completedApiSearches": 48,
+      "apiHttpStatuses": {
+        "200": 48
+      },
+      "observedChunkQueries": 268,
+      "visibleSdkHttpStatuses": {
+        "200": 268
+      },
+      "knownApiRequestChargeRU": {
+        "n": 48,
+        "sum": 1875.72,
+        "mean": 39.0775,
+        "median": 39.415000000000006,
+        "min": 30.44,
+        "p95": 45.925,
+        "max": 47.72
+      },
+      "knownChunkResponseChargeRU": {
+        "n": 48,
+        "sum": 1465.32,
+        "mean": 30.5275,
+        "median": 30.700000000000003,
+        "min": 22.689999999999998,
+        "p95": 35.812,
+        "max": 37.46
+      },
+      "wrapperLatencyMs": {
+        "n": 48,
+        "sum": 18692.234789952636,
+        "mean": 389.42155812401325,
+        "median": 375.9970625396818,
+        "min": 329.4467499945313,
+        "p95": 475.8471455308608,
+        "max": 646.4113330002874
+      },
+      "apiReportedLatencyMs": {
+        "n": 48,
+        "sum": 14251.6,
+        "mean": 296.90833333333336,
+        "median": 284.3,
+        "min": 255.9,
+        "p95": 389.11999999999995,
+        "max": 518.5
+      },
+      "cacheEmbedderLocalTimingMs": {
+        "n": 48,
+        "sum": 0.0,
+        "mean": 0.0,
+        "median": 0.0,
+        "min": 0.0,
+        "p95": 0.0,
+        "max": 0.0
+      },
+      "visiblePartitionContactCountPerSearch": {
+        "1": 48
+      },
+      "visible429Responses": 0,
+      "visible5xxResponses": 0,
+      "visibleRetryAfterResponses": 0,
+      "totalChargeRU": null,
+      "totalRetries": null,
+      "observabilityComplete": false
+    },
+    "hybrid": {
+      "completedApiSearches": 48,
+      "apiHttpStatuses": {
+        "200": 48
+      },
+      "observedChunkQueries": 247,
+      "visibleSdkHttpStatuses": {
+        "400": 48,
+        "200": 343
+      },
+      "knownApiRequestChargeRU": {
+        "n": 48,
+        "sum": 5204.53,
+        "mean": 108.42770833333333,
+        "median": 109.27000000000001,
+        "min": 99.87,
+        "p95": 115.247,
+        "max": 116.1
+      },
+      "knownChunkResponseChargeRU": {
+        "n": 48,
+        "sum": 4815.79,
+        "mean": 100.32895833333333,
+        "median": 100.58,
+        "min": 91.53,
+        "p95": 106.127,
+        "max": 107.49000000000001
+      },
+      "wrapperLatencyMs": {
+        "n": 48,
+        "sum": 56273.170749424025,
+        "mean": 1172.3577239463339,
+        "median": 1162.8067914862186,
+        "min": 971.436332911253,
+        "p95": 1290.8034873427823,
+        "max": 1422.6626250892878
+      },
+      "apiReportedLatencyMs": {
+        "n": 48,
+        "sum": 51506.6,
+        "mean": 1073.0541666666668,
+        "median": 1062.65,
+        "min": 863.9,
+        "p95": 1184.33,
+        "max": 1336.4
+      },
+      "cacheEmbedderLocalTimingMs": {
+        "n": 48,
+        "sum": 1.0,
+        "mean": 0.020833333333333332,
+        "median": 0.0,
+        "min": 0.0,
+        "p95": 0.0,
+        "max": 1.0
+      },
+      "visiblePartitionContactCountPerSearch": {
+        "1": 48
+      },
+      "visible429Responses": 0,
+      "visible5xxResponses": 0,
+      "visibleRetryAfterResponses": 0,
+      "totalChargeRU": null,
+      "totalRetries": null,
+      "observabilityComplete": false
+    }
+  },
+  "embeddingPreparation": {
+    "requests": 49,
+    "prompt_tokens": 1302,
+    "throttled": 0,
+    "retries": 1,
+    "uniqueFrozenQuestions": 48,
+    "dimensions": 3072,
+    "model": "text-embedding-3-large",
+    "revision": "1",
+    "sku": {
+      "name": "GlobalStandard",
+      "capacity": 150
+    },
+    "completedCacheEntries": 48,
+    "allTokensReported": true,
+    "queryPreparationLatencyMs": {
+      "n": 48,
+      "sum": 164624.2373767309,
+      "mean": 3429.671612015227,
+      "median": 376.2362920679152,
+      "min": 123.42324992641807,
+      "p95": 14517.321648029609,
+      "max": 50744.062500074506
+    },
+    "providerEmbeddingCallsDuringDirectSearch": 0,
+    "deploymentBeforeAfterReceiptHashes": {
+      "deployment-before.json": "13bac62a5f2c69a00a235a69ceb6356b22f6c1467995ad783d4ce687adb74433",
+      "deployment-after.json": "ed227e969b899e8fa02bf3213cda05f02758f713c4f4bd526a7b9a762249bb21"
+    }
+  },
+  "indexDiagnostics": {
+    "preflightBuildProgress": null,
+    "preflightExecutionMode": "unknown",
+    "steadyStateReadinessClaimed": false,
+    "visibleRankedQueryMetricDistributions": {
+      "vector:retrievedDocumentCount": {
+        "n": 48,
+        "sum": 1728.0,
+        "mean": 36.0,
+        "median": 36.0,
+        "min": 36.0,
+        "p95": 36.0,
+        "max": 36.0
+      },
+      "vector:outputDocumentCount": {
+        "n": 48,
+        "sum": 768.0,
+        "mean": 16.0,
+        "median": 16.0,
+        "min": 16.0,
+        "p95": 16.0,
+        "max": 16.0
+      },
+      "vector:indexUtilizationRatio": {
+        "n": 48,
+        "sum": 1.44,
+        "mean": 0.03,
+        "median": 0.03,
+        "min": 0.03,
+        "p95": 0.03,
+        "max": 0.03
+      },
+      "hybrid:retrievedDocumentCount": {
+        "n": 144,
+        "sum": 3456.0,
+        "mean": 24.0,
+        "median": 36.0,
+        "min": 0.0,
+        "p95": 36.0,
+        "max": 36.0
+      },
+      "hybrid:outputDocumentCount": {
+        "n": 144,
+        "sum": 3504.0,
+        "mean": 24.333333333333332,
+        "median": 36.0,
+        "min": 1.0,
+        "p95": 36.0,
+        "max": 36.0
+      },
+      "hybrid:indexUtilizationRatio": {
+        "n": 144,
+        "sum": 50.88,
+        "mean": 0.35333333333333333,
+        "median": 0.03,
+        "min": 0.03,
+        "p95": 1.0,
+        "max": 1.0
+      }
+    },
+    "visibleIndexUtilizationHeaderCounts": {
+      "vector:UtilizedVectorIndexes": 48,
+      "vector:UtilizedSingleIndexes": 48,
+      "hybrid:UtilizedVectorIndexes": 48,
+      "hybrid:UtilizedSingleIndexes": 96
+    }
+  },
+  "frozenDirectControls": {
+    "top": 8,
+    "includeNeighbors": true,
+    "repeats": 1,
+    "order": "alternate-arm-first-by-case",
+    "maxEvidenceTokens": 200000,
+    "filters": {}
+  },
+  "frozenQueryAudit": {
+    "clientTerms": "query.lower(); regex [0-9A-Za-z]+; first occurrence deduplication; first 16 terms",
+    "clientStopwordRemoval": false,
+    "clientStemming": false,
+    "clientPhraseOrIdentifierPreservation": false,
+    "maximumLexicalTerms": 16,
+    "rrfWeights": "omitted; service defaults",
+    "fullTextPolicy": {
+      "defaultLanguage": "en-US",
+      "fullTextPaths": [
+        {
+          "path": "/text",
+          "language": "en-US"
+        }
+      ]
+    },
+    "vectorRouting": "library prefix partition_key=[libraryId]",
+    "hybridRouting": "omit partition_key; retain exactly one libraryId equality",
+    "fetchAtTop8": 16,
+    "postQuerySelection": "active-generation visibility filter then first 8; neighbors independently expanded",
+    "zeroLexicalTerms": "existing render_search falls back to vector; receipt records effective mode",
+    "querySourceSha256": "bdbea3ca40f7d581f80431df0cd331ccfede09bae5d4354da725745bd782e6a1",
+    "searchSourceSha256": "0213d535f3d0fde0da7202e8fc127d8affac827e03967fc573bef17cb50041a4",
+    "containerDefinitionSha256": "553f3e07f7c133f9d57705f15b4e93a3bfe066d3de43677a9d5643ef56b9b958"
+  },
+  "hashBindings": {
+    "acceptedReceiptSha256": "cd7834d9724762e043f311efd6db3087aaa53670920da661062a586fdbe61aaf",
+    "rawArtifactsSha256": {
+      "controls.json": "8cdbe32839cb0d4362cdda25600152673eb2b66a31b688eda16ad75d873f5194",
+      "config-private.json": "0d11ab457d17c68cf7007cc56bb36005080bf7115fc864ff71266e36aa88f1ed",
+      "plan.json": "a159a3e728ae46382f7982bc4b0e8419b1473aaa848371562670398c67fadfe6",
+      "preflight-private.json": "81378145a3d5f71a035e668a94e475a329765747c5a62e4f68c4f8e1503a2285",
+      "canary-private.json": "e823ba183c724d70352b6265cd90b6cc482fd3beec6e2fdc6e94feffbfac71a5",
+      "settings-private.json": "1497fc18fc2250373e5585231c87a2853ca49614b143a7a0c8cdd3096c292c96",
+      "query-cache-private.json": "146306ad2e916bd9827defc88cb71d3edbc4229a2edbf212da285b1773f28a67",
+      "source-before.json": "592044239e5745ee50e0e050e5d3c77a8ba869b4edface6cc9f9f951051877d2",
+      "source-after.json": "592044239e5745ee50e0e050e5d3c77a8ba869b4edface6cc9f9f951051877d2",
+      "captures-private.json": "3eca3d46ba2ba33584fddf0ead909f910d73e8fad77e2838ab3ff3b1b01d32cc",
+      "capture-receipt.json": "c5e101ccb3231042c1ce8a17bbd9c146cef4577263e33d91177442b0ee747247",
+      "reviews-private.json": "f7796fc0be8353ad71b4b3751d933de9fe79d6c11b2265d79f2bccf6e3e7d075"
+    },
+    "planSha256": "a159a3e728ae46382f7982bc4b0e8419b1473aaa848371562670398c67fadfe6",
+    "manifestSha256": "d7d181754e68df84675c077ba6a71ab6df8929d26398982451eafa26ff036c5c",
+    "tasksSha256": "f83b892a71efe5ba7fb97843b10fa451cbf8b45e663fef0a7f61a5789968dfff",
+    "queryCacheSha256": "146306ad2e916bd9827defc88cb71d3edbc4229a2edbf212da285b1773f28a67",
+    "sourceSnapshotSha256": "efa3da1e91e3b65c2f4e31193a43eaad9c842bf213755cbd8894bd349d33b0d4",
+    "codeSha256": {
+      "scripts/hybrid_quality_direct.py": "3fe92dced551c4d44493b96a984fd6cf2b659986ce00cb79df459f1e9ee3b776",
+      "scripts/hybrid_quality_scope.py": "18c2f928532c7d02c032db59fb350a9c5fe42f7113817e7d4dffc9dd77cefe0a",
+      "scripts/canary.py": "2bd80698df6d12300887af082155763bde967042a33c8ca4463710f330f5d0ee",
+      "src/fli/__init__.py": "9bcd9eca441026cb92824aa85d6bd8f7afd2f350f44592411d151fe0353d1bff",
+      "src/fli/api/__init__.py": "12cb7798714f6c089ddaa1ede3d99e4187805144ef5eb1275c03e09a2175abae",
+      "src/fli/api/documents.py": "1ad9278207e0be41f54d60c13594bdb7ead7fd0cf1947a9dcdcc714f6cd86b8c",
+      "src/fli/api/experiments.py": "923348d532600e988c6296b26efacf1a372a2a78c95ddd7cb4615de21b5fed2e",
+      "src/fli/api/libraries.py": "929f3eb1267ed531c08d1a8f96fe238aeb30877bcd686bb46c3a6e356701a2f5",
+      "src/fli/api/metrics.py": "87db04b0d4fb2bb35536fef5c24a58d008b54b1cbeb598276d0ff78dfe9e9edf",
+      "src/fli/api/reading.py": "ceb93f57c78e97b7a30fcf8e88272b71716e0cf7723cf93c222caf0ac171258a",
+      "src/fli/api/search.py": "d999c2a222630ea604f22cd756e0404e49198a6e6b441dedb341e1a983b6491a",
+      "src/fli/auth.py": "69f39a98ffbf0b37e53dfa77ec48466057358014e6d4a54a57330085c7211c7b",
+      "src/fli/blobs.py": "d24c5c075a4a873d45bcd1bd2873366bd852ff6516bc9cc0e61b9a05a32b6eb3",
+      "src/fli/checkpoints.py": "2f186f4257bfcdb8329900b19457dd5b340c0ca928e79b9a1b36b22ef556a075",
+      "src/fli/chunking.py": "f799eceec274b3930a4aeb61a11347f7c86381c817b5f9323556b1fef272221e",
+      "src/fli/chunks.py": "89a304bffedb1a8478ce415a4760b1fbf93b27856b691834e54fa4c1292c69ed",
+      "src/fli/config.py": "721e20e80180e9ba0b585d2c5c67de63b5b07f59455b84c318af18bacf9079ce",
+      "src/fli/docintel.py": "1eb546cd02f82ce52ed060325376d740f2e763983b76af71fffcd21f8f4fa42f",
+      "src/fli/embedding.py": "7fc5e895ed2874233e8bb21b8638bf475e37e51e1fa43f59cba0307e60c6298f",
+      "src/fli/enums.py": "9c89197153ec990b6f86852fd4038e3c85bed746951d3d5a069aa062445e14dd",
+      "src/fli/errors.py": "c19d6ec645d05a31d73aaa2c2ebde582c29fb3e5f2c606f636fb2c0890ccaa67",
+      "src/fli/evidence.py": "5e369ecd2cb29817f9055097d83151ee28fd9a671a14fc5bc558d583350714e6",
+      "src/fli/extraction.py": "769b2176382521559ffa698ba48ac010d7bb71038226706a9e119cbc4a2fda40",
+      "src/fli/figures.py": "2bde27097de7294426f8e636d7d51b5c04d9bd5595c22757c58f1a1d1282bde1",
+      "src/fli/generation.py": "92c856b7b7d8acfeb21f75ddfb5244e3780b763f9ad51327270c72324a697070",
+      "src/fli/governor.py": "47b8bec2b6de96cbe36e9de1dcc78aec5b9a1598c5c402302a2bd61fe2e432f9",
+      "src/fli/http.py": "644dc7e93e03e15f90072e03cf79716faef7c746f8b0909fa6f1cfd3b307104a",
+      "src/fli/ids.py": "bcb765ac1d5e45e3ae64f6da2e4225bac71d1f634ef9f735e722735ce8e5b1ab",
+      "src/fli/image_assets.py": "066ae5681a1f00f3502280f3a822ce22e474f5702036173226626550960f95cc",
+      "src/fli/images.py": "5742b8a5a1483df38ebb177e60ad04097fe6f8ffd4b3efb1e70facebdaf436ad",
+      "src/fli/ingestion.py": "923ffe2b909e96bdaf26d29b930dd02198ffa878d8a101f6529a0c4504e33b37",
+      "src/fli/logs.py": "d365bca9eb21ace14cd4d1b46597efb9505d896eebe669400629395e4bf9cc2f",
+      "src/fli/metrics.py": "6f15b230ff15be4ef8818b3a8855d346da986449a745bdddb5198ab6a5225b06",
+      "src/fli/microsoft.py": "2b35a114059ff5b712d9ea994893748a21e14ea71fb856ff9196ae4ffa3fc161",
+      "src/fli/page_images.py": "b1eb68089e87be77e5890cea2b1f1c6efc02205d3b79da636943b87ffbe6987c",
+      "src/fli/permissions.py": "dd849d8fd1bf21b5066b8c1e8c73bd7ddf8b98c1da64c9360a8a8a89905d0bcf",
+      "src/fli/presentation.py": "747352989219b02504312998b403d654632d669ddd5b5835c34346b01e7ac13e",
+      "src/fli/proposals.py": "112bf284606f0257019ae0d6d38181d2d17d90f97826ef61b8f5757a70822d57",
+      "src/fli/query.py": "bdbea3ca40f7d581f80431df0cd331ccfede09bae5d4354da725745bd782e6a1",
+      "src/fli/queue.py": "653e917c9debab4f982ee6af78a6c468345ce222f8f56500f9b5a073b9629d2f",
+      "src/fli/reading.py": "34c5b0db04644971e2e978448b17928fda7db9c350d27fbb3a42d404e2a33946",
+      "src/fli/reconcile.py": "4180ed8f4ed7ae7d0b103172d046042593ef82eebce8d2b31498d2ff9787f2fc",
+      "src/fli/reference_format.py": "70e562240e0f65d185461aadea0bb5054abda17b8dd8ad7e13d8f5c33cfb7f99",
+      "src/fli/search.py": "0213d535f3d0fde0da7202e8fc127d8affac827e03967fc573bef17cb50041a4",
+      "src/fli/selector_hints.py": "be8a1b9f07808eefe003672234afeab1fe0cd964eb51530e5dd56e2331db3026",
+      "src/fli/store.py": "14dab254183d0326a021baf286ff0d32c35ec26e44edbb7760b87b9183ef36f9",
+      "src/fli/structural_enrichment.py": "29bdc6325734802ae546b0040d218512d3131d05b08e8e6dbc85ece0f4bed8f3",
+      "src/fli/structure_lab.py": "50de9c0caa8d37f330b78afd8e9cf262aef3d0ba9b217664195c0fd8c30295fb",
+      "src/fli/structure_representation.py": "1c9e02b96ac6d6535dcd9681f1606e4c0c4298aea49782bb342041578598a60e",
+      "src/fli/tokens.py": "22a30504d00795a6431a6b35f1f8fa88b13c1c5f29cddcb0b8f770658a63bd7a",
+      "src/fli/tool.py": "3eaacff26ad0647ce232597204ccd206198c9817db3c0a379565b6f329dbc221",
+      "src/fli/vocabulary.py": "4784854092158ba19ef8d77b3e90f3151568b66c83125a35d3a3c60a79c8be1f",
+      "src/fli/worker/__init__.py": "be8d881b79190ecf5b0a11b3bd60b23c6e2e2ff110261b0433bd9369827aab0c",
+      "src/fli/worker/handlers.py": "1d56b187305008522b32cc87044bfe519bdd036fe72a0250e85701dd3ed9c6dd",
+      "src/fli_demo/__init__.py": "c76e51a232d3e956b611cfd99e3ee705732432530dcf5e9c34a33d8e9adff738",
+      "src/fli_demo/agent.py": "6e004170f10e6f3a361c5d29c477ed99c4ff4d9d3c8cd026f3bb301266d8268e",
+      "src/fli_demo/client.py": "8461d2a4a6a99bb486c89899245af8142877cc771945493c381903927144c777",
+      "src/fli_demo/proposals.py": "a87ea32b4c2dcf023098a6c719e63f521a8a44e52a3a4700d31486190cdc7eee",
+      "src/fli_demo/registry.py": "4173e7def2adfc9d9a5bb9ff1e946f99384b956d38a29de6a0bfb2c75160f86d",
+      "src/fli_demo/responses.py": "72bbbe50e5ddda0dadeca46da5cb7a9b57a81b7d526d63cb09934912c59750c4",
+      "src/fli_demo/telemetry.py": "95bb3cc0f6ef252b8b65f23d0aeeec73205fac26acd932531f1a1988973f37d7",
+      "cosmos/chunks.container.json": "553f3e07f7c133f9d57705f15b4e93a3bfe066d3de43677a9d5643ef56b9b958",
+      "cosmos/documents.container.json": "0864f0e3f90bd6534b7327e896ce1f67ea8c9c0eaccabe44c55048bb7b144baa",
+      "cosmos/indexer-lab.container.json": "c2af4ba3c526c4a3e9644d658f65d4ee9ad12d6c701c332e37bd627bad021c5f",
+      "cosmos/lab-passages.container.json": "b99db6756867731bc5fd25b1977fad34eafd64895a87af1f1e7e4a5ecc6cf621",
+      "cosmos/lab-shared.container.json": "535062079a7261abb77cae551be34b0002677d4630862671d85e85ecbf82d5cc",
+      "cosmos/lab-summaries.container.json": "4eeccf23744024fb92a121785916792456545c74de560b3de0a6af147c1d76d7",
+      "cosmos/libraries.container.json": "59afeefefc927d0a49c1b2c3f2a39ef3cd2a93adc4b6ab571e448818c72da7da"
+    }
+  },
+  "verifiedChecks": {
+    "accepted_status_complete": true,
+    "all_accepted_artifact_hashes": true,
+    "capture_artifact_hashes": true,
+    "receipt_control_bindings": true,
+    "code_byte_hashes": true,
+    "control_planSha256": true,
+    "control_configSha256": true,
+    "control_preflightSha256": true,
+    "control_queryCacheSha256": true,
+    "settings_digest": true,
+    "manifestSha256": true,
+    "tasksSha256": true,
+    "gold_digest_manifest_plan": true,
+    "source_snapshots_identical": true,
+    "canary_hash_bound": true,
+    "inherited_canary_same_incarnation": true,
+    "passing_canary_checks": true,
+    "preflight_scope_and_preparation": true,
+    "complete_96_unique_capture_matrix": true,
+    "complete_96_review_score_matrix": true,
+    "alternating_frozen_order": true,
+    "direct_controls": true,
+    "frozen_settings": true,
+    "cache_complete_48": true,
+    "cache_question_vector_f16_integrity": true,
+    "cache_model_revision": true,
+    "original_cache_same_bytes": true,
+    "embedding_deployment-before.json_hash": true,
+    "embedding_deployment-before.json_binding": true,
+    "embedding_deployment-after.json_hash": true,
+    "embedding_deployment-after.json_binding": true,
+    "embedding_recheck_after_completion": true,
+    "one_library_exact_frozen_sources": true,
+    "source_bytes_generation_recipe_metadata": true,
+    "chunk_identity_and_etag_inventory": true,
+    "prospective_corpus_gate": true,
+    "microsoft_profile": true,
+    "query_source_hashes": true,
+    "ranked_response_sequences": true,
+    "all_query_sql_parameters_routing_frozen": true,
+    "all_wire_evidence_projection_budgets_generation": true,
+    "all_rows_review_arithmetic_and_rank_partitions": true,
+    "all_row_instrumentation_matches_raw": true,
+    "vector_macro_summary": true,
+    "hybrid_macro_summary": true,
+    "all_paired_question_outcomes_and_set_differences": true,
+    "overlapping_family_summary": true,
+    "embedding_usage_totals": true,
+    "artifacts_still_immutable_at_audit_end": true
+  },
+  "distributionDefinition": "p95 uses linear interpolation at (n-1)*0.95; sums/means are unrounded observed values. RU distributions describe 48 queries per arm, including missing-value questions.",
+  "limitations": [
+    "This audit recomputes the accepted source-review arithmetic; it does not repeat original-source semantic judgments for all 96 cells. Those remain the accepted reviewers’ judgments. No replay answers or scores were inspected.",
+    "One alternating paired direct pass covers 48 frozen questions: 40 answerable and eight deliberately missing-value questions. The 96 searches are not 96 independent questions. Families overlap. The top-level plan repeats value applies outside this direct pass; direct.repeats is one.",
+    "The purposeful eight-document, 36-chunk UK contract-template corpus supports conclusions about this frozen confirmation pack only, not enterprise-wide accuracy, production-scale performance or production cost.",
+    "Query vectors were prepared once per question and reused by both arms through the immutable in-process embedder. The cache records 49 provider requests, including one retry, for 48 completed embeddings. Search timing excludes embedding preparation. Zero search embedding calls follows from the reviewed frozen adapter and matching vector fingerprints; no independent network trace is available.",
+    "Known API RU and visible chunk-response RU overlap and must not be added. Query-plan and other SDK-internal charges may be invisible; total RU is unavailable. Visible partition contacts, 429/5xx responses and Retry-After headers do not establish complete contact/retry/throttling histories.",
+    "Every hybrid ranking observation contains one visible HTTP 400 followed by three HTTP 200 responses. The retained recorder does not capture substatus or error body. Installed SDK 4.17.1 code routes HTTP 400/substatus 1004 through query-plan fallback; the successful sequence is consistent with that mechanism, but 1004 itself is not directly recorded here. This is distinct from E17’s HTTP 500 float16 conversion failure. No visible 5xx occurred in this completed direct pass.",
+    "Index build progress and steady-state readiness are not established for this corpus. Index-utilization headers and successful retrieval are diagnostics, not an independent ANN recall or exact hybrid-rank oracle; they do not upgrade the preflight’s unknown index execution-mode statement.",
+    "All before/after source snapshots are identical, including original hashes, generation identities, chunk content hashes and row ETags. The inherited passing canary is bound to the same recorded incarnation. This local audit makes no new live claim about current remote state or cleanup.",
+    "Some initial hits remain unjudged for usefulness. Overall semantic useful-hit precision is therefore unknown. Unanswerable recall and precision remain null; helpful absence context is separate. Normalized-substring labeled-evidence precision is a diagnostic, not semantic precision.",
+    "Wrapper latency includes local API/SDK and evidence-presentation work and is measured serially with cached embeddings. A single small-corpus pass does not estimate production tail latency, capacity or costs.",
+    "The snapshot confirms the retained Microsoft ingestion profile and original-source identities, but this direct measurement does not independently validate general extraction fidelity, remote scheduled orphan cleanup, or full ingestion lifecycle acceptance.",
+    "Code-byte verification covers the files explicitly listed by the capture controls. The receipt does not hash the interpreter, installed SDK or every transitive helper script, so this is not a certification of an entirely immutable runtime.",
+    "The original immutable query cache and its before/after ARM deployment receipts were reopened locally. Hashes, endpoint/deployment identity, model/revision/SKU and post-completion recheck match the frozen cache; no fresh deployment API request was made."
+  ],
+  "allRequiredEvidenceQuestionCounts": {
+    "vector": {
+      "initial": 24,
+      "expanded": 30
+    },
+    "hybrid": {
+      "initial": 36,
+      "expanded": 37
+    }
+  },
+  "primaryMacroDeltasHybridMinusVector": {
+    "initialRegionRecall": 0.2875,
+    "initialFactRecall": 0.2875,
+    "initialAllRequiredEvidence": 0.30000000000000004,
+    "expandedRegionRecall": 0.17500000000000004,
+    "expandedFactRecall": 0.17500000000000004,
+    "expandedAllRequiredEvidence": 0.17500000000000004
+  }
+}

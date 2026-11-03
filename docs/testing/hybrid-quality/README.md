@@ -1,9 +1,14 @@
 # Hybrid-quality v1: original-source confirmation pack
 
+**Consumed on 2026-11-03.** The [completed comparison](../../hybrid-quality-results-20261103.md)
+contains all 96 direct searches and 192 answer turns. This unchanged pack is now
+development/regression evidence; new confirmation requires new frozen questions.
+Manifest, tasks and plan remain byte-for-byte as frozen.
+
 `manifest.json` freezes source bytes, metadata, source-based fact anchors, task
 bytes and the deterministic private-gold digest. `tasks.json` freezes 48 questions.
-This is an entirely new confirmation set; no task is a development probe and no
-post-outcome tuning or task deletion is allowed. The coordinator's frozen run plan
+At freeze this was an entirely new confirmation set; no task was a development
+probe. No post-outcome tuning or task deletion is allowed. The coordinator's frozen run plan
 binds these files and sets the actual comparison schedule.
 
 ## Sources and scope
@@ -30,7 +35,8 @@ Contains public sector information licensed under the
 
 These counts visit each original OOXML body text node once, including nested
 controls, so merged table cells are not counted repeatedly. Counts use
-`cl100k_base`; actual Microsoft 5000-token layout chunks are unmeasured here.
+`cl100k_base`; the later completed ingestion produced 36 Microsoft layout chunks,
+with seven multi-chunk documents. These local estimates are not provider counters.
 The complete MSC Combined Schedules candidate was excluded before retrieval
 because its initial local estimate exceeded 255k tokens for one source, beyond
 the fixed 200k conversation allowance. Other Security schedule variants were
@@ -129,6 +135,7 @@ addresses that distinction. See `source-review.json` for sanitized receipts.
 
 Local validation proves reconstruction and label integrity. Actual Microsoft
 extraction fidelity, actual published chunk count, cloud readiness, matched direct
-recall and answering quality remain separate coordinator-owned gates. No cloud
+recall and answering quality were separately evaluated in the linked result; the
+shared definition-structure limitation remains explicit. No cloud
 provisioning, ingestion, performance measurement or model answering is performed
 by this package.

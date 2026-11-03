@@ -8,9 +8,11 @@ application architecture, profile recipe, query policy, permission or lifecycle
 contract in this specification. Production and foundation gates remain open.
 
 The [hybrid quality experiment](hybrid-quality-comparison.md) (E67) freezes a
-fresh source-recall and answer-quality comparison. Its fresh restart health and
-workflow gates now pass; corpus preparation and confirmation remain pending.
-Application defaults and architecture are unchanged.
+source-recall and answer-quality comparison. Its [completed bounded result](hybrid-quality-results-20261103.md)
+shows improved initial source recall for hybrid, without an established final-answer
+quality gain under matched large-context controls. Both arms expose a source-structure
+fidelity limitation. The pack is consumed; broader quality and production gates
+remain open. Application defaults and architecture are unchanged.
 
 ## 1. Scope
 
