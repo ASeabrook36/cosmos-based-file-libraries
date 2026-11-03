@@ -1434,3 +1434,60 @@ advances selector handles to consuming-agent integration. The frozen numerical
 This supersedes the earlier efficiency-based recommendation to retain opt-in
 status indefinitely. No runtime default, measurement or architecture changes in
 this decision update.
+
+
+## E67 — Hybrid quality confirmation prepared; cloud gates blocked (2026-11-02)
+
+The [coordinator report](hybrid-quality-comparison.md) and
+[sanitized preparation receipt](../records/hybrid-quality-preparation-20261102.json)
+freeze eight fresh complete DOCX sources, 48 questions, 104 original regions and
+62 facts. Independent reviewers checked all questions against originals before
+any measured retrieval or answering. R0/I1 questions remain development evidence;
+this fresh pack has not been consumed. The retained Microsoft layout profile,
+accepted selector handles, compact evidence, exact Sol revision, medium reasoning,
+8k output and 200k context remain fixed. Query tokenization/default RRF weights
+and the required vector-versus-hybrid routing distinction are documented unchanged.
+
+New measurement tools bind query embeddings, original source/generation/metadata,
+stored-row ETags, deployed model versions, actual process settings and loaded code.
+They preserve every attempt, prevent selective replay and separate initial search,
+neighbor expansion, adaptive agent search and complete-file recovery. Source-based
+manual judgments remain distinct from string-match diagnostics. No application or
+container policy changed. The integrated harness and independently reviewed
+failed-scope recovery helper passed 1,205 tests, lint, format and privacy checks.
+
+Preparation reproduced E17's observable failure signature: HTTP 500 converting
+`float16` in the stored vector policy, including an ordinary scoped metadata query.
+Stored policy readback still worked. Cause is not established. Two atomic creation
+attempts for the same replacement target failed with `Invalid capability
+EnableNoSQLVectorSearch`, including a retry after the operator removed a spending
+limit. Actual subscription state was `Enabled` / spending limit `Off`, and ARM
+template validation passed. A documented two-stage attempt created that same
+empty account, but its explicit vector enablement failed with the same error.
+Guarded empty-account deletion completed. Independent authenticated HTTP 404s and
+the later exact-target verifier confirm absence of that account; the planned
+queue and worker are also absent. A different provider-specific 404 format had
+stopped an earlier read-only observer; no deletion was repeated or absence assumed.
+No database/container, new queue/worker, fresh canary or temporary answering
+deployment reached execution. Resource-management delays after subscription
+reactivation are documented, but these observations do not establish the cause.
+
+The record includes all 26 observed failed-run ingestion attempts and the known
+28,450.86 chunk-write RU across them. Only three attempts have complete write-charge
+visibility; provider embedding meters and billed totals remain unavailable. Frozen
+R0/P1/I1 catalogues, source metadata and tools remain unchanged, as do the worker and
+actual embedding deployment, including post-billing checks. The eight uploads
+produced seven completed plans containing 33 possible chunk IDs; three published
+documents reported six chunks, not a verified physical inventory. The reviewed
+exact-scope recovery precheck found two chunks and failed on the third with E17,
+before any delete attempt. Thirty candidates were not reached. The owned library
+remains fenced, with live source/checkpoint data and private archives retained.
+Complete cleanup and late absence checks remain unknown; ordinary worker cleanup
+and scheduled reconciliation are not validated by this exception recovery.
+
+**Quality conclusion: unavailable.** Zero of 96 direct searches and zero of 192
+answering turns executed. There are no paired wins/losses/ties or ranking winner.
+Restore healthy same-policy infrastructure and run the committed, unchanged
+handoff before further efficiency tuning. The 48 questions remain fresh. R3,
+ordinary healthy-worker cleanup, broker redelivery, broad concurrency/scale,
+production authentication and M1 scheduled orphan discovery remain open.

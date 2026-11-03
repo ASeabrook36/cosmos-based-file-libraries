@@ -7,6 +7,10 @@ inputs, source-based scoring and matched diagnostic controls. It changes no
 application architecture, profile recipe, query policy, permission or lifecycle
 contract in this specification. Production and foundation gates remain open.
 
+The [hybrid quality experiment](hybrid-quality-comparison.md) (E67) freezes a
+fresh source-recall and answer-quality comparison. Its cloud preparation is
+blocked before confirmation; application defaults and architecture are unchanged.
+
 ## 1. Scope
 
 The File Library Index (the **index**) replaces Azure AI Search as the store and search engine behind the platform's file libraries. It:

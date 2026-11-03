@@ -1,5 +1,18 @@
 # Build plan
 
+**Hybrid quality confirmation prepared, execution blocked, 2026-11-02 (E67):**
+the [controlled comparison](hybrid-quality-comparison.md) freezes eight fresh
+originals and 48 source-labeled questions, plus matched direct/replay tooling.
+The existing account reproduced E17 on scoped queries and an owned chunk point
+read. Two atomic attempts for one replacement target rejected its required vector
+capability. After a billing-limit change, a staged empty account could be created,
+but its vector enablement still failed. Exact owned-scope recovery stopped before
+deletion; source/checkpoint archives remain retained. All 1,205 local tests pass.
+None of the 96 direct searches or 192 answering turns ran. Restore a
+healthy same-policy isolated foundation, then execute the unchanged pack before
+further tuning. No ranking recommendation or R3 comparison follows from these
+operational failures.
+
 **Selector-only I1 complete, 2026-11-02 (E66):** the
 [coordinator result](retrieval-i1.md) records 13 live lifecycle gates passed
 before all 64 reserved held-out turns. Both cells retain reviewed source and
