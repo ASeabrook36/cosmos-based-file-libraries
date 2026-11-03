@@ -7,7 +7,28 @@ format, representation, model or efficiency tuning belongs in this comparison.
 R0/I1 questions are consumed development/regression evidence; confirmation uses
 new original sources and questions frozen before measured retrieval or answering.
 
-## Execution outcome: blocked before confirmation
+## Restart status: fresh health gates passed
+
+On 2026-11-03 the bounded [read-only recheck](../records/hybrid-quality-health-recheck-20261103.json)
+succeeded on both the formerly failing scoped query and the exact formerly failing
+chunk read, with unchanged container identity and policies. No account creation or
+capability-enable retry was made. The cause of the earlier failures remains unknown.
+
+The [restart receipt](../records/hybrid-quality-restart-20261103.json) records
+fresh real-text writes, point/scoped reads, vector and hybrid queries, exact-owned
+cleanup and a late absence check. All 19 actual mounted-workflow/worker/model
+binding checks passed, and protected R0/P1/I1 snapshots remain unchanged.
+The new [executable restart gate](hybrid-quality-restart.md) binds these receipts
+and a predeclared partial-ingestion cleanup plan before any new source upload.
+Application code, policies, dependency lock and frozen comparison controls remain
+unchanged; main's selector integration was not rebased into this branch.
+
+Confirmation has not started at this checkpoint. The smoke used separate real
+text and does not establish corpus readiness, recall, answer quality or steady-state
+performance. The next step is the unchanged eight-source ingestion and preparation
+gate, followed by the 96-search direct comparison and 192-turn answering schedule.
+
+## Initial preparation: blocked before confirmation
 
 The [sanitized receipt](../records/hybrid-quality-preparation-20261102.json)
 records **zero of 96 planned direct searches and zero of 192 planned answering
@@ -251,9 +272,10 @@ order:
    vector and hybrid queries. Reused containers need this too; a historical
    canary, policy readback or missing-item 404 is insufficient. Rebind the mounted
    workflow package/parameters and predeclare cleanup for partial ingestion.
-   These checks must be recorded and enforced by the restart preflight before
-   accepting its existing ingest command; the current inherited-canary gate
-   alone does not enforce them. A new container still requires the full canary.
+   The [restart preflight](hybrid-quality-restart.md) now enforces these checks
+   before the ingest command can create a library or upload a source. A historical
+   canary alone cannot authorize new ingestion. A new container still requires
+   the full canary.
 1. Run `scripts/canary.py` on each new container with the separate real-text canary
    corpus; require all checks, exact actual policy/incarnation binding and cleanup.
    Capture actual embedding deployment/version before and after. The fresh path

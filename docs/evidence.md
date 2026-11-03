@@ -1503,3 +1503,14 @@ index-versioning cloud use, and no tool/configuration mismatch explaining the
 Azure failures. Frozen benchmark controls and all numerical observations remain
 unchanged; the chunk-store accounting label above corrects the earlier write-only
 description.
+
+**Restart checkpoint, 2026-11-03:** the [fresh bounded read check](../records/hybrid-quality-health-recheck-20261103.json)
+now succeeds against the same container incarnation and policies, including the
+exact formerly failing chunk. The [restart receipt](../records/hybrid-quality-restart-20261103.json)
+also establishes fresh real-text writes/reads, scoped/vector/hybrid operations,
+exact-owned cleanup and late absence, and 19 actual mounted workflow/worker/model
+binding checks. No provisioning retry or capability enablement was attempted.
+These observations do not establish the cause of recovery or a ranking result.
+The executable ingest gate now requires hash-bound current evidence and a declared
+partial-ingestion cleanup procedure. Frozen controls and protected snapshots remain
+unchanged; the confirmation matrix remains unconsumed at this checkpoint.

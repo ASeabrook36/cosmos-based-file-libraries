@@ -1,5 +1,14 @@
 # Build plan
 
+**Hybrid quality restart gates passed, 2026-11-03 (E67):** the same isolated
+container now serves the previously failing reads. Fresh owned real-text
+writes/reads/vector/hybrid queries and exact cleanup passed, as did all 19
+mounted workflow/worker/model binding checks. An executable gate now enforces
+fresh evidence and a partial-ingestion cleanup declaration before uploads.
+The frozen comparison remains unchanged and has not yet consumed confirmation
+questions. Proceed with corpus readiness, then source recall and answer quality;
+no efficiency tuning or main-branch rebase is included.
+
 **Hybrid quality confirmation prepared, execution blocked, 2026-11-02 (E67):**
 the [controlled comparison](hybrid-quality-comparison.md) freezes eight fresh
 originals and 48 source-labeled questions, plus matched direct/replay tooling.
