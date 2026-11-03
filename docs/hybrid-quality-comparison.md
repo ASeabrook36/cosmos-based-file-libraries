@@ -53,8 +53,11 @@ finished, containing 33 possible generation-1 chunk IDs; only three documents
 published successfully before fencing, reporting six published chunks in their
 document counters. This is not a verified inventory of partially written chunks. The failed run retains all 26 observed
 worker ingestion attempts: three published, 21 errored and two stopped. Known
-chunk-write charge across those attempts is 28,450.86 RU, with complete charge
-visibility on only three attempts. Microsoft embedding request/token/retry meters
+instrumented chunk-store charge across those attempts is 28,450.86 RU. The counter
+includes collision-verification reads as well as writes. Three attempts have
+complete charge visibility, 21 partial and two unavailable. Eighteen attempts have
+broker delivery numbers above one; that is distinct from provider retry counts.
+Microsoft embedding request/token/retry meters
 were unavailable on all seven results. These are preparation counters, not billed
 cost totals or retrieval performance.
 
@@ -67,6 +70,40 @@ read with the same HTTP 500 before any delete attempt. Thirty candidates were no
 reached. The failed library remains fenced, with live originals/checkpoints and
 private archives retained; complete chunk/record/blob absence and late cleanup
 checks remain unverified. Failed SQL or point reads are never an empty inventory.
+
+## Cross-session consistency review
+
+A read-only review with the modular-ingestion, C1/M1 and index-versioning chats
+confirmed the [deployment and process comparison](../records/hybrid-quality-consistency-review-20261102.json).
+The earlier successful recovery and this run both used Azure CLI `az deployment
+group create` with compiled ARM JSON. Historical traces identify CLI 2.86.0;
+the current installed executable is also 2.86.0. The copied ARM template came
+from Bicep 0.48.1.52935. Parsed templates match after only nested-deployment name
+substitution; parameters differ only in account name. Declared Cosmos resource
+APIs remain 2025-10-15 and nested-deployment APIs 2025-04-01. No per-invocation
+executable hash or outer CLI-selected HTTP API version was captured.
+
+Both atomic submissions succeeded at the CLI boundary, then failed in Azure's
+recorded account-creation operation. The staged capability update was a new
+recovery experiment, not a previously successful project procedure. Its CLI SDK
+warning does not explain the preceding ARM-template failures. No deployment-tool
+change has been established as the cause or as a remedy.
+
+The review found a preparation omission: the inherited canary and unchanged
+policy/incarnation proved identity, not current data-plane health. A fresh owned
+health check should have preceded the eight uploads. It could have detected the
+known E17 failure earlier; it does not establish the cause of that failure.
+The worker/model checks were preserved, but this preparation also lacked M1's
+independent reread of the mounted Microsoft workflow package and parameters.
+
+M1 finished its live preservation checks more than five hours before this run;
+index versioning performed no cloud operations. That rules out overlap from those
+two activities, not unrelated tenant activity. The ranking experiment remains on
+the pinned foundation. Future versioning integration must reconcile duplicate
+E67 documentation identifiers and adapt the direct-capture instrumentation to
+request-scoped searchers; its changed source hashes intentionally fail this
+experiment's frozen controls. These are prospective integration issues, not
+explanations for the current service failures.
 
 ## Controlled comparison
 
@@ -209,6 +246,14 @@ draft retains the relevant request IDs and exact reproduction details.
 Once that dependency is resolved, follow these committed command contracts in
 order:
 
+0. Before any full-corpus upload, require fresh data-plane health in an owned
+   smoke scope, including actual real-chunk writes/reads and working scoped,
+   vector and hybrid queries. Reused containers need this too; a historical
+   canary, policy readback or missing-item 404 is insufficient. Rebind the mounted
+   workflow package/parameters and predeclare cleanup for partial ingestion.
+   These checks must be recorded and enforced by the restart preflight before
+   accepting its existing ingest command; the current inherited-canary gate
+   alone does not enforce them. A new container still requires the full canary.
 1. Run `scripts/canary.py` on each new container with the separate real-text canary
    corpus; require all checks, exact actual policy/incarnation binding and cleanup.
    Capture actual embedding deployment/version before and after. The fresh path

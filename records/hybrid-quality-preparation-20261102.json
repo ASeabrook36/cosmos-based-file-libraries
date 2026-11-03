@@ -88,18 +88,26 @@
       "error": 21,
       "stopped": 2
     },
-    "knownChunkWriteRequestChargeAcrossAllAttempts": 28450.86,
-    "chunkWriteChargeCompleteAttempts": 3,
     "totalRequestCharge": null,
     "providerEmbeddingRequests": null,
     "providerEmbeddingTokens": null,
     "providerRetryTotals": null,
     "accountingLimits": [
       "Provider result meters were unavailable on all seven completed Microsoft outputs.",
-      "Known chunk-write charge includes failed attempts; total RU, provider billing and hosting cost remain unavailable.",
+      "Known instrumented chunk-store charge includes failed attempts and collision-verification reads; total RU, provider billing and hosting cost remain unavailable.",
       "Preparation is not steady-state retrieval performance or source/answer quality evidence."
     ],
-    "publishedChunkCountBasis": "Published document counters before fencing; not a chunk-container inventory."
+    "publishedChunkCountBasis": "Published document counters before fencing; not a chunk-container inventory.",
+    "knownInstrumentedChunkStoreRequestChargeAcrossAllAttempts": 28450.86,
+    "chunkStoreChargeCompleteAttempts": 3,
+    "chunkStoreChargePartialAttempts": 21,
+    "chunkStoreChargeUnavailableAttempts": 2,
+    "attemptsWithBrokerDeliveryNumberAboveOne": 18,
+    "instrumentedChargeIncludes": [
+      "chunk create/upsert",
+      "collision-verification point reads"
+    ],
+    "rawMetricName": "chunkWriteChargeKnown"
   },
   "preservation": {
     "r0Libraries": 3,
@@ -185,6 +193,9 @@
     "privateProvisioningHelpersContainEnvironmentBindings": true
   },
   "untestedGates": [
+    "fresh real-chunk health gate before corpus ingestion on reused containers",
+    "independent mounted Microsoft workflow package and parameter binding before restart",
+    "predeclared cleanup for partially completed ingestion before restart",
     "live healthy float16 chunk queries and required vector-feature enablement",
     "fresh replacement container canary",
     "complete eight-document ready immutable snapshot and actual-corpus adequacy",

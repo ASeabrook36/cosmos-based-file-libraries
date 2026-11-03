@@ -1473,8 +1473,10 @@ deployment reached execution. Resource-management delays after subscription
 reactivation are documented, but these observations do not establish the cause.
 
 The record includes all 26 observed failed-run ingestion attempts and the known
-28,450.86 chunk-write RU across them. Only three attempts have complete write-charge
-visibility; provider embedding meters and billed totals remain unavailable. Frozen
+28,450.86 instrumented chunk-store RU across them, including collision-verification
+reads. Three attempts have complete charge visibility, 21 partial and two missing;
+18 attempts have broker delivery numbers above one. Provider embedding/retry
+meters and billed totals remain unavailable. Frozen
 R0/P1/I1 catalogues, source metadata and tools remain unchanged, as do the worker and
 actual embedding deployment, including post-billing checks. The eight uploads
 produced seven completed plans containing 33 possible chunk IDs; three published
@@ -1491,3 +1493,13 @@ Restore healthy same-policy infrastructure and run the committed, unchanged
 handoff before further efficiency tuning. The 48 questions remain fresh. R3,
 ordinary healthy-worker cleanup, broker redelivery, broad concurrency/scale,
 production authentication and M1 scheduled orphan discovery remain open.
+
+The subsequent [cross-session review](../records/hybrid-quality-consistency-review-20261102.json)
+verified the same Azure CLI/compiled-ARM deployment path and materially identical
+template/parameters as the successful recovery. It identified missing fresh
+data-plane health before ingestion and weaker mounted-workflow binding than M1.
+Those become explicit restart prerequisites. It found no M1 cloud overlap or
+index-versioning cloud use, and no tool/configuration mismatch explaining the
+Azure failures. Frozen benchmark controls and all numerical observations remain
+unchanged; the chunk-store accounting label above corrects the earlier write-only
+description.
