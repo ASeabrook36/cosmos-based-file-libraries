@@ -47,7 +47,16 @@ def loaded():
     )
 
 
-def test_real_pack_and_order_are_frozen_and_balanced():
+@pytest.fixture
+def measured_sdk_versions(monkeypatch):
+    # Unit plan checks control installed-version metadata independently of the
+    # general dependency-compatibility CI. Live runs retain the real version gate.
+    versions = {"azure-cosmos": "4.17.1", "openai": "3.37.0"}
+    monkeypatch.setattr(p, "version", versions.__getitem__)
+    return versions
+
+
+def test_real_pack_and_order_are_frozen_and_balanced(measured_sdk_versions):
     plan, _, tasks = loaded()
     assert plan["runLimits"] == p.LIMITS and len(tasks) == 48
     rows = p.schedule(tasks)
@@ -68,7 +77,7 @@ def test_real_pack_and_order_are_frozen_and_balanced():
         ("packUse", "fresh-confirmation"),
     ],
 )
-def test_changed_plan_rejected(tmp_path, key, value):
+def test_changed_plan_rejected(tmp_path, key, value, measured_sdk_versions):
     plan, _, _ = loaded()
     plan[key] = value
     path = tmp_path / "plan.json"
@@ -79,6 +88,13 @@ def test_changed_plan_rejected(tmp_path, key, value):
             p.REPO / "docs/testing/hybrid-quality/manifest.json",
             p.REPO / "docs/testing/hybrid-quality/tasks.json",
         )
+
+
+@pytest.mark.parametrize("package,reported_version", [("azure-cosmos", "4.17.0"), ("openai", "3.45.0")])
+def test_measured_sdk_version_drift_is_rejected(measured_sdk_versions, package, reported_version):
+    measured_sdk_versions[package] = reported_version
+    with pytest.raises(ValueError, match="measured SDK versions differ"):
+        loaded()
 
 
 def test_config_and_actual_capacity_are_bound(config):

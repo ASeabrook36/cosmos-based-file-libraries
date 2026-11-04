@@ -230,11 +230,19 @@ soft-delete/version/backup retention or guarantee against indefinitely late outp
 
 ## Validation and reproducibility
 
-The repository suite passed 1,397 tests; lint/format and reference-privacy checks
+The initial repository suite passed 1,397 tests; lint/format and reference-privacy checks
 passed. The separate private archiver suite passed 13 tests. The new 65 delivery
 analysis regressions are synthetic and require neither private sources nor cloud
-credentials. Application source, container definitions, dependency controls and
-the completed hybrid benchmark pack are unchanged from the completed baseline.
+credentials. Application source, container definitions, application runtime dependencies,
+frozen experiment dependency controls and the completed hybrid benchmark pack are
+unchanged from the completed baseline.
+
+Post-measurement CI exposed two test-environment gaps: the general development
+install selected OpenAI 3.45.0 while plan tests inherited the live pilot's 3.37.0
+gate, and the exact-vector reference test needed NumPy. NumPy is now a development
+dependency. Plan unit tests explicitly control version metadata, with two added
+tests proving either SDK's drift is rejected. Live version gates and all 112 frozen
+producer files remain unchanged; no experiment was rerun for this CI repair.
 
 The [review receipt](../records/hybrid-model-pilot-review-20261104.json) binds the
 finalized run, accepted source judgments, delivery correction and independent
