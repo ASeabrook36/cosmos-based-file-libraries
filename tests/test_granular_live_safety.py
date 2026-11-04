@@ -12,7 +12,7 @@ from fli.blobs import MemoryBlobs
 from fli.checkpoints import digest
 from fli.chunks import MemoryChunks
 from fli.ids import chunk_id
-from fli.store import Conflict, MemoryDocumentStore, MemoryLibraryStore
+from fli.store import Conflict, MemoryDocumentStore, MemoryLibraryStore, public
 from scripts.granular_live_safety import (
     CHUNK_HASH_FIELDS,
     LIMITS,
@@ -24,6 +24,8 @@ from scripts.granular_live_safety import (
     OwnedLedger,
     OwnershipError,
     guard_owned_inventory,
+    semantic_json,
+    semantic_record_digest,
 )
 
 BINDING = {"candidate": "a" * 40, "fixtureManifest": "b" * 64}
@@ -137,8 +139,12 @@ async def test_library_intent_is_flushed_before_store_call_and_lost_response_blo
 
     async def lost_response(row):
         latest = json.loads(sorted((scope.ledger.root / "events").iterdir())[-1].read_text())
-        assert latest["kind"] == "mutation-before"
+        assert latest["kind"] == "record-payload"
         assert latest["stateAfter"]["operations"][-1]["status"] == "started"
+        reference = latest["stateAfter"]["operations"][-1]["recordPayloads"]["proposed"]
+        payload = scope.ledger.root / reference["path"]
+        assert hashlib.sha256(payload.read_bytes()).hexdigest() == reference["sha256"]
+        assert json.loads(payload.read_bytes()) == row
         assert row["id"] in latest["stateAfter"]["libraries"]
         await original(row)
         raise TimeoutError("lost response after actual creation")
@@ -528,3 +534,141 @@ async def test_safe_summary_contains_no_owned_ids_or_source_bytes(scope):
     library, document, path, _ = await owned_document(scope)
     summary = json.dumps(scope.ledger.summary())
     assert all(value not in summary for value in (library, document, path, "Heading", str(scope.ledger.root)))
+
+
+@pytest.mark.parametrize("value", [0.0, -0.0, 1.0, -1.0, 1000000000.0])
+def test_json_number_canonicalization_equates_only_identical_numeric_values(value):
+    assert semantic_record_digest({"nested": [value]}) == semantic_record_digest({"nested": [int(value)]})
+    assert semantic_record_digest({"nested": [value]}) != semantic_record_digest({"nested": [int(value) + 1]})
+
+
+@pytest.mark.parametrize("left,right", [(False, 0), (True, 1), ("0", 0), (None, 0), (0.5, 0), ([1, 2], [2, 1])])
+def test_json_normalization_preserves_types_values_and_array_order(left, right):
+    assert semantic_record_digest({"value": left}) != semantic_record_digest({"value": right})
+    assert semantic_record_digest({}) != semantic_record_digest({"value": None})
+
+
+@pytest.mark.parametrize("number", [float("nan"), float("inf"), float("-inf")])
+def test_nonfinite_numbers_are_refused(number):
+    with pytest.raises(OwnershipError, match="non-finite"):
+        semantic_record_digest({"metrics": {"value": number}})
+
+
+async def test_cosmos_integral_number_roundtrip_preserves_raw_evidence_and_allows_records(scope, monkeypatch):
+    original_create = scope.raw.libraries.create
+
+    async def create_normalized(row):
+        return await original_create(semantic_json(row))
+
+    monkeypatch.setattr(scope.raw.libraries, "create", create_normalized)
+    proposed_library = {**library_row(), "ingestionProfile": {"version": 1.0}}
+    library = (await scope.libraries.create(proposed_library))["id"]
+    assert (await scope.libraries.get(library))["ingestionProfile"]["version"] == 1
+    document = uid()
+    proposed = {"id": document, "libraryId": library, "generation": 1, "metrics": {"elapsed": 0.0}}
+    original_doc_create = scope.raw.documents.create
+
+    async def create_doc_normalized(row):
+        return await original_doc_create(semantic_json(row))
+
+    monkeypatch.setattr(scope.raw.documents, "create", create_doc_normalized)
+    row = await scope.documents.create(proposed)
+    row["metrics"] = {"elapsed": 0.0, "values": [1.0, -0.0, 0.25]}
+    original_replace = scope.raw.documents.replace
+
+    async def replace_normalized(record):
+        return await original_replace(semantic_json(record))
+
+    monkeypatch.setattr(scope.raw.documents, "replace", replace_normalized)
+    await scope.documents.replace(row)
+    observed = await scope.documents.get(library, document)
+    assert observed["metrics"] == {"elapsed": 0, "values": [1, 0, 0.25]}
+    operation = scope.ledger.snapshot()["operations"][-1]
+    assert operation["status"] == "confirmed"
+    assert operation["bodySha256"] != operation["semanticBodySha256"]
+    for role in ("proposed", "response"):
+        reference = operation["recordPayloads"][role]
+        payload = scope.ledger.root / reference["path"]
+        assert payload.stat().st_mode & 0o777 == 0o600
+        assert hashlib.sha256(payload.read_bytes()).hexdigest() == reference["sha256"]
+    sent = json.loads((scope.ledger.root / operation["recordPayloads"]["proposed"]["path"]).read_bytes())
+    received = json.loads((scope.ledger.root / operation["recordPayloads"]["response"]["path"]).read_bytes())
+    assert type(sent["metrics"]["elapsed"]) is float
+    assert type(received["metrics"]["elapsed"]) is int
+    await guard_owned_inventory(scope.libraries, scope.documents, scope.chunks, scope.blobs, scope.ledger)
+
+
+async def test_actual_changed_response_is_preserved_but_not_confirmed(scope, monkeypatch):
+    library, document, _, row = await owned_document(scope)
+    original = scope.raw.documents.replace
+    row["processingMetrics"] = {"visualExtractionMs": 0.0}
+
+    async def changed(record):
+        altered = copy.deepcopy(record)
+        altered["processingMetrics"]["visualExtractionMs"] = 1
+        return await original(altered)
+
+    monkeypatch.setattr(scope.raw.documents, "replace", changed)
+    with pytest.raises(OwnershipError, match="returned record body"):
+        await scope.documents.replace(row)
+    operation = scope.ledger.snapshot()["operations"][-1]
+    assert operation["status"] == "unknown"
+    assert set(operation["recordPayloads"]) == {"proposed", "response"}
+    response = json.loads((scope.ledger.root / operation["recordPayloads"]["response"]["path"]).read_bytes())
+    assert response["processingMetrics"]["visualExtractionMs"] == 1
+    with pytest.raises(OwnershipError, match="ambiguous"):
+        await scope.documents.get(library, document)
+
+
+async def legacy_ambiguous_publication(scope):
+    library, document, _, proposed = await owned_document(scope)
+    proposed.update(processingMetrics={"visualExtractionMs": 0.0, "visionMs": 0.0}, activeGeneration=1)
+    operation = scope.ledger.begin("document-replace", "document:" + document, bodySha256=digest(public(proposed)))
+    observed = await scope.raw.documents.replace(semantic_json(proposed))
+    scope.ledger.finish(operation, status="unknown")
+    proof = scope.ledger.root.parent / "independent-proof.json"
+    proof.write_text(json.dumps({"observed": observed, "proposedSha256": digest(public(proposed))}))
+    proof.chmod(0o600)
+    return library, document, operation, proposed, observed, proof, hashlib.sha256(proof.read_bytes()).hexdigest()
+
+
+async def test_exact_legacy_reconciliation_appends_without_rewriting_or_reserving_new_scopes(scope):
+    library, document, operation, proposed, observed, proof, proof_hash = await legacy_ambiguous_publication(scope)
+    before = {path.name: path.read_bytes() for path in (scope.ledger.root / "events").iterdir()}
+    counts = scope.ledger.summary()
+    scope.ledger.confirm_reconciled(operation, proposed, observed, evidence_path=proof, evidence_sha256=proof_hash)
+    assert all((scope.ledger.root / "events" / name).read_bytes() == content for name, content in before.items())
+    result = scope.ledger.snapshot()["operations"][-1]
+    assert result["status"] == "confirmed"
+    assert result["bodySha256"] == digest(public(proposed))
+    assert result["semanticBodySha256"] == semantic_record_digest(observed)
+    assert result["reconciliation"]["originalBodySha256"] == result["bodySha256"]
+    assert scope.ledger.summary()["unresolvedOperations"] == 0
+    for count in ("reservedLibraries", "reservedDocuments", "reservedGenerations", "reservedChunks"):
+        assert scope.ledger.summary()[count] == counts[count]
+    assert await scope.documents.get(library, document) == observed
+    await guard_owned_inventory(scope.libraries, scope.documents, scope.chunks, scope.blobs, scope.ledger)
+    with pytest.raises(OwnershipError, match="only an ambiguous"):
+        scope.ledger.confirm_reconciled(operation, proposed, observed, evidence_path=proof, evidence_sha256=proof_hash)
+
+
+@pytest.mark.parametrize(
+    "case", ["wrong_proposal", "changed_observation", "wrong_proof", "wrong_operation", "missing_etag"]
+)
+async def test_reconciliation_refuses_any_unproved_change_without_appending(scope, case):
+    _, _, operation, proposed, observed, proof, proof_hash = await legacy_ambiguous_publication(scope)
+    before = scope.ledger.snapshot()
+    if case == "wrong_proposal":
+        proposed["processingMetrics"]["visionMs"] = 0  # Even semantically equal must match the original raw WAL.
+    elif case == "changed_observation":
+        observed["source"]["blobPath"] = "foreign"
+    elif case == "wrong_proof":
+        proof_hash = "0" * 64
+    elif case == "wrong_operation":
+        operation = "not-this-operation"
+    else:
+        scope.ledger.live = True
+        observed.pop("_etag")
+    with pytest.raises(OwnershipError):
+        scope.ledger.confirm_reconciled(operation, proposed, observed, evidence_path=proof, evidence_sha256=proof_hash)
+    assert scope.ledger.snapshot() == before

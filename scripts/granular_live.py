@@ -55,7 +55,12 @@ class BoundedEmbedder(AzureOpenAIEmbedder):
 
     def bind(self, root, deadline):
         self.root, self.deadline = root, deadline
-        self.rows = []
+        previous = root / "embedding-attempts.json"
+        self.rows = json.loads(previous.read_text()) if previous.exists() else []
+        require(
+            all(row.get("status") in {"response", "error"} for row in self.rows),
+            "unfinished embedding attempt requires review",
+        )
         self.tokenizer = TiktokenTokenizer()
         self.max_attempts = LIMITS["embeddingAttemptsEach"]
         return self
@@ -459,14 +464,24 @@ class Qualification:
                 self.b.app.state.blobs = barrier.wrapped
                 self.b.app.state.searcher.blobs = barrier.wrapped
 
-    async def mechanics(self):
-        shared, personal, foreign = (
-            await self.create("shared"),
-            await self.create("personal"),
-            await self.create("shared"),
-        )
-        docx, markdown = await self.upload(shared, "source.docx"), await self.upload(shared, "source.md")
-        lifecycle = await self.upload(personal, "source.docx")
+    async def mechanics(self, existing=None):
+        if existing is None:
+            shared, personal, foreign = (
+                await self.create("shared"),
+                await self.create("personal"),
+                await self.create("shared"),
+            )
+            docx, markdown = await self.upload(shared, "source.docx"), await self.upload(shared, "source.md")
+            lifecycle = await self.upload(personal, "source.docx")
+        else:
+            shared, personal, foreign = (existing[k] for k in ("shared", "personal", "foreign"))
+            docx, markdown, lifecycle = (existing[k] for k in ("docx", "markdown", "lifecycle"))
+            self.owned = [shared, personal, foreign]
+            self.documents = [
+                (shared, docx, "source.docx"),
+                (shared, markdown, "source.md"),
+                (personal, lifecycle, "source.docx"),
+            ]
         await self.drain()
         for library, document, _ in self.documents:
             row = await self.publication(library, document, _, 1)

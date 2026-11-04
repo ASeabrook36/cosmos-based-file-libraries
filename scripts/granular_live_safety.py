@@ -12,6 +12,7 @@ import copy
 import fcntl
 import hashlib
 import json
+import math
 import os
 import uuid
 from datetime import UTC, datetime
@@ -47,6 +48,29 @@ def identifier(value):
     return value
 
 
+def semantic_json(value):
+    """Normalize JSON's single number type without Python's bool/int equality.
+
+    Cosmos may return an integral JSON number as int after receiving a float.
+    No rounding, string coercion, missing-field folding or array reordering is
+    permitted. Non-finite numbers are not JSON and fail before any SDK call.
+    """
+    if type(value) is float:
+        require(math.isfinite(value), "non-finite JSON number")
+        return int(value) if value.is_integer() else value
+    if isinstance(value, dict):
+        require(all(type(key) is str for key in value), "JSON object keys must be strings")
+        return {key: semantic_json(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [semantic_json(item) for item in value]
+    require(value is None or type(value) in {str, int, bool}, "unsupported JSON value")
+    return value
+
+
+def semantic_record_digest(record):
+    return digest(semantic_json(public(record)))
+
+
 def identity(record, library=False):
     keys = (
         ("id", "libraryId", "kind", "boundAgentId", "createdAt", "createdBy", "ingestionProfile")
@@ -56,7 +80,7 @@ def identity(record, library=False):
             "libraryId",
         )
     )
-    return digest({key: record.get(key) for key in keys})
+    return digest(semantic_json({key: record.get(key) for key in keys}))
 
 
 class OwnedLedger:
@@ -195,7 +219,7 @@ class OwnedLedger:
     def record_hashes(self, key):
         self.key_settled(key)
         hashes = [
-            row["bodySha256"]
+            row.get("semanticBodySha256", row["bodySha256"])
             for row in self._state["operations"]
             if row["key"] == key and row["status"] == "confirmed" and "bodySha256" in row
         ]
@@ -204,6 +228,142 @@ class OwnedLedger:
 
     def record_hash(self, key):
         return self.record_hashes(key)[-1]
+
+    def record_matches(self, key, record, *, latest=False):
+        self.key_settled(key)
+        rows = [
+            row
+            for row in self._state["operations"]
+            if row["key"] == key and row["status"] == "confirmed" and "bodySha256" in row
+        ]
+        require(rows, "confirmed record body unavailable")
+        if latest:
+            rows = rows[-1:]
+        return any(
+            semantic_record_digest(record) == row["semanticBodySha256"]
+            if "semanticBodySha256" in row
+            else digest(public(record)) == row["bodySha256"]
+            for row in rows
+        )
+
+    def _record_payload(self, operation, role, record):
+        """Persist raw SDK input/output before confirmation; private, never receipts."""
+        row = next(row for row in self._state["operations"] if row["id"] == operation)
+        require(row["status"] in {"started", "unknown"}, "record mutation already settled")
+        directory = self.root / "records"
+        directory.mkdir(mode=0o700, exist_ok=True)
+        require(not directory.is_symlink(), "private record directory is a symlink")
+        root_descriptor = os.open(self.root, os.O_RDONLY)
+        try:
+            os.fsync(root_descriptor)
+        finally:
+            os.close(root_descriptor)
+        path = directory / f"{operation}-{role}.json"
+        content = encoded(record) + b"\n"
+        with path.open("xb") as handle:
+            os.chmod(path, 0o600)
+            handle.write(content)
+            handle.flush()
+            os.fsync(handle.fileno())
+        descriptor = os.open(directory, os.O_RDONLY)
+        try:
+            os.fsync(descriptor)
+        finally:
+            os.close(descriptor)
+        reference = {"path": str(path.relative_to(self.root)), "sha256": hashlib.sha256(content).hexdigest()}
+        self._change(
+            "record-payload",
+            {"operationId": operation, "role": role, **reference},
+            lambda state: (
+                next(item for item in state["operations"] if item["id"] == operation)
+                .setdefault("recordPayloads", {})
+                .update({role: reference})
+            ),
+        )
+        return reference
+
+    def begin_record(self, kind, key, record):
+        normalized = semantic_record_digest(record)  # Validate JSON before reserving an operation.
+        operation = self.begin(kind, key, bodySha256=digest(public(record)), semanticBodySha256=normalized)
+        self._record_payload(operation, "proposed", copy.deepcopy(record))
+        return operation
+
+    def validate_record_response(self, operation, record):
+        self._record_payload(operation, "response", copy.deepcopy(record))
+        row = next(row for row in self._state["operations"] if row["id"] == operation)
+        require(semantic_record_digest(record) == row["semanticBodySha256"], "returned record body differs")
+
+    def confirm_reconciled(self, operation, proposed, observed, *, evidence_path, evidence_sha256):
+        """Explicitly reconcile one ambiguous record write from independent evidence.
+
+        The coordinator must supply a fresh independent read, and preserve its
+        proof outside the repository. This method makes no cloud calls or guesses:
+        the original exact proposed hash must match, then every semantic field of
+        the observation must match. Existing events and resource ceilings survive.
+        """
+        rows = [row for row in self._state["operations"] if row["id"] == operation]
+        require(len(rows) == 1, "unknown reconciliation operation")
+        row = rows[0]
+        require(row["status"] == "unknown", "only an ambiguous operation can be reconciled")
+        require(
+            row["kind"] in {"library-create", "library-replace", "document-create", "document-replace"},
+            "reconciliation supports exact record writes only",
+        )
+        require(
+            [
+                item["id"]
+                for item in self._state["operations"]
+                if item["key"] == row["key"] and item["status"] not in TERMINAL
+            ]
+            == [operation],
+            "another mutation for this key remains unresolved",
+        )
+        require(digest(public(proposed)) == row["bodySha256"], "original proposed body hash differs")
+        normalized = semantic_record_digest(proposed)
+        require(normalized == semantic_record_digest(observed), "independent observed body differs")
+        require(not self.live or observed.get("_etag"), "independent observation ETag missing")
+        kind, identifier_ = row["key"].split(":", 1)
+        require(proposed.get("id") == identifier_, "reconciliation record ID differs")
+        if kind == "document":
+            self.document(proposed["libraryId"], identifier_)
+            for field in ("generation", "activeGeneration", "pendingGeneration"):
+                if proposed.get(field) is not None:
+                    require(
+                        [identifier_, proposed[field]] in self._state["generations"],
+                        "unowned reconciliation generation",
+                    )
+        else:
+            require(kind == "library" and proposed.get("libraryId") == identifier_, "reconciliation library differs")
+            known = self._state["libraries"].get(identifier_)
+            require(known is not None and identifier_ not in self.protected, "unowned reconciliation library")
+            require(identity(proposed, True) == known["identitySha256"], "reconciliation library identity differs")
+        evidence = private_path(evidence_path)
+        require(evidence.is_file() and not evidence.is_symlink(), "private reconciliation evidence missing")
+        require(
+            hashlib.sha256(evidence.read_bytes()).hexdigest() == evidence_sha256, "reconciliation evidence hash differs"
+        )
+        proposed_ref = self._record_payload(operation, "reconciled-proposed", copy.deepcopy(proposed))
+        observed_ref = self._record_payload(operation, "reconciled-observed", copy.deepcopy(observed))
+
+        def confirm(state):
+            item = next(item for item in state["operations"] if item["id"] == operation)
+            item.update(
+                status="confirmed",
+                semanticBodySha256=normalized,
+                reconciliation={
+                    "evidenceSha256": evidence_sha256,
+                    "proposed": proposed_ref,
+                    "observed": observed_ref,
+                    "observationEtag": observed.get("_etag"),
+                    "originalBodySha256": item["bodySha256"],
+                },
+            )
+            if item["kind"] == "library-create":
+                state["libraries"][identifier_]["status"] = "confirmed"
+            elif item["kind"] == "document-create":
+                state["documents"][identifier_]["status"] = "confirmed"
+
+        self._change("mutation-reconciled", {"operationId": operation, "evidenceSha256": evidence_sha256}, confirm)
 
     def library(self, library, *, writing=False):
         value = self._state["libraries"].get(library)
@@ -283,7 +443,7 @@ class GuardedLibraries:
         row = await self.store.get(library_id, **kwargs)
         if row:
             require(not self.ledger.library(library_id).get("deleted"), "deleted library reappeared")
-            require(digest(public(row)) in self.ledger.record_hashes("library:" + library_id), "library body differs")
+            require(self.ledger.record_matches("library:" + library_id, row), "library body differs")
             require(
                 identity(row, True) == self.ledger.library(library_id)["identitySha256"], "library identity differs"
             )
@@ -305,10 +465,10 @@ class GuardedLibraries:
             }
 
         self.ledger._change("reserve-library", {"libraryId": library, "initialPointReadAbsent": True}, reserve)
-        operation = self.ledger.begin("library-create", "library:" + library, bodySha256=digest(public(record)))
+        operation = self.ledger.begin_record("library-create", "library:" + library, record)
         try:
             result = await self.store.create(record)
-            require(digest(public(result)) == digest(public(record)), "created library body differs")
+            self.ledger.validate_record_response(operation, result)
         except BaseException:
             self.ledger.finish(operation, status="unknown")
             raise
@@ -322,10 +482,10 @@ class GuardedLibraries:
         library = record["id"]
         known = self.ledger.library(library, writing=True)
         require(identity(record, True) == known["identitySha256"], "immutable library identity changed")
-        operation = self.ledger.begin("library-replace", "library:" + library, bodySha256=digest(public(record)))
+        operation = self.ledger.begin_record("library-replace", "library:" + library, record)
         try:
             result = await self.store.replace(record)
-            require(digest(public(result)) == digest(public(record)), "replaced library body differs")
+            self.ledger.validate_record_response(operation, result)
         except Conflict:
             self.ledger.finish(operation, status="rejected")
             raise
@@ -350,7 +510,7 @@ class GuardedLibraries:
         record = await self.get(library_id)
         if record is None:
             return
-        require(digest(public(record)) == self.ledger.record_hash(key), "latest library body differs")
+        require(self.ledger.record_matches(key, record, latest=True), "latest library body differs")
         require(record.get("status") == "deleting", "library is not fenced for deletion")
         require(not self.ledger.live or record.get("_etag"), "live library ETag missing")
         operation = self.ledger.begin("library-delete", key, etag=record.get("_etag"))
@@ -382,9 +542,7 @@ class GuardedDocuments:
         if row:
             require(known["status"] == "confirmed", "unconfirmed document exists; never adopt it")
             require(not known.get("deleted"), "deleted document reappeared")
-            require(
-                digest(public(row)) in self.ledger.record_hashes("document:" + document_id), "document body differs"
-            )
+            require(self.ledger.record_matches("document:" + document_id, row), "document body differs")
             require(row["id"] == document_id and row["libraryId"] == library_id, "document scope differs")
         return row
 
@@ -399,10 +557,10 @@ class GuardedDocuments:
             {"documentId": document},
             lambda s: s["documents"][document].update(createAttempted=True),
         )
-        operation = self.ledger.begin("document-create", "document:" + document, bodySha256=digest(public(record)))
+        operation = self.ledger.begin_record("document-create", "document:" + document, record)
         try:
             result = await self.store.create(record)
-            require(digest(public(result)) == digest(public(record)), "created document body differs")
+            self.ledger.validate_record_response(operation, result)
         except BaseException:
             self.ledger.finish(operation, status="unknown")
             raise
@@ -417,10 +575,10 @@ class GuardedDocuments:
         known = self.ledger.document(library, document, writing=True)
         require(known["status"] == "confirmed", "unconfirmed document cannot be replaced")
         self.ledger.reserve_document(library, document, record["generation"])
-        operation = self.ledger.begin("document-replace", "document:" + document, bodySha256=digest(public(record)))
+        operation = self.ledger.begin_record("document-replace", "document:" + document, record)
         try:
             result = await self.store.replace(record)
-            require(digest(public(result)) == digest(public(record)), "replaced document body differs")
+            self.ledger.validate_record_response(operation, result)
         except Conflict:
             self.ledger.finish(operation, status="rejected")
             raise
@@ -451,7 +609,7 @@ class GuardedDocuments:
         record = await self.get(library_id, document_id)
         if record is None:
             return
-        require(digest(public(record)) == self.ledger.record_hash(key), "latest document body differs")
+        require(self.ledger.record_matches(key, record, latest=True), "latest document body differs")
         require(record.get("status") == "deleting", "document is not fenced for deletion")
         require(not self.ledger.live or record.get("_etag"), "live document ETag missing")
         operation = self.ledger.begin("document-delete", key, etag=record.get("_etag"))
@@ -754,7 +912,7 @@ async def guard_owned_inventory(libraries, documents, chunks, blobs, ledger):
         result["libraries"][library] = await libraries.get(library)
         if result["libraries"][library] is not None:
             require(
-                digest(public(result["libraries"][library])) == ledger.record_hash("library:" + library),
+                ledger.record_matches("library:" + library, result["libraries"][library], latest=True),
                 "latest library body differs",
             )
         await documents.list(library)
@@ -774,7 +932,7 @@ async def guard_owned_inventory(libraries, documents, chunks, blobs, ledger):
         result["documents"][document] = await documents.get(library, document)
         if result["documents"][document] is not None:
             require(
-                digest(public(result["documents"][document])) == ledger.record_hash("document:" + document),
+                ledger.record_matches("document:" + document, result["documents"][document], latest=True),
                 "latest document body differs",
             )
         await chunks.generations(library, document)

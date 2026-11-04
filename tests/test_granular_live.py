@@ -91,6 +91,40 @@ async def test_embedding_usage_remains_measured_when_response_dimensions_are_inv
     assert row["physicalRequests"] == 1 and row["unmeteredAttempts"] == 0
 
 
+async def test_resumed_embedding_meter_keeps_prior_consumption_and_call_sequence(tmp_path):
+    previous = [
+        {
+            "logicalCall": 1,
+            "localInputTokens": 98,
+            "status": "response",
+            "reportedPromptTokens": 98,
+            "physicalRequests": 1,
+            "retries": 0,
+            "throttles": 0,
+            "unmeteredAttempts": 0,
+        }
+    ]
+    (tmp_path / "embedding-attempts.json").write_text(json.dumps(previous))
+    payload = {"data": [{"index": 0, "embedding": [1.0]}], "usage": {"prompt_tokens": 7}}
+    async with httpx.AsyncClient(transport=httpx.MockTransport(lambda _: httpx.Response(200, json=payload))) as http:
+        embedder = live.BoundedEmbedder("https://local.invalid", "embedding", token, http, dimensions=1).bind(
+            tmp_path, time.monotonic() + 30
+        )
+        await embedder.embed(["new source"])
+    rows = json.loads((tmp_path / "embedding-attempts.json").read_text())
+    assert rows[0] == previous[0] and rows[1]["logicalCall"] == 2
+    assert sum(row["reportedPromptTokens"] for row in rows) == 105
+    assert sum(row["physicalRequests"] for row in rows) == 2
+
+
+def test_resumed_embedding_meter_refuses_unfinished_prior_attempt(tmp_path):
+    (tmp_path / "embedding-attempts.json").write_text(json.dumps([{"logicalCall": 1, "status": "started"}]))
+    with pytest.raises(ValueError, match="unfinished embedding attempt"):
+        live.BoundedEmbedder("https://local.invalid", "embedding", token, None, dimensions=1).bind(
+            tmp_path, time.monotonic() + 30
+        )
+
+
 async def test_loopback_quiescence_joins_handler_that_survives_client_cancellation():
     app = FastAPI()
     arrived, release = asyncio.Event(), asyncio.Event()
@@ -212,6 +246,27 @@ class BlobInventory:
                 yield SimpleNamespace(name=path, size=len(data), etag=hashlib.sha256(data).hexdigest())
 
 
+def normalize_cosmos_numbers(value):
+    if isinstance(value, dict):
+        return {key: normalize_cosmos_numbers(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [normalize_cosmos_numbers(item) for item in value]
+    if type(value) is float and value.is_integer():
+        return int(value)
+    return value
+
+
+def normalize_stored_records(stores):
+    """Cosmos may emit JSON numeric zero as 0 when the submitted value was 0.0."""
+    for store in (stores.libraries, stores.documents):
+        original = store.m._stamp
+
+        def stamp(record, original=original):
+            return original(normalize_cosmos_numbers(record))
+
+        store.m._stamp = stamp
+
+
 def local_service(stores, ledger):
     libraries = GuardedLibraries(stores.libraries, ledger)
     documents = GuardedDocuments(stores.documents, ledger)
@@ -284,7 +339,10 @@ async def test_publication_gate_rejects_changed_source_or_passage_binding(tmp_pa
                 await qualification.publication(library, document, "source.docx", 1)
 
 
-async def test_complete_live_mechanics_locally_with_normal_http_client_and_owned_guards(tmp_path, monkeypatch):
+@pytest.mark.parametrize("cosmos_number_normalization", [False, True])
+async def test_complete_live_mechanics_locally_with_normal_http_client_and_owned_guards(
+    tmp_path, monkeypatch, cosmos_number_normalization
+):
     # Keep task scheduling and server startup real; skip only the Azure index delay.
     original_sleep = asyncio.sleep
 
@@ -300,6 +358,8 @@ async def test_complete_live_mechanics_locally_with_normal_http_client_and_owned
     captures = tmp_path / "capture"
     captures.mkdir()
     stores = Services()
+    if cosmos_number_normalization:
+        normalize_stored_records(stores)
     await stores.libraries.create({"id": "protected", "libraryId": "protected", "status": "active"})
     independent = SimpleNamespace(database=InventoryDatabase(stores), blob_container=BlobInventory(stores.blobs))
     protected = await live.protected_snapshot(independent.database, independent.blob_container, ["protected"])
@@ -329,6 +389,10 @@ async def test_complete_live_mechanics_locally_with_normal_http_client_and_owned
         assert "pending_replacement_inflight_publication_and_stale_selector" in qualification.checks
         assert "independent_client_deletion_fence_and_idempotent_purge" in qualification.checks
         assert len(service.database.queries) == 4
+        if cosmos_number_normalization:
+            published = json.loads(next(captures.glob("*-publication-1.json")).read_text())["document"]
+            assert type(published["processingMetrics"]["visualExtractionMs"]) is int
+            assert type(published["processingMetrics"]["visionMs"]) is int
         assert cleanup["passed"]
         for check in (cleanup["immediate"], cleanup["late"]):
             assert check["library404"] == 3 and check["document404"] == 3
