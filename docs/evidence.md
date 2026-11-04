@@ -1567,3 +1567,19 @@ The earlier failed scope remains fenced, its cleanup unresolved. Scheduled orpha
 discovery, production authentication/redelivery/concurrency/lifecycle, large-index
 engagement and library-spanning-range merge gates remain open. Ordinary cleanup
 is not exceptional per-chunk-absence-before-blob ordering or indefinite absence.
+
+
+## Granular source navigation follow-through, 2026-11-04
+
+The [candidate](granular-source-navigation.md) reuses the separately qualified
+source-only repair and adds authored hierarchy plus paragraph/cell/section/subtree
+reads in a new custom recipe. This requires new paragraph-level passages and
+embeddings; it does not change the completed experiments or select a provider.
+Context repair and index versioning remain separate. Local tests exercise actual
+API/adapter responses, source relationships, mappings and lifecycle refusal.
+Review found and corrected Markdown chapter selection/citation, malformed-artifact
+errors and conflicting passage-to-source pointers. Search distinguishes recorded
+mapping from expansion-time artifact validation. The validation receipt and
+prepared live plan distinguish fake-service mechanics, local token estimates,
+unavailable cloud counters and still-unmeasured real-model quality. No live or
+larger confirmation outcome is claimed.

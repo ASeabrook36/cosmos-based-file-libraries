@@ -105,3 +105,11 @@ or an amendment of I1's measured scores or frozen controls.
 local checkout, fresh and repeated dependency installation, 705 passing tests and
 the portable logging-test correction. The user subsequently confirmed that the
 environment appears in the local picker; automatic cloud setup is excluded.
+
+
+`granular-source-navigation-20261104.json` records the dedicated main-plus-source-only
+baseline, focused navigation implementation, actual local validation and source
+invariance checks. The linked preparation and local-qualification receipts freeze
+new mechanics fixtures and real tool serializations with in-memory services;
+cloud/model counters remain unavailable and live qualification remains pending.
+Completed comparison and repair receipts are not rewritten.

@@ -40,7 +40,7 @@ def add_hints(evidence):
         for key, item in list(value.items()):
             if key in {"documents", "results", "sections", "outline", "candidateImages", "pageSections"}:
                 visit(item, context)
-        if not pinned or not ("documentId" in value or "sectionId" in value or "evidenceId" in value):
+        if not pinned or not any(k in value for k in ("documentId", "sectionId", "evidenceId", "navigationNodeId")):
             return
         scope = {k: context[k] for k in SCOPE}
         value["documentSelector"] = scope
@@ -57,6 +57,11 @@ def add_hints(evidence):
             or any(key in location for key in ("paragraph", "page", "slide"))
             or ("charStart" in location and "charEnd" in location)
         )
+        granular = (value.get("processingCoverage") or {}).get("sourceStructure") == "fli.granular-source.v1"
+        if granular and field == "evidenceIds":
+            usable = bool(location.get("sourceAtomId"))
+            value["passageToSourceMapping"] = "recorded_containing_source_atom" if usable else "unavailable"
+            value["passageMappingVerification"] = "publication_bound; revalidated_on_expansion"
         value["readCapabilities"] = {
             "snapshotBound": True,
             "full": value.get("readable", True),
@@ -64,8 +69,44 @@ def add_hints(evidence):
             "evidenceExpansion": "selected_handle" if handle and usable else "outline_required",
             "sourceLocationPrecision": "stored_extraction_only",
         }
+        if granular and field == "evidenceIds":
+            value["readCapabilities"]["sourceLocationPrecision"] = (
+                "recorded_containing_source_atom_not_exact_passage_offsets" if usable else "unavailable"
+            )
         if handle and usable:
             value["readSelector"] = {"mode": "selected", "documents": [{**scope, field: [handle]}]}
+        if node := value.get("navigationNodeId"):
+            selected = {**scope, "nodeIds": [node]}
+            value["readSelector"] = {
+                "mode": "selected",
+                "documents": [
+                    {
+                        **selected,
+                        **({"nodeScope": "section"} if value.get("navigationKind") in {"section", "chapter"} else {}),
+                    }
+                ],
+            }
+            value["subtreeSelector"] = {"mode": "selected", "documents": [selected]}
+            value["outlineSelector"] = {"mode": "outline", "documents": [{**scope, "outlineNodeId": node}]}
+            value["fullSelector"] = {"mode": "full", "documents": [scope]}
+            if parent := value.get("parentNodeId"):
+                value["parentSelector"] = {"mode": "selected", "documents": [{**scope, "nodeIds": [parent]}]}
+            if containing := value.get("containingSectionId"):
+                value["containingSectionSelector"] = {
+                    "mode": "selected",
+                    "documents": [{**scope, "nodeIds": [containing]}],
+                }
+                value["containingSectionScope"] = (
+                    "document_root_no_containing_authored_section"
+                    if containing == "n0"
+                    else "complete_authored_subtree"
+                )
+            value["readCapabilities"].update(
+                evidenceExpansion="selected_handle",
+                sourceLocationPrecision="verified_source_atom",
+                sectionReadScope="own_content_excluding_authored_subsections",
+                subtreeReadScope="all_descendant_source_atoms",
+            )
 
     visit(result)
     result["selectorGuidance"] = GUIDANCE

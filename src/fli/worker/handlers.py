@@ -741,6 +741,7 @@ class Worker:
         if hashlib.sha256(data).hexdigest() != source["sha256"]:
             raise ValueError("original source digest mismatch")
         recipe = source.get("ingestionJob", {}).get("profile") or snapshot(library)
+        granular = recipe["id"] == "custom-granular-v1"
         structured = recipe["enrichment"]["adapter"] is not None
         if structured and source.get("fileType") not in ("md", "docx"):
             await self._fail(library_id, document_id, generation, "structured_format_unsupported")
@@ -773,7 +774,7 @@ class Worker:
         if result.outcome != "ok":
             await self._fail(library_id, document_id, generation, status_detail(result))
             return
-        visuals, images_skipped = ([] if controlled else None), 0
+        visuals, images_skipped = ([] if controlled or granular else None), 0
         asset_skipped_pages = {}
         if is_pdf and not controlled:
             if self.layout is None:
@@ -810,6 +811,7 @@ class Worker:
             )
         stages["extractionMs"] = (time.perf_counter() - extraction_started) * 1000
         structure = None
+        granular_sections, granular_coverage = None, {}
         selected_chunker = self.chunker
         if controlled:
             selected_chunker = Chunker(
@@ -820,9 +822,18 @@ class Worker:
             selected_chunker.version += "+shared-layout-controlled-v1"
         if structured:
             try:
-                result.sections, structure = await asyncio.to_thread(
-                    source_structure, data, document_id, source["fileName"], source["fileType"]
-                )
+                if granular:
+                    from fli.granular_source import build_source, plain_sections
+
+                    granular_sections, granular_coverage = await asyncio.to_thread(
+                        build_source, data, source["ingestionJob"], source["fileName"], source["fileType"]
+                    )
+                    result.sections = plain_sections(granular_sections)
+                    result.extraction_version = "granular-source-v1"
+                else:
+                    result.sections, structure = await asyncio.to_thread(
+                        source_structure, data, document_id, source["fileName"], source["fileType"]
+                    )
             except (ValueError, UnicodeDecodeError):
                 await self._fail(library_id, document_id, generation, "structured_source_invalid")
                 return
@@ -831,7 +842,7 @@ class Worker:
                 target=recipe["chunking"]["targetTokens"],
                 overlap=recipe["chunking"]["overlapTokens"],
             )
-            selected_chunker.version += "+source-structure-v1"
+            selected_chunker.version += "+granular-source-v1" if granular else "+source-structure-v1"
         chunking_started = time.perf_counter()
         kind = "email" if source.get("fileType") == "eml" and not controlled else "document"
         pieces = await asyncio.to_thread(selected_chunker.chunk, result.sections, kind)  # CPU-bound tokenizing
@@ -893,21 +904,24 @@ class Worker:
         else:
             meta["facets"] = document.get("facets", [])
 
-        sections = [
-            {"heading": sec.heading, "text": sec.text, "location": sec.location or {}} for sec in result.sections
-        ]
+        sections = (
+            granular_sections
+            if granular
+            else [{"heading": sec.heading, "text": sec.text, "location": sec.location or {}} for sec in result.sections]
+        )
         return {
             "version": 1,
             "job": source.get("ingestionJob"),
             "structure": structure,
             "coverage": {
                 "authoredHierarchy": structure["adapter"]
-                if structured
+                if structure
                 else "unavailable"
                 if controlled
                 else "extraction-sections",
-                "visuals": "unavailable" if controlled else "bounded-native-and-layout",
+                "visuals": "unavailable" if controlled or granular else "bounded-native-and-layout",
                 "generatedSummaries": "unavailable",
+                **granular_coverage,
             },
             "generation": generation,
             "sourceSha256": source["sha256"],

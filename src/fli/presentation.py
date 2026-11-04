@@ -62,7 +62,7 @@ def project(response):
         context = {**(parent or {}), **value}
         out = {}
         for key, item in value.items():
-            if key in OPERATIONAL:
+            if key in OPERATIONAL or key == "sourceNavigation":
                 continue
             if key == "image" and isinstance(item, dict):
                 image_id = value.get("imageId") or value.get("chunkId")
@@ -124,8 +124,12 @@ def project(response):
                             f"source table {coordinate['table'] + 1}, row {coordinate['row'] + 1}, "
                             f"column {coordinate['column'] + 1}"
                         )
-                    else:
+                        if value.get("navigationKind") == "paragraph":
+                            where += f", source paragraph {location['paragraph']}"
+                    elif coordinate["kind"] == "paragraph":
                         where = f"source paragraph {coordinate['paragraph']}"
+                    elif coordinate["kind"] in {"block", "sourceBlock"}:
+                        where = f"source characters {location['charStart']}–{location['charEnd']} (end exclusive)"
                 out["citation"] = f"{name} ({where})" if where else name
         return out
 

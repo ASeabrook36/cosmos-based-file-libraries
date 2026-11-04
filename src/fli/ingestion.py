@@ -18,19 +18,45 @@ from fli.chunking import Chunk
 from fli.config import EMBEDDING_MODEL
 
 ProfileId = Literal[
-    "current-v1", "custom-structured-v1", "microsoft-indexer-layout-v1", "microsoft-indexer-source-fidelity-v1"
+    "current-v1",
+    "custom-structured-v1",
+    "microsoft-indexer-layout-v1",
+    "microsoft-indexer-source-fidelity-v1",
+    "custom-granular-v1",
 ]
 PROFILE_IDS = (
     "current-v1",
     "custom-structured-v1",
     "microsoft-indexer-layout-v1",
     "microsoft-indexer-source-fidelity-v1",
+    "custom-granular-v1",
 )
 
 
 def profile(profile_id: str = "current-v1", *, controlled: bool = False) -> dict:
     if profile_id not in PROFILE_IDS:
         raise ValueError("unknown ingestion profile")
+    if profile_id == "custom-granular-v1":
+        if controlled:
+            raise ValueError("granular profile does not change frozen component comparisons")
+        recipe = profile("custom-structured-v1")
+        recipe.update(id=profile_id, version=1)
+        recipe["enrichment"]["adapter"] = "fli.granular-source.v1"
+        recipe["capabilities"].update(
+            authoredHierarchy="docx-outline-levels-and-markdown-atx",
+            sourceStructure="paragraphs-and-table-cells",
+            visuals=False,
+            completeProviderText=False,
+        )
+        recipe["limitations"] = [
+            "DOCX main body only; unsupported source constructs fail explicitly. Markdown retains ATX source blocks.",
+            "Paragraph/block passages use existing 500-token target and 50-token overlap within an atom. "
+            "This changes custom passage boundaries and requires new embeddings.",
+            "Passage mapping verifies the containing source atom, not exact passage offsets after chunk normalization.",
+            "Rendered pages, inferred chapters, generated summaries, visuals "
+            "and printed list ordinals are unavailable.",
+        ]
+        return recipe
     if profile_id == "microsoft-indexer-source-fidelity-v1":
         if controlled:
             raise ValueError("source-fidelity profile does not change the frozen component comparison")

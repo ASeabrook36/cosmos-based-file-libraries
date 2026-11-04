@@ -1,5 +1,11 @@
 # Agent evidence tools
 
+The opt-in [granular source profile](granular-source-navigation.md) adds authored
+hierarchy, paragraph/cell reads and section/subtree expansion to the same tools.
+Its outline drills through immediate children with snapshot-bound selectors and
+explicit size estimates. Its tool bundle advertises only supported source reads;
+visual/page selection remains unavailable for this profile.
+
 The natural-test fixes add capabilities over the existing Cosmos/Blob artifacts. The priority is supported user intent, then time, then model/embedding/vision tokens and RU. The [strategy](consults/2026-10-27-agent-retrieval-strategy.md) was authorized for implementation after the original review. [E49](evidence.md) records validation and limits.
 
 ## Four actions per attached library

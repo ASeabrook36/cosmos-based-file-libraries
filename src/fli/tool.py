@@ -297,4 +297,37 @@ def tool_definitions(library: Mapping[str, Any]) -> list[dict[str, Any]]:
             },
         },
     }
+    if (library.get("ingestionProfile") or {}).get("id") == "custom-granular-v1":
+        read["function"]["description"] = common + (
+            "\nRead supported DOCX main-body structure or exact Markdown ATX source blocks. "
+            "mode=outline returns immediate children: authored sections/subsections, tables, cells and paragraphs "
+            "(Markdown: headings and blocks). Copy outlineSelector to drill down; "
+            "paginate with afterSection/sectionLimit "
+            "until hasMore=false. Source-size estimates exclude response overhead and do not guarantee a fit. "
+            "Copy readSelector for a paragraph/cell or a section's own content. Copy subtreeSelector to include "
+            "all authored subsections. containingSectionSelector expands the complete containing authored subtree; "
+            "fullSelector reads the document. Keep generation/contentRevision pins; stale references are refused. "
+            "Use search evidenceIds to expand verified containing source atoms, not guessed character offsets. "
+            "If mapping is unavailable, use the outline. DOCX numbering identity/depth is retained but printed "
+            "ordinals are unresolved; source coordinates are not printed clause numbers. No rendered pages, "
+            "inferred chapters, visual selection or generated summaries are offered by this profile. "
+            "Full reads are all-or-nothing, complete=true only for full source representation. Selected reads "
+            "report selectionComplete with documentComplete=false. All modes enforce maxTokens (default 32000, "
+            "maximum 200000) without clipping. Narrow or paginate after refusal; disclose omissions."
+        )
+        properties = read["function"]["parameters"]["properties"]["documents"]["items"]["properties"]
+        properties.update(
+            outlineNodeId={
+                "type": "string",
+                "description": "Copy from outlineSelector; outline-only, with snapshot pins.",
+            },
+            nodeScope={
+                "type": "string",
+                "enum": ["section", "subtree"],
+                "description": "With nodeIds: section excludes authored subsections; subtree includes descendants.",
+            },
+        )
+        properties.pop("pages")
+        properties.pop("slides")
+        return [search, catalogue, read]
     return [search, catalogue, read, images]

@@ -21,6 +21,13 @@ remain open. Application defaults and architecture are unchanged.
 
 ## 1. Scope
 
+The [granular navigation candidate](granular-source-navigation.md) adds opt-in
+`custom-granular-v1`: source atoms and authored hierarchy share an immutable
+artifact, and existing reads accept pinned outline-node and section/subtree
+selectors. Source scope, unsupported formats, passage/embedding changes and
+re-ingestion requirements are versioned in that contract. Existing recipes,
+default ingestion, query policy and context accounting retain their behavior.
+
 The File Library Index (the **index**) replaces Azure AI Search as the store and search engine behind the platform's file libraries. It:
 
 - accepts files into libraries, extracts their text and image content, embeds it, and stores it in Azure Cosmos DB;

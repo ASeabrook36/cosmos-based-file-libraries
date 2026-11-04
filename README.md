@@ -337,6 +337,12 @@ When deploying Python changes to the API or demo adapter, restart the affected A
 
 ## Modular ingestion profiles
 
+The opt-in [granular source navigation candidate](docs/granular-source-navigation.md)
+adds DOCX paragraph/table-cell and authored section/subtree reads through the normal
+agent tools, with Markdown ATX support. Select `custom-granular-v1` for new ingestion;
+existing sources need re-ingestion for its source atoms and passage mappings.
+Local validation and the prepared live gate are separate from completed comparisons.
+
 The existing Admin demo now offers current processing, a Markdown/DOCX structural
 vertical slice, adapted Microsoft Document Indexer and matched custom/Microsoft
 pair creation. Complete strategies and controlled shared-extraction/500-token

@@ -24,6 +24,43 @@ LIB = "owned-library"
 DOCS = ["00000000-0000-4000-8000-000000000001", "00000000-0000-4000-8000-000000000002"]
 
 
+def worker_repository(tmp_path):
+    """Bind fake deployment evidence to its own immutable Git snapshot.
+
+    A developer may be testing uncommitted worker edits. Such edits must still
+    fail the real deployment guard; synthetic archives must not pretend that the
+    development checkout's HEAD deployed those bytes. No production guard is mocked.
+    """
+    repository = tmp_path / "synthetic-worker"
+    repository.mkdir()
+    for name in r.WORKER_FILES:
+        target = repository / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes((REPO / name).read_bytes())
+    subprocess.run(["git", "init", "--quiet", str(repository)], check=True)
+    subprocess.run(["git", "add", "--", *r.WORKER_FILES], cwd=repository, check=True)
+    subprocess.run(
+        [
+            "git",
+            "-c",
+            "user.name=Synthetic fixture",
+            "-c",
+            "user.email=fixture@example.invalid",
+            "-c",
+            "commit.gpgsign=false",
+            "commit",
+            "--quiet",
+            "--no-verify",
+            "-m",
+            "Bind synthetic worker bytes",
+        ],
+        cwd=repository,
+        check=True,
+    )
+    revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repository, text=True).strip()
+    return repository, revision
+
+
 def fixture(tmp_path, mutate=None):
     """Make a complete two-source archive; no live source body or environment IDs."""
 
@@ -148,7 +185,7 @@ def fixture(tmp_path, mutate=None):
             },
         },
     )
-    revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO, text=True).strip()
+    repository, revision = worker_repository(tmp_path)
     container = {
         "image": "synthetic-image",
         "env": [{"name": k, "value": v} for k, v in {**environment, "FLI_CODE_REVISION": revision}.items()],
@@ -190,7 +227,7 @@ def fixture(tmp_path, mutate=None):
     }.items():
         save("archive/" + name, value)
     args = SimpleNamespace(
-        repository=REPO,
+        repository=repository,
         output=tmp_path / "proof",
         env=env,
         manifest=manifest,
@@ -211,7 +248,20 @@ def test_proof_closes_planned_and_post_fence_empty_universes(tmp_path):
     assert len(p["sources"]) == 2 and len(p["candidates"]) == 1 and len(p["attempts"]) == 2
     assert p["sources"][1]["postFenceEarlyStops"] == 1 and p["sources"][1]["candidateCount"] == 0
     assert p["builderSha256"] == r.sha(r.__file__)
+    assert args.repository != REPO
+    assert p["workerCodeSha256"] == {name: r.sha(args.repository / name) for name in r.WORKER_FILES}
     assert r.read(args.output / "build-summary.json")["cleanupExecuted"] is False
+
+
+def test_real_deployment_guard_rejects_working_bytes_that_differ_from_recorded_git_revision(tmp_path):
+    args, _, _ = fixture(tmp_path)
+    path = args.repository / "src/fli/worker/handlers.py"
+    path.write_bytes(path.read_bytes() + b"\n# Synthetic uncommitted deployment drift.\n")
+    with pytest.raises(ValueError, match="deployed worker code differs from analyzed repository"):
+        r.build(args)
+    assert not (args.output / "proof-private.json").exists()
+    summary = r.read(args.output / "build-summary.json")
+    assert summary["status"] == "unknown" and not summary["cleanupExecuted"]
 
 
 @pytest.mark.parametrize(
@@ -270,6 +320,7 @@ def test_event_errors_are_append_only(tmp_path):
     "failure",
     [
         "builder-changed",
+        "worker-code-changed",
         "archive-corrupt",
         "archive-missing",
         "archive-symlink",
@@ -316,6 +367,9 @@ async def test_point_recovery_never_converts_failures_to_absence(tmp_path, monke
             archived.symlink_to(target)
     if failure == "builder-changed":
         p["builderSha256"] = "other"
+    if failure == "worker-code-changed":
+        path = build_args.repository / "src/fli/worker/handlers.py"
+        path.write_bytes(path.read_bytes() + b"\n# Synthetic drift after proof acceptance.\n")
     if failure == "escaped-candidate":
         p["candidates"][0]["libraryId"] = "protected-library"
     proof_path.write_text(json.dumps(p))
@@ -446,12 +500,13 @@ async def test_point_recovery_never_converts_failures_to_absence(tmp_path, monke
         proof=proof_path,
         proof_sha256=r.sha(proof_path),
         maximum_candidates=1,
-        repository=REPO,
+        repository=build_args.repository,
         env=build_args.env,
         late_recheck=0 if failure == "short-late-check" else 60,
     )
     if failure:
-        with pytest.raises((HttpResponseError, ValueError)):
+        message = "analyzed worker code changed" if failure == "worker-code-changed" else None
+        with pytest.raises((HttpResponseError, ValueError), match=message):
             await r.execute(args)
         assert r.read(args.output / "summary.json")["cleanupComplete"] is False
     else:
@@ -459,8 +514,16 @@ async def test_point_recovery_never_converts_failures_to_absence(tmp_path, monke
         assert r.read(args.output / "summary.json")["status"] == "complete"
     if failure and failure.startswith("archive-"):
         assert not api_opens and calls == [] and blobs == original_blobs and len(docs) == 2
-    if failure in ("builder-changed", "escaped-candidate", "short-late-check", "chunk-precheck-500"):
+    if failure in (
+        "builder-changed",
+        "worker-code-changed",
+        "escaped-candidate",
+        "short-late-check",
+        "chunk-precheck-500",
+    ):
         assert calls == [] and blobs == original_blobs and len(docs) == 2
+    if failure == "worker-code-changed":
+        assert not api_opens
     if failure == "independent-500":
         assert all(kind == "chunk-delete" for kind, _ in calls) and blobs == original_blobs and len(docs) == 2
     if failure is None:
