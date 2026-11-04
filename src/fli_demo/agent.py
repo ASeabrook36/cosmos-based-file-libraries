@@ -8,6 +8,7 @@ dropped. Query text and chunk text are not logged.
 
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import logging
@@ -22,6 +23,7 @@ from fli.http import parse_retry_after
 from fli.presentation import compact_response, project
 from fli.reference_format import ENVELOPE, expanded, model_messages, pack
 from fli.selector_hints import error_details
+from fli_demo.context_budget import MODES, SYNTHESIS_PROMPT, EnvelopeContext, refusal_message
 
 log = logging.getLogger("fli_demo.agent")
 
@@ -516,7 +518,10 @@ def run_turn(
     image_inputs: bool = True,
     image_tokens: int = 8192,
     evidence_ledger: list[dict[str, Any]] | None = None,
+    context_accounting: str = "legacy-v1",
 ) -> Turn:
+    if context_accounting not in MODES:
+        raise ValueError("unknown context accounting mode")
     turn_started = time.perf_counter()
     model_calls: list[dict[str, Any]] = []
 
@@ -611,14 +616,59 @@ Answer:
     messages.append({"role": "user", "content": question})
     searches: list[SearchTrace] = []
     names = library_names or {}
+    withheld_source = False
+    withheld_documents: set[str] = set()
+    unknown_history_scope = (
+        context_accounting == "envelope-v2"
+        and not metadata_question(question)
+        and re.search(
+            r"\b(?:both|each|every)\s+(?:(?:of\s+)?(?:the|these|those)\s+)?"
+            r"(?:files?|documents?|reports?|assessments?|sources?)\b",
+            question,
+            re.I,
+        )
+        and any(
+            json.loads(message["content"]).get("contextContentWithheld")
+            for message in history
+            if message["role"] == "tool"
+        )
+    )
+
+    def grounding_messages():
+        if context_accounting != "envelope-v2":
+            return messages
+        refused = withheld_source or any(
+            json.loads(message["content"]).get("contextContentWithheld")
+            for message in messages
+            if message["role"] == "tool"
+        )
+        if not refused:
+            return messages
+        # These are local grounding facts, never provider input, source delivery,
+        # authorization or reference-ledger entries. Five real IDs suffice to
+        # retain the existing small-set (2..4 documents) comparison rule.
+        facts = {"documents": [{"documentId": value} for value in sorted(withheld_documents)] or [{}]}
+        return messages + [{"role": "tool", "content": json.dumps(facts)}]
 
     def grounded_answer(answer):
-        needs_source, body, missing = grounding_state(question, messages)
+        needs_source, body, missing = grounding_state(question, grounding_messages())
         if needs_source and not body:
+            if context_accounting == "envelope-v2":
+                return (
+                    "I did not receive original source body text within this turn's retrieval limits. "
+                    "Unreturned source content, catalogue descriptions and outlines do not establish the requested "
+                    "facts, so I cannot give a source-grounded answer or claim complete coverage."
+                )
             return (
                 "I could identify source files but did not receive their original body text within this turn's "
                 "retrieval limits. Their catalogue descriptions and outlines do not establish the requested facts, "
                 "so I cannot give a source-grounded answer or claim complete coverage."
+            )
+        if unknown_history_scope:
+            return (
+                "A prior context-limited retrieval did not retain the withheld file scope in this resumed history. "
+                "I cannot verify source coverage for each requested file or give a reliable multi-file comparison. "
+                "A fresh retrieval session is needed to establish the complete requested source set."
             )
         if missing:
             return (
@@ -635,7 +685,21 @@ Answer:
     def wire_messages():
         return model_messages(messages) if getattr(index, "evidence_view", "compact") == "references" else messages
 
+    envelope_budget = (
+        EnvelopeContext(
+            tokenizer,
+            tools,
+            context_token_budget,
+            image_tokens,
+            model_messages if getattr(index, "evidence_view", "compact") == "references" else lambda rows: rows,
+        )
+        if context_accounting == "envelope-v2"
+        else None
+    )
+
     def local_size():
+        if envelope_budget is not None:
+            return envelope_budget.local_size(messages)
         # Reserve for new visuals until the provider reports their actual prompt use.
         images = sum(
             1
@@ -650,6 +714,8 @@ Answer:
     carryover_tokens_estimate = 0
 
     def context_size():
+        if envelope_budget is not None:
+            return envelope_budget.size(messages)
         current = local_size()
         visible = current if accounted_prompt is None else accounted_prompt + max(0, current - accounted_local)
         return visible + carryover_tokens_estimate
@@ -673,27 +739,35 @@ Answer:
         prompt_tokens = reply.usage.get("prompt_tokens")
         if type(prompt_tokens) is int and prompt_tokens > 0:
             accounted_local, accounted_prompt = sent_local, prompt_tokens
+        if envelope_budget is not None:
+            envelope_budget.observe(sent_local, reply.usage, carryover_tokens_estimate)
         model_calls.append(
             {"usage": reply.usage, "timing": reply.timing, "purpose": "tool_request" if reply.tool_calls else "answer"}
         )
         if not reply.tool_calls:
-            issues = answer_issues(question, reply.content or "", messages, searches)
+            issues = answer_issues(question, reply.content or "", grounding_messages(), searches)
             if issues and answer_repairs < 2 and round_index + 1 < max_rounds:
                 answer_repairs += 1
                 model_calls[-1]["purpose"] = "answer_repair"
-                messages.extend(
-                    [
-                        {"role": "assistant", "content": reply.content or ""},
-                        {
-                            "role": "user",
-                            "content": "Before finalizing, correct these unmet requirements: "
-                            + " ".join(issues)
-                            + " Use tools if evidence is missing. Select genuinely relevant figures; "
-                            "Do not pad or invent evidence. "
-                            "If the source cannot support a deliverable, explain the limit.",
-                        },
-                    ]
-                )
+                repairs = [
+                    {"role": "assistant", "content": reply.content or ""},
+                    {
+                        "role": "user",
+                        "content": "Before finalizing, correct these unmet requirements: "
+                        + " ".join(issues)
+                        + " Use tools if evidence is missing. Select genuinely relevant figures; "
+                        "Do not pad or invent evidence. "
+                        "If the source cannot support a deliverable, explain the limit.",
+                    },
+                ]
+                if envelope_budget is not None and not envelope_budget.fits(messages + repairs):
+                    answer = grounded_answer(
+                        "The remaining model context budget is insufficient to check "
+                        "the unfinished answer requirements. "
+                        "I cannot claim those requirements or complete source coverage were satisfied."
+                    )
+                    return finish(answer, searches, messages + [{"role": "assistant", "content": answer}])
+                messages.extend(repairs)
                 continue
             answer = grounded_answer(reply.content or "")
             return finish(answer, searches, messages + [{"role": "assistant", "content": answer}])
@@ -707,10 +781,31 @@ Answer:
                 ],
             }
         )
+        # A response can itself exhaust the remaining context. Do not fetch source
+        # bodies unless every outstanding call can receive a bounded no-body reply.
+        terminal_reserve = [SYNTHESIS_PROMPT] if round_index + 1 == max_rounds else []
+        if envelope_budget is not None and not envelope_budget.fits(
+            messages + [refusal_message(c.id) for c in reply.tool_calls] + terminal_reserve
+        ):
+            withheld_source = True
+            answer = grounded_answer(
+                "The remaining model context budget cannot accommodate the pending tool replies. "
+                "No additional source content was fetched for these calls; source retrieval remains incomplete."
+            )
+            return finish(
+                answer,
+                searches,
+                messages
+                + [refusal_message(c.id) for c in reply.tool_calls]
+                + [{"role": "assistant", "content": answer}],
+            )
         pending_images = []
-        for call in reply.tool_calls:
+        for call_index, call in enumerate(reply.tool_calls):
             used = context_size()
             remaining = max(0, context_token_budget - used - 8_512)  # answer + tool envelope margin
+            pending_reserve = [refusal_message(c.id) for c in reply.tool_calls[call_index + 1 :]] + terminal_reserve
+            if envelope_budget is not None:
+                remaining = envelope_budget.remaining(messages + [refusal_message(call.id)] + pending_reserve)
             trace_start = len(searches)
             if call.name.startswith(
                 ("find_documents_library_", "read_documents_library_", "get_images_library_", "inspect_images_library_")
@@ -800,7 +895,7 @@ Answer:
                 if getattr(index, "evidence_view", "compact") == "references"
                 else content
             )
-            if len(tokenizer.encode(budget_content)) > remaining:
+            if envelope_budget is None and len(tokenizer.encode(budget_content)) > remaining:
                 images = []
                 original = json.loads(content)
                 content = json.dumps(
@@ -826,12 +921,17 @@ Answer:
                 if len(searches) > trace_start
                 else None
             )
+            candidate_progress = progress
+            candidate_trace = trace
             if trace is not None:
-                progress.observe(payload, owners.get(call.name), trace)
-                remember_sources(evidence_ledger, owners.get(call.name), payload)
-            if image_inputs:
+                if envelope_budget is not None:
+                    candidate_progress, candidate_trace = copy.deepcopy(progress), copy.deepcopy(trace)
+                candidate_progress.observe(payload, owners.get(call.name), candidate_trace)
+                if envelope_budget is None:
+                    remember_sources(evidence_ledger, owners.get(call.name), payload)
+            if image_inputs and envelope_budget is None:
                 pending_images.extend((visual, trace, call.id) for visual in images)
-            elif trace is not None:
+            elif not image_inputs and trace is not None and envelope_budget is None:
                 trace.images_selected = len(images)
                 trace.images_withheld = len(images)
             payload["nativeImageDelivery"] = {
@@ -844,20 +944,56 @@ Answer:
                 "supplied": [],
                 "alreadySupplied": [],
                 "withheld": [v["imageId"] for v in images],
-                "reason": ("model_image_inputs_disabled" if not image_inputs else "pending_budget_check")
+                "reason": (
+                    "model_image_inputs_disabled"
+                    if not image_inputs
+                    else "remaining_context_budget"
+                    if envelope_budget is not None
+                    else "pending_budget_check"
+                )
                 if images
                 else None,
             }
             content = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
-            messages.append(
-                {
-                    "role": "tool",
-                    "tool_call_id": call.id,
-                    "content": content,
-                }
-            )
+            candidate_message = {"role": "tool", "tool_call_id": call.id, "content": content}
+            if envelope_budget is not None:
+                if envelope_budget.fits(messages + [candidate_message] + pending_reserve):
+                    progress = candidate_progress
+                    if trace is not None:
+                        for attribute in ("overlap_count", "no_progress", "mode", "result_unit"):
+                            setattr(trace, attribute, getattr(candidate_trace, attribute))
+                    remember_sources(evidence_ledger, owners.get(call.name), payload)
+                    if image_inputs:
+                        pending_images.extend((visual, trace, call.id) for visual in images)
+                    elif trace is not None:
+                        trace.images_selected = trace.images_withheld = len(images)
+                else:
+                    candidate_message = refusal_message(call.id)
+                    withheld_source = True
+                    for row in evidence_rows(payload):
+                        if row.get("documentId") and len(withheld_documents) < 5:
+                            withheld_documents.add(row["documentId"])
+                    # The batch preflight reserved these exact bytes. Keep all
+                    # request charges, but do not record withheld bodies as delivery.
+                    if not envelope_budget.fits(messages + [candidate_message] + pending_reserve):
+                        raise RuntimeError("reserved context refusal no longer fits")
+                    for item in searches[trace_start:]:
+                        item.complete = False if item.operation == "read" else item.complete
+                        item.result_count = 0
+                        item.citations = []
+                        item.notes.append("Tool content withheld by the enclosing context budget.")
+                    progress.stalled += 1
+            messages.append(candidate_message)
         # All tool replies precede visual inputs, preserving tool-call protocol.
         parts = []
+        reminder = {
+            "type": "text",
+            "text": "Continue answering only the current user request: "
+            + question
+            + "\nUse previous turns only to resolve current references; "
+            "do not repeat or resume unrelated earlier tasks. "
+            "Check requested deliverables and source qualifications before finalizing.",
+        }
         for visual, trace, call_id in pending_images:
             key = visual["imageId"]
             if trace is not None:
@@ -867,7 +1003,14 @@ Answer:
             else:
                 delivery_status = "withheld"
             if key in supplied_images:
-                update_delivery(messages, key, delivery_status, call_id)
+                if envelope_budget is None:
+                    update_delivery(messages, key, delivery_status, call_id)
+                else:
+                    candidate = copy.deepcopy(messages)
+                    update_delivery(candidate, key, delivery_status, call_id)
+                    images_reserve = [{"role": "user", "content": [reminder, *parts]}] if parts else []
+                    if envelope_budget.fits(candidate + images_reserve + terminal_reserve):
+                        messages[:] = candidate
                 continue
             candidate_parts = parts + (
                 [
@@ -884,41 +1027,37 @@ Answer:
                     {"type": "image_url", "image_url": {"url": visual["url"], "detail": "high"}},
                 ]
             )
-            messages.append({"role": "user", "content": candidate_parts})
-            fits = context_size() + 10_000 <= context_token_budget
-            messages.pop()
+            if envelope_budget is None:
+                messages.append({"role": "user", "content": candidate_parts})
+                fits = context_size() + 10_000 <= context_token_budget
+                messages.pop()
+            else:
+                candidate = copy.deepcopy(messages)
+                update_delivery(candidate, key, "supplied", call_id)
+                fits = envelope_budget.fits(
+                    candidate + [{"role": "user", "content": [reminder, *candidate_parts]}] + terminal_reserve
+                )
             if fits:
                 supplied_images.add(key)
                 parts = candidate_parts
                 if trace is not None:
                     trace.images_supplied += 1
-                update_delivery(messages, key, "supplied", call_id)
+                if envelope_budget is None:
+                    update_delivery(messages, key, "supplied", call_id)
+                else:
+                    messages[:] = candidate
                 progress.stalled = 0
                 if trace is not None:
                     trace.no_progress = False
             else:
                 if trace is not None:
                     trace.images_withheld += 1
-                update_delivery(messages, key, "withheld", call_id)
-        reminder = {
-            "type": "text",
-            "text": "Continue answering only the current user request: "
-            + question
-            + "\nUse previous turns only to resolve current references; "
-            "do not repeat or resume unrelated earlier tasks. "
-            "Check requested deliverables and source qualifications before finalizing.",
-        }
+                if envelope_budget is None:
+                    update_delivery(messages, key, "withheld", call_id)
         if parts:
             messages.append({"role": "user", "content": [reminder, *parts]})
     # out of rounds: ask for an answer without tools
-    messages.append(
-        {
-            "role": "user",
-            "content": "Tool-round limit reached. Answer from content actually received. "
-            "Explicitly disclose any unfinished full-document reads or catalogue pages; "
-            "never claim exhaustive coverage.",
-        }
-    )
+    messages.append(dict(SYNTHESIS_PROMPT))
     if context_size() + 8_000 > context_token_budget:
         answer = grounded_answer(
             "The remaining model context budget is insufficient to synthesize an answer. "
