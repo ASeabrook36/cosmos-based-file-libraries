@@ -243,7 +243,11 @@ async def load_sections(searcher, blobs, library_id, doc, cost):
             or not all(isinstance(s, dict) and isinstance(s.get("text"), str) for s in sections)
         ):
             raise ApiError(409, "document_text_incomplete", "the extracted text artifact is incomplete; reprocess")
-        if fidelity or (doc.get("processingCoverage") or {}).get("sourceStructure"):
+        if (
+            fidelity
+            or (doc.get("processingCoverage") or {}).get("sourceStructure")
+            or any("sourceStructure" in section for section in sections)
+        ):
             from fli.source_fidelity import validate_sections
 
             try:

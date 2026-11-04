@@ -12,7 +12,7 @@
   "implementationSha256": {
     "src/fli/source_fidelity.py": "f147b4dab7ee5f44c305c4a320a0e7c229b2e2cbab4fd157853d61f05910b0c8",
     "src/fli/ingestion.py": "08b5c39ce84a892787a6af7810c860bce9ad0e9a509f270400fdeb7592bc74f9",
-    "src/fli/reading.py": "26ed252f047fc1c6ec02abc85a1807c93cba5502608a93f1ee0e74fb1201a593",
+    "src/fli/reading.py": "f9815d6a56289d1b9c74965bcd5cf6d6767041e99279a3bf0530511a58697abf",
     "src/fli/presentation.py": "e75c932108101a5f608a6120aa5e3cdebce40c9508acb5603861f49f374bee59",
     "src/fli/worker/handlers.py": "0c9441899a488f3de81fcb5e2683a02f1d59fffcb70971b9d6da16cb09adb32e",
     "src/fli/search.py": "5401e0e922befd1a9581386b56d0fc774fef1db591be953bc44a550708e2f2bf",

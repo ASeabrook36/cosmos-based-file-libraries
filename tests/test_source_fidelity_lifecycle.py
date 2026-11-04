@@ -150,6 +150,22 @@ async def test_missing_or_corrupt_source_artifact_never_falls_back_to_flattened_
     assert "sections" not in response.json()
 
 
+@pytest.mark.parametrize("view", ["raw", "compact", "references"])
+async def test_embedded_structure_requires_binding_even_when_both_document_markers_are_missing(view):
+    client, s, lib, _, doc_id, doc = await ready()
+    doc.pop("ingestionJob")
+    doc.pop("processingCoverage")
+    await s.documents.replace(doc)
+    response = client.post(
+        f"/v1/libraries/{lib}/documents:read?view={view}",
+        json={"documents": [{"documentId": doc_id}], "maxTokens": 200000},
+        headers={"X-Agent-Id": "reader"},
+    )
+    assert response.status_code == 409
+    assert response.json()["error"]["code"] == "document_text_incomplete"
+    assert "sections" not in response.json()
+
+
 async def test_metadata_patch_keeps_source_readable_pending_replacement_keeps_old_active_source_and_stales_selectors():
     client, s, lib, worker, doc_id, doc = await ready()
     outline = read(client, lib, doc_id, mode="outline").json()["documents"][0]["outline"]

@@ -57,6 +57,9 @@ and rendered-source/coordinate consistency before selecting evidence. A missing
 descriptor, stale generation, wrong/missing coverage schema, missing/corrupt blob
 or mismatched internal binding refuses the read; this profile never falls back to
 flattened legacy chunks.
+An artifact containing embedded source structure also triggers validation when
+both document-level profile and coverage markers are missing; corrupt or migrated
+metadata cannot turn that artifact into an unchecked legacy read.
 
 Existing permissions and post-I/O generation/content-revision/metadata/library
 checks remain authoritative. Retagging does not invalidate immutable source text.
@@ -128,7 +131,7 @@ sh scripts/dev lint
 sh scripts/dev privacy --deny-file "$PRIVATE_DENY_FILE"
 ```
 
-The added suite has 68 passing cases: positive/negative source mapping, Unicode
+The added suite has 71 passing cases: positive/negative source mapping, Unicode
 units, qualifiers inside/outside lists, repeated paragraphs, split/hyperlink/content
 control runs, blank/merged cells, inherited/suppressed numbering, restarts/overrides,
 namespace preservation, fields, exact projections, missing/corrupt bindings,
