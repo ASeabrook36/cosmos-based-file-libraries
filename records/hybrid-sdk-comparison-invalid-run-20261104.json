@@ -1,0 +1,55 @@
+{
+  "schema": "fli.hybrid-sdk-comparison.invalid-run.v1",
+  "status": "invalid_client_comparison_preserved",
+  "experimentDate": "2026-11-04",
+  "reason": "Observer used typed HttpContent header lookup for response-only retry-after; successful metadata HTTP responses became collector exceptions before .NET data queries.",
+  "collectorFixCommit": "e6c9fb0",
+  "runTreatment": "Full matrix repeated in a new run with unchanged SQL, parameters, SDK request options and schedule. No selective replacement of failed cells.",
+  "evidenceHashes": {
+    "finalizationSha256": "88c058e319d5718c01b091e9634a46cb8c21ab931373967ee2727fb767f170f2",
+    "controlsSha256": "7a4a147b2dacb3295f1e0596aaf88dc67aed36bb2f4dac5c6452d950dd3d2986",
+    "correctedPrivateSummarySha256": "bb28736ba593417472bdd2de1200ae8306296efccb9200de1c769c0f09029d12"
+  },
+  "queries": {
+    "measuredAttempted": 576,
+    "pythonMeasuredCompleted": 288,
+    "dotnetMeasuredCompleted": 0,
+    "exactReferencesCompleted": 384,
+    "warmupLogicalAttempts": 6
+  },
+  "dotnetFailure": {
+    "logicalFailuresIncludingWarmups": 291,
+    "metadataWireResponses": 292,
+    "capturedHttpStatus": 200,
+    "dataQueryComparisonPerformed": false,
+    "rankingQuality": null,
+    "successLatency": null,
+    "partitionEfficiency": null,
+    "knownRequestCharge": null,
+    "totalBilledRu": null
+  },
+  "knownWireUsage": {
+    "python": {
+      "wireRequests": 1192,
+      "responsesWithCharge": 893,
+      "knownRu": 11957.61,
+      "captureErrorEvents": 1
+    },
+    "dotnet": {
+      "wireRequests": 292,
+      "responsesWithCharge": 0,
+      "knownRu": null,
+      "captureErrorEvents": 292
+    }
+  },
+  "knownMeasuredWireRu": 9910.66,
+  "separatePreparationKnownRu": {
+    "exactReferences": 1902.24,
+    "warmups": 103.69,
+    "snapshotsAndMetadata": 41.019999999999996
+  },
+  "knownWholeRunRuLowerBound": 11957.61,
+  "missingChargeMeansFree": false,
+  "qualifyingUse": "Observer diagnosis and usage accounting only; no .NET retrieval or efficiency conclusion.",
+  "originalRunModified": false
+}
