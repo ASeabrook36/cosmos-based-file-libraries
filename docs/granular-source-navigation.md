@@ -107,6 +107,14 @@ artifacts, stale selectors, permissions/lifecycle races, budgets, retry,
 replacement and deletion. They establish mechanics, not autonomous model quality
 or distributed Azure behavior.
 
+Final local validation passed **1,613 tests**, lint, formatting and reference
+privacy checks (14 existing test-client deprecation warnings). The 120 new focused
+checks comprise 58 source, 45 API/scripted-agent and 17 qualification-helper cases.
+All seven existing valid recipe variants and four existing tool bundles were
+compared with the integrated baseline and remain identical. The normal answering
+adapter, query policy, original source-repair implementation and frozen experiment
+controls/receipts remain unchanged by this incremental implementation.
+
 Prepare fresh private controls after source changes settle:
 
 ```sh
@@ -122,6 +130,16 @@ fixtures, private response captures and a live plan. It rejects reuse, drift and
 `--live`: a live mutation/cleanup runner is not implemented here. Fake-service
 RU/provider usage remains unavailable. These fixtures do not consume the larger
 confirmation corpus.
+
+The [prepared plan receipt](../records/granular-navigation-preparation-20261104.json)
+and [local qualification receipt](../records/granular-navigation-local-qualification-20261104.json)
+bind 35 captured tool replies and successful in-memory cleanup. On that small
+fixture, actual compact evidence JSON measured 1,602 local tokens for one paragraph,
+3,573 for its four-paragraph cell, 2,082 for a section's own two atoms, 8,838 for
+its 13-atom subtree and 9,881 for the 15-atom document (`cl100k_base`). These include
+handles/metadata and show substantial remaining envelope overhead. They are not
+provider tokens, model-quality results, latency or billing. Broader long-document
+fit and presentation efficiency remain unqualified.
 
 Before live execution, announce the cloud window under existing isolated-resource
 authorization and verify identity, resource policies/incarnation, current health,

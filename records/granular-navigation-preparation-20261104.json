@@ -1,0 +1,31 @@
+{
+  "schema": "fli.granular-navigation.preparation.v1",
+  "status": "prepared_not_executed",
+  "planSha256": "d7e2a855bcc9834a55e7baf5357af043ad20bb0dea9dc6ab51e48b0dec3abbd2",
+  "profile": "custom-granular-v1",
+  "sourceCount": 3,
+  "limits": {
+    "libraries": 3,
+    "documents": 4,
+    "ingestGenerations": 5,
+    "publishedChunks": 64,
+    "sourceBytesEach": 1048576,
+    "sourceEmbeddingTokens": 50000,
+    "logicalEmbeddingRequests": 20,
+    "embeddingAttemptsEach": 3,
+    "modelTurns": 6,
+    "logicalModelCalls": 36,
+    "physicalModelAttempts": 48,
+    "modelContextAllowance": 200000,
+    "modelOutputAllowance": 8000,
+    "inputTokensIncludingUnknownReservations": 2000000,
+    "outputTokensIncludingUnknownReservations": 200000,
+    "executionSeconds": 1800,
+    "cleanupSeconds": 600,
+    "lateAbsenceCheckSeconds": 60
+  },
+  "liveExecutorImplemented": false,
+  "cloudCalls": 0,
+  "modelCalls": 0,
+  "largerConfirmationLaunched": false
+}

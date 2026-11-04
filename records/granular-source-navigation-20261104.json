@@ -1,0 +1,166 @@
+{
+  "schema": "fli.granular-source-navigation.validation.v1",
+  "date": "2026-11-04",
+  "branch": "codex/granular-source-navigation",
+  "mainCommit": "1ddc4386361446a5122ce936cdb3ba28aa4e5919",
+  "sourceOnlyRepairCommit": "33402d3bf66c5ad6ba2d0b12c0c46cba66695aff",
+  "reviewedBaselineCommit": "7e9a31b2b73a22d8d53327614e6116a6d442a79f",
+  "testedImplementationCommit": "774d4da0dd9c9a7e48e9245de87a141ac32a1805",
+  "separateContextRepairCommit": "44708040dce0a6d4cd5b44205a07a5d7e54404a7",
+  "separateIndexVersioningCommit": "1cf7e935a16a0073093fa0f8214251a1bd252a3c",
+  "combinedReportingReviewedCommit": "dc703ec4c01c1c2484bfe885d2e91f10fad7cd68",
+  "contextRepairIncluded": false,
+  "indexVersioningIncluded": false,
+  "profile": "custom-granular-v1",
+  "schemaVersion": "fli.granular-source.v1",
+  "baselineReview": {
+    "dependencies": "Full source-only ancestry preserves completed experiment scripts/tests/evidence; main selector adoption retained.",
+    "conflictsResolved": [
+      "docs/build-plan.md",
+      "docs/evidence.md",
+      "docs/spec.md"
+    ],
+    "indexVersioningOverlap": [
+      "ingestion jobs and provider capability gates",
+      "scoped publication/store/path helpers",
+      "source index/digest pins",
+      "selected-index artifact validation and post-I/O checks",
+      "presentation and selector metadata"
+    ],
+    "indexVersioningRequiredForThisSlice": false
+  },
+  "newNavigation": [
+    "DOCX authored heading/section/subsection hierarchy",
+    "DOCX source paragraph and table cell selection",
+    "own-section versus complete-subtree reads",
+    "containing section or explicit document-root expansion",
+    "complete-document expansion",
+    "immediate-child paginated outlines and labelled local size estimates",
+    "exact Markdown ATX source blocks and authored hierarchy",
+    "recorded passage provenance with canonical-coordinate validation during expansion"
+  ],
+  "passageChange": {
+    "intentional": true,
+    "newRecipeOnly": true,
+    "atomBoundary": "DOCX paragraph / Markdown source block",
+    "targetTokens": 500,
+    "maximumWithinAtomOverlapTokens": 50,
+    "headingPrefix": "existing bounded prefix",
+    "embeddingModelAndDimensionsChanged": false,
+    "newEmbeddingsRequired": true,
+    "mappingPrecision": "containing source atom; no exact normalized passage offsets claimed",
+    "unchangedMicrosoftPassages": true,
+    "vectorCountOrCostImprovementClaimed": false
+  },
+  "tests": {
+    "command": "sh scripts/dev check -q",
+    "passed": 1613,
+    "warnings": 14,
+    "seconds": 271.2,
+    "warningCategory": "Existing StarletteDeprecationWarning in TestClient calls",
+    "privateLogSha256": "fb16e525f6ac705c49d2331c62129a13adf90a4e427ec191160d1df54996a28e",
+    "focusedCommand": "sh scripts/dev test -q tests/test_granular_source.py tests/test_granular_navigation.py tests/test_qualify_granular_navigation.py",
+    "focusedPassed": 120,
+    "focusedSeconds": 9.48,
+    "focusedPrivateLogSha256": "599a63e79e189d93616a87858805a63bd51390c72acf7e448e1889ed6fad7da6",
+    "sourceTests": 58,
+    "apiAndScriptedAgentTests": 45,
+    "qualificationHelperTests": 17,
+    "syntheticDeploymentGuardTests": 21,
+    "providers": "in-memory stores, fake embeddings and scripted model replies; actual application API/tool serializations"
+  },
+  "checks": {
+    "lint": "passed",
+    "format": "passed; 296 Python files",
+    "privacy": "passed; zero findings",
+    "diffWhitespace": "passed",
+    "oldRecipeVariantsIdentical": 7,
+    "oldToolBundlesIdentical": 4,
+    "frozenPathsIdenticalToReviewedBaseline": true
+  },
+  "protectedPathsComparedWithBaseline": [
+    "src/fli_demo",
+    "src/fli/query.py",
+    "src/fli/source_fidelity.py",
+    "cosmos",
+    "infra",
+    "docs/testing",
+    "scripts/hybrid*",
+    "scripts/source_structure_probe.py",
+    "scripts/qualify_source_fidelity.py",
+    "tools",
+    "records/hybrid-*",
+    "records/source-*",
+    "records/retrieval-*",
+    "requirements-local.lock",
+    "pyproject.toml"
+  ],
+  "reviewCorrections": [
+    "Markdown chapter own-content selectors now exclude authored subsections; subtree selection remains explicit.",
+    "Markdown sourceBlock citations use verified decoded character ranges.",
+    "Unheaded content labels document-root expansion rather than inventing an authored section.",
+    "Malformed source artifacts and job/profile metadata refuse with explicit 409 errors.",
+    "Conflicting passage atom pointers/coordinates refuse before returning unrelated source; search labels recorded provenance.",
+    "Synthetic failed-scope tests bind a temporary committed worker snapshot; real deployed-code guards remain unchanged and negative drift tests pass."
+  ],
+  "initialFullSuiteFailure": {
+    "failed": 11,
+    "passed": 1555,
+    "cause": "Synthetic cleanup fixture advertised real HEAD while tested worker changes were uncommitted; the unchanged production guard correctly rejected that mismatch.",
+    "fixScope": "Test fixture only; temporary committed bytes and negative build/execute drift checks. No frozen runtime guard or experiment control was relaxed."
+  },
+  "independentReview": "Baseline/dependency review, adversarial source/navigation integration review and final scope/report review completed; no remaining blockers reported within this local slice.",
+  "preparationReceipt": "records/granular-navigation-preparation-20261104.json",
+  "localQualificationReceipt": "records/granular-navigation-local-qualification-20261104.json",
+  "localQualification": {
+    "capturedToolReplies": 35,
+    "checks": [
+      "source_publication",
+      "actual_outline_selected_full_tool_envelopes",
+      "paragraph_cell_section_subtree_and_parent_document_expansion",
+      "verified_passage_mapping_and_unavailable_scope_disclosure",
+      "atomic_multidocument_budget_refusal",
+      "immutable_retry",
+      "metadata_preserves_source",
+      "pending_replacement_and_stale_selection",
+      "personal_and_foreign_scope_denial",
+      "deletion_fence_and_owned_purge"
+    ],
+    "privateToolResponsesSha256": "b15a516099479e00f27bc5aa9f071292c338dbb5a187a7a4b347885f33d8bd3f",
+    "localCleanupPassed": true,
+    "providerUsage": null,
+    "cloudRequestCharge": null
+  },
+  "localEvidenceJsonTokens": {
+    "tokenizer": "cl100k_base",
+    "scope": "actual compact evidence JSON including handles; serialization only, not provider usage",
+    "paragraph": 1602,
+    "cellFourAtoms": 3573,
+    "sectionOwnTwoAtoms": 2082,
+    "subtreeThirteenAtoms": 8838,
+    "wholeDocumentFifteenAtoms": 9881
+  },
+  "codeInventoryReceipt": "records/granular-navigation-local-qualification-20261104.json#candidateSourceSha256",
+  "liveStatus": "prepared_not_executed",
+  "liveExecutorImplemented": false,
+  "cloudCalls": 0,
+  "realModelCalls": 0,
+  "applicationDeployed": false,
+  "mainMerged": false,
+  "largerConfirmationLaunched": false,
+  "completedExperimentsModified": false,
+  "remainingLiveSteps": [
+    "Announce window and verify existing isolated identity/resources/capacity/model revisions; bind current policies/incarnation/health and protected scopes.",
+    "Implement and review exact-owned write-ahead mutation/cleanup runner using local candidate API/worker plus real Azure stores/embedding services without app deployment or shared queue consumption.",
+    "Qualify real immutable publication, permissions, metadata/replacement/retry/deletion and independent-client races.",
+    "Run the bounded separately metered real-model navigation/citation regression with adequate fixed context and original context accounting.",
+    "Archive and verify exact-owned cleanup/absence immediately and after 60 seconds; retain unknown usage and soft-delete/backup limits."
+  ],
+  "limitations": [
+    "Live Azure behavior and autonomous model navigation/quality untested.",
+    "Substantial selector/metadata overhead remains; long-document fit and efficiency unqualified.",
+    "Supported DOCX main body and Markdown ATX only; no rendered DOCX pages, inferred chapters, native visuals or resolved printed list ordinals.",
+    "Hosted authentication/worker/broker redelivery, broader concurrency/scale and known scheduled orphan-container defect remain separate.",
+    "Ordinary Python retries may re-embed; duplicate/publication safety is preserved, not an embedding-cache guarantee."
+  ]
+}
