@@ -8,18 +8,20 @@ intentionally changes paragraph-level passages/embeddings; old recipes and
 completed experiments remain intact. Context repair and index versioning stay
 separate. The [bounded live qualification](granular-navigation-live-qualification.md)
 passed ten ingestion/navigation/lifecycle gates and verified owned cleanup. Six
-actual model turns preserved core facts/citations but exposed incomplete cell-scope
-selection and one internal-ID reporting error. Hold integration pending two
-targeted model checks of the locally tested guidance mitigation. Source runtime
-baseline `821ea25` passed 1,730 local tests; the post-run guidance is separately
-attributable. The [two-turn follow-up](granular-navigation-followup.md) now
-demonstrates complete-cell selection and exact ID reporting, with verified cleanup.
-The full frozen rubric still fails: two size-only outline inspections delivered
-no entries before a full-document fallback, and the cell answer included unnecessary
-Word numbering metadata. Hold unconditional integration sign-off for a narrow
-outline-inspection contract fix and one targeted model check. Product runtime is
-unchanged from `83168a8`; no further model reruns occurred. Response overhead remains
-the next presentation-efficiency issue. Deployment and the larger confirmation remain pending.
+actual model turns exposed cell-scope and identifier-reporting gaps; the preserved
+[two-turn follow-up](granular-navigation-followup.md) subsequently demonstrated
+both core checks, while exposing empty outline inspections and unnecessary source
+numbering metadata. The [outline contract repair and one-turn result](granular-outline-contract.md)
+now clarify size-only inspection, deliver usable recovery selectors and demonstrate
+four actual authored outlines. The model instead read and repeated a table, never
+read the required rule scope, and hit the unchanged local 37k serialized-input
+pacing ceiling before a final answer. **Hold integration sign-off:** the focused
+navigation/citation check remains incomplete. Product `752d420`, executed through
+runner `e8326a7`, passes 1,850 regression tests plus separately run final runner/case
+checks. Owned cleanup and prior evidence preservation are verified; no rerun was
+made. Review this failed route and pacing boundary before another separately
+bounded qualification. Response overhead remains separate presentation-efficiency
+work. Deployment and the larger confirmation remain pending.
 
 **Normal-agent selector integration, 2026-11-02 (E66 follow-through):** the
 [merge candidate](i1-selector-integration.md) enables handles in the normal client

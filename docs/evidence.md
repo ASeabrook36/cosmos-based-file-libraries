@@ -1645,3 +1645,25 @@ stored-source, permission, lifecycle, query or context-accounting change is made
 The next sealed one-turn gate requires actual outline entries, a copied returned
 selector, focused source delivery and a correct citation; whole-file fallback
 cannot substitute. Earlier results and the separate overhead work remain intact.
+
+**One-turn outline qualification:** product `752d420`, runner `e8326a7`, delivered
+four nonempty authored outlines and copied selectors in actual successful model
+requests. The model selected a table, then repeated the same table with explicit
+subtree scope and a larger response allowance. It never read the required rule
+paragraph or immediate section and produced no final answer/citation. The seventh
+logical call hit the existing local pacing refusal before provider dispatch:
+37k serialized input plus 8k reserved output, separate from the 200k context
+allowance. This closes the description/outline-delivery gap, not the complete
+navigation qualification. Hold integration; review the route and pacing boundary
+before a new bounded check, keeping representation compression separate.
+
+Six physical calls measured 62,474 input/1,391 output tokens with no failed
+provider attempts or unknown usage. The product regression passed 1,850 tests;
+the final runner/case set separately passed 103 overlapping tests. Source
+publication and normal owned cleanup passed; independent absence checks were
+65.85 seconds apart, with all 14 protected libraries/48 documents unchanged.
+All 999 original and 313 two-turn private evidence files remain unchanged. A
+separate post-failure read-only check verified exact model/embedding bindings and
+executed code hashes. The [receipt](../records/granular-outline-qualification-20261104.json)
+keeps this failed attempt, local estimates and partial usage counters distinct.
+No model rerun, merge, deployment or larger study occurred.

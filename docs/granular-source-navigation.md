@@ -4,6 +4,11 @@ Opt-in `custom-granular-v1` connects preserved source paragraphs, table cells an
 lists to authored headings through the existing demo, ingestion worker, API and
 agent tools. It does not change the default provider or retrieval policy.
 
+Current qualification status: the [outline contract follow-up](granular-outline-contract.md)
+repairs inspection guidance and demonstrates actual outline delivery, but its
+single model turn stops before the required focused source answer. Integration
+sign-off remains on hold; earlier cell, identifier and lifecycle results are preserved.
+
 ## Baseline and attribution
 
 Branch `codex/granular-source-navigation` starts with reviewed integration

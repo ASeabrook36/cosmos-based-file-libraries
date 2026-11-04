@@ -1,5 +1,11 @@
 # records/
 
+`granular-outline-qualification-20261104.json` records the separately bounded
+outline contract check: real outline delivery worked, but the required focused
+source read and final citation were not reached before a local pacing refusal.
+It preserves the failed attempt, measured usage, separate local estimates and
+verified cleanup without revising the earlier two successful core checks.
+
 Canary records written by `scripts/canary.py`, one per run, named `canary-<UTC timestamp>.json`. Commit them: a passing record is the Phase 0 exit check (`docs/build-plan.md`).
 
 Phase 1 exit-check records written by `scripts/phase1_exit.py`, named `phase1-exit-<UTC timestamp>.json`:
