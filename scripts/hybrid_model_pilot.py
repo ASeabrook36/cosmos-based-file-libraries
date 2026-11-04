@@ -22,7 +22,7 @@ from fli.structure_lab import digest
 from fli_demo.agent import MAX_ROUNDS, run_turn
 from scripts import hybrid_quality_replay as h
 from scripts.evaluate_agent_retrieval import prepare_output, replay, snapshot
-from scripts.hybrid_model_meter import Meter, actual_client, meter_summary
+from scripts.hybrid_model_meter import Meter, actual_client, meter_by_cell, meter_summary
 from scripts.retrieval_controls import AGENT_INSTRUCTIONS, deployment_binding, private_path, read
 from scripts.retrieval_p1 import RecordedChat
 from scripts.score_retrieval_benchmark import delivered_bodies, usage
@@ -672,7 +672,7 @@ def trace_counts(result):
     }
 
 
-def paired(rows):
+def paired(rows, provider_by_cell=None):
     lookup = {(r["case"], r["modelRole"], r["arm"]): r for r in rows}
     require(len(lookup) == len(rows) == 192, "reviewed matrix incomplete")
     comparisons = []
@@ -773,12 +773,16 @@ def paired(rows):
         "retrievalModelInteractionByQuestion": interaction,
         "retrievalModelInteraction": interaction_summary,
         "usageByCell": {
-            "-".join(cell): summarize_usage([r for r in rows if (r["modelRole"], r["arm"]) == cell]) for cell in CELLS
+            "-".join(cell): summarize_usage(
+                [r for r in rows if (r["modelRole"], r["arm"]) == cell],
+                provider_by_cell["-".join(cell)] if provider_by_cell is not None else None,
+            )
+            for cell in CELLS
         },
     }
 
 
-def summarize_usage(rows):
+def summarize_usage(rows, provider=None):
     keys = (
         "promptTokens",
         "completionTokens",
@@ -800,6 +804,8 @@ def summarize_usage(rows):
     for key in keys:
         values = [r["usage"].get(key) for r in rows]
         complete = all(v is not None for v in values)
+        if key in {"promptTokens", "completionTokens", "cachedPromptTokens", "reasoningTokens"}:
+            complete = complete and provider is not None and provider["usageComplete"]
         if key == "retrievalRequestCharge":
             complete = complete and all(r["usage"].get("retrievalChargeComplete") is True for r in rows)
         known = [v for v in values if v is not None]
@@ -810,6 +816,14 @@ def summarize_usage(rows):
             "totalTurns": len(rows),
             "medianKnownTurn": median(known) if known else None,
         }
+    result["providerAttempts"] = provider
+    result["tokenScope"] = (
+        "Known turn subtotals include measured successful Responses usage; complete token totals require "
+        "the actual attempt ledger and no unknown attempts in this cell."
+    )
+    if provider is not None:
+        for key, actual in (("promptTokens", "knownInputTokens"), ("completionTokens", "knownOutputTokens")):
+            require(result[key]["knownSubtotal"] == provider[actual], "cell provider and turn token subtotals differ")
     result["sourceActivity"] = {
         key: sum(r["sourceActivity"][key] for r in rows)
         for key in (
@@ -939,7 +953,7 @@ def score(root, gold_path, reviews):
         "models": MODELS,
         "commonControls": ANSWERING,
         "rows": rows,
-        **paired(rows),
+        **paired(rows, meter_by_cell(root / "provider/ledger.json")),
         "providerMeter": meter_summary(root / "provider/ledger.json"),
         "limitations": [
             "Consumed purposeful DOCX/procurement pack; exploratory evidence, not fresh confirmation.",

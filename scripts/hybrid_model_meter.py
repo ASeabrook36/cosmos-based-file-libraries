@@ -234,3 +234,29 @@ def meter_summary(path):
         "limitation": "Responses create attempts only; excludes Azure credential, embedding and index requests. "
         "Unknown attempt reservations are guard allowances, never measured usage or billed cost.",
     }
+
+
+def meter_by_cell(path):
+    """Attribute known usage and unknown attempts from the actual provider ledger."""
+    meter_summary(path)  # Reconcile complete ledger before projecting any subset.
+    state = read(private_path(path))
+    result = {}
+    for cell in sorted({r["cell"] for r in state["logicalCalls"]}):
+        calls = [r for r in state["calls"] if r["cell"] == cell]
+        logical = [r for r in state["logicalCalls"] if r["cell"] == cell]
+        unknown = sum(r["knownInputTokens"] is None or r["knownOutputTokens"] is None for r in calls)
+        known_input = sum(r["knownInputTokens"] or 0 for r in calls)
+        known_output = sum(r["knownOutputTokens"] or 0 for r in calls)
+        result[cell] = {
+            "logicalCallsStarted": len(logical),
+            "physicalResponsesAttempts": len(calls),
+            "knownInputTokens": known_input,
+            "knownOutputTokens": known_output,
+            "unmeteredAttempts": unknown,
+            "usageComplete": unknown == 0,
+            "completeInputTokens": known_input if unknown == 0 else None,
+            "completeOutputTokens": known_output if unknown == 0 else None,
+            "http429Attempts": sum(r.get("httpStatus") == 429 for r in calls),
+            "scope": "Actual Responses attempts for this cell; unknown error usage is not zero.",
+        }
+    return result

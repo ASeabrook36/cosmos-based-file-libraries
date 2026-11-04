@@ -9,7 +9,7 @@ import pytest
 from openai import RateLimitError
 
 from scripts import hybrid_model_pilot as p
-from scripts.hybrid_model_meter import Meter, meter_summary, scrub_media
+from scripts.hybrid_model_meter import Meter, meter_by_cell, meter_summary, scrub_media
 from tests.test_responses_chat import client_for, message, reasoning, response
 
 
@@ -306,3 +306,42 @@ def test_coordinator_authorization_and_ledger_root_are_required(tmp_path):
     authorization["executionLedger"] = str(tmp_path / "run/claim.json")
     with pytest.raises(ValueError, match="outside run"):
         p.authorize(authorization, template)
+
+
+def test_unknown_provider_attempt_only_invalidates_its_own_cell_totals(tmp_path):
+    meter = Meter(tmp_path / "provider", p.LIMITS)
+    cells = ("sol-vector", "budget-hybrid")
+    for cell in cells:
+        logical = meter.logical({"run": cell, "cell": cell})
+        if cell == "budget-hybrid":
+            attempt = meter.begin_attempt(logical, {})
+            meter.finish_attempt(attempt, error=ValueError("unmetered"), elapsed_ms=1)
+        attempt = meter.begin_attempt(logical, {})
+        meter.finish_attempt(attempt, response=response(message()), elapsed_ms=1)
+    actual = meter_by_cell(meter.path)
+    assert actual["sol-vector"]["completeInputTokens"] == 100
+    assert actual["budget-hybrid"]["completeInputTokens"] is None
+    assert actual["budget-hybrid"]["knownInputTokens"] == 100
+    assert actual["budget-hybrid"]["physicalResponsesAttempts"] == 2
+    rows = [
+        {
+            "usage": {"promptTokens": 100, "completionTokens": 50, "cachedPromptTokens": 60, "reasoningTokens": 30},
+            "sourceActivity": dict.fromkeys(
+                (
+                    "explicitEvidenceSearchReplies",
+                    "additionalEvidenceSearchReplies",
+                    "automaticDocumentPassageReplies",
+                    "remainingContextWithheldReplies",
+                ),
+                0,
+            ),
+        }
+    ]
+    complete = p.summarize_usage(rows, actual["sol-vector"])
+    unknown = p.summarize_usage(rows, actual["budget-hybrid"])
+    for key in ("promptTokens", "completionTokens", "cachedPromptTokens", "reasoningTokens"):
+        assert complete[key]["completeTotal"] == rows[0]["usage"][key]
+        assert unknown[key]["completeTotal"] is None
+        assert unknown[key]["knownSubtotal"] == rows[0]["usage"][key]
+    assert unknown["providerAttempts"]["unmeteredAttempts"] == 1
+    assert p.summarize_usage(rows)["promptTokens"]["completeTotal"] is None

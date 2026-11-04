@@ -64,7 +64,7 @@ are disabled; the existing adapter only retries 429 responses, at most three
 attempts. Unknown provider usage is never reported as zero. Credential, embedding
 and index HTTP requests are outside the Responses-attempt counter. Provider token
 meters, actual physical attempts, logical calls, retry waits, wall time, tool RU
-and incomplete RU attribution remain separate. `elapsedMinusRecordedRateWaitMs`
+and incomplete RU attribution remain separate. Per-cell provider totals are rebuilt from the actual attempt ledger; a 429 or other unmetered attempt makes that cell's complete token totals unavailable while retaining measured subtotals. Other cells do not inherit that missingness. `elapsedMinusRecordedRateWaitMs`
 is wall time less known rate-limit waits; it still includes provider queueing,
 retry execution, local work and retrieval, so it is not pure inference time.
 
