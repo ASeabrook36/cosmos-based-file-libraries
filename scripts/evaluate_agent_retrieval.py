@@ -16,6 +16,7 @@ from pathlib import Path
 
 from fli_demo.agent import azure_chat, run_turn
 from fli_demo.client import IndexClient
+from fli_demo.context_budget import MODES
 from fli_demo.registry import Registry
 from fli_demo.responses import ResponsesProtocolError
 from fli_demo.telemetry import metrics
@@ -155,8 +156,15 @@ def indicators(case, number, answer, replies):
     }
 
 
-def replay(index, chat, agent, cases, output, budget=48000):
+def replay(index, chat, agent, cases, output, budget=48000, *, context_accounting="legacy-v1"):
+    if context_accounting not in MODES:
+        raise ValueError("unknown context accounting mode")
     output = prepare_output(output)
+    if context_accounting != "legacy-v1":
+        (output / "context-accounting.json").write_text(
+            json.dumps({"mode": context_accounting, "contextTokens": budget, "outputReservation": 8000}, indent=2)
+            + "\n"
+        )
     results = []
     try:
         before = snapshot(index, agent)
@@ -167,7 +175,14 @@ def replay(index, chat, agent, cases, output, budget=48000):
             history, ledger = [], []
             for number, question in enumerate(case.get("questions") or [case["question"]], 1):
                 turn = run_turn(
-                    chat, index, agent, history, question, context_token_budget=budget, evidence_ledger=ledger
+                    chat,
+                    index,
+                    agent,
+                    history,
+                    question,
+                    context_token_budget=budget,
+                    evidence_ledger=ledger,
+                    **({"context_accounting": context_accounting} if context_accounting != "legacy-v1" else {}),
                 )
                 replies = capture([json.loads(m["content"]) for m in turn.messages if m["role"] == "tool"])
                 row = {
@@ -233,6 +248,7 @@ def replay_pair(
     index_ready=False,
     run_controls=None,
     measurement_mode="steady-state",
+    context_accounting="legacy-v1",
 ):
     """Alternate independent single-library sessions. Preserve source-based review cases.
 
@@ -243,6 +259,8 @@ def replay_pair(
 
     if repeats < 1:
         raise ValueError("repeats must be positive")
+    if context_accounting not in MODES:
+        raise ValueError("unknown context accounting mode")
     if measurement_mode not in {"steady-state", "functional-smoke"}:
         raise ValueError("unknown measurement mode")
     if not index_ready and measurement_mode == "steady-state":
@@ -323,6 +341,8 @@ def replay_pair(
         "usage": "measured per turn; hosting cost and unavailable provider counters are not inferred",
         "runs": [],
     }
+    if context_accounting != "legacy-v1":
+        metadata["contextAccounting"] = context_accounting
     root = prepare_output(root)
     try:
         pair_agent = {**agent, "libraryIds": list(libraries.values())}
@@ -355,7 +375,15 @@ def replay_pair(
                 lib = libraries[member]
                 # Same name/description/instructions. Profile labels never enter the model context.
                 single = {**agent, "libraryIds": [lib]}
-                replay(index, chat_factory(), single, cases, root / f"run-{repeat + 1}-{member}", budget)
+                replay(
+                    index,
+                    chat_factory(),
+                    single,
+                    cases,
+                    root / f"run-{repeat + 1}-{member}",
+                    budget,
+                    **({"context_accounting": context_accounting} if context_accounting != "legacy-v1" else {}),
+                )
                 metadata["runs"].append({"repeat": repeat + 1, "member": member, "order": len(metadata["runs"]) + 1})
                 (root / "comparison.json").write_text(json.dumps(metadata, indent=2) + "\n")
         after_context = snapshot(index, pair_agent)
@@ -394,6 +422,7 @@ def main():
     parser.add_argument("--cases", type=Path, default=Path("docs/testing/2026-10-27/casual-cases.json"))
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--context-tokens", type=int, default=48000)
+    parser.add_argument("--context-accounting", choices=MODES, default="legacy-v1")
     parser.add_argument("--experiment-id")
     parser.add_argument("--repeats", type=int, default=3)
     parser.add_argument("--index-ready", action="store_true")
@@ -415,6 +444,7 @@ def main():
             args.index_ready,
             json.loads(args.run_controls.read_text()) if args.run_controls else None,
             args.measurement_mode,
+            args.context_accounting,
         )
         return
     replay(
@@ -424,6 +454,7 @@ def main():
         json.loads(args.cases.read_text()),
         args.output,
         args.context_tokens,
+        context_accounting=args.context_accounting,
     )
 
 

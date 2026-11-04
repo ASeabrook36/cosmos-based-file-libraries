@@ -1,0 +1,51 @@
+{
+  "schema": "fli.context-envelope-validation.v1",
+  "status": "accepted-local-qualification",
+  "mode": "envelope-v2",
+  "defaultMode": "legacy-v1",
+  "baselineCommit": "4ad228d05ed2517cda743e95470599e09898d4f9",
+  "qualificationReceiptSha256": "4db78864b45d47a4b0731ac0ad9f67a1d6d8db683d2427b9cc1ec904746a4bd1",
+  "codeSha256": {
+    "src/fli_demo/agent.py": "ffff6d686822712cfcd9253fc9089848fa48b81f0a4d92b8e6c39a5b9b0f7c52",
+    "src/fli_demo/context_budget.py": "2fb7ceb4c4f02bd15914e34d1fb680d4985476a9ba87d5eebe6383ae1ca5dbc7",
+    "scripts/evaluate_agent_retrieval.py": "1142b33c93ff565243f0e3d381b38773b200e00aff3501d288cc7ed8a5fcb959",
+    "scripts/qualify_context_envelope.py": "609f3ea3417cd6a7ed8e6e02bdabee06cfa62de9c7fb2bbcb0a4d619c219421d",
+    "tests/test_context_budget.py": "b005d22e1756b620fbc29443e1e22ef07b83176d3438d74e9e3d5f2ab4780a1f",
+    "tests/test_context_qualification.py": "b35ac6a68807d48ade5d14489e503b895e5383e44b12d8b1a8cd102823d25c38"
+  },
+  "validation": {
+    "repositoryTestsPassed": 1434,
+    "repositoryWarnings": 14,
+    "repositorySeconds": 178.67,
+    "newSyntheticTestsPassed": 35,
+    "lintAndFormatPassed": true,
+    "referencePrivacyPassed": true,
+    "diffCheckPassed": true,
+    "testLogSha256": "ddf81b175681228cb76472db6229f3ad16f6bd50cc5ca1a413211861a0a35468"
+  },
+  "independentReview": {
+    "boundHistoricalArtifactChecks": 72,
+    "archivedGuardReconstructions": 18,
+    "defaultImageAndEscapingChecksPassed": 6,
+    "groundingChecksPassed": 10,
+    "evidenceSha256": {
+      "context-independent-archive-audit-v4.json": "3c6f865a3924429bea0561ffe3ea9d9fc7ce384def58686831d402c42d902bcd",
+      "context-independent-checks-v4.json": "fc0171d2ae6c258b0d430faad8925707d22488ab653893027aa2b0067f2919f9",
+      "context-grounding-resolved-v4.json": "b99188b134c9b62a06d0d3cdad964745306b033a2062255938a7f66ca4a5adf2"
+    }
+  },
+  "replayModePlumbing": {
+    "singleRunModeAndReservationsBound": true,
+    "bothPairCellsModeBound": true,
+    "privateReceiptSha256": "eb6957179934185aa8ba5b07cace1ea296497dcb428f6e1ee482cc435e74045d"
+  },
+  "cloudCalls": 0,
+  "modelCalls": 0,
+  "completedExperimentsModified": false,
+  "largerConfirmationLaunched": false,
+  "untestedGates": [
+    "Actual provider context-token equivalence and capacity adequacy.",
+    "Real-model continuation, recovery, final answer quality, latency and RU under the new mode.",
+    "General multi-file recovery when resuming full history with an unscoped withholding marker; this mode conservatively requires a fresh retrieval session."
+  ]
+}
