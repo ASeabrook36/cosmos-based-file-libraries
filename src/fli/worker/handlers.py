@@ -343,6 +343,9 @@ class Worker:
         plan = await load(self.blobs, plan_path)
         plan_hit = plan is not None
         if recipe["provider"] == "microsoft-indexer":
+            if recipe["id"] == "microsoft-indexer-source-fidelity-v1" and source.get("fileType") != "docx":
+                await self._fail(library_id, document_id, generation, "source_structure_format_unsupported")
+                return
             if plan is None:
                 if self.microsoft is None:
                     await self._fail(library_id, document_id, generation, "microsoft_provider_unconfigured")
@@ -614,6 +617,17 @@ class Worker:
             "generation": generation,
             "sha256": hashlib.sha256(serialized.encode("utf-8")).hexdigest(),
         }
+        if (plan.get("coverage") or {}).get("sourceStructure"):
+            from fli.presentation import evidence_json, project
+
+            projected, _ = project({"sections": sections})
+            full_text.update(
+                compactSectionsTokenCount=await asyncio.to_thread(
+                    self.chunker.count, evidence_json(projected["sections"])
+                ),
+                compactSectionsTokenizer=self.chunker.tokenizer.name,
+                compactSectionsEstimateScope="projected_sections_only",
+            )
         if not await self.blobs.create(full_text["blobPath"], serialized.encode("utf-8"), "application/json"):
             existing = await self.blobs.download(full_text["blobPath"])
             if hashlib.sha256(existing).hexdigest() != full_text["sha256"]:

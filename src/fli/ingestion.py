@@ -17,13 +17,31 @@ from fli.checkpoints import digest
 from fli.chunking import Chunk
 from fli.config import EMBEDDING_MODEL
 
-ProfileId = Literal["current-v1", "custom-structured-v1", "microsoft-indexer-layout-v1"]
-PROFILE_IDS = ("current-v1", "custom-structured-v1", "microsoft-indexer-layout-v1")
+ProfileId = Literal[
+    "current-v1", "custom-structured-v1", "microsoft-indexer-layout-v1", "microsoft-indexer-source-fidelity-v1"
+]
+PROFILE_IDS = (
+    "current-v1",
+    "custom-structured-v1",
+    "microsoft-indexer-layout-v1",
+    "microsoft-indexer-source-fidelity-v1",
+)
 
 
 def profile(profile_id: str = "current-v1", *, controlled: bool = False) -> dict:
     if profile_id not in PROFILE_IDS:
         raise ValueError("unknown ingestion profile")
+    if profile_id == "microsoft-indexer-source-fidelity-v1":
+        if controlled:
+            raise ValueError("source-fidelity profile does not change the frozen component comparison")
+        from fli.source_fidelity import LIMITATIONS, SCHEMA
+
+        recipe = profile("microsoft-indexer-layout-v1")
+        recipe.update(id=profile_id, version=1)
+        recipe["enrichment"]["adapter"] = SCHEMA
+        recipe["capabilities"].update(sourceStructure="docx-main-body", completeProviderText=False)
+        recipe["limitations"] = list(LIMITATIONS)
+        return recipe
     microsoft = profile_id == "microsoft-indexer-layout-v1"
     structured = profile_id == "custom-structured-v1"
     return {
@@ -159,18 +177,25 @@ def validate_microsoft(output: dict, work: dict, source: bytes, dimensions: int)
         value = usage.get(key)
         if value is not None and (type(value) not in (int, float) or not math.isfinite(value) or value < 0):
             raise ValueError("invalid provider usage")
+    sections = [{"text": analysis["content"], "heading": None, "location": {}, "contentKind": "text"}]
+    coverage = {
+        "visuals": "unavailable",
+        "authoredHierarchy": "unavailable",
+        "generatedSummaries": "unavailable",
+        "providerFigureCount": len(analysis.get("figures", [])),
+    }
+    if work["profile"]["id"] == "microsoft-indexer-source-fidelity-v1":
+        from fli.source_fidelity import source_sections
+
+        sections, source_coverage = source_sections(source, analysis, work)
+        coverage.update(source_coverage)
     return ProviderResult(
         pieces,
-        [{"text": analysis["content"], "heading": None, "location": {}, "contentKind": "text"}],
+        sections,
         vectors,
         {"method": "logicapps-prebuilt-layout", "pageCount": len(analysis.get("pages", []))},
         {key: usage.get(key) for key in allowed},
-        {
-            "visuals": "unavailable",
-            "authoredHierarchy": "unavailable",
-            "generatedSummaries": "unavailable",
-            "providerFigureCount": len(analysis.get("figures", [])),
-        },
+        coverage,
     )
 
 
