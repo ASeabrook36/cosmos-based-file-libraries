@@ -182,7 +182,7 @@ def preparation_gate(path, baseline, runtimes, embedding, plan, *, fresh=True):
         and receipt.get("sourceSnapshotSha256")
         and receipt.get("embeddingDeploymentBinding") == embedding
         and receipt.get("sourceOriginalsVerified") is True
-        and receipt.get("allIngestionsTerminalPublished") is True
+        and receipt.get("allSourcesCommittedAndObservedAttemptsTerminal") is True
         and receipt.get("hybridWhereOnlyRanksMeaningfully") is True
         and receipt.get("protectedScopesUnchanged") is True,
         "fresh preparation acceptance incomplete",

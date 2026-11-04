@@ -265,7 +265,7 @@ def test_source_gate_binds_originals_chunks_and_evidence(tmp_path):
         "sourceSnapshotSha256": p.digest(source),
         "embeddingDeploymentBinding": {"pinned": True},
         "sourceOriginalsVerified": True,
-        "allIngestionsTerminalPublished": True,
+        "allSourcesCommittedAndObservedAttemptsTerminal": True,
         "hybridWhereOnlyRanksMeaningfully": True,
         "protectedScopesUnchanged": True,
         "evidenceReferences": [{"path": str(source_path), "sha256": p.sha(source_path)}],

@@ -115,15 +115,15 @@ sourceSnapshotFileSha256: file-byte SHA-256
 sourceSnapshotSha256: canonical JSON digest of source-before.json
 embeddingDeploymentBinding: hybrid_quality_replay.embedding_binding(envelope, runtimes)
 sourceOriginalsVerified: true
-allIngestionsTerminalPublished: true
+allSourcesCommittedAndObservedAttemptsTerminal: true
 hybridWhereOnlyRanksMeaningfully: true
 protectedScopesUnchanged: true
 evidenceReferences: [{path: private absolute receipt path, sha256: file-byte SHA-256}, ...]
 ```
 
 The coordinator must verify these assertions against source checksums, ingestion
-terminal/published receipts, a bounded direct ranking check and before/after
-protected-scope inventories. They are acceptance decisions, not automatically
+terminal observed-attempt receipts, committed/ready source rows, a bounded direct ranking check and before/after
+protected-scope inventories. An attempt that fails after committing its source must retain that failed terminal status; it does not establish failed source publication when the committed rows and subsequent observations prove publication. The gate does not claim that every ingestion attempt succeeded. These are acceptance decisions, not automatically
 inferred from an existing boolean. Hashes bind their supporting evidence.
 
 ## Executable sequence
