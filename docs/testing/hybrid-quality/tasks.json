@@ -1,0 +1,2338 @@
+[
+  {
+    "case": "hq-01",
+    "question": "Under the Model Services Contract, can a general legal change or a specific legal change foreseeable at the Effective Date justify higher Charges or relief from the obligation to supply?",
+    "families": [
+      "paraphrase",
+      "concept",
+      "exception"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-01",
+        "source": "MSC_-_Core_Terms_-_E_W_-_Word_v2.2A_2025.DOCX",
+        "regions": [
+          {
+            "id": "hq-01:p368",
+            "kind": "paragraph",
+            "index": 368,
+            "sourceSha256": "43c7e8b70daf21779253921143b6bc71419ec3b59dba1071469cdc5f557a7f8e",
+            "normalizedTextSha256": "a757f647b6cdc4313413b1643c660f6672df1172322fcb3a8dce435aa3b418d8",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-01:p369",
+            "kind": "paragraph",
+            "index": 369,
+            "sourceSha256": "43c7e8b70daf21779253921143b6bc71419ec3b59dba1071469cdc5f557a7f8e",
+            "normalizedTextSha256": "e78cad7f8935cd43f439e7505ccdbec61ad210d37feae0a0104f3dbf4b0c85bf",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-01:p370",
+            "kind": "paragraph",
+            "index": 370,
+            "sourceSha256": "43c7e8b70daf21779253921143b6bc71419ec3b59dba1071469cdc5f557a7f8e",
+            "normalizedTextSha256": "6265276abf9df18c73e57cc16c9eb8591394784cd930ba55473ede487519bc9b",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-01"
+    ],
+    "requiredRegionIds": [
+      "hq-01:p368",
+      "hq-01:p369",
+      "hq-01:p370"
+    ],
+    "requiredFactIds": [
+      "hq-01-f01"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-02",
+    "question": "For Model Services Contract Key Personnel, how long may a Key Role be vacant, and what notice is normally needed for planned replacement? Include the exceptions to that notice rule.",
+    "families": [
+      "exact-term",
+      "exception"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-01",
+        "source": "MSC_-_Core_Terms_-_E_W_-_Word_v2.2A_2025.DOCX",
+        "regions": [
+          {
+            "id": "hq-01:p408",
+            "kind": "paragraph",
+            "index": 408,
+            "sourceSha256": "43c7e8b70daf21779253921143b6bc71419ec3b59dba1071469cdc5f557a7f8e",
+            "normalizedTextSha256": "d892223989d0db1dde56a3dad727aecfb11ff93e198a11696fb49d5aaf910421",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-01:p409",
+            "kind": "paragraph",
+            "index": 409,
+            "sourceSha256": "43c7e8b70daf21779253921143b6bc71419ec3b59dba1071469cdc5f557a7f8e",
+            "normalizedTextSha256": "2bf333d137123db32f5e1d4a9e8a69cf935de51f5a17d28648e3fdbdfd43e418",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-01"
+    ],
+    "requiredRegionIds": [
+      "hq-01:p408",
+      "hq-01:p409"
+    ],
+    "requiredFactIds": [
+      "hq-02-f01",
+      "hq-02-f02"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-03",
+    "question": "In the Model Services Contract Rectification Plan Process, when must a Notifiable Default be reported and when is the first draft plan due, even if the supplier disputes responsibility?",
+    "families": [
+      "exact-term",
+      "identifier",
+      "section-reference"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-01",
+        "source": "MSC_-_Core_Terms_-_E_W_-_Word_v2.2A_2025.DOCX",
+        "regions": [
+          {
+            "id": "hq-01:p822",
+            "kind": "paragraph",
+            "index": 822,
+            "sourceSha256": "43c7e8b70daf21779253921143b6bc71419ec3b59dba1071469cdc5f557a7f8e",
+            "normalizedTextSha256": "c98283cb5c1d83b5e91a44a90ff33f0ae9437d48a2441743c3deacaadee9c34e",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-01:p830",
+            "kind": "paragraph",
+            "index": 830,
+            "sourceSha256": "43c7e8b70daf21779253921143b6bc71419ec3b59dba1071469cdc5f557a7f8e",
+            "normalizedTextSha256": "b2f1e22317d5f5bbb958acf96298939fc6291ef675fb0ec6e55dd83239e44b11",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-01"
+    ],
+    "requiredRegionIds": [
+      "hq-01:p822",
+      "hq-01:p830"
+    ],
+    "requiredFactIds": [
+      "hq-03-f01",
+      "hq-03-f02"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-04",
+    "question": "Which named quality-management standard must the Model Services Contract Quality Plans follow, and is a successor standard allowed?",
+    "families": [
+      "name",
+      "identifier",
+      "acronym"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-01",
+        "source": "MSC_-_Core_Terms_-_E_W_-_Word_v2.2A_2025.DOCX",
+        "regions": [
+          {
+            "id": "hq-01:p233",
+            "kind": "paragraph",
+            "index": 233,
+            "sourceSha256": "43c7e8b70daf21779253921143b6bc71419ec3b59dba1071469cdc5f557a7f8e",
+            "normalizedTextSha256": "aa20a48a905be7c7ccde2ca5a6484a9397af2029f2ad2edda0095eb7dfeda963",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-01"
+    ],
+    "requiredRegionIds": [
+      "hq-01:p233"
+    ],
+    "requiredFactIds": [
+      "hq-04-f01"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-05",
+    "question": "In the Model Services Contract, which avoidable consequences prevent a supplier from claiming force-majeure relief, and what exception applies to failure of the continuity plan?",
+    "families": [
+      "concept",
+      "exception",
+      "paraphrase"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-01",
+        "source": "MSC_-_Core_Terms_-_E_W_-_Word_v2.2A_2025.DOCX",
+        "regions": [
+          {
+            "id": "hq-01:p953",
+            "kind": "paragraph",
+            "index": 953,
+            "sourceSha256": "43c7e8b70daf21779253921143b6bc71419ec3b59dba1071469cdc5f557a7f8e",
+            "normalizedTextSha256": "fa4661cf0dac2736efce5ad6707de01e66116e882a3d259b26dd4f898421e50f",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-01:p954",
+            "kind": "paragraph",
+            "index": 954,
+            "sourceSha256": "43c7e8b70daf21779253921143b6bc71419ec3b59dba1071469cdc5f557a7f8e",
+            "normalizedTextSha256": "6b6ea73a4125811c4651ab3c92e5cccdd7fcd1443e1f43fb2b30c415e493c404",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-01:p955",
+            "kind": "paragraph",
+            "index": 955,
+            "sourceSha256": "43c7e8b70daf21779253921143b6bc71419ec3b59dba1071469cdc5f557a7f8e",
+            "normalizedTextSha256": "a3d0a5408ae0a17046d5781662cf7a7d1a59cfe32bb7f38e287f1d00f6a40e76",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-01:p956",
+            "kind": "paragraph",
+            "index": 956,
+            "sourceSha256": "43c7e8b70daf21779253921143b6bc71419ec3b59dba1071469cdc5f557a7f8e",
+            "normalizedTextSha256": "9ffad4ca8230e9ac75adb9f1d6fa30ee6faba7058ef567fec5890d8c58b90e13",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-01"
+    ],
+    "requiredRegionIds": [
+      "hq-01:p953",
+      "hq-01:p954",
+      "hq-01:p955",
+      "hq-01:p956"
+    ],
+    "requiredFactIds": [
+      "hq-05-f01"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-06",
+    "question": "Under the Model Services Contract, how and when is the initial Authority Representative identified, and how may that appointment or authority change?",
+    "families": [
+      "exact-term",
+      "name"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-01",
+        "source": "MSC_-_Core_Terms_-_E_W_-_Word_v2.2A_2025.DOCX",
+        "regions": [
+          {
+            "id": "hq-01:p356",
+            "kind": "paragraph",
+            "index": 356,
+            "sourceSha256": "43c7e8b70daf21779253921143b6bc71419ec3b59dba1071469cdc5f557a7f8e",
+            "normalizedTextSha256": "915877da2947338be0a806652cf24c987e2b2e38e1819b0766b8ac9ab8ade357",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-01"
+    ],
+    "requiredRegionIds": [
+      "hq-01:p356"
+    ],
+    "requiredFactIds": [
+      "hq-06-f01"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-07",
+    "question": "What minimum defect-warranty period does the Short Form require for Deliverables, and what happens if the supplier offers customers a longer warranty?",
+    "families": [
+      "exact-term",
+      "exception"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-03",
+        "source": "Short_Form_Contract_-_Word_v1.5A_2025__1_.docx",
+        "regions": [
+          {
+            "id": "hq-03:p140",
+            "kind": "paragraph",
+            "index": 140,
+            "sourceSha256": "88c177fe3a74dec53005df61a4aaecf163ed1c22731980fbefbd061da604e196",
+            "normalizedTextSha256": "7ad8c32698601f3bc9f0ae81de8bd8192ccd0ec01111fd64c83ff013b70f2dd1",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-03"
+    ],
+    "requiredRegionIds": [
+      "hq-03:p140"
+    ],
+    "requiredFactIds": [
+      "hq-07-f01"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-08",
+    "question": "For the Short Form, who bears risk after delivery if the buyer discovers damage, and what notification deadline preserves that position?",
+    "families": [
+      "paraphrase",
+      "exception"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-03",
+        "source": "Short_Form_Contract_-_Word_v1.5A_2025__1_.docx",
+        "regions": [
+          {
+            "id": "hq-03:p144",
+            "kind": "paragraph",
+            "index": 144,
+            "sourceSha256": "88c177fe3a74dec53005df61a4aaecf163ed1c22731980fbefbd061da604e196",
+            "normalizedTextSha256": "a55cbb92c84370e4df85ec62775631d54b7aec087487c1172a45280635ba0a7f",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-03"
+    ],
+    "requiredRegionIds": [
+      "hq-03:p144"
+    ],
+    "requiredFactIds": [
+      "hq-08-f01"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-09",
+    "question": "If part of a Short Form invoice is disputed, must the buyer pay anything and may the supplier stop work immediately?",
+    "families": [
+      "concept",
+      "paraphrase",
+      "exception"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-03",
+        "source": "Short_Form_Contract_-_Word_v1.5A_2025__1_.docx",
+        "regions": [
+          {
+            "id": "hq-03:p177",
+            "kind": "paragraph",
+            "index": 177,
+            "sourceSha256": "88c177fe3a74dec53005df61a4aaecf163ed1c22731980fbefbd061da604e196",
+            "normalizedTextSha256": "c6cf9ddb1e23cffbe95fc4069a41ffd7d12bcf829589a32ddf757ad7358cdf62",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-03"
+    ],
+    "requiredRegionIds": [
+      "hq-03:p177"
+    ],
+    "requiredFactIds": [
+      "hq-09-f01"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-10",
+    "question": "How long must Short Form contract records and accounts be retained after the agreement ends, and which data-protection regimes qualify that obligation?",
+    "families": [
+      "paraphrase",
+      "acronym"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-03",
+        "source": "Short_Form_Contract_-_Word_v1.5A_2025__1_.docx",
+        "regions": [
+          {
+            "id": "hq-03:p197",
+            "kind": "paragraph",
+            "index": 197,
+            "sourceSha256": "88c177fe3a74dec53005df61a4aaecf163ed1c22731980fbefbd061da604e196",
+            "normalizedTextSha256": "c3bc4f1c8f133ad6688972872a368319920a8eb2c552ff83c01bb0e9c628cb2a",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-03"
+    ],
+    "requiredRegionIds": [
+      "hq-03:p197"
+    ],
+    "requiredFactIds": [
+      "hq-10-f01"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-11",
+    "question": "Under Short Form clause 16, how quickly must a Request For Information reach the buyer, and what timing and cost rules govern subsequent cooperation?",
+    "families": [
+      "section-reference",
+      "exact-term"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-03",
+        "source": "Short_Form_Contract_-_Word_v1.5A_2025__1_.docx",
+        "regions": [
+          {
+            "id": "hq-03:p434",
+            "kind": "paragraph",
+            "index": 434,
+            "sourceSha256": "88c177fe3a74dec53005df61a4aaecf163ed1c22731980fbefbd061da604e196",
+            "normalizedTextSha256": "0a742b26b8ad9a5456a67f6f786bcf9c757ee424841600a05245ba380dd1860b",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-03:p435",
+            "kind": "paragraph",
+            "index": 435,
+            "sourceSha256": "88c177fe3a74dec53005df61a4aaecf163ed1c22731980fbefbd061da604e196",
+            "normalizedTextSha256": "e0807ff711a6b2c5742a002493bcb3946646e1cb1a7dc56a3af248ed0c7e424b",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-03:p436",
+            "kind": "paragraph",
+            "index": 436,
+            "sourceSha256": "88c177fe3a74dec53005df61a4aaecf163ed1c22731980fbefbd061da604e196",
+            "normalizedTextSha256": "b7c7768d11ace541f1dc34ace25b554461d3136907dc474714a944ef46ef6859",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-03:p437",
+            "kind": "paragraph",
+            "index": 437,
+            "sourceSha256": "88c177fe3a74dec53005df61a4aaecf163ed1c22731980fbefbd061da604e196",
+            "normalizedTextSha256": "304a72ea73b7a383d85d9812a17c5a1721bdcf7ab4b84ff77f51069b53615fe7",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-03:p438",
+            "kind": "paragraph",
+            "index": 438,
+            "sourceSha256": "88c177fe3a74dec53005df61a4aaecf163ed1c22731980fbefbd061da604e196",
+            "normalizedTextSha256": "2de978403783ea12c19acd5aeaf0f8ee6576de15702e9a5868d928d4b5ff2470",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-03"
+    ],
+    "requiredRegionIds": [
+      "hq-03:p434",
+      "hq-03:p435",
+      "hq-03:p436",
+      "hq-03:p437",
+      "hq-03:p438"
+    ],
+    "requiredFactIds": [
+      "hq-11-f01",
+      "hq-11-f02"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-12",
+    "question": "For the Short Form, what overdue undisputed debt threshold and reminder period permit the supplier to terminate?",
+    "families": [
+      "concept",
+      "identifier"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-03",
+        "source": "Short_Form_Contract_-_Word_v1.5A_2025__1_.docx",
+        "regions": [
+          {
+            "id": "hq-03:p287",
+            "kind": "paragraph",
+            "index": 287,
+            "sourceSha256": "88c177fe3a74dec53005df61a4aaecf163ed1c22731980fbefbd061da604e196",
+            "normalizedTextSha256": "4ae67aad6515781d39ffe33bf2a545b1d13f921dfab7cb51bd0518d6cb34496d",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-03"
+    ],
+    "requiredRegionIds": [
+      "hq-03:p287"
+    ],
+    "requiredFactIds": [
+      "hq-12-f01"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-13",
+    "question": "Under Short Form clause 26, when does an emailed notice take effect, and what are the fallback delivery methods and timing if email is impracticable?",
+    "families": [
+      "section-reference",
+      "paraphrase",
+      "exception"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-03",
+        "source": "Short_Form_Contract_-_Word_v1.5A_2025__1_.docx",
+        "regions": [
+          {
+            "id": "hq-03:p496",
+            "kind": "paragraph",
+            "index": 496,
+            "sourceSha256": "88c177fe3a74dec53005df61a4aaecf163ed1c22731980fbefbd061da604e196",
+            "normalizedTextSha256": "db7066f123cd4c6fac3e0fe400dc4e2a8ff2a631e6fa508b85ae629545cbb5ad",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-03:p497",
+            "kind": "paragraph",
+            "index": 497,
+            "sourceSha256": "88c177fe3a74dec53005df61a4aaecf163ed1c22731980fbefbd061da604e196",
+            "normalizedTextSha256": "3c6b9158340a05422a9778dec7e6fa0e3b63240a09fa8377ff478e7e901d2020",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-03"
+    ],
+    "requiredRegionIds": [
+      "hq-03:p496",
+      "hq-03:p497"
+    ],
+    "requiredFactIds": [
+      "hq-13-f01",
+      "hq-13-f02"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-14",
+    "question": "When does a prolonged Force Majeure Event allow either party to terminate all or part of the Short Form contract?",
+    "families": [
+      "exact-term",
+      "concept"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-03",
+        "source": "Short_Form_Contract_-_Word_v1.5A_2025__1_.docx",
+        "regions": [
+          {
+            "id": "hq-03:p452",
+            "kind": "paragraph",
+            "index": 452,
+            "sourceSha256": "88c177fe3a74dec53005df61a4aaecf163ed1c22731980fbefbd061da604e196",
+            "normalizedTextSha256": "dfc45bbca12950f4f981b8c0233319f0bc1be84c3d5bdfca114b33ea6e4ff874",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-03"
+    ],
+    "requiredRegionIds": [
+      "hq-03:p452"
+    ],
+    "requiredFactIds": [
+      "hq-14-f01"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-15",
+    "question": "What default minimum warranty does the Mid-Tier impose for obvious defects in Deliverables, and where can a different period be specified?",
+    "families": [
+      "paraphrase",
+      "exception"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-04",
+        "source": "Mid-Tier_Core_Terms_Word_v1.3A_2025.docx",
+        "regions": [
+          {
+            "id": "hq-04:p34",
+            "kind": "paragraph",
+            "index": 34,
+            "sourceSha256": "c3d056e64cac0fe18a00dc1cb0ff3a1d838b9b9391931fea0c4c505f5d7197e4",
+            "normalizedTextSha256": "8dc0cebd4bb1911b0d966fe0b025d5af361253fe1af8ea494e24960386289b0c",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-04"
+    ],
+    "requiredRegionIds": [
+      "hq-04:p34"
+    ],
+    "requiredFactIds": [
+      "hq-15-f01"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-16",
+    "question": "For a Mid-Tier supplier invoice to be valid, which Procurement Act provision must its information satisfy, and what additional references and breakdown are required?",
+    "families": [
+      "identifier",
+      "section-reference",
+      "exact-term"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-04",
+        "source": "Mid-Tier_Core_Terms_Word_v1.3A_2025.docx",
+        "regions": [
+          {
+            "id": "hq-04:p78",
+            "kind": "paragraph",
+            "index": 78,
+            "sourceSha256": "c3d056e64cac0fe18a00dc1cb0ff3a1d838b9b9391931fea0c4c505f5d7197e4",
+            "normalizedTextSha256": "69a95780f1375b5711b885922e4c5794f96cbba12e2052ee59e467a433171810",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-04:p79",
+            "kind": "paragraph",
+            "index": 79,
+            "sourceSha256": "c3d056e64cac0fe18a00dc1cb0ff3a1d838b9b9391931fea0c4c505f5d7197e4",
+            "normalizedTextSha256": "dc614218d8e3680fa5bda808087f078c67dbafcaf992698e99ba868d4023e9e4",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-04:p80",
+            "kind": "paragraph",
+            "index": 80,
+            "sourceSha256": "c3d056e64cac0fe18a00dc1cb0ff3a1d838b9b9391931fea0c4c505f5d7197e4",
+            "normalizedTextSha256": "063ecb9b50e4769d23ff59ce3fc8cd925015dc266019a87175783a1537628c14",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-04:p81",
+            "kind": "paragraph",
+            "index": 81,
+            "sourceSha256": "c3d056e64cac0fe18a00dc1cb0ff3a1d838b9b9391931fea0c4c505f5d7197e4",
+            "normalizedTextSha256": "8d27f9de97b377ebb037946995a5e614801d6b655cdae7ca3ae5460c4ffbb701",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-04"
+    ],
+    "requiredRegionIds": [
+      "hq-04:p78",
+      "hq-04:p79",
+      "hq-04:p80",
+      "hq-04:p81"
+    ],
+    "requiredFactIds": [
+      "hq-16-f01"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-17",
+    "question": "Under the Mid-Tier goods clauses, do ownership and risk pass at the same moment? Explain the payment-versus-delivery rule and the damaged-goods exception.",
+    "families": [
+      "concept",
+      "exception"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-04",
+        "source": "Mid-Tier_Core_Terms_Word_v1.3A_2025.docx",
+        "regions": [
+          {
+            "id": "hq-04:p43",
+            "kind": "paragraph",
+            "index": 43,
+            "sourceSha256": "c3d056e64cac0fe18a00dc1cb0ff3a1d838b9b9391931fea0c4c505f5d7197e4",
+            "normalizedTextSha256": "665b35beab37ac5d518725b0f9d038e04156171633fc2e1deb73caad3fa46ddb",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-04:p44",
+            "kind": "paragraph",
+            "index": 44,
+            "sourceSha256": "c3d056e64cac0fe18a00dc1cb0ff3a1d838b9b9391931fea0c4c505f5d7197e4",
+            "normalizedTextSha256": "eb647c8ef659b7bf68261471ecd5aac917bff4aeebb26ec538c53b16e0b22f0a",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-04"
+    ],
+    "requiredRegionIds": [
+      "hq-04:p43",
+      "hq-04:p44"
+    ],
+    "requiredFactIds": [
+      "hq-17-f01",
+      "hq-17-f02"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-18",
+    "question": "What does the Mid-Tier mean operationally by fix first, settle later, and when do those Collaborative Working Principles apply?",
+    "families": [
+      "exact-term",
+      "concept"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-04",
+        "source": "Mid-Tier_Core_Terms_Word_v1.3A_2025.docx",
+        "regions": [
+          {
+            "id": "hq-04:p35",
+            "kind": "paragraph",
+            "index": 35,
+            "sourceSha256": "c3d056e64cac0fe18a00dc1cb0ff3a1d838b9b9391931fea0c4c505f5d7197e4",
+            "normalizedTextSha256": "471da43be0ebd989b27045f71462219514ddc7623e1c4a4b16c778cf6a1d2d4f",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-04:p36",
+            "kind": "paragraph",
+            "index": 36,
+            "sourceSha256": "c3d056e64cac0fe18a00dc1cb0ff3a1d838b9b9391931fea0c4c505f5d7197e4",
+            "normalizedTextSha256": "2adfee2317a952ad96ffc4487df638620087c09346f6a0b6300ee50f018ac55c",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-04"
+    ],
+    "requiredRegionIds": [
+      "hq-04:p35",
+      "hq-04:p36"
+    ],
+    "requiredFactIds": [
+      "hq-18-f01"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-19",
+    "question": "What are the Mid-Tier rules for retaining contract records during and after the Contract Period, including audited records?",
+    "families": [
+      "paraphrase",
+      "exact-term"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-04",
+        "source": "Mid-Tier_Core_Terms_Word_v1.3A_2025.docx",
+        "regions": [
+          {
+            "id": "hq-04:p106",
+            "kind": "paragraph",
+            "index": 106,
+            "sourceSha256": "c3d056e64cac0fe18a00dc1cb0ff3a1d838b9b9391931fea0c4c505f5d7197e4",
+            "normalizedTextSha256": "41f15b9bdf2b1e142c965ebfe3b55afaf85ec45fdc20d103bfe6f37e95209db5",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-04"
+    ],
+    "requiredRegionIds": [
+      "hq-04:p106"
+    ],
+    "requiredFactIds": [
+      "hq-19-f01"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-20",
+    "question": "In the Mid-Tier definitions, expand EIR and FOIA and identify the statutory years. Does FOIA include subordinate legislation and regulator guidance?",
+    "families": [
+      "acronym",
+      "name",
+      "identifier"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-05",
+        "source": "Mid-Tier_Schedule_01__Definitions__Word_v1.3A_2025.docx",
+        "regions": [
+          {
+            "id": "hq-05:t0:r70:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 70,
+            "column": 0,
+            "sourceSha256": "0970916cdf0ca2ffb314a282e9a2d308f41dc048ead33df0d4ec1825305d4dad",
+            "normalizedTextSha256": "dd6ad53cd0497ad699d1c575acce7a84d03417ce7daf7a4157c3f9e99587c64e",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-05:t0:r70:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 70,
+            "column": 1,
+            "sourceSha256": "0970916cdf0ca2ffb314a282e9a2d308f41dc048ead33df0d4ec1825305d4dad",
+            "normalizedTextSha256": "7158fbf963fe536e97f0c67e0ccbc8e275ce397c35a1d9c272b205e6a3e12b23",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-05:t0:r89:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 89,
+            "column": 0,
+            "sourceSha256": "0970916cdf0ca2ffb314a282e9a2d308f41dc048ead33df0d4ec1825305d4dad",
+            "normalizedTextSha256": "788014e914c0abd6aff17304058dd920aeb24305c3f6902253a208bb6f87807b",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-05:t0:r89:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 89,
+            "column": 1,
+            "sourceSha256": "0970916cdf0ca2ffb314a282e9a2d308f41dc048ead33df0d4ec1825305d4dad",
+            "normalizedTextSha256": "d3e2e3e3120c052e58821b34bb27c1643dc112c4226f53d1dd3d1694e1af23b1",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-05"
+    ],
+    "requiredRegionIds": [
+      "hq-05:t0:r70:c0",
+      "hq-05:t0:r70:c1",
+      "hq-05:t0:r89:c0",
+      "hq-05:t0:r89:c1"
+    ],
+    "requiredFactIds": [
+      "hq-20-f01",
+      "hq-20-f02"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-21",
+    "question": "In the Mid-Tier definitions, how does a Work Day differ from a Working Day, and does Work Hours include commuting or lunch?",
+    "families": [
+      "exact-term",
+      "concept",
+      "exception"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-05",
+        "source": "Mid-Tier_Schedule_01__Definitions__Word_v1.3A_2025.docx",
+        "regions": [
+          {
+            "id": "hq-05:t0:r233:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 233,
+            "column": 0,
+            "sourceSha256": "0970916cdf0ca2ffb314a282e9a2d308f41dc048ead33df0d4ec1825305d4dad",
+            "normalizedTextSha256": "4418dba8bc68790c5dc16ce442ebf9055d67167f0013215c8cac1bc0444f1ebc",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-05:t0:r233:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 233,
+            "column": 1,
+            "sourceSha256": "0970916cdf0ca2ffb314a282e9a2d308f41dc048ead33df0d4ec1825305d4dad",
+            "normalizedTextSha256": "4c7d9ee42f6590bd2d7cf84dcda14b946da93dd2716af210b3bffa0c195a0c71",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-05:t0:r234:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 234,
+            "column": 0,
+            "sourceSha256": "0970916cdf0ca2ffb314a282e9a2d308f41dc048ead33df0d4ec1825305d4dad",
+            "normalizedTextSha256": "11d4db2faf0170d325f985fc182217ef5cea007a2884dcb647797b476e193ba6",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-05:t0:r234:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 234,
+            "column": 1,
+            "sourceSha256": "0970916cdf0ca2ffb314a282e9a2d308f41dc048ead33df0d4ec1825305d4dad",
+            "normalizedTextSha256": "32d0a0dffe9f268bc60c07673efb35753893695ab0beeb32fda6b4731e81d72e",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-05:t0:r236:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 236,
+            "column": 0,
+            "sourceSha256": "0970916cdf0ca2ffb314a282e9a2d308f41dc048ead33df0d4ec1825305d4dad",
+            "normalizedTextSha256": "66bff489dc99e29b1a652b6f27436950052439951f122a2727d1dc2160e5dccf",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-05:t0:r236:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 236,
+            "column": 1,
+            "sourceSha256": "0970916cdf0ca2ffb314a282e9a2d308f41dc048ead33df0d4ec1825305d4dad",
+            "normalizedTextSha256": "05778b591218746282490a815dbcb9c0137e6a5add4635db187448bbde4ebf2a",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-05"
+    ],
+    "requiredRegionIds": [
+      "hq-05:t0:r233:c0",
+      "hq-05:t0:r233:c1",
+      "hq-05:t0:r234:c0",
+      "hq-05:t0:r234:c1",
+      "hq-05:t0:r236:c0",
+      "hq-05:t0:r236:c1"
+    ],
+    "requiredFactIds": [
+      "hq-21-f01",
+      "hq-21-f02",
+      "hq-21-f03"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-22",
+    "question": "How broadly does the Mid-Tier define Malicious Software? Does it require immediate operation or deliberate introduction?",
+    "families": [
+      "exact-term",
+      "concept",
+      "exception"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-05",
+        "source": "Mid-Tier_Schedule_01__Definitions__Word_v1.3A_2025.docx",
+        "regions": [
+          {
+            "id": "hq-05:t0:r128:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 128,
+            "column": 0,
+            "sourceSha256": "0970916cdf0ca2ffb314a282e9a2d308f41dc048ead33df0d4ec1825305d4dad",
+            "normalizedTextSha256": "b5090e362d0e00b12b6795d0e46a6570d11032a2ce505791247485c3420fc093",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-05:t0:r128:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 128,
+            "column": 1,
+            "sourceSha256": "0970916cdf0ca2ffb314a282e9a2d308f41dc048ead33df0d4ec1825305d4dad",
+            "normalizedTextSha256": "0c532837de8f2f9a9580e3772327f9ae36ad03b0dc3335773b257ade27811bc7",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-05"
+    ],
+    "requiredRegionIds": [
+      "hq-05:t0:r128:c0",
+      "hq-05:t0:r128:c1"
+    ],
+    "requiredFactIds": [
+      "hq-22-f01"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-23",
+    "question": "For Mid-Tier ICT Services, how much notice is required before new supplier-owned COTS software or upgrades, and what security-related exception applies?",
+    "families": [
+      "acronym",
+      "exact-term",
+      "exception"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-06",
+        "source": "Mid-Tier_Schedule_28__ICT_Services__Word_v1.3_2025.DOCX",
+        "regions": [
+          {
+            "id": "hq-06:p25",
+            "kind": "paragraph",
+            "index": 25,
+            "sourceSha256": "e0b9f64fa441ff89a7dfec04d4e6191083b4ec8a05c0116e1baf95603399febb",
+            "normalizedTextSha256": "f1716fa6f28535dbbfffbab65db4fad2dfbf786ac2948cb3154edbce3b34cb3e",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-06"
+    ],
+    "requiredRegionIds": [
+      "hq-06:p25"
+    ],
+    "requiredFactIds": [
+      "hq-23-f01"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-24",
+    "question": "Under Mid-Tier ICT Schedule 28 paragraph 6, which quality standard must Quality Plans meet and does buyer Approval transfer responsibility for service quality?",
+    "families": [
+      "identifier",
+      "section-reference",
+      "concept"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-06",
+        "source": "Mid-Tier_Schedule_28__ICT_Services__Word_v1.3_2025.DOCX",
+        "regions": [
+          {
+            "id": "hq-06:p31",
+            "kind": "paragraph",
+            "index": 31,
+            "sourceSha256": "e0b9f64fa441ff89a7dfec04d4e6191083b4ec8a05c0116e1baf95603399febb",
+            "normalizedTextSha256": "a9808a667def9a7ff6a5cd2c0c656da23fa32a4ce90287385a07c657863f1966",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-06:p32",
+            "kind": "paragraph",
+            "index": 32,
+            "sourceSha256": "e0b9f64fa441ff89a7dfec04d4e6191083b4ec8a05c0116e1baf95603399febb",
+            "normalizedTextSha256": "3f7b9c4018876c88dd6a6ab154b2d03045a305a3d8b08d160ad2db2c10f925a6",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-06"
+    ],
+    "requiredRegionIds": [
+      "hq-06:p31",
+      "hq-06:p32"
+    ],
+    "requiredFactIds": [
+      "hq-24-f01",
+      "hq-24-f02"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-25",
+    "question": "For Mid-Tier ICT maintenance, how is planned maintenance authorized and what notice and disruption duties apply to emergency work?",
+    "families": [
+      "paraphrase",
+      "concept"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-06",
+        "source": "Mid-Tier_Schedule_28__ICT_Services__Word_v1.3_2025.DOCX",
+        "regions": [
+          {
+            "id": "hq-06:p44",
+            "kind": "paragraph",
+            "index": 44,
+            "sourceSha256": "e0b9f64fa441ff89a7dfec04d4e6191083b4ec8a05c0116e1baf95603399febb",
+            "normalizedTextSha256": "872b043ddbb78d486236b4b30139483e39cf9587eac7c00f0f6abb702e83e2f0",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-06:p45",
+            "kind": "paragraph",
+            "index": 45,
+            "sourceSha256": "e0b9f64fa441ff89a7dfec04d4e6191083b4ec8a05c0116e1baf95603399febb",
+            "normalizedTextSha256": "9cdce28605a30f8ba1aca2348b591426d34c7186006a2fb1f2ce721a16eaa0d2",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-06:p46",
+            "kind": "paragraph",
+            "index": 46,
+            "sourceSha256": "e0b9f64fa441ff89a7dfec04d4e6191083b4ec8a05c0116e1baf95603399febb",
+            "normalizedTextSha256": "680add2011a90d775d22a0d9e8dc177c859b36b13148f108effeee62151dca41",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-06:p47",
+            "kind": "paragraph",
+            "index": 47,
+            "sourceSha256": "e0b9f64fa441ff89a7dfec04d4e6191083b4ec8a05c0116e1baf95603399febb",
+            "normalizedTextSha256": "3738ff807535c6410a89686057f9862e4720ffe68859f5047b7032661c8ddbc4",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-06"
+    ],
+    "requiredRegionIds": [
+      "hq-06:p44",
+      "hq-06:p45",
+      "hq-06:p46",
+      "hq-06:p47"
+    ],
+    "requiredFactIds": [
+      "hq-25-f01",
+      "hq-25-f02"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-26",
+    "question": "Under the Mid-Tier processing-data terms, who decides what processing is authorized, and what must a processor do if an instruction appears unlawful?",
+    "families": [
+      "concept",
+      "paraphrase"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-07",
+        "source": "Mid-Tier_Schedule_20__Processing_Data__Word_v1.3_2025.DOCX",
+        "regions": [
+          {
+            "id": "hq-07:p10",
+            "kind": "paragraph",
+            "index": 10,
+            "sourceSha256": "8597feb7e1f2313de19025bdf2cb7fa63b11b3415c595149e8ee6da659bf6e49",
+            "normalizedTextSha256": "a2ef69dbc34127cb746badefafc7f3a11315f53feec53026aa89d9dfcd997f51",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-07:p11",
+            "kind": "paragraph",
+            "index": 11,
+            "sourceSha256": "8597feb7e1f2313de19025bdf2cb7fa63b11b3415c595149e8ee6da659bf6e49",
+            "normalizedTextSha256": "386ce1d6f516c2d8f2c8764b27841770ed01521b4f396356f5992a88dcb17926",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-07"
+    ],
+    "requiredRegionIds": [
+      "hq-07:p10",
+      "hq-07:p11"
+    ],
+    "requiredFactIds": [
+      "hq-26-f01",
+      "hq-26-f02"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-27",
+    "question": "When the Mid-Tier contract ends, what must a processor do with Personal Data at the controller's written direction, and what retention exception remains?",
+    "families": [
+      "exact-term",
+      "exception"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-07",
+        "source": "Mid-Tier_Schedule_20__Processing_Data__Word_v1.3_2025.DOCX",
+        "regions": [
+          {
+            "id": "hq-07:p51",
+            "kind": "paragraph",
+            "index": 51,
+            "sourceSha256": "8597feb7e1f2313de19025bdf2cb7fa63b11b3415c595149e8ee6da659bf6e49",
+            "normalizedTextSha256": "3ac073a645eecf43d439c62267a03e8125beb1289363562d719de2babcc49d8d",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-07"
+    ],
+    "requiredRegionIds": [
+      "hq-07:p51"
+    ],
+    "requiredFactIds": [
+      "hq-27-f01"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-28",
+    "question": "Before a Mid-Tier Subprocessor receives Personal Data, what written steps and information are required, and who remains liable for its conduct?",
+    "families": [
+      "exact-term",
+      "concept"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-07",
+        "source": "Mid-Tier_Schedule_20__Processing_Data__Word_v1.3_2025.DOCX",
+        "regions": [
+          {
+            "id": "hq-07:p72",
+            "kind": "paragraph",
+            "index": 72,
+            "sourceSha256": "8597feb7e1f2313de19025bdf2cb7fa63b11b3415c595149e8ee6da659bf6e49",
+            "normalizedTextSha256": "200fdb530fecf27f74ad872fe984f6d311da1a7172d88cbc4ec6ea66334fbf33",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-07:p73",
+            "kind": "paragraph",
+            "index": 73,
+            "sourceSha256": "8597feb7e1f2313de19025bdf2cb7fa63b11b3415c595149e8ee6da659bf6e49",
+            "normalizedTextSha256": "9ddac580c40a25b39aeaf433b4020d0dcf3fdab5f21e3cde481a3621b467a783",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-07:p74",
+            "kind": "paragraph",
+            "index": 74,
+            "sourceSha256": "8597feb7e1f2313de19025bdf2cb7fa63b11b3415c595149e8ee6da659bf6e49",
+            "normalizedTextSha256": "67ad146e33e3e027918b937027eb98b340cff2431f7c6b5b9a210cd6ab108afb",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-07:p75",
+            "kind": "paragraph",
+            "index": 75,
+            "sourceSha256": "8597feb7e1f2313de19025bdf2cb7fa63b11b3415c595149e8ee6da659bf6e49",
+            "normalizedTextSha256": "1ae28ddbe3c1fabde5e24a97d5042cecfdac02ee2e8c19c4223d7d67e4911994",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-07:p76",
+            "kind": "paragraph",
+            "index": 76,
+            "sourceSha256": "8597feb7e1f2313de19025bdf2cb7fa63b11b3415c595149e8ee6da659bf6e49",
+            "normalizedTextSha256": "26c83423801e6b64ff373aab9b2c8372fcadbf75ab4e7bc90183b2371ba4f16f",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-07:p77",
+            "kind": "paragraph",
+            "index": 77,
+            "sourceSha256": "8597feb7e1f2313de19025bdf2cb7fa63b11b3415c595149e8ee6da659bf6e49",
+            "normalizedTextSha256": "5c0cd3c0e85e15e8e57e95eb00104f6c0a3e87b9e0f507bdd31ec5bbda103d53",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-07"
+    ],
+    "requiredRegionIds": [
+      "hq-07:p72",
+      "hq-07:p73",
+      "hq-07:p74",
+      "hq-07:p75",
+      "hq-07:p76",
+      "hq-07:p77"
+    ],
+    "requiredFactIds": [
+      "hq-28-f01",
+      "hq-28-f02"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-29",
+    "question": "Does a Mid-Tier processor with fewer than 250 staff always escape the complete-records requirement? Identify the exceptions.",
+    "families": [
+      "identifier",
+      "exception",
+      "concept"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-07",
+        "source": "Mid-Tier_Schedule_20__Processing_Data__Word_v1.3_2025.DOCX",
+        "regions": [
+          {
+            "id": "hq-07:p66",
+            "kind": "paragraph",
+            "index": 66,
+            "sourceSha256": "8597feb7e1f2313de19025bdf2cb7fa63b11b3415c595149e8ee6da659bf6e49",
+            "normalizedTextSha256": "8b9ddd1aa5d03775dacc60192900498e2ee28d9d3c5c14674a7d5ab4375d3af1",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-07:p67",
+            "kind": "paragraph",
+            "index": 67,
+            "sourceSha256": "8597feb7e1f2313de19025bdf2cb7fa63b11b3415c595149e8ee6da659bf6e49",
+            "normalizedTextSha256": "0c8a2ad23dbaa67681ce21f2fffeeb35d2f230a6669a966c7cac71cd16598bf0",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-07:p68",
+            "kind": "paragraph",
+            "index": 68,
+            "sourceSha256": "8597feb7e1f2313de19025bdf2cb7fa63b11b3415c595149e8ee6da659bf6e49",
+            "normalizedTextSha256": "3d09dfa3c0ca5462346c702f7da33b6f39b79872ac264af00f0af7be719d5bea",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-07:p69",
+            "kind": "paragraph",
+            "index": 69,
+            "sourceSha256": "8597feb7e1f2313de19025bdf2cb7fa63b11b3415c595149e8ee6da659bf6e49",
+            "normalizedTextSha256": "554ac3bf40c63ce0ef1fb3d5a0ec1f029b58284591dd9149307bfaf72d6ae252",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-07"
+    ],
+    "requiredRegionIds": [
+      "hq-07:p66",
+      "hq-07:p67",
+      "hq-07:p68",
+      "hq-07:p69"
+    ],
+    "requiredFactIds": [
+      "hq-29-f01"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-30",
+    "question": "For Buyer-led Assurance, what three conditions must be met before the supplier starts Services or handles Government Data using its information system?",
+    "families": [
+      "exact-term",
+      "acronym",
+      "concept"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-08-1",
+        "source": "Mid-Tier_Schedule_16__Security___Buyer-led_Assurance__Word_v1.3_2025.DOCX",
+        "regions": [
+          {
+            "id": "hq-08-1:p71",
+            "kind": "paragraph",
+            "index": 71,
+            "sourceSha256": "2cc19a1f0015badd3de9bd05a1f7c8ec38f08a4716f65f320227e9e38017c665",
+            "normalizedTextSha256": "050c6fd2300af165663a2acd0b59dabffeb8c9a965c19166959b55ea74fca20b",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-08-1:p72",
+            "kind": "paragraph",
+            "index": 72,
+            "sourceSha256": "2cc19a1f0015badd3de9bd05a1f7c8ec38f08a4716f65f320227e9e38017c665",
+            "normalizedTextSha256": "2a0a194a2bf8463bfa9bd2b50d1a973565fd3684ddc7ed38501b82321e2eb713",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-08-1:p73",
+            "kind": "paragraph",
+            "index": 73,
+            "sourceSha256": "2cc19a1f0015badd3de9bd05a1f7c8ec38f08a4716f65f320227e9e38017c665",
+            "normalizedTextSha256": "d93f28a662c91f2ce13c00ce9a6a5ed6e4d76aec0af40856d45321569a9ef0d6",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-08-1:p74",
+            "kind": "paragraph",
+            "index": 74,
+            "sourceSha256": "2cc19a1f0015badd3de9bd05a1f7c8ec38f08a4716f65f320227e9e38017c665",
+            "normalizedTextSha256": "c8a69f69754487458ba1b8ff473d119702d7e43925fae45475156780939bc606",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-08-1:p75",
+            "kind": "paragraph",
+            "index": 75,
+            "sourceSha256": "2cc19a1f0015badd3de9bd05a1f7c8ec38f08a4716f65f320227e9e38017c665",
+            "normalizedTextSha256": "69599793c2ca03069f970f0dddf6ae9459a5d802c581203a79811f8f03a0cd2d",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-08-1:p76",
+            "kind": "paragraph",
+            "index": 76,
+            "sourceSha256": "2cc19a1f0015badd3de9bd05a1f7c8ec38f08a4716f65f320227e9e38017c665",
+            "normalizedTextSha256": "bfa21109a53fa0bbdafac99d65eaa4b04728f32accebaafc42bda1f6ef4c0883",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-08-1:p77",
+            "kind": "paragraph",
+            "index": 77,
+            "sourceSha256": "2cc19a1f0015badd3de9bd05a1f7c8ec38f08a4716f65f320227e9e38017c665",
+            "normalizedTextSha256": "3d445f65f711dba56d8868174d40ed641c3c000fddfe2f98db7b74c784e99d37",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-08-1"
+    ],
+    "requiredRegionIds": [
+      "hq-08-1:p71",
+      "hq-08-1:p72",
+      "hq-08-1:p73",
+      "hq-08-1:p74",
+      "hq-08-1:p75",
+      "hq-08-1:p76",
+      "hq-08-1:p77"
+    ],
+    "requiredFactIds": [
+      "hq-30-f01"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-31",
+    "question": "In Buyer-led Assurance, when is the annual compliance letter due, who provides it, and how must written buyer dispensations be reflected?",
+    "families": [
+      "paraphrase",
+      "name",
+      "exception"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-08-1",
+        "source": "Mid-Tier_Schedule_16__Security___Buyer-led_Assurance__Word_v1.3_2025.DOCX",
+        "regions": [
+          {
+            "id": "hq-08-1:p79",
+            "kind": "paragraph",
+            "index": 79,
+            "sourceSha256": "2cc19a1f0015badd3de9bd05a1f7c8ec38f08a4716f65f320227e9e38017c665",
+            "normalizedTextSha256": "ab870d8e8b10d5fc47029dc24b493366dbd9cc85e7dcc3dfb2294fca6e4a83b5",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-08-1:p80",
+            "kind": "paragraph",
+            "index": 80,
+            "sourceSha256": "2cc19a1f0015badd3de9bd05a1f7c8ec38f08a4716f65f320227e9e38017c665",
+            "normalizedTextSha256": "8dc00f39fd250f80dbab0a5485d30214761c852e5cf06b40feec511fe3eea23b",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-08-1:p81",
+            "kind": "paragraph",
+            "index": 81,
+            "sourceSha256": "2cc19a1f0015badd3de9bd05a1f7c8ec38f08a4716f65f320227e9e38017c665",
+            "normalizedTextSha256": "826f0e43abf8a770c7eafb4a406568bd7ca30e1ab111b5cfda026a518990bb7f",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-08-1:p82",
+            "kind": "paragraph",
+            "index": 82,
+            "sourceSha256": "2cc19a1f0015badd3de9bd05a1f7c8ec38f08a4716f65f320227e9e38017c665",
+            "normalizedTextSha256": "b18b95ccd9305f7ad73f54629e9bb29f270d335b7f360fce4a92b2f7a6dd15bc",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-08-1:p83",
+            "kind": "paragraph",
+            "index": 83,
+            "sourceSha256": "2cc19a1f0015badd3de9bd05a1f7c8ec38f08a4716f65f320227e9e38017c665",
+            "normalizedTextSha256": "4533d2cd042b90401ed0bc624e8474d0a937fa8bce4a76f67372df7d08834b97",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-08-1:p84",
+            "kind": "paragraph",
+            "index": 84,
+            "sourceSha256": "2cc19a1f0015badd3de9bd05a1f7c8ec38f08a4716f65f320227e9e38017c665",
+            "normalizedTextSha256": "1194136078069c692983e07cf5eaf8c2e070f7f6adad0f051e481ad1c9b4bb2a",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-08-1:p85",
+            "kind": "paragraph",
+            "index": 85,
+            "sourceSha256": "2cc19a1f0015badd3de9bd05a1f7c8ec38f08a4716f65f320227e9e38017c665",
+            "normalizedTextSha256": "88ac8264a1dd0eb21e0acd3c4713f8af330ed5502714c5f17d5cfe1d4d72b1ab",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-08-1:p86",
+            "kind": "paragraph",
+            "index": 86,
+            "sourceSha256": "2cc19a1f0015badd3de9bd05a1f7c8ec38f08a4716f65f320227e9e38017c665",
+            "normalizedTextSha256": "2a2143635390a0e5786822dd7244a1343dc8b7af9e63db548ac56c00c587071d",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-08-1:p87",
+            "kind": "paragraph",
+            "index": 87,
+            "sourceSha256": "2cc19a1f0015badd3de9bd05a1f7c8ec38f08a4716f65f320227e9e38017c665",
+            "normalizedTextSha256": "a4eb0f842655731aca5014b9e8f9593d218e650cd58c177b948c4a6a399cdbd5",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-08-1"
+    ],
+    "requiredRegionIds": [
+      "hq-08-1:p79",
+      "hq-08-1:p80",
+      "hq-08-1:p81",
+      "hq-08-1:p82",
+      "hq-08-1:p83",
+      "hq-08-1:p84",
+      "hq-08-1:p85",
+      "hq-08-1:p86",
+      "hq-08-1:p87"
+    ],
+    "requiredFactIds": [
+      "hq-31-f01",
+      "hq-31-f02"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-32",
+    "question": "If NCSC Device Guidance conflicts with the Buyer-led Assurance security schedule, which requirements prevail and are the guidance recommendations otherwise binding?",
+    "families": [
+      "acronym",
+      "name",
+      "exception"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-08-1",
+        "source": "Mid-Tier_Schedule_16__Security___Buyer-led_Assurance__Word_v1.3_2025.DOCX",
+        "regions": [
+          {
+            "id": "hq-08-1:p662",
+            "kind": "paragraph",
+            "index": 662,
+            "sourceSha256": "2cc19a1f0015badd3de9bd05a1f7c8ec38f08a4716f65f320227e9e38017c665",
+            "normalizedTextSha256": "72bcafe3a760566df957e6fe18671c0ef9a9378da464c5ebe4f6e414de75c12c",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-08-1:p663",
+            "kind": "paragraph",
+            "index": 663,
+            "sourceSha256": "2cc19a1f0015badd3de9bd05a1f7c8ec38f08a4716f65f320227e9e38017c665",
+            "normalizedTextSha256": "52bed02acfd57ee98869402a65161f34600476727c23e153e201f9968274638a",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-08-1"
+    ],
+    "requiredRegionIds": [
+      "hq-08-1:p662",
+      "hq-08-1:p663"
+    ],
+    "requiredFactIds": [
+      "hq-32-f01",
+      "hq-32-f02"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-33",
+    "question": "For Mid-Tier exit preparation, when must the Virtual Library be established, what two broad collections must it hold, and how accessible must it remain?",
+    "families": [
+      "exact-term",
+      "paraphrase",
+      "concept"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-09",
+        "source": "Mid-Tier_Schedule_30__Exit_Management__Word_v1.3A_2025.DOCX",
+        "regions": [
+          {
+            "id": "hq-09:p7",
+            "kind": "paragraph",
+            "index": 7,
+            "sourceSha256": "138d52f79edbdc0d5230175c99fc2fb08766899f0a9b711f3ba79823174ce677",
+            "normalizedTextSha256": "afec00687b2541273f2599d5ae40122620a4817c63fa7215ba14ccd51007c056",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-09:p8",
+            "kind": "paragraph",
+            "index": 8,
+            "sourceSha256": "138d52f79edbdc0d5230175c99fc2fb08766899f0a9b711f3ba79823174ce677",
+            "normalizedTextSha256": "b92bdabfff9da65144bd4ec80d0103f56cbff7ce5806504f493f2563a062a91b",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-09:p9",
+            "kind": "paragraph",
+            "index": 9,
+            "sourceSha256": "138d52f79edbdc0d5230175c99fc2fb08766899f0a9b711f3ba79823174ce677",
+            "normalizedTextSha256": "0ce39ad63fa4b728c1dd99cf03784dc3f0039f9f47fee011ae6dda0fe8d5c5c4",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-09:p10",
+            "kind": "paragraph",
+            "index": 10,
+            "sourceSha256": "138d52f79edbdc0d5230175c99fc2fb08766899f0a9b711f3ba79823174ce677",
+            "normalizedTextSha256": "2de0265f13bb056ee8ba22422c78cc683cc04b6f318876c126425fb34ed5018a",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-09"
+    ],
+    "requiredRegionIds": [
+      "hq-09:p7",
+      "hq-09:p8",
+      "hq-09:p9",
+      "hq-09:p10"
+    ],
+    "requiredFactIds": [
+      "hq-33-f01"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-34",
+    "question": "Under Mid-Tier Schedule 30 paragraph 4, when is the first Exit Plan due and what happens if its contents are not agreed within the specified working-day window?",
+    "families": [
+      "section-reference",
+      "identifier",
+      "exact-term"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-09",
+        "source": "Mid-Tier_Schedule_30__Exit_Management__Word_v1.3A_2025.DOCX",
+        "regions": [
+          {
+            "id": "hq-09:p24",
+            "kind": "paragraph",
+            "index": 24,
+            "sourceSha256": "138d52f79edbdc0d5230175c99fc2fb08766899f0a9b711f3ba79823174ce677",
+            "normalizedTextSha256": "32431864208b0101fb665c403ef9fbc68af10a88b26c027cefad1e5e25e1fab4",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-09:p25",
+            "kind": "paragraph",
+            "index": 25,
+            "sourceSha256": "138d52f79edbdc0d5230175c99fc2fb08766899f0a9b711f3ba79823174ce677",
+            "normalizedTextSha256": "44cadf1bb2f84336b44c1b692c7258df21aac440ea8a77bc72d4406ff9ca1633",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-09"
+    ],
+    "requiredRegionIds": [
+      "hq-09:p24",
+      "hq-09:p25"
+    ],
+    "requiredFactIds": [
+      "hq-34-f01",
+      "hq-34-f02"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-35",
+    "question": "Under the Mid-Tier exit terms, what notice is required to request Termination Assistance before expiry or after a termination notice, and how long can assistance and extensions last?",
+    "families": [
+      "exact-term",
+      "exception"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-09",
+        "source": "Mid-Tier_Schedule_30__Exit_Management__Word_v1.3A_2025.DOCX",
+        "regions": [
+          {
+            "id": "hq-09:p54",
+            "kind": "paragraph",
+            "index": 54,
+            "sourceSha256": "138d52f79edbdc0d5230175c99fc2fb08766899f0a9b711f3ba79823174ce677",
+            "normalizedTextSha256": "78d676c0e25b8483d22ab370ab24cbcbce85b0376ff2c1d880155ef87e265305",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-09:p55",
+            "kind": "paragraph",
+            "index": 55,
+            "sourceSha256": "138d52f79edbdc0d5230175c99fc2fb08766899f0a9b711f3ba79823174ce677",
+            "normalizedTextSha256": "0296da65707722ffa5b06d68477f0fe77358bb7c7a3e9f6d1542dee8d585154f",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-09:p56",
+            "kind": "paragraph",
+            "index": 56,
+            "sourceSha256": "138d52f79edbdc0d5230175c99fc2fb08766899f0a9b711f3ba79823174ce677",
+            "normalizedTextSha256": "08fa56d3e68651a1e88b8ec9b668399b11f27d208763812734acbc0e7b520f7b",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-09:p57",
+            "kind": "paragraph",
+            "index": 57,
+            "sourceSha256": "138d52f79edbdc0d5230175c99fc2fb08766899f0a9b711f3ba79823174ce677",
+            "normalizedTextSha256": "4c8c68a708b55141c2dd460e83a5608acc5e829bd3c2666aae4e87616ac5a8e8",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-09:p58",
+            "kind": "paragraph",
+            "index": 58,
+            "sourceSha256": "138d52f79edbdc0d5230175c99fc2fb08766899f0a9b711f3ba79823174ce677",
+            "normalizedTextSha256": "b8307026b7905ec93c7836279a9250ea56662a6903bb447ae80393db7004b1c7",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-09:p59",
+            "kind": "paragraph",
+            "index": 59,
+            "sourceSha256": "138d52f79edbdc0d5230175c99fc2fb08766899f0a9b711f3ba79823174ce677",
+            "normalizedTextSha256": "1d425e3dcf2d9c4e10b29509e7b7e49f7f9e262c45b72b862d63b1d3ca2d076d",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-09"
+    ],
+    "requiredRegionIds": [
+      "hq-09:p54",
+      "hq-09:p55",
+      "hq-09:p56",
+      "hq-09:p57",
+      "hq-09:p58",
+      "hq-09:p59"
+    ],
+    "requiredFactIds": [
+      "hq-35-f01",
+      "hq-35-f02"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-36",
+    "question": "Compare the Short Form and Mid-Tier contract-record retention rules: what period applies after ending, and what explicit in-contract retention requirement does the Mid-Tier state?",
+    "families": [
+      "cross-document",
+      "paraphrase"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-03",
+        "source": "Short_Form_Contract_-_Word_v1.5A_2025__1_.docx",
+        "regions": [
+          {
+            "id": "hq-03:p197",
+            "kind": "paragraph",
+            "index": 197,
+            "sourceSha256": "88c177fe3a74dec53005df61a4aaecf163ed1c22731980fbefbd061da604e196",
+            "normalizedTextSha256": "c3bc4f1c8f133ad6688972872a368319920a8eb2c552ff83c01bb0e9c628cb2a",
+            "expectedBlank": false
+          }
+        ]
+      },
+      {
+        "sourceId": "hq-04",
+        "source": "Mid-Tier_Core_Terms_Word_v1.3A_2025.docx",
+        "regions": [
+          {
+            "id": "hq-04:p106",
+            "kind": "paragraph",
+            "index": 106,
+            "sourceSha256": "c3d056e64cac0fe18a00dc1cb0ff3a1d838b9b9391931fea0c4c505f5d7197e4",
+            "normalizedTextSha256": "41f15b9bdf2b1e142c965ebfe3b55afaf85ec45fdc20d103bfe6f37e95209db5",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-03",
+      "hq-04"
+    ],
+    "requiredRegionIds": [
+      "hq-03:p197",
+      "hq-04:p106"
+    ],
+    "requiredFactIds": [
+      "hq-36-f01",
+      "hq-36-f02"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-37",
+    "question": "Compare Model Services Contract and Mid-Tier ICT Quality Plans: do they name the same quality standard, and where does each leave the preparation timescale to be specified?",
+    "families": [
+      "cross-document",
+      "name",
+      "identifier"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-01",
+        "source": "MSC_-_Core_Terms_-_E_W_-_Word_v2.2A_2025.DOCX",
+        "regions": [
+          {
+            "id": "hq-01:p233",
+            "kind": "paragraph",
+            "index": 233,
+            "sourceSha256": "43c7e8b70daf21779253921143b6bc71419ec3b59dba1071469cdc5f557a7f8e",
+            "normalizedTextSha256": "aa20a48a905be7c7ccde2ca5a6484a9397af2029f2ad2edda0095eb7dfeda963",
+            "expectedBlank": false
+          }
+        ]
+      },
+      {
+        "sourceId": "hq-06",
+        "source": "Mid-Tier_Schedule_28__ICT_Services__Word_v1.3_2025.DOCX",
+        "regions": [
+          {
+            "id": "hq-06:p31",
+            "kind": "paragraph",
+            "index": 31,
+            "sourceSha256": "e0b9f64fa441ff89a7dfec04d4e6191083b4ec8a05c0116e1baf95603399febb",
+            "normalizedTextSha256": "a9808a667def9a7ff6a5cd2c0c656da23fa32a4ce90287385a07c657863f1966",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-01",
+      "hq-06"
+    ],
+    "requiredRegionIds": [
+      "hq-01:p233",
+      "hq-06:p31"
+    ],
+    "requiredFactIds": [
+      "hq-37-f01",
+      "hq-37-f02"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-38",
+    "question": "Compare the Mid-Tier processing-data and exit-management provisions on data after termination: distinguish the processor's Personal Data duty from the supplier's Government Data use restrictions and confidentiality return/delete obligation.",
+    "families": [
+      "cross-document",
+      "concept",
+      "exception"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-07",
+        "source": "Mid-Tier_Schedule_20__Processing_Data__Word_v1.3_2025.DOCX",
+        "regions": [
+          {
+            "id": "hq-07:p51",
+            "kind": "paragraph",
+            "index": 51,
+            "sourceSha256": "8597feb7e1f2313de19025bdf2cb7fa63b11b3415c595149e8ee6da659bf6e49",
+            "normalizedTextSha256": "3ac073a645eecf43d439c62267a03e8125beb1289363562d719de2babcc49d8d",
+            "expectedBlank": false
+          }
+        ]
+      },
+      {
+        "sourceId": "hq-09",
+        "source": "Mid-Tier_Schedule_30__Exit_Management__Word_v1.3A_2025.DOCX",
+        "regions": [
+          {
+            "id": "hq-09:p74",
+            "kind": "paragraph",
+            "index": 74,
+            "sourceSha256": "138d52f79edbdc0d5230175c99fc2fb08766899f0a9b711f3ba79823174ce677",
+            "normalizedTextSha256": "38143e4c6bcc2cdb0f8f3db677ec76d2a4b3ab2ba1132d5e39ba3b0933a4aa13",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-09:p75",
+            "kind": "paragraph",
+            "index": 75,
+            "sourceSha256": "138d52f79edbdc0d5230175c99fc2fb08766899f0a9b711f3ba79823174ce677",
+            "normalizedTextSha256": "2c6dbf6aff4ac0c3a95a48b2460a62c484e427844d03b4520584ac7d4f7c3593",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-09:p81",
+            "kind": "paragraph",
+            "index": 81,
+            "sourceSha256": "138d52f79edbdc0d5230175c99fc2fb08766899f0a9b711f3ba79823174ce677",
+            "normalizedTextSha256": "a6da05a2a4218f4e6935a28bdf77e7dbbc3279ee535438c27d84b2b3133150e2",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-07",
+      "hq-09"
+    ],
+    "requiredRegionIds": [
+      "hq-07:p51",
+      "hq-09:p74",
+      "hq-09:p75",
+      "hq-09:p81"
+    ],
+    "requiredFactIds": [
+      "hq-38-f01",
+      "hq-38-f02",
+      "hq-38-f03"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-39",
+    "question": "Use both the Mid-Tier definitions and ICT Services provisions to explain the Malicious Software exception to software-release notice. Could delayed or unknowingly introduced malicious code fall within the defined term?",
+    "families": [
+      "cross-document",
+      "exact-term",
+      "exception"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-05",
+        "source": "Mid-Tier_Schedule_01__Definitions__Word_v1.3A_2025.docx",
+        "regions": [
+          {
+            "id": "hq-05:t0:r128:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 128,
+            "column": 0,
+            "sourceSha256": "0970916cdf0ca2ffb314a282e9a2d308f41dc048ead33df0d4ec1825305d4dad",
+            "normalizedTextSha256": "b5090e362d0e00b12b6795d0e46a6570d11032a2ce505791247485c3420fc093",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-05:t0:r128:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 128,
+            "column": 1,
+            "sourceSha256": "0970916cdf0ca2ffb314a282e9a2d308f41dc048ead33df0d4ec1825305d4dad",
+            "normalizedTextSha256": "0c532837de8f2f9a9580e3772327f9ae36ad03b0dc3335773b257ade27811bc7",
+            "expectedBlank": false
+          }
+        ]
+      },
+      {
+        "sourceId": "hq-06",
+        "source": "Mid-Tier_Schedule_28__ICT_Services__Word_v1.3_2025.DOCX",
+        "regions": [
+          {
+            "id": "hq-06:p25",
+            "kind": "paragraph",
+            "index": 25,
+            "sourceSha256": "e0b9f64fa441ff89a7dfec04d4e6191083b4ec8a05c0116e1baf95603399febb",
+            "normalizedTextSha256": "f1716fa6f28535dbbfffbab65db4fad2dfbf786ac2948cb3154edbce3b34cb3e",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-05",
+      "hq-06"
+    ],
+    "requiredRegionIds": [
+      "hq-05:t0:r128:c0",
+      "hq-05:t0:r128:c1",
+      "hq-06:p25"
+    ],
+    "requiredFactIds": [
+      "hq-39-f01",
+      "hq-39-f02"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-40",
+    "question": "Under the Mid-Tier core terms, when can persistent force majeure justify termination, and what kinds of failure are expressly excluded from the defined Force Majeure Event?",
+    "families": [
+      "cross-document",
+      "exact-term",
+      "concept",
+      "exception"
+    ],
+    "answerable": true,
+    "split": "confirmation",
+    "sourceFacts": [
+      {
+        "sourceId": "hq-04",
+        "source": "Mid-Tier_Core_Terms_Word_v1.3A_2025.docx",
+        "regions": [
+          {
+            "id": "hq-04:p386",
+            "kind": "paragraph",
+            "index": 386,
+            "sourceSha256": "c3d056e64cac0fe18a00dc1cb0ff3a1d838b9b9391931fea0c4c505f5d7197e4",
+            "normalizedTextSha256": "ae3e98936d89b30ee052fb03e8280916918c1bc41ea8db99359e7483a27cc30f",
+            "expectedBlank": false
+          }
+        ]
+      },
+      {
+        "sourceId": "hq-05",
+        "source": "Mid-Tier_Schedule_01__Definitions__Word_v1.3A_2025.docx",
+        "regions": [
+          {
+            "id": "hq-05:t0:r90:c0",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 90,
+            "column": 0,
+            "sourceSha256": "0970916cdf0ca2ffb314a282e9a2d308f41dc048ead33df0d4ec1825305d4dad",
+            "normalizedTextSha256": "8f410548d4a27aa6d738ec5653faccddc55cfec1eb40b3878f32086826758bdd",
+            "expectedBlank": false
+          },
+          {
+            "id": "hq-05:t0:r90:c1",
+            "kind": "table_cell",
+            "table": 0,
+            "row": 90,
+            "column": 1,
+            "sourceSha256": "0970916cdf0ca2ffb314a282e9a2d308f41dc048ead33df0d4ec1825305d4dad",
+            "normalizedTextSha256": "e25afd76ed96eadad2c0890672a3629cfe0392afeb89de64e988b95a0239ecc6",
+            "expectedBlank": false
+          }
+        ]
+      }
+    ],
+    "expectedSourceIds": [
+      "hq-04",
+      "hq-05"
+    ],
+    "requiredRegionIds": [
+      "hq-04:p386",
+      "hq-05:t0:r90:c0",
+      "hq-05:t0:r90:c1"
+    ],
+    "requiredFactIds": [
+      "hq-40-f01",
+      "hq-40-f02"
+    ],
+    "successCriteria": "Answer every requested component using source-supported evidence and correct citations; distinguish template rules, options and unspecified values."
+  },
+  {
+    "case": "hq-41",
+    "question": "What is the actual legal name of the Supplier appointed under the Model Services Contract in this library?",
+    "families": [
+      "name",
+      "exact-term",
+      "unanswerable"
+    ],
+    "answerable": false,
+    "split": "confirmation",
+    "sourceFacts": [],
+    "expectedSourceIds": [],
+    "requiredRegionIds": [],
+    "requiredFactIds": [],
+    "successCriteria": "Explicit supported abstention; do not invent the requested absent value.",
+    "missingAnswerDefinition": "Missing answer requested: What is the actual legal name of the Supplier appointed under the Model Services Contract in this library? The requested completed-contract value or external fact is absent from the supplied original templates. State that it cannot be determined from this library; identify the missing information if helpful. Do not convert a placeholder, drafting option, illustrative value, or unrelated template rule into the requested actual value."
+  },
+  {
+    "case": "hq-42",
+    "question": "What total monthly fee in pounds did the buyer and supplier actually agree in the Short Form Order Form?",
+    "families": [
+      "identifier",
+      "paraphrase",
+      "unanswerable"
+    ],
+    "answerable": false,
+    "split": "confirmation",
+    "sourceFacts": [],
+    "expectedSourceIds": [],
+    "requiredRegionIds": [],
+    "requiredFactIds": [],
+    "successCriteria": "Explicit supported abstention; do not invent the requested absent value.",
+    "missingAnswerDefinition": "Missing answer requested: What total monthly fee in pounds did the buyer and supplier actually agree in the Short Form Order Form? The requested completed-contract value or external fact is absent from the supplied original templates. State that it cannot be determined from this library; identify the missing information if helpful. Do not convert a placeholder, drafting option, illustrative value, or unrelated template rule into the requested actual value."
+  },
+  {
+    "case": "hq-43",
+    "question": "Exactly how many days did the parties select in the Award Form for preparing the Mid-Tier ICT Quality Plans?",
+    "families": [
+      "exact-term",
+      "section-reference",
+      "unanswerable"
+    ],
+    "answerable": false,
+    "split": "confirmation",
+    "sourceFacts": [],
+    "expectedSourceIds": [],
+    "requiredRegionIds": [],
+    "requiredFactIds": [],
+    "successCriteria": "Explicit supported abstention; do not invent the requested absent value.",
+    "missingAnswerDefinition": "Missing answer requested: Exactly how many days did the parties select in the Award Form for preparing the Mid-Tier ICT Quality Plans? The requested completed-contract value or external fact is absent from the supplied original templates. State that it cannot be determined from this library; identify the missing information if helpful. Do not convert a placeholder, drafting option, illustrative value, or unrelated template rule into the requested actual value."
+  },
+  {
+    "case": "hq-44",
+    "question": "What number of Working Days did the parties insert as their agreed extension-notice period in the Model Services Contract?",
+    "families": [
+      "exact-term",
+      "identifier",
+      "unanswerable"
+    ],
+    "answerable": false,
+    "split": "confirmation",
+    "sourceFacts": [],
+    "expectedSourceIds": [],
+    "requiredRegionIds": [],
+    "requiredFactIds": [],
+    "successCriteria": "Explicit supported abstention; do not invent the requested absent value.",
+    "missingAnswerDefinition": "Missing answer requested: What number of Working Days did the parties insert as their agreed extension-notice period in the Model Services Contract? The requested completed-contract value or external fact is absent from the supplied original templates. State that it cannot be determined from this library; identify the missing information if helpful. Do not convert a placeholder, drafting option, illustrative value, or unrelated template rule into the requested actual value."
+  },
+  {
+    "case": "hq-45",
+    "question": "What is the name of the individual chief executive who signed the Buyer-led Assurance annual compliance confirmation for this contract?",
+    "families": [
+      "name",
+      "paraphrase",
+      "unanswerable"
+    ],
+    "answerable": false,
+    "split": "confirmation",
+    "sourceFacts": [],
+    "expectedSourceIds": [],
+    "requiredRegionIds": [],
+    "requiredFactIds": [],
+    "successCriteria": "Explicit supported abstention; do not invent the requested absent value.",
+    "missingAnswerDefinition": "Missing answer requested: What is the name of the individual chief executive who signed the Buyer-led Assurance annual compliance confirmation for this contract? The requested completed-contract value or external fact is absent from the supplied original templates. State that it cannot be determined from this library; identify the missing information if helpful. Do not convert a placeholder, drafting option, illustrative value, or unrelated template rule into the requested actual value."
+  },
+  {
+    "case": "hq-46",
+    "question": "What refresh interval did the parties actually select in the Award Form for updating the Mid-Tier Virtual Library?",
+    "families": [
+      "exact-term",
+      "paraphrase",
+      "unanswerable"
+    ],
+    "answerable": false,
+    "split": "confirmation",
+    "sourceFacts": [],
+    "expectedSourceIds": [],
+    "requiredRegionIds": [],
+    "requiredFactIds": [],
+    "successCriteria": "Explicit supported abstention; do not invent the requested absent value.",
+    "missingAnswerDefinition": "Missing answer requested: What refresh interval did the parties actually select in the Award Form for updating the Mid-Tier Virtual Library? The requested completed-contract value or external fact is absent from the supplied original templates. State that it cannot be determined from this library; identify the missing information if helpful. Do not convert a placeholder, drafting option, illustrative value, or unrelated template rule into the requested actual value."
+  },
+  {
+    "case": "hq-47",
+    "question": "What was the actual pass/fail result and completion date of the supplier's most recent IT Health Check for this contract?",
+    "families": [
+      "acronym",
+      "concept",
+      "unanswerable"
+    ],
+    "answerable": false,
+    "split": "confirmation",
+    "sourceFacts": [],
+    "expectedSourceIds": [],
+    "requiredRegionIds": [],
+    "requiredFactIds": [],
+    "successCriteria": "Explicit supported abstention; do not invent the requested absent value.",
+    "missingAnswerDefinition": "Missing answer requested: What was the actual pass/fail result and completion date of the supplier's most recent IT Health Check for this contract? The requested completed-contract value or external fact is absent from the supplied original templates. State that it cannot be determined from this library; identify the missing information if helpful. Do not convert a placeholder, drafting option, illustrative value, or unrelated template rule into the requested actual value."
+  },
+  {
+    "case": "hq-48",
+    "question": "What is the registration number of the supplier actually appointed in the Short Form Order Form?",
+    "families": [
+      "identifier",
+      "name",
+      "unanswerable"
+    ],
+    "answerable": false,
+    "split": "confirmation",
+    "sourceFacts": [],
+    "expectedSourceIds": [],
+    "requiredRegionIds": [],
+    "requiredFactIds": [],
+    "successCriteria": "Explicit supported abstention; do not invent the requested absent value.",
+    "missingAnswerDefinition": "Missing answer requested: What is the registration number of the supplier actually appointed in the Short Form Order Form? The requested completed-contract value or external fact is absent from the supplied original templates. State that it cannot be determined from this library; identify the missing information if helpful. Do not convert a placeholder, drafting option, illustrative value, or unrelated template rule into the requested actual value."
+  }
+]

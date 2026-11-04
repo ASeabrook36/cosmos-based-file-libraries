@@ -1,0 +1,741 @@
+{
+  "schema": "fli.hybrid-model-pilot.independent-usage-supplement.v1",
+  "scope": "Content-free arithmetic from sealed judgments and saved provider/tool counters; no new answer judgments.",
+  "scorecardSha256": "e8805c8060ca959de792a0297b4f0d502e51851dc6f51511c440e451ae9828b6",
+  "exploratory": true,
+  "quality": {
+    "budget-hybrid": {
+      "answerableCompletion": {
+        "passed": 36,
+        "failed": 4,
+        "unavailableOrInapplicable": 0
+      },
+      "missingValueAbstention": {
+        "passed": 2,
+        "failed": 6,
+        "unavailableOrInapplicable": 0
+      },
+      "jointAnswerablePass": {
+        "passed": 29,
+        "denominator": 40,
+        "scope": "Descriptive supplement; all four judgments true on answerable questions; not a frozen primary metric."
+      },
+      "requiredRegionRecall": {
+        "applicableTurns": 40,
+        "mean": 0.9916666666666666
+      },
+      "requiredFactCoverage": {
+        "applicableTurns": 40,
+        "mean": 0.9375
+      }
+    },
+    "budget-vector": {
+      "answerableCompletion": {
+        "passed": 30,
+        "failed": 10,
+        "unavailableOrInapplicable": 0
+      },
+      "missingValueAbstention": {
+        "passed": 2,
+        "failed": 6,
+        "unavailableOrInapplicable": 0
+      },
+      "jointAnswerablePass": {
+        "passed": 26,
+        "denominator": 40,
+        "scope": "Descriptive supplement; all four judgments true on answerable questions; not a frozen primary metric."
+      },
+      "requiredRegionRecall": {
+        "applicableTurns": 40,
+        "mean": 0.8291666666666666
+      },
+      "requiredFactCoverage": {
+        "applicableTurns": 40,
+        "mean": 0.8041666666666666
+      }
+    },
+    "sol-hybrid": {
+      "answerableCompletion": {
+        "passed": 39,
+        "failed": 1,
+        "unavailableOrInapplicable": 0
+      },
+      "missingValueAbstention": {
+        "passed": 8,
+        "failed": 0,
+        "unavailableOrInapplicable": 0
+      },
+      "jointAnswerablePass": {
+        "passed": 38,
+        "denominator": 40,
+        "scope": "Descriptive supplement; all four judgments true on answerable questions; not a frozen primary metric."
+      },
+      "requiredRegionRecall": {
+        "applicableTurns": 40,
+        "mean": 0.9729166666666667
+      },
+      "requiredFactCoverage": {
+        "applicableTurns": 40,
+        "mean": 0.975
+      }
+    },
+    "sol-vector": {
+      "answerableCompletion": {
+        "passed": 36,
+        "failed": 4,
+        "unavailableOrInapplicable": 0
+      },
+      "missingValueAbstention": {
+        "passed": 8,
+        "failed": 0,
+        "unavailableOrInapplicable": 0
+      },
+      "jointAnswerablePass": {
+        "passed": 36,
+        "denominator": 40,
+        "scope": "Descriptive supplement; all four judgments true on answerable questions; not a frozen primary metric."
+      },
+      "requiredRegionRecall": {
+        "applicableTurns": 40,
+        "mean": 0.8916666666666666
+      },
+      "requiredFactCoverage": {
+        "applicableTurns": 40,
+        "mean": 0.9
+      }
+    }
+  },
+  "jointAnswerablePass": {
+    "budget-hybrid": {
+      "passed": 29,
+      "denominator": 40,
+      "scope": "Descriptive supplement; all four judgments true on answerable questions; not a frozen primary metric."
+    },
+    "budget-vector": {
+      "passed": 26,
+      "denominator": 40,
+      "scope": "Descriptive supplement; all four judgments true on answerable questions; not a frozen primary metric."
+    },
+    "sol-hybrid": {
+      "passed": 38,
+      "denominator": 40,
+      "scope": "Descriptive supplement; all four judgments true on answerable questions; not a frozen primary metric."
+    },
+    "sol-vector": {
+      "passed": 36,
+      "denominator": 40,
+      "scope": "Descriptive supplement; all four judgments true on answerable questions; not a frozen primary metric."
+    }
+  },
+  "completionInteractionByStratum": {
+    "answerable": {
+      "questions": 40,
+      "solHybridGain": 0.075,
+      "budgetHybridGain": 0.15,
+      "budgetMinusSolGain": 0.075
+    },
+    "missingValue": {
+      "questions": 8,
+      "solHybridGain": 0.0,
+      "budgetHybridGain": 0.0,
+      "budgetMinusSolGain": 0.0
+    },
+    "all": {
+      "questions": 48,
+      "solHybridGain": 0.0625,
+      "budgetHybridGain": 0.125,
+      "budgetMinusSolGain": 0.0625
+    }
+  },
+  "usageByCell": {
+    "budget-hybrid": {
+      "provider": {
+        "logicalCallsStarted": 298,
+        "physicalResponsesAttempts": 325,
+        "knownInputTokens": 7583160,
+        "knownOutputTokens": 84764,
+        "unmeteredAttempts": 27,
+        "usageComplete": false,
+        "completeInputTokens": null,
+        "completeOutputTokens": null,
+        "http429Attempts": 27
+      },
+      "details": {
+        "cachedPromptTokens": {
+          "knownSubtotal": 5536256,
+          "missingLogicalCalls": 0,
+          "logicalCalls": 298
+        },
+        "cacheWriteTokens": {
+          "knownSubtotal": 0,
+          "missingLogicalCalls": 0,
+          "logicalCalls": 298
+        },
+        "reasoningTokens": {
+          "knownSubtotal": 43857,
+          "missingLogicalCalls": 0,
+          "logicalCalls": 298
+        }
+      },
+      "conditionalDetailSubtotalDefectTriggered": false,
+      "knownToolRu": 14988.6,
+      "ruIncompleteTurns": 33,
+      "unknownChargeToolTraces": 38,
+      "elapsedMs": 1648735.7007504907,
+      "recorded429WaitMs": 130116.3,
+      "elapsedMinusRecorded429WaitMs": 1518619.4007504906,
+      "providerMs": 1076390.1,
+      "retrievalMs": 426796.59759486094,
+      "physicalSdkCallElapsedMs": 1073361.8316929787,
+      "localActivity": {
+        "explicitEvidenceSearchReplies": 106,
+        "additionalEvidenceSearchReplies": 58,
+        "automaticDocumentPassageReplies": 14,
+        "remainingContextWithheldReplies": 17
+      },
+      "deliveredActivity": {
+        "explicitEvidenceSearchReplies": 106,
+        "additionalEvidenceSearchReplies": 58,
+        "automaticDocumentPassageReplies": 14,
+        "remainingContextWithheldReplies": 9
+      }
+    },
+    "budget-vector": {
+      "provider": {
+        "logicalCallsStarted": 305,
+        "physicalResponsesAttempts": 391,
+        "knownInputTokens": 8284872,
+        "knownOutputTokens": 83717,
+        "unmeteredAttempts": 86,
+        "usageComplete": false,
+        "completeInputTokens": null,
+        "completeOutputTokens": null,
+        "http429Attempts": 86
+      },
+      "details": {
+        "cachedPromptTokens": {
+          "knownSubtotal": 6325760,
+          "missingLogicalCalls": 0,
+          "logicalCalls": 305
+        },
+        "cacheWriteTokens": {
+          "knownSubtotal": 0,
+          "missingLogicalCalls": 0,
+          "logicalCalls": 305
+        },
+        "reasoningTokens": {
+          "knownSubtotal": 43398,
+          "missingLogicalCalls": 0,
+          "logicalCalls": 305
+        }
+      },
+      "conditionalDetailSubtotalDefectTriggered": false,
+      "knownToolRu": 8117.31,
+      "ruIncompleteTurns": 26,
+      "unknownChargeToolTraces": 31,
+      "elapsedMs": 2007107.2602127679,
+      "recorded429WaitMs": 503392.0,
+      "elapsedMinusRecorded429WaitMs": 1503715.2602127679,
+      "providerMs": 1071424.8,
+      "retrievalMs": 415924.695343012,
+      "physicalSdkCallElapsedMs": 1067636.5784772206,
+      "localActivity": {
+        "explicitEvidenceSearchReplies": 128,
+        "additionalEvidenceSearchReplies": 81,
+        "automaticDocumentPassageReplies": 7,
+        "remainingContextWithheldReplies": 33
+      },
+      "deliveredActivity": {
+        "explicitEvidenceSearchReplies": 128,
+        "additionalEvidenceSearchReplies": 81,
+        "automaticDocumentPassageReplies": 7,
+        "remainingContextWithheldReplies": 21
+      }
+    },
+    "sol-hybrid": {
+      "provider": {
+        "logicalCallsStarted": 180,
+        "physicalResponsesAttempts": 180,
+        "knownInputTokens": 3762001,
+        "knownOutputTokens": 21021,
+        "unmeteredAttempts": 0,
+        "usageComplete": true,
+        "completeInputTokens": 3762001,
+        "completeOutputTokens": 21021,
+        "http429Attempts": 0
+      },
+      "details": {
+        "cachedPromptTokens": {
+          "knownSubtotal": 2310978,
+          "missingLogicalCalls": 0,
+          "logicalCalls": 180
+        },
+        "cacheWriteTokens": {
+          "knownSubtotal": 1450483,
+          "missingLogicalCalls": 0,
+          "logicalCalls": 180
+        },
+        "reasoningTokens": {
+          "knownSubtotal": 1012,
+          "missingLogicalCalls": 0,
+          "logicalCalls": 180
+        }
+      },
+      "conditionalDetailSubtotalDefectTriggered": false,
+      "knownToolRu": 3877.6,
+      "ruIncompleteTurns": 5,
+      "unknownChargeToolTraces": 5,
+      "elapsedMs": 996914.2059984151,
+      "recorded429WaitMs": 0.0,
+      "elapsedMinusRecorded429WaitMs": 996914.2059984151,
+      "providerMs": 796852.1,
+      "retrievalMs": 191351.43371019512,
+      "physicalSdkCallElapsedMs": 795349.5479212143,
+      "localActivity": {
+        "explicitEvidenceSearchReplies": 60,
+        "additionalEvidenceSearchReplies": 12,
+        "automaticDocumentPassageReplies": 12,
+        "remainingContextWithheldReplies": 0
+      },
+      "deliveredActivity": {
+        "explicitEvidenceSearchReplies": 59,
+        "additionalEvidenceSearchReplies": 11,
+        "automaticDocumentPassageReplies": 12,
+        "remainingContextWithheldReplies": 0
+      }
+    },
+    "sol-vector": {
+      "provider": {
+        "logicalCallsStarted": 200,
+        "physicalResponsesAttempts": 200,
+        "knownInputTokens": 4846040,
+        "knownOutputTokens": 23480,
+        "unmeteredAttempts": 0,
+        "usageComplete": true,
+        "completeInputTokens": 4846040,
+        "completeOutputTokens": 23480,
+        "http429Attempts": 0
+      },
+      "details": {
+        "cachedPromptTokens": {
+          "knownSubtotal": 3301142,
+          "missingLogicalCalls": 0,
+          "logicalCalls": 200
+        },
+        "cacheWriteTokens": {
+          "knownSubtotal": 1544298,
+          "missingLogicalCalls": 0,
+          "logicalCalls": 200
+        },
+        "reasoningTokens": {
+          "knownSubtotal": 1109,
+          "missingLogicalCalls": 0,
+          "logicalCalls": 200
+        }
+      },
+      "conditionalDetailSubtotalDefectTriggered": false,
+      "knownToolRu": 2717.83,
+      "ruIncompleteTurns": 4,
+      "unknownChargeToolTraces": 4,
+      "elapsedMs": 1071056.0411654878,
+      "recorded429WaitMs": 0.0,
+      "elapsedMinusRecorded429WaitMs": 1071056.0411654878,
+      "providerMs": 883106.7,
+      "retrievalMs": 177733.6374321021,
+      "physicalSdkCallElapsedMs": 881469.0129137598,
+      "localActivity": {
+        "explicitEvidenceSearchReplies": 72,
+        "additionalEvidenceSearchReplies": 24,
+        "automaticDocumentPassageReplies": 15,
+        "remainingContextWithheldReplies": 2
+      },
+      "deliveredActivity": {
+        "explicitEvidenceSearchReplies": 72,
+        "additionalEvidenceSearchReplies": 24,
+        "automaticDocumentPassageReplies": 15,
+        "remainingContextWithheldReplies": 2
+      }
+    }
+  },
+  "usageByModel": {
+    "sol": {
+      "logicalCallsStarted": 380,
+      "physicalResponsesAttempts": 380,
+      "knownInputTokens": 8608041,
+      "knownOutputTokens": 44501,
+      "unmeteredAttempts": 0,
+      "http429Attempts": 0,
+      "cachedPromptTokens": 5612120,
+      "cacheWriteTokens": 2994781,
+      "reasoningTokens": 2121,
+      "illustrativeKnownResponsesUsd": 6.998063999999999
+    },
+    "budget": {
+      "logicalCallsStarted": 603,
+      "physicalResponsesAttempts": 716,
+      "knownInputTokens": 15868032,
+      "knownOutputTokens": 168481,
+      "unmeteredAttempts": 113,
+      "http429Attempts": 113,
+      "cachedPromptTokens": 11862016,
+      "cacheWriteTokens": 0,
+      "reasoningTokens": 87255,
+      "illustrativeKnownResponsesUsd": 4.6523277
+    }
+  },
+  "probeByModelSeparate": {
+    "sol": {
+      "logicalCalls": 2,
+      "physicalAttempts": 2,
+      "inputTokens": 252,
+      "outputTokens": 34,
+      "cachedTokens": 0,
+      "illustrativeUsd": 0.000844
+    },
+    "budget": {
+      "logicalCalls": 2,
+      "physicalAttempts": 2,
+      "inputTokens": 307,
+      "outputTokens": 89,
+      "cachedTokens": 0,
+      "illustrativeUsd": 0.00063075
+    }
+  },
+  "knownResponsesIllustrativeCostByCell": {
+    "budget-hybrid": {
+      "uncachedInputTokens": 2046904,
+      "cachedInputTokens": 5536256,
+      "outputTokens": 84764,
+      "usd": 2.3318352
+    },
+    "budget-vector": {
+      "uncachedInputTokens": 1959112,
+      "cachedInputTokens": 6325760,
+      "outputTokens": 83717,
+      "usd": 2.3204925
+    },
+    "sol-hybrid": {
+      "uncachedInputTokens": 1451023,
+      "cachedInputTokens": 2310978,
+      "outputTokens": 21021,
+      "usd": 3.3433537999999996
+    },
+    "sol-vector": {
+      "uncachedInputTokens": 1544898,
+      "cachedInputTokens": 3301142,
+      "outputTokens": 23480,
+      "usd": 3.6547102000000002
+    }
+  },
+  "illustrativePriceAssumptions": {
+    "usdPerMillionTokens": {
+      "sol": {
+        "input": 2.0,
+        "cachedInput": 0.1,
+        "output": 10.0
+      },
+      "budget": {
+        "input": 0.75,
+        "cachedInput": 0.075,
+        "output": 4.5
+      }
+    },
+    "scope": "Supplied OpenAI list-price illustration for measured successful Responses only. Cached reads use cached rate; all other input including cache writes uses input rate. Not an Azure invoice or complete bill; 429 usage, query embeddings, ingestion, SDK tests, hosting/storage/resource lifecycle excluded."
+  },
+  "scoredKnownResponsesIllustrativeUsd": 11.6503917,
+  "probeIllustrativeUsdSeparate": 0.00147475,
+  "providerGuardUnits": {
+    "knownInput": 24476073,
+    "unknownInputReservation": 7232000,
+    "inputGuardTotal": 31708073,
+    "inputGuardRemaining": 291927,
+    "knownOutput": 212982,
+    "unknownOutputReservation": 904000,
+    "outputGuardTotal": 1116982
+  },
+  "contextStopsRequiringDeliveryCorrection": [
+    {
+      "case": "hq-02",
+      "cell": "budget-vector",
+      "localReplyCount": 10,
+      "providerReceivedReplyCount": 9,
+      "unsubmittedReplyCount": 1,
+      "unsubmittedOriginalBodyFiles": 0,
+      "reconstructedGuardTotal": 64065
+    },
+    {
+      "case": "hq-04",
+      "cell": "budget-vector",
+      "localReplyCount": 15,
+      "providerReceivedReplyCount": 14,
+      "unsubmittedReplyCount": 1,
+      "unsubmittedOriginalBodyFiles": 0,
+      "reconstructedGuardTotal": 64056
+    },
+    {
+      "case": "hq-06",
+      "cell": "budget-vector",
+      "localReplyCount": 11,
+      "providerReceivedReplyCount": 10,
+      "unsubmittedReplyCount": 1,
+      "unsubmittedOriginalBodyFiles": 0,
+      "reconstructedGuardTotal": 64113
+    },
+    {
+      "case": "hq-19",
+      "cell": "budget-vector",
+      "localReplyCount": 8,
+      "providerReceivedReplyCount": 7,
+      "unsubmittedReplyCount": 1,
+      "unsubmittedOriginalBodyFiles": 0,
+      "reconstructedGuardTotal": 64223
+    },
+    {
+      "case": "hq-32",
+      "cell": "budget-vector",
+      "localReplyCount": 13,
+      "providerReceivedReplyCount": 11,
+      "unsubmittedReplyCount": 2,
+      "unsubmittedOriginalBodyFiles": 0,
+      "reconstructedGuardTotal": 64547
+    },
+    {
+      "case": "hq-38",
+      "cell": "sol-hybrid",
+      "localReplyCount": 3,
+      "providerReceivedReplyCount": 1,
+      "unsubmittedReplyCount": 2,
+      "unsubmittedOriginalBodyFiles": 1,
+      "reconstructedGuardTotal": 64843
+    },
+    {
+      "case": "hq-42",
+      "cell": "budget-vector",
+      "localReplyCount": 10,
+      "providerReceivedReplyCount": 9,
+      "unsubmittedReplyCount": 1,
+      "unsubmittedOriginalBodyFiles": 0,
+      "reconstructedGuardTotal": 64720
+    },
+    {
+      "case": "hq-42",
+      "cell": "budget-hybrid",
+      "localReplyCount": 10,
+      "providerReceivedReplyCount": 9,
+      "unsubmittedReplyCount": 1,
+      "unsubmittedOriginalBodyFiles": 0,
+      "reconstructedGuardTotal": 64576
+    },
+    {
+      "case": "hq-43",
+      "cell": "budget-vector",
+      "localReplyCount": 10,
+      "providerReceivedReplyCount": 9,
+      "unsubmittedReplyCount": 1,
+      "unsubmittedOriginalBodyFiles": 0,
+      "reconstructedGuardTotal": 64306
+    },
+    {
+      "case": "hq-43",
+      "cell": "budget-hybrid",
+      "localReplyCount": 8,
+      "providerReceivedReplyCount": 7,
+      "unsubmittedReplyCount": 1,
+      "unsubmittedOriginalBodyFiles": 0,
+      "reconstructedGuardTotal": 64625
+    },
+    {
+      "case": "hq-44",
+      "cell": "budget-hybrid",
+      "localReplyCount": 8,
+      "providerReceivedReplyCount": 7,
+      "unsubmittedReplyCount": 1,
+      "unsubmittedOriginalBodyFiles": 0,
+      "reconstructedGuardTotal": 64241
+    },
+    {
+      "case": "hq-45",
+      "cell": "budget-hybrid",
+      "localReplyCount": 10,
+      "providerReceivedReplyCount": 9,
+      "unsubmittedReplyCount": 1,
+      "unsubmittedOriginalBodyFiles": 0,
+      "reconstructedGuardTotal": 64003
+    },
+    {
+      "case": "hq-45",
+      "cell": "budget-vector",
+      "localReplyCount": 6,
+      "providerReceivedReplyCount": 5,
+      "unsubmittedReplyCount": 1,
+      "unsubmittedOriginalBodyFiles": 0,
+      "reconstructedGuardTotal": 64046
+    },
+    {
+      "case": "hq-46",
+      "cell": "budget-vector",
+      "localReplyCount": 10,
+      "providerReceivedReplyCount": 9,
+      "unsubmittedReplyCount": 1,
+      "unsubmittedOriginalBodyFiles": 0,
+      "reconstructedGuardTotal": 64107
+    },
+    {
+      "case": "hq-46",
+      "cell": "budget-hybrid",
+      "localReplyCount": 7,
+      "providerReceivedReplyCount": 6,
+      "unsubmittedReplyCount": 1,
+      "unsubmittedOriginalBodyFiles": 0,
+      "reconstructedGuardTotal": 64364
+    },
+    {
+      "case": "hq-47",
+      "cell": "budget-vector",
+      "localReplyCount": 9,
+      "providerReceivedReplyCount": 8,
+      "unsubmittedReplyCount": 1,
+      "unsubmittedOriginalBodyFiles": 0,
+      "reconstructedGuardTotal": 64457
+    },
+    {
+      "case": "hq-47",
+      "cell": "budget-hybrid",
+      "localReplyCount": 7,
+      "providerReceivedReplyCount": 4,
+      "unsubmittedReplyCount": 3,
+      "unsubmittedOriginalBodyFiles": 0,
+      "reconstructedGuardTotal": 64587
+    },
+    {
+      "case": "hq-48",
+      "cell": "budget-vector",
+      "localReplyCount": 9,
+      "providerReceivedReplyCount": 8,
+      "unsubmittedReplyCount": 1,
+      "unsubmittedOriginalBodyFiles": 0,
+      "reconstructedGuardTotal": 64490
+    }
+  ],
+  "allSavedLocalGuardMessages": [
+    {
+      "case": "hq-02",
+      "cell": "budget-vector",
+      "answerCategory": "pre-call-context"
+    },
+    {
+      "case": "hq-04",
+      "cell": "budget-vector",
+      "answerCategory": "pre-call-context"
+    },
+    {
+      "case": "hq-06",
+      "cell": "budget-vector",
+      "answerCategory": "pre-call-context"
+    },
+    {
+      "case": "hq-19",
+      "cell": "budget-vector",
+      "answerCategory": "pre-call-context"
+    },
+    {
+      "case": "hq-32",
+      "cell": "budget-vector",
+      "answerCategory": "pre-call-context"
+    },
+    {
+      "case": "hq-38",
+      "cell": "sol-hybrid",
+      "answerCategory": "pre-call-context"
+    },
+    {
+      "case": "hq-42",
+      "cell": "budget-vector",
+      "answerCategory": "pre-call-context"
+    },
+    {
+      "case": "hq-42",
+      "cell": "budget-hybrid",
+      "answerCategory": "pre-call-context"
+    },
+    {
+      "case": "hq-43",
+      "cell": "budget-vector",
+      "answerCategory": "pre-call-context"
+    },
+    {
+      "case": "hq-43",
+      "cell": "budget-hybrid",
+      "answerCategory": "pre-call-context"
+    },
+    {
+      "case": "hq-44",
+      "cell": "budget-hybrid",
+      "answerCategory": "pre-call-context"
+    },
+    {
+      "case": "hq-45",
+      "cell": "budget-hybrid",
+      "answerCategory": "pre-call-context"
+    },
+    {
+      "case": "hq-45",
+      "cell": "budget-vector",
+      "answerCategory": "pre-call-context"
+    },
+    {
+      "case": "hq-46",
+      "cell": "budget-vector",
+      "answerCategory": "pre-call-context"
+    },
+    {
+      "case": "hq-46",
+      "cell": "budget-hybrid",
+      "answerCategory": "pre-call-context"
+    },
+    {
+      "case": "hq-47",
+      "cell": "budget-vector",
+      "answerCategory": "pre-call-context"
+    },
+    {
+      "case": "hq-47",
+      "cell": "budget-hybrid",
+      "answerCategory": "pre-call-context"
+    },
+    {
+      "case": "hq-48",
+      "cell": "budget-vector",
+      "answerCategory": "pre-call-context"
+    }
+  ],
+  "missingCountersSummary": {
+    "budget-hybrid": {
+      "cachedPromptTokens": 0,
+      "cacheWriteTokens": 0,
+      "reasoningTokens": 0
+    },
+    "budget-vector": {
+      "cachedPromptTokens": 0,
+      "cacheWriteTokens": 0,
+      "reasoningTokens": 0
+    },
+    "sol-hybrid": {
+      "cachedPromptTokens": 0,
+      "cacheWriteTokens": 0,
+      "reasoningTokens": 0
+    },
+    "sol-vector": {
+      "cachedPromptTokens": 0,
+      "cacheWriteTokens": 0,
+      "reasoningTokens": 0
+    }
+  },
+  "limitations": [
+    "Unknown 429 usage remains unknown; reservations are not consumed tokens or cost.",
+    "RU is captured tool RU; incomplete trace charges and uninstrumented resource activity remain excluded.",
+    "Elapsed minus explicit 429 sleeps still includes retry requests, backend delay, tools, recording and local processing.",
+    "Joint four-judgment pass is supplemental descriptive reporting, not a replacement for frozen primary metrics.",
+    "Interaction is within the consumed eight-document/48-question exploratory pack, one observation per cell."
+  ]
+}

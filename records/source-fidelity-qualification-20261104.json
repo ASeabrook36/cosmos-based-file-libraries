@@ -1,0 +1,112 @@
+{
+  "schema": "fli.source-fidelity.qualification.v1",
+  "status": "qualified-offline",
+  "sourceId": "hq-05",
+  "profile": "microsoft-indexer-source-fidelity-v1",
+  "inputSha256": {
+    "original": "0970916cdf0ca2ffb314a282e9a2d308f41dc048ead33df0d4ec1825305d4dad",
+    "extraction": "28df53d5bc42cd59f16a28b1a476b37d6454cbdc0b1dd070e003403220e9655d",
+    "result": "f01d59cabd1c1b8967ba83792b4608756c0feb916abadd6a2f6a8e82952960e8",
+    "sections": "a3eda43509ede0075e612055525a554405d40e7ecc316ec2dc7840c1402cf82b"
+  },
+  "implementationSha256": {
+    "src/fli/source_fidelity.py": "f147b4dab7ee5f44c305c4a320a0e7c229b2e2cbab4fd157853d61f05910b0c8",
+    "src/fli/ingestion.py": "08b5c39ce84a892787a6af7810c860bce9ad0e9a509f270400fdeb7592bc74f9",
+    "src/fli/reading.py": "f9815d6a56289d1b9c74965bcd5cf6d6767041e99279a3bf0530511a58697abf",
+    "src/fli/presentation.py": "e75c932108101a5f608a6120aa5e3cdebce40c9508acb5603861f49f374bee59",
+    "src/fli/worker/handlers.py": "0c9441899a488f3de81fcb5e2683a02f1d59fffcb70971b9d6da16cb09adb32e",
+    "src/fli/search.py": "5401e0e922befd1a9581386b56d0fc774fef1db591be953bc44a550708e2f2bf",
+    "scripts/qualify_source_fidelity.py": "4b9b06e9a2ea7882588f236936f4cabdb2991429914f36862d7e836dd8f15d54"
+  },
+  "originalFailureStillReproduces": true,
+  "providerFacingRecipeUnchanged": true,
+  "counterfactualExecutionIdChanged": true,
+  "passageTextAndLocationsUnchanged": true,
+  "vectorsUnchanged": true,
+  "passagesSha256": "0220f243a6fc84f0040832df9ec4140551a73be5123b0e72bbb1a59a09311e4a",
+  "vectorsSha256": "e8b249627d6f7ab56bab034b0bbee9c2e3cdfe7a655f5a1f8cce56a15c5daf41",
+  "sectionsSha256": "2d38ba5f5134e3f2c90c921e07a5c030055b994799e5f4c6544acb325e5c0dbe",
+  "coverageSha256": "38e1632e294ea63f66973ad3a41b7a5e076da17bc19090dbba1b2d80849f49ed",
+  "observations": {
+    "wholeSource": {
+      "visuals": "unavailable",
+      "authoredHierarchy": "unavailable",
+      "generatedSummaries": "unavailable",
+      "providerFigureCount": 0,
+      "sourceStructure": "fli.docx-source-blocks.v1",
+      "sourceStructureScope": "docx-main-body-with-provider-only-extras",
+      "sourceStructureLimitations": [
+        "Original structure covers DOCX main-body paragraphs and tables only, not complete original-document structure.",
+        "Headers/footers/page numbers are separately labelled provider-only evidence without original-region mapping.",
+        "Numbering definitions are preserved; printed ordinal markers and semantic qualifier scope are not inferred.",
+        "Footnotes, endnotes, revisions, text boxes, nested tables and visuals are unsupported.",
+        "Fields retain their cached visible text and field properties; no field evaluation is performed.",
+        "Existing passage vectors and locations are unchanged; expand search through outline section selectors."
+      ],
+      "sourceParagraphs": 682,
+      "mergedContinuationParagraphs": 0,
+      "sourceTableCells": 474,
+      "providerOnlyParagraphs": 5,
+      "directPassageToSourceMapping": "unavailable",
+      "sourceStructureRendering": "XML tags/attributes describe structure; enclosed text is source text. Numbered list items retain list identity/depth with unresolved printed markers."
+    },
+    "targetParagraphs": 10,
+    "targetNumberedParagraphs": 8,
+    "targetFinalParagraphUnnumbered": true,
+    "targetFinalParagraphRenderedAsSeparateSibling": true,
+    "targetParagraphTextSha256": [
+      "d739789f2148e15094c8521296ae161d0a472e98d2267c9dd9ad0e1d84966d62",
+      "b94101117c324cc8c3f85582edc23da14355efc72a31551e067e0750e125acc1",
+      "e9a343af8816e6606e68cbd272c031b7e99d1a29b42c34be052d37a5ff93e5ab",
+      "22de2f2db7ce265cd1b668c8c393427b0509d26155ed5ad80850b8a525414021",
+      "59bc588bebb82d2f37132fc8f92fe3c3501d4e738cd61b0dd7e4214ca1248f8c",
+      "8dce624bd0df295186803a950e147a9a3211d32f18fbaf0c1b42d27a6244446b",
+      "97134eb7b936f2a61d7cc40e7ee91edac673b71115a556606ec0208f33b8f8d8",
+      "fed8b2d921cb542bd27f5905456a40ec6f9eb15212d9a5b373a0f3c43b4efae5",
+      "7a2ac4dc2f9e2fcbb1f37fb6449bc963108718ffb53f315ce18abe3303f77d62",
+      "2adb9d4d0ad19d927d673e5a0515e3a6bf8d7079662d7d9fea4c982a9f947498"
+    ],
+    "targetRunsSha256": [
+      "38074b93f47811721325e156a827c5f3f71cdca6b6b354a0df7892aa72b4f8aa",
+      "a679db27505fe65734802976687ad2103396be7ef22a5444a0c5d614e7710ab9",
+      "0554cf8d9e2c461665acbb3b7fed0eeb76e5b444d37e7cc65c4e3050e8f845dc",
+      "8d4e6cc1b1f85d44a36366ac98af1aff6539ea205a4f1b92377e3b071ac09b27",
+      "0eb81ff4855a64d30feb0a5b0c96d21061c3053abcbc7d057f9a111c6246cc31",
+      "2610bfdc92d6340288085b18c036f7a16badf096eab270bfa3916c16d55006f7",
+      "1368b43098b6a62eaa1d4b9b04a7949b74fdd159debfe4fc3ac72bd8275649b4",
+      "db820b259132a4d96da0e7c42145d3847e174a3c7ad8a6978b4bc250bfae9b5b",
+      "271da44589d57ea73ffbd2e932d6df418d1664eb785c1b2e88d73853c565697b",
+      "37f6488c38e0aee27df4a69edeaf05220398147c3b036a43a478783d6fb1b73d"
+    ],
+    "numberingDefinitions": 47
+  },
+  "tokens": {
+    "wholeSource": {
+      "artifactTokens": 368935,
+      "projectedSectionsOnlyTokens": 76052,
+      "rawEnvelopeTokens": 409908,
+      "tokenizer": "cl100k_base",
+      "scope": "actual source sections in a fixed generic envelope; not measured provider context or billing",
+      "compactEnvelopeTokens": 86603,
+      "referencesEnvelopeTokens": 78160
+    },
+    "target": {
+      "artifactTokens": 2179,
+      "projectedSectionsOnlyTokens": 553,
+      "rawEnvelopeTokens": 2870,
+      "tokenizer": "cl100k_base",
+      "scope": "actual source sections in a fixed generic envelope; not measured provider context or billing",
+      "compactEnvelopeTokens": 876,
+      "referencesEnvelopeTokens": 892
+    }
+  },
+  "cloudCalls": 0,
+  "modelCalls": 0,
+  "newConfirmationQuestions": 0,
+  "limits": [
+    "Counterfactual local profile/job rebind, not a new live provider execution.",
+    "Consumed-source regression; no answer-quality or latency improvement claim.",
+    "Printed numbering markers, complete original-document fidelity and direct passage-to-source mapping remain unavailable.",
+    "Live distributed lifecycle, Azure publication and larger confirmation remain unrun."
+  ]
+}

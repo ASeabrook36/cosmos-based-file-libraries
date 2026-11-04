@@ -78,6 +78,10 @@ def project(response):
             elif key in {"location", "sourceScope"} and isinstance(item, dict):
                 # Internal layout figure IDs are not printed source captions/locators.
                 out[key] = {k: v for k, v in item.items() if k != "figure"}
+            elif key == "sourceStructure" and isinstance(item, dict):
+                from fli.source_fidelity import evidence_structure
+
+                out[key] = evidence_structure(item)
             else:
                 out[key] = visit(item, context)
         if "sectionId" in value and "text" not in value and "estimatedTokens" in value:
@@ -114,6 +118,14 @@ def project(response):
                 if "chunkIndex" in value and "location" not in value:
                     out["locationStatus"] = "neighbor_location_not_returned_do_not_inherit_hit_location"
                 where = ", ".join(f"{k} {v}" for k, v in location.items() if k != "figure")
+                if value.get("sourceStructure") and (coordinate := location.get("originalCoordinate")):
+                    if coordinate["kind"] == "tableCell":
+                        where = (
+                            f"source table {coordinate['table'] + 1}, row {coordinate['row'] + 1}, "
+                            f"column {coordinate['column'] + 1}"
+                        )
+                    else:
+                        where = f"source paragraph {coordinate['paragraph']}"
                 out["citation"] = f"{name} ({where})" if where else name
         return out
 

@@ -1,0 +1,64 @@
+{
+  "schema": "fli.hybrid-model-pilot.review-receipt.v1",
+  "status": "accepted",
+  "producerCommit": "8ead7998b175ed5dbc80bd0bdd66516e2b519e18",
+  "exploratory": true,
+  "uniqueQuestions": 48,
+  "reviewedTurns": 192,
+  "primaryReviewerTurns": [
+    64,
+    64,
+    64
+  ],
+  "independentSecondReviewTurns": 28,
+  "rootFieldAdjudications": 6,
+  "provisionalBatchesRebound": 26,
+  "exactFinalPacketAndSourceBytesVerified": true,
+  "sourceJudgmentsChangedByArithmeticAudit": false,
+  "scoringDiscrepancies": [],
+  "evidenceSha256": {
+    "scorecard-candidate.json": "e8805c8060ca959de792a0297b4f0d502e51851dc6f51511c440e451ae9828b6",
+    "independent-usage-supplement-candidate.json": "ec39e9684fbe4578642b1dfd8b71a95c2a07736fd0e66b0cf4be8ec71f197370",
+    "independent-score-usage-audit.json": "808586b6ec7b020993ea84646bbb30ab8c9010d627528ce61287d08a905f2e5a",
+    "audit_final_score.py": "22fdd8d89f5b77b8d4982e27b21fdb12ce7f07eb47a99ec25a01e730cd909052",
+    "parent-result-acceptance.json": "f7fd6071d551e2104cb37d1c4f4ee05c3900073d85dab33aec7c4ce9529974cf",
+    "review-acceptance.json": "5d60e18f28f7783d2c1e90944239763446e7130d4994be2737b8d226a92e77fe",
+    "reviews-adjudicated-list.json": "5d07bd1561923c6237f6c56ec2abd99c7c4368ff1e228121a05c6cdc657e12dc",
+    "review-serialization.json": "36191db920a716daeab73f939782680dedd47a12349f603aeda579378e49dc37",
+    "review-verification/summary.json": "b55fed1b524f6ab5d2338cdb4fe8604088098255ffa5e53d898210b8be632a04",
+    "analysis-v4-acceptance.json": "60d3fb9f1bb51cc7ee3b54bd30dde63d8a42710fc85a463e3aff3b356dd41735",
+    "analysis-v4-final-diagnostic.json": "d038e1cae92a00df407443fa8969e57db89eb43ed13055bd1cbc6ddfd4df9a0d",
+    "analysis-v4-hq38-proof.json": "d38e05824251e23fd5b3648afa7903f07fe58f914eee46260b5c77097d46cd66"
+  },
+  "deliveryAnalysis": {
+    "version": "v4",
+    "originalVerifierPasses": 174,
+    "correctedLocalGuards": 18,
+    "unsentRepliesExcluded": 22,
+    "noBodyTailCorrections": 17,
+    "sourceBodyTailCorrections": 1,
+    "qualityRubricUnchanged": true,
+    "producerAndRawAnswersUnchanged": true
+  },
+  "accounting": {
+    "successfulCalls": 983,
+    "unknown429Attempts": 113,
+    "cachedReasoningDetailMissingCalls": 0,
+    "conditionalSubtotalDefectTriggered": false,
+    "incompleteRuTurns": 68,
+    "unknownChargeToolTraces": 78
+  },
+  "validation": {
+    "repositoryTestsPassed": 1397,
+    "repositoryTestWarnings": 14,
+    "lintPassed": true,
+    "archiveProcedureTestsPassed": 13,
+    "privacyPassed": true
+  },
+  "limitations": [
+    "Consumed eight-document/48-question pack; not fresh confirmation.",
+    "Assistant source review with hidden labels; style can reveal model, coordinator instrumentation had labels.",
+    "Per-question source and citation sensitivities retained privately; no general accuracy or intrinsic model-capacity claim.",
+    "Unknown failed-provider usage and incomplete RU remain unknown; illustrative token pricing is not Azure spending."
+  ]
+}

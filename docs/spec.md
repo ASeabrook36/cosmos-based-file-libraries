@@ -12,6 +12,13 @@ selector handles in the consuming `IndexClient`, with explicit legacy rollback.
 The service's REST defaults, compact evidence format, query policies and ingestion
 profiles retain their existing behavior. This is not a provider or storage choice.
 
+The [hybrid quality experiment](hybrid-quality-comparison.md) (E67) freezes a
+source-recall and answer-quality comparison. Its [completed bounded result](hybrid-quality-results-20261103.md)
+shows improved initial source recall for hybrid, without an established final-answer
+quality gain under matched large-context controls. Both arms expose a source-structure
+fidelity limitation. The pack is consumed; broader quality and production gates
+remain open. Application defaults and architecture are unchanged.
+
 ## 1. Scope
 
 The File Library Index (the **index**) replaces Azure AI Search as the store and search engine behind the platform's file libraries. It:

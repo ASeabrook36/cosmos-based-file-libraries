@@ -1,0 +1,28 @@
+{
+  "pilotScorecardSha256": "e8805c8060ca959de792a0297b4f0d502e51851dc6f51511c440e451ae9828b6",
+  "status": "observed_workload_calibration_not_budget_or_launch_authorization",
+  "observedTurnsPerModel": 96,
+  "illustratedConfirmationTurns": 960,
+  "usageScope": "known successful Responses;113 failed mini attempts have unknown usage",
+  "models": {
+    "sol": {
+      "meanKnownInputTokensPerTurn": 89667.09375,
+      "meanKnownOutputTokensPerTurn": 463.5520833333333,
+      "observedCachedInputFraction": 0.6519625080782027,
+      "sameWorkload960TurnsWithObservedCacheUsd": 69.98064,
+      "sameKnownTokens960TurnsWithoutCacheUsd": 176.61092
+    },
+    "budget": {
+      "meanKnownInputTokensPerTurn": 165292.0,
+      "meanKnownOutputTokensPerTurn": 1755.0104166666667,
+      "observedCachedInputFraction": 0.7475417241407126,
+      "sameWorkload960TurnsWithObservedCacheUsd": 46.523277,
+      "sameKnownTokens960TurnsWithoutCacheUsd": 126.591885
+    }
+  },
+  "limitations": [
+    "Reused small pack can overstate cache reuse. New40-document source inventory, repaired representation and960-turn navigation matrix can change tokens and retries.",
+    "Not an Azure bill or ceiling; excludes reviewer, extraction, embedding, storage, database, hosting and unknown failed-request charges.",
+    "Keep conservative low/central/high scenarios; freeze actual resource and spend ceilings only after new source/representation preflight."
+  ]
+}

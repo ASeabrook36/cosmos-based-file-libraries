@@ -238,6 +238,10 @@ This project avoids the problem: agents choose libraries by description and sear
 
 ### E21. Hybrid search runs; its quality is unmeasured · Measured (execution only)
 
+Later evidence: [E67 completed quality pilot](hybrid-quality-results-20261103.md),
+2026-11-03, measures source recall and reviewed answers in a separate fixed scope.
+E21 below remains the historical execution-only observation.
+
 Hybrid queries (`ORDER BY RANK RRF(VectorDistance(…), FullTextScore(…))`) executed successfully on a live account. RRF (Reciprocal Rank Fusion) merges the vector and keyword result lists by rank position rather than by score.
 
 Their ranking quality was never measured. The local Cosmos emulator rejects `FullTextScore`, so hybrid can only be tested against a real account.
@@ -478,7 +482,9 @@ These are the honest limits of the evidence. Phase 0 and Phase 4 of `build-plan.
 
 - **N1. ~~This exact configuration has never been built.~~ Built and passing at small scale (Phase 0).** float16, spherical, `indexingSearchListSize` 300, a shard key and hybrid search deployed together, and their stored definitions match `cosmos/*.json`. The canary passed at 1,500 chunks in one library (E8, E12, E25). What remains open is behaviour at scale (N11).
 - **N2. Library-only sharding is inferred, and so is partition-key routing at scale.** The source measurements cover type plus owner, not owner alone, and none of their queries supplied a partition key (E57). Library alone means one query per search instead of one per document type. Small libraries are scanned either way (E12), so the open question is large shared libraries (10,000–100,000+ chunks). A comparison run on such libraries settles it.
-- **N3. Hybrid ranking quality is unmeasured** (E21). Until Phase 1 it had never actually run ranked (E27); the source project's one hybrid check recorded only row counts and RU, not whether results were ranked (E57).
+- **N3. Hybrid ranking quality was unmeasured in the original evidence** (E21).
+  The later [E67 quality pilot](hybrid-quality-results-20261103.md) measures a bounded
+  procurement/DOCX scope; broad quality and scale remain open. Until Phase 1 it had never actually run ranked (E27); the source project's one hybrid check recorded only row counts and RU, not whether results were ranked (E57).
 - **N4. A library spanning physical ranges and global top-k merging remain untested.** R1 (E65) verified a two-range container, but its library occupied only one range. Prefix-vector calls stayed on that range in complete visible telemetry; all 60 hybrid calls visibly contacted both. This does not establish split-library ranking, many-range behavior or absence of additional SDK requests where telemetry is incomplete. A split-library reproduction must verify document placement and query winners in different ranges before claiming correct global merging or changing routing/layout.
 - **N5. The design depends on preview features** (E58, checked 2026-10-28). **Sharded DiskANN** (`vectorIndexShardKey`, public preview since April 2025, no GA notice) is what gives each library its own vector index; without it a library search becomes a filtered search over the partition's whole index, the layout E2 found much more expensive. **Filtered DiskANN** (public preview since May 2025) is the feature that routes a filtered search to its shard. The **spherical quantizer** (public preview since May 2026) has a GA fallback, product quantization, at somewhat lower recall (E6). *Corrected 2026-10-28:* this entry previously named only spherical.
 - **N6. Microsoft asks to be contacted, and the route is uncertain.** Microsoft's vector-search (updated 2026-09-29), sharded DiskANN (2026-04-27) and performance-tips (2026-05-08) pages, read 2026-10-28, all ask users of vector search on containers with hierarchical partition keys to email the Cosmos search team so the account can be configured. The source project reports that this address rejected an external message on 2 August 2026, as a group that does not accept external senders (E57); that is not verified here. *Not resolved.* The remaining route is an Azure support request, by inference; no Microsoft page names it for this purpose. Treat Microsoft's confirmation as a production prerequisite.
@@ -1446,3 +1452,118 @@ authorization, deletion, budget refusal and legacy compatibility. They establish
 integration mechanics, not a new answering-quality or efficiency measurement.
 The original 18.8542783% result and unmet 20% target remain unchanged. Live cloud,
 production and broader provider/format gates are not closed by this integration.
+
+## E67 — Hybrid quality confirmation prepared; cloud gates blocked (2026-11-02)
+
+The [coordinator report](hybrid-quality-comparison.md) and
+[sanitized preparation receipt](../records/hybrid-quality-preparation-20261102.json)
+freeze eight fresh complete DOCX sources, 48 questions, 104 original regions and
+62 facts. Independent reviewers checked all questions against originals before
+any measured retrieval or answering. R0/I1 questions remain development evidence;
+this fresh pack had not been consumed at the initial checkpoint. The retained Microsoft layout profile,
+accepted selector handles, compact evidence, exact Sol revision, medium reasoning,
+8k output and 200k context remain fixed. Query tokenization/default RRF weights
+and the required vector-versus-hybrid routing distinction are documented unchanged.
+
+New measurement tools bind query embeddings, original source/generation/metadata,
+stored-row ETags, deployed model versions, actual process settings and loaded code.
+They preserve every attempt, prevent selective replay and separate initial search,
+neighbor expansion, adaptive agent search and complete-file recovery. Source-based
+manual judgments remain distinct from string-match diagnostics. No application or
+container policy changed. The integrated harness and independently reviewed
+failed-scope recovery helper passed 1,205 tests, lint, format and privacy checks.
+
+Preparation reproduced E17's observable failure signature: HTTP 500 converting
+`float16` in the stored vector policy, including an ordinary scoped metadata query.
+Stored policy readback still worked. Cause is not established. Two atomic creation
+attempts for the same replacement target failed with `Invalid capability
+EnableNoSQLVectorSearch`, including a retry after the operator removed a spending
+limit. Actual subscription state was `Enabled` / spending limit `Off`, and ARM
+template validation passed. A documented two-stage attempt created that same
+empty account, but its explicit vector enablement failed with the same error.
+Guarded empty-account deletion completed. Independent authenticated HTTP 404s and
+the later exact-target verifier confirm absence of that account; the planned
+queue and worker are also absent. A different provider-specific 404 format had
+stopped an earlier read-only observer; no deletion was repeated or absence assumed.
+No database/container, new queue/worker, fresh canary or temporary answering
+deployment reached execution. Resource-management delays after subscription
+reactivation are documented, but these observations do not establish the cause.
+
+The record includes all 26 observed failed-run ingestion attempts and the known
+28,450.86 instrumented chunk-store RU across them, including collision-verification
+reads. Three attempts have complete charge visibility, 21 partial and two missing;
+18 attempts have broker delivery numbers above one. Provider embedding/retry
+meters and billed totals remain unavailable. Frozen
+R0/P1/I1 catalogues, source metadata and tools remain unchanged, as do the worker and
+actual embedding deployment, including post-billing checks. The eight uploads
+produced seven completed plans containing 33 possible chunk IDs; three published
+documents reported six chunks, not a verified physical inventory. The reviewed
+exact-scope recovery precheck found two chunks and failed on the third with E17,
+before any delete attempt. Thirty candidates were not reached. The owned library
+remains fenced, with live source/checkpoint data and private archives retained.
+Complete cleanup and late absence checks remain unknown; ordinary worker cleanup
+and scheduled reconciliation are not validated by this exception recovery.
+
+**Quality conclusion at the 2026-11-02 checkpoint: unavailable.** Zero of 96 direct searches and zero of 192
+answering turns executed. There are no paired wins/losses/ties or ranking winner.
+Restore healthy same-policy infrastructure and run the committed, unchanged
+handoff before further efficiency tuning. At that checkpoint the 48 questions remained fresh. R3,
+ordinary healthy-worker cleanup, broker redelivery, broad concurrency/scale,
+production authentication and M1 scheduled orphan discovery remain open.
+
+The subsequent [cross-session review](../records/hybrid-quality-consistency-review-20261102.json)
+verified the same Azure CLI/compiled-ARM deployment path and materially identical
+template/parameters as the successful recovery. It identified missing fresh
+data-plane health before ingestion and weaker mounted-workflow binding than M1.
+Those become explicit restart prerequisites. It found no M1 cloud overlap or
+index-versioning cloud use, and no tool/configuration mismatch explaining the
+Azure failures. Frozen benchmark controls and all numerical observations remain
+unchanged; the chunk-store accounting label above corrects the earlier write-only
+description.
+
+**Restart checkpoint, 2026-11-03:** the [fresh bounded read check](../records/hybrid-quality-health-recheck-20261103.json)
+now succeeds against the same container incarnation and policies, including the
+exact formerly failing chunk. The [restart receipt](../records/hybrid-quality-restart-20261103.json)
+also establishes fresh real-text writes/reads, scoped/vector/hybrid operations,
+exact-owned cleanup and late absence, and 19 actual mounted workflow/worker/model
+binding checks. No provisioning retry or capability enablement was attempted.
+These observations do not establish the cause of recovery or a ranking result.
+The executable ingest gate now requires hash-bound current evidence and a declared
+partial-ingestion cleanup procedure. Frozen controls and protected snapshots remain
+unchanged; the confirmation matrix remains unconsumed at this checkpoint.
+
+
+**Completed confirmation, 2026-11-03:** the [accepted report](hybrid-quality-results-20261103.md)
+and [completion receipt](../records/hybrid-quality-completion-20261103.json) supersede
+only the pending quality status above. The cause of Azure recovery and fresh-account
+capability provisioning remain unestablished; no provisioning retry was needed.
+The same frozen controls produced eight ready originals, 36 chunks, 96 direct
+searches and 192 answer turns. This branch was not rebased onto main.
+
+On 40 answerable questions, all-required initial evidence improved from vector
+24/40 to hybrid 36/40; expanded evidence improved from 30/40 to 37/40. Initial
+macro region recall was 62.08% versus 90.83%, expanded 75.83% versus 93.33%.
+Final answer completion/support was vector 80/80 versus hybrid 79/80; citation
+accuracy 80/80 versus 77/80. Both appropriately abstained in 16/16 missing-value
+turns. Repeats are correlated; this is not 80 independent answerable questions.
+The single strict completion difference has a documented lenient sensitivity.
+Both arms lost complete-region credit where extraction flattened a definition's
+list/qualifier structure; final required-region recall was 99.17% in each arm.
+Opaque manual review, independent adjudication and a 9,223-check reporting audit
+preceded acceptance. Source recall and answer correctness remain distinct outcomes.
+
+Hybrid's recorded answering input was 4.29% lower, but retrieval RU was higher
+and incomplete, and rate-limit waits/caching confound elapsed comparisons. There
+is no established final-answer quality gain, billed-cost saving or production
+latency result. Keep defaults and retain hybrid as a retrieval-quality candidate;
+prioritize source fidelity and a broader newly frozen quality confirmation.
+All 48 questions are now consumed. No R3, physical policy or representation change
+was made; the accepted earlier I1 18.8542783% benefit remains unchanged.
+
+Only the successful evaluation scope and its temporary answering deployment were
+removed, with independent absence checks and protected-scope preservation. Raw
+receipts and sources remain in a hash-verified private archive outside Git.
+The earlier failed scope remains fenced, its cleanup unresolved. Scheduled orphan
+discovery, production authentication/redelivery/concurrency/lifecycle, large-index
+engagement and library-spanning-range merge gates remain open. Ordinary cleanup
+is not exceptional per-chunk-absence-before-blob ordering or indefinite absence.

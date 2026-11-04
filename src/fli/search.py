@@ -326,7 +326,14 @@ class Searcher:
                 "contentRevision": documents[c["documentId"]].get("contentRevision", 0),
                 "evidenceId": reference(documents[c["documentId"]], "chunk", c["chunkIndex"]),
                 "sourceScope": c.get("location") or {},
-                "documentTokens": (documents[c["documentId"]].get("fullText") or {}).get("tokenCount"),
+                "documentTokens": (documents[c["documentId"]].get("fullText") or {}).get(
+                    "compactSectionsTokenCount", (documents[c["documentId"]].get("fullText") or {}).get("tokenCount")
+                ),
+                **(
+                    {"documentTokenEstimateScope": "projected_sections_only"}
+                    if "compactSectionsTokenCount" in (documents[c["documentId"]].get("fullText") or {})
+                    else {}
+                ),
                 "processingCoverage": documents[c["documentId"]].get("processingCoverage"),
                 "representation": "extracted_sections"
                 if (documents[c["documentId"]].get("fullText") or {}).get("generation") == c["generation"]

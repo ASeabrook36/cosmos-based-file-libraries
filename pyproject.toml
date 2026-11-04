@@ -39,6 +39,7 @@ demo = [
 dev = [
   "pytest>=8,<9",
   "ruff>=0.6",
+  "numpy>=2,<3",  # exact-vector reference tests; no application dependency
   "openai>=1.50,<4",  # unit tests exercise the optional demo's chat transport and usage accounting
   "numpy>=2,<3",  # tests exercise the retrieval comparison's exact-cosine reference
 ]

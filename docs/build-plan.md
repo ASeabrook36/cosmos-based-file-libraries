@@ -7,6 +7,41 @@ retain explicit controls. Main's independent local-setup documentation is retain
 This local integration does not rerun consumed confirmation questions, touch the
 hybrid comparison, change ingestion ownership, or include index versioning.
 
+**Hybrid quality comparison complete, 2026-11-03 (E67):** the
+[accepted result](hybrid-quality-results-20261103.md) completes 96 direct searches
+and 192 fixed-model answer turns without rebasing onto main. Hybrid improves
+all-required initial retrieval from 24/40 to 36/40 and expanded retrieval from
+30/40 to 37/40. Final supported completion is 80/80 vector and 79/80 hybrid; the
+single strict difference has a documented lenient sensitivity. Both abstain
+appropriately on 16/16 absent-value turns. No final-answer gain is established.
+Keep defaults, retain hybrid as a quality candidate, and investigate shared source
+structure/numbering fidelity before a broader, newly frozen quality confirmation.
+This pack is consumed; no R3 or efficiency tuning starts. Successful-scope cleanup
+and protected snapshots are verified; the old fenced scope and production/scale
+gates remain open. See the linked report for receipts and exact limitations.
+
+**Hybrid quality restart gates passed, 2026-11-03 (E67):** the same isolated
+container now serves the previously failing reads. Fresh owned real-text
+writes/reads/vector/hybrid queries and exact cleanup passed, as did all 19
+mounted workflow/worker/model binding checks. An executable gate now enforces
+fresh evidence and a partial-ingestion cleanup declaration before uploads.
+At that restart checkpoint the frozen comparison was unchanged and confirmation
+questions were unconsumed. Corpus readiness, source recall and answer quality followed;
+no efficiency tuning or main-branch rebase is included.
+
+**Hybrid quality confirmation prepared, execution blocked, 2026-11-02 (E67):**
+the [controlled comparison](hybrid-quality-comparison.md) freezes eight fresh
+originals and 48 source-labeled questions, plus matched direct/replay tooling.
+The existing account reproduced E17 on scoped queries and an owned chunk point
+read. Two atomic attempts for one replacement target rejected its required vector
+capability. After a billing-limit change, a staged empty account could be created,
+but its vector enablement still failed. Exact owned-scope recovery stopped before
+deletion; source/checkpoint archives remain retained. All 1,205 local tests pass.
+None of the 96 direct searches or 192 answering turns ran. Restore a
+healthy same-policy isolated foundation, then execute the unchanged pack before
+further tuning. No ranking recommendation or R3 comparison follows from these
+operational failures.
+
 **Selector-only I1 complete, 2026-11-02 (E66):** the
 [coordinator result](retrieval-i1.md) records 13 live lifecycle gates passed
 before all 64 reserved held-out turns. Both cells retain reviewed source and

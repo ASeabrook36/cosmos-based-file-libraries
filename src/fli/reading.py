@@ -89,6 +89,7 @@ def manifest(doc: Record) -> Record:
     full = doc.get("fullText") or {}
     active = doc.get("activeGeneration")
     return {
+        **({"sourceSha256": doc.get("sha256")} if (doc.get("processingCoverage") or {}).get("sourceStructure") else {}),
         "documentId": doc["id"],
         "fileName": doc.get("fileName"),
         "generation": active,
@@ -105,6 +106,15 @@ def manifest(doc: Record) -> Record:
         "description": doc.get("description"),
         "descriptionSource": "generated-from-opening" if doc.get("description") else None,
         "estimatedTokens": full.get("tokenCount"),
+        **(
+            {
+                "compactDocumentTokens": full.get("compactSectionsTokenCount"),
+                "compactDocumentTokenEstimateScope": full.get("compactSectionsEstimateScope"),
+                "compactDocumentTokenTokenizer": full.get("compactSectionsTokenizer"),
+            }
+            if (doc.get("processingCoverage") or {}).get("sourceStructure")
+            else {}
+        ),
         "tokenizer": full.get("tokenizer"),
         "representation": "extracted_sections" if full.get("generation") == active and active else "indexed_chunks",
         "chunkCount": doc.get("chunkCount"),
@@ -134,6 +144,8 @@ def region_matches(section, location, sections):
     for key in ("page", "slide", "paragraph"):
         if key not in location or key not in here:
             continue
+        if key == "paragraph" and "paragraphOrdinals" in here:
+            return location[key] in here["paragraphOrdinals"]
         if key == "paragraph" and here.get("paragraphEnd") is not None:
             return here[key] <= location[key] <= here["paragraphEnd"]
         if key == "paragraph" and section.get("contentKind", "text") == "text":
@@ -209,6 +221,12 @@ async def select_sections(searcher, library_id, doc, sections, scope, cost, asse
 async def load_sections(searcher, blobs, library_id, doc, cost):
     document_id, generation = doc["id"], doc["activeGeneration"]
     full = doc.get("fullText") or {}
+    fidelity = (doc.get("ingestionJob") or {}).get("profile", {}).get("id") == "microsoft-indexer-source-fidelity-v1"
+    if fidelity and (
+        full.get("generation") != generation
+        or (doc.get("processingCoverage") or {}).get("sourceStructure") != "fli.docx-source-blocks.v1"
+    ):
+        raise ApiError(409, "document_text_incomplete", "source structure descriptor is unavailable; reprocess")
     if full.get("generation") == generation:
         try:
             data = await blobs.download(full["blobPath"])
@@ -225,6 +243,19 @@ async def load_sections(searcher, blobs, library_id, doc, cost):
             or not all(isinstance(s, dict) and isinstance(s.get("text"), str) for s in sections)
         ):
             raise ApiError(409, "document_text_incomplete", "the extracted text artifact is incomplete; reprocess")
+        if (
+            fidelity
+            or (doc.get("processingCoverage") or {}).get("sourceStructure")
+            or any("sourceStructure" in section for section in sections)
+        ):
+            from fli.source_fidelity import validate_sections
+
+            try:
+                validate_sections(sections, doc)
+            except (KeyError, TypeError, ValueError) as exc:
+                raise ApiError(
+                    409, "document_text_incomplete", "source structure binding is incomplete; reprocess"
+                ) from exc
         representation = "extracted_sections"
     else:
         # Pre-enhancement documents remain usable. Preserve every indexed passage in
@@ -417,8 +448,11 @@ async def read_documents(
             public_sections.append(public)
         item = {**manifest(doc), "representation": representation, "sections": public_sections}
         if view != "raw":
-            item["documentTokens"] = (doc.get("fullText") or {}).get("tokenCount")
-            item["documentTokenTokenizer"] = (doc.get("fullText") or {}).get("tokenizer")
+            descriptor = doc.get("fullText") or {}
+            item["documentTokens"] = descriptor.get("compactSectionsTokenCount", descriptor.get("tokenCount"))
+            item["documentTokenTokenizer"] = descriptor.get("compactSectionsTokenizer", descriptor.get("tokenizer"))
+            if "compactSectionsTokenCount" in descriptor:
+                item["documentTokenEstimateScope"] = "projected_sections_only"
         if assets is not None:
             candidates = [
                 a
