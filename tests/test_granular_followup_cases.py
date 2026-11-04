@@ -158,3 +158,23 @@ async def test_exact_identifier_checks_use_delivered_paragraph_but_leave_semanti
     source[0]["sourceNavigation"]["sourceSha256"] = "0" * 64
     with pytest.raises(ValueError, match="publication differs"):
         followup.inspect_turn(cases[1], {"answer": answer}, calls, source)
+
+
+async def test_outline_inspections_followed_by_full_source_do_not_count_as_delivered_authored_outline():
+    env, cases, source = await prepared()
+    inspection = {"mode": "outline", "documents": [env.pin], "includeText": False}
+    manifest = read(env, inspection)
+    assert manifest["disposition"] == "inspected" and not manifest["documents"][0].get("outline")
+    full_selector = {"mode": "full", "documents": [env.pin]}
+    full = read(env, full_selector)
+    paragraph = next(s for s in full["documents"][0]["sections"] if followup.RULE in s["text"])
+    answer = json.dumps({key: paragraph[key] for key in ("sectionId", "containingSectionId", "citation")})
+    calls = [
+        successful_call(inspection, manifest, identity="inspection"),
+        successful_call(full_selector, full, identity="full"),
+    ]
+    observed = followup.inspect_turn(cases[1], {"answer": answer}, calls, source)
+    assert observed["sourceParagraphDelivered"] and observed["sourceParagraphTextMatches"]
+    assert observed["exactReportedFields"]
+    assert observed["outlineBeforeSourceRead"] is False
+    assert observed["manualReview"]["overallPass"] is None

@@ -223,7 +223,13 @@ def inspect_turn(case, turn, successful_model_calls, source_sections):
         )
     else:
         source, _, target = _source_target(source_sections, RULE)
-        outlines = [i for i, row in enumerate(reads) if row["request"].get("mode") == "outline"]
+        outlines = [
+            i
+            for i, row in enumerate(reads)
+            if row["request"].get("mode") == "outline"
+            and isinstance(row["document"].get("outline"), list)
+            and row["document"]["outline"]
+        ]
         records = [
             (i, part)
             for i, row in enumerate(reads)
