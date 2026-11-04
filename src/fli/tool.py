@@ -301,7 +301,10 @@ def tool_definitions(library: Mapping[str, Any]) -> list[dict[str, Any]]:
         read["function"]["description"] = common + (
             "\nRead supported DOCX main-body structure or exact Markdown ATX source blocks. "
             "mode=outline returns immediate children: authored sections/subsections, tables, cells and paragraphs "
-            "(Markdown: headings and blocks). Copy outlineSelector to drill down; "
+            "(Markdown: headings and blocks), without body text. Use includeText=true (the default) to receive "
+            "outline entries. includeText=false is size/coverage inspection only: it returns neither source text "
+            "nor outline entries in any mode. After inspection, copy the returned readSelector with includeText=true "
+            "to receive the inspected scope under the same budget. Copy outlineSelector to drill down; "
             "paginate with afterSection/sectionLimit "
             "until hasMore=false. Source-size estimates exclude response overhead and do not guarantee a fit. "
             "Copy readSelector for a paragraph/cell or a section's own content. Copy subtreeSelector to include "
@@ -322,6 +325,10 @@ def tool_definitions(library: Mapping[str, Any]) -> list[dict[str, Any]]:
             "Full reads are all-or-nothing, complete=true only for full source representation. Selected reads "
             "report selectionComplete with documentComplete=false. All modes enforce maxTokens (default 32000, "
             "maximum 200000) without clipping. Narrow or paginate after refusal; disclose omissions."
+        )
+        read["function"]["parameters"]["properties"]["includeText"]["description"] = (
+            "True (default): deliver source text in full/selected mode, or navigation entries without body text "
+            "in outline mode. False: size/coverage inspection only, with no source text or outline entries."
         )
         properties = read["function"]["parameters"]["properties"]["documents"]["items"]["properties"]
         properties.update(

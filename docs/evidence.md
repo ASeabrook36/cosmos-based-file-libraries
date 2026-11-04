@@ -1633,3 +1633,15 @@ source tokens; these are not provider billing quantities. Owned absence passed
 twice 65.31 seconds apart; 14 protected libraries/48 documents and all 999 prior
 private evidence files are unchanged. The two turns are consumed; no rerun,
 deployment, merge or larger study occurred.
+
+**Outline-inspection contract repair:** the
+[focused clarification](granular-outline-contract.md) addresses the observed
+`includeText=false` confusion in the granular tool description, parameter schema
+and returned inspection guidance together. False remains a content-free size/
+coverage inspection in every mode; true/default is required to obtain outline
+entries. Granular inspection replies now provide a same-scope, snapshot-pinned
+next-read selector with true and the effective unchanged budget. No ingestion,
+stored-source, permission, lifecycle, query or context-accounting change is made.
+The next sealed one-turn gate requires actual outline entries, a copied returned
+selector, focused source delivery and a correct citation; whole-file fallback
+cannot substitute. Earlier results and the separate overhead work remain intact.

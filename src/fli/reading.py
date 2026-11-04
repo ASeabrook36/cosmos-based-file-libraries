@@ -620,9 +620,33 @@ async def read_documents(
         "usage": {"requestCharge": round(cost.request_charge, 2), "totalMs": elapsed},
         "nextAction": None,
     }
+    inspection_selector = None
+    if not include_text and (library.get("ingestionProfile") or {}).get("id") == "custom-granular-v1":
+        inspection_selector = {
+            "mode": mode,
+            "documents": [
+                {
+                    **(scopes or {}).get(doc["id"], {}),
+                    "documentId": doc["id"],
+                    "generation": doc["activeGeneration"],
+                    "contentRevision": doc.get("contentRevision", 0),
+                }
+                for doc in records
+            ],
+            "includeText": True,
+            "maxTokens": max_tokens,
+        }
+        if mode == "outline":
+            inspection_selector.update(afterSection=after_section, sectionLimit=section_limit)
     if view != "raw":
         result = await asyncio.to_thread(
-            compact_response, response, max_tokens, include_text, view=view, selectors=selectors
+            compact_response,
+            response,
+            max_tokens,
+            include_text,
+            view=view,
+            selectors=selectors,
+            inspection_selector=inspection_selector,
         )
         tokens = result["metadata"]["budget"]["requiredTokens"]
         fits = result["metadata"]["budget"]["fits"]
@@ -653,6 +677,10 @@ async def read_documents(
                 item.pop("outline", None)
                 item.pop("candidateImages", None)
                 item.update(selectionComplete=False, documentComplete=False)
+            if inspection_selector is not None:
+                from fli.selector_hints import inspection_hints
+
+                response = inspection_hints(response, inspection_selector)
     elapsed = round((time.perf_counter() - started) * 1000, 1)
     response["usage"]["totalMs"] = elapsed
     log.info(

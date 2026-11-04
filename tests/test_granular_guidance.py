@@ -21,10 +21,12 @@ def tools(profile):
     return IndexClient("http://testserver", "k", http=client).tools(library, "reader")
 
 
-# Captured through IndexClient.tools before this description-only mitigation.
+# Captured through IndexClient.tools before the granular-only guidance mitigations.
 BASELINE_OTHER_PROFILES = "2a2680c2db8c34cc0cc3dbe0bd9d6bc295e17dd894a6c6ead8f2cbfc338ad605"
 BASELINE_GRANULAR_OTHER_TOOLS = "e0df6b3ce5d8e01ac383097c013bf45edb354c41ec6aa9305c3db5bb5e8428eb"
-BASELINE_GRANULAR_READ_SCHEMA = "5d8caac733708e2d48e32240a9f2a8ea04e299b223a50c70f53b2b427d9db095"
+# Only the granular includeText parameter's description changed: false is an
+# inspection without outline entries; true/default is required to receive them.
+GRANULAR_READ_SCHEMA = "e566bf72254ddf4b52bd4a5c4a7002122f4a627a3c954fae4073eca0746c5d56"
 
 
 @pytest.mark.parametrize(
@@ -35,7 +37,7 @@ def test_other_profile_model_visible_tool_bundles_match_pre_mitigation_baseline(
     assert digest(tools(profile)) == BASELINE_OTHER_PROFILES
 
 
-def test_normal_client_exposes_granular_guidance_without_changing_other_tools_or_schema():
+def test_normal_client_exposes_granular_guidance_without_changing_other_tools():
     bundle = tools("custom-granular-v1")
     read_tool = next(item for item in bundle if item["function"]["name"].startswith("read_documents_"))
     description = read_tool["function"]["description"]
@@ -49,7 +51,18 @@ def test_normal_client_exposes_granular_guidance_without_changing_other_tools_or
     assert "cite the returned citation string" in description
     assert "Omit internal IDs unless asked" in description
     assert "copy each named field and value verbatim" in description
-    assert digest(read_tool["function"]["parameters"]) == BASELINE_GRANULAR_READ_SCHEMA
+    assert "Use includeText=true (the default) to receive outline entries." in description
+    assert "includeText=false is size/coverage inspection only" in description
+    assert "nor outline entries in any mode" in description
+    assert "copy the returned readSelector with includeText=true" in description
+    assert read_tool["function"]["parameters"]["properties"]["includeText"] == {
+        "type": "boolean",
+        "description": (
+            "True (default): deliver source text in full/selected mode, or navigation entries without body text "
+            "in outline mode. False: size/coverage inspection only, with no source text or outline entries."
+        ),
+    }
+    assert digest(read_tool["function"]["parameters"]) == GRANULAR_READ_SCHEMA
     assert digest([item for item in bundle if item is not read_tool]) == BASELINE_GRANULAR_OTHER_TOOLS
 
 

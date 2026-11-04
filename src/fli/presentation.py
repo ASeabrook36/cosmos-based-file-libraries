@@ -15,7 +15,7 @@ from pydantic import BaseModel, Field
 
 from fli.chunking import default_tokenizer
 from fli.reference_format import ENVELOPE, pack
-from fli.selector_hints import add_hints
+from fli.selector_hints import add_hints, inspection_hints
 
 ResponseView = Annotated[Literal["raw", "compact", "references"], Query()]
 SelectorMode = Annotated[Literal["legacy", "handles"], Query()]
@@ -143,7 +143,13 @@ def project(response):
 
 
 def compact_response(
-    response, max_tokens=DEFAULT_EVIDENCE_TOKENS, include_content=True, *, view="compact", selectors="legacy"
+    response,
+    max_tokens=DEFAULT_EVIDENCE_TOKENS,
+    include_content=True,
+    *,
+    view="compact",
+    selectors="legacy",
+    inspection_selector=None,
 ):
     if view not in {"compact", "references"} or selectors not in {"legacy", "handles"}:
         raise ValueError("unsupported evidence presentation")
@@ -194,6 +200,8 @@ def compact_response(
                 for d in original["documents"]
             ]
         attachments = []
+        if not include_content and inspection_selector is not None:
+            evidence = inspection_hints(evidence, inspection_selector)
     metadata = {k: response[k] for k in ("usage", "telemetryId") if k in response}
     if results := response.get("results"):
         metadata["references"] = [

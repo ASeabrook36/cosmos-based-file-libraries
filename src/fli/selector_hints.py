@@ -121,6 +121,24 @@ def tool_hints(tools):
     return result
 
 
+def inspection_hints(evidence, read_selector):
+    """Recovery for granular size inspection, after source content was removed.
+
+    The reader supplies an already validated, pinned request for exactly the same
+    scope and effective budget. These hints neither deliver nor authorize content.
+    """
+    result = copy.deepcopy(evidence)
+    result["readSelector"] = copy.deepcopy(read_selector)
+    result["nextAction"] = (
+        "This was a size/coverage inspection (includeText=false), not a source or outline read. "
+        "Copy readSelector with includeText=true to receive the same scope. In mode=outline this returns "
+        "navigation entries without body text. The same maxTokens and snapshot checks apply; "
+        "if the content does not fit, narrow scope or paginate."
+    )
+    result["notes"] = [*(result.get("notes") or []), "includeText=false returned no source bodies or outline entries."]
+    return result
+
+
 def error_details(error):
     """Sanitized categories for model recovery; never repeat untrusted selectors."""
     code = getattr(

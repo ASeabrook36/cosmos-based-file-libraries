@@ -35,8 +35,11 @@ citations to the returned citation field. These are locally tested responses to
 two observed model gaps. The [two-turn follow-up](granular-navigation-followup.md)
 demonstrates complete-cell reading and exact named-field reporting, but exposes
 ineffective size-only outline inspections followed by full-document recovery.
-Clarifying the granular tool's `includeText` contract and qualifying real outline
-delivery remain pending; runtime behavior is unchanged by the follow-up.
+The [outline contract clarification](granular-outline-contract.md) now documents
+that `includeText=false` returns size/coverage only, while true/default returns
+outline entries in outline mode. Granular inspection responses carry a pinned,
+same-scope `readSelector` with true and the unchanged budget. Real-model outline
+delivery is a separately bounded qualification; full-document fallback does not pass.
 
 The File Library Index (the **index**) replaces Azure AI Search as the store and search engine behind the platform's file libraries. It:
 
