@@ -63,9 +63,40 @@ def require(condition, message):
         raise ValueError(message)
 
 
-def _prior_controls(controls, binding):
-    require(controls.get("schema") == "fli.granular-live-models.controls.v1", "unexpected prior controls")
-    require(len(controls.get("cases", [])) == 6, "prior six-turn qualification controls required")
+def protocol_settings(protocol="two-turn-v1"):
+    if protocol == "two-turn-v1":
+        return {
+            "cases": cases,
+            "turns": TURNS,
+            "meter": copy.deepcopy(METER_LIMITS),
+            "schema": "fli.granular-followup-models.controls.v1",
+            "priorSchema": "fli.granular-live-models.controls.v1",
+            "priorTurns": 6,
+            "scope": "Two separately sealed fresh follow-up turns with platform-provided DOCX document pins.",
+        }
+    require(protocol == "outline-v1", "unknown qualification protocol")
+    from scripts.granular_outline_case import cases as outline_cases
+
+    return {
+        "cases": outline_cases,
+        "turns": 1,
+        "meter": {
+            "logicalCalls": 13,
+            "physicalResponsesAttempts": 18,
+            "inputTokensWithUnknownReservations": 1000000,
+            "outputTokensWithUnknownReservations": 100000,
+        },
+        "schema": "fli.granular-outline-models.controls.v1",
+        "priorSchema": "fli.granular-followup-models.controls.v1",
+        "priorTurns": 2,
+        "scope": "One sealed outline-to-focused-read turn; whole-document fallback does not pass.",
+    }
+
+
+def _prior_controls(controls, binding, *, protocol="two-turn-v1"):
+    selected = protocol_settings(protocol)
+    require(controls.get("schema") == selected["priorSchema"], "unexpected prior controls")
+    require(len(controls.get("cases", [])) == selected["priorTurns"], "prior qualification turn count differs")
     for key, value in PER_TURN_CONTROLS.items():
         require(controls.get(key) == value, "prior per-turn control differs: " + key)
     require(
@@ -87,32 +118,34 @@ def _save_bytes(path, content):
         os.fsync(handle.fileno())
 
 
-def prepare_cases(output, source_bindings, *, prior_controls, prior_model_binding):
+def prepare_cases(output, source_bindings, *, prior_controls, prior_model_binding, protocol="two-turn-v1"):
+    selected = protocol_settings(protocol)
     root = private_path(output)
     require(not root.exists(), "follow-up model qualification requires a new private directory")
     require(not (REPO / "src/fli_demo/context_budget.py").exists(), "context repair is separately attributable")
     prior_bytes = private_path(prior_controls).read_bytes()
     binding_bytes = private_path(prior_model_binding).read_bytes()
     prior, binding = json.loads(prior_bytes), json.loads(binding_bytes)
-    _prior_controls(prior, binding)
-    sealed_cases = cases(source_bindings)
+    _prior_controls(prior, binding, protocol=protocol)
+    sealed_cases = selected["cases"](source_bindings)
     require(
-        len(sealed_cases) == TURNS and len({row["case"] for row in sealed_cases}) == TURNS, "exactly two cases required"
+        len(sealed_cases) == selected["turns"] and len({row["case"] for row in sealed_cases}) == selected["turns"],
+        "sealed qualification case count differs",
     )
     controls = {
-        "schema": "fli.granular-followup-models.controls.v1",
+        "schema": selected["schema"],
         "sourceBindings": copy.deepcopy(source_bindings),
         "cases": sealed_cases,
         "codeSha256": code_hashes(),
-        "meterLimits": METER_LIMITS,
-        "modelTurns": TURNS,
+        "meterLimits": selected["meter"],
+        "modelTurns": selected["turns"],
         **copy.deepcopy(PER_TURN_CONTROLS),
         "expectedModelBinding": binding,
         "priorEvidence": {
             "prior-model-controls.json": hashlib.sha256(prior_bytes).hexdigest(),
             "prior-model-binding.json": hashlib.sha256(binding_bytes).hexdigest(),
         },
-        "qualificationScope": "Two separately sealed fresh follow-up turns with platform-provided DOCX document pins.",
+        "qualificationScope": selected["scope"],
         "priorEvidenceModified": False,
         "largerConfirmation": False,
     }
@@ -120,20 +153,22 @@ def prepare_cases(output, source_bindings, *, prior_controls, prior_model_bindin
     _save_bytes(root / "prior-model-controls.json", prior_bytes)
     _save_bytes(root / "prior-model-binding.json", binding_bytes)
     save_new(root / "controls.json", controls)
-    return {"controlsSha256": sha(root / "controls.json"), "cases": TURNS, "status": "prepared"}
+    return {"controlsSha256": sha(root / "controls.json"), "cases": selected["turns"], "status": "prepared"}
 
 
-def _verify(root):
+def _verify(root, *, protocol="two-turn-v1"):
+    selected = protocol_settings(protocol)
     controls = json.loads((root / "controls.json").read_text())
-    require(controls.get("schema") == "fli.granular-followup-models.controls.v1", "unknown follow-up controls")
+    require(controls.get("schema") == selected["schema"], "unknown follow-up controls")
     require(
-        controls.get("cases") == cases(controls.get("sourceBindings")) and len(controls["cases"]) == TURNS,
+        controls.get("cases") == selected["cases"](controls.get("sourceBindings"))
+        and len(controls["cases"]) == selected["turns"],
         "sealed follow-up cases changed",
     )
     require(controls.get("codeSha256") == code_hashes(), "follow-up code drift")
     for key, value in {
-        "meterLimits": METER_LIMITS,
-        "modelTurns": TURNS,
+        "meterLimits": selected["meter"],
+        "modelTurns": selected["turns"],
         **PER_TURN_CONTROLS,
         "priorEvidenceModified": False,
         "largerConfirmation": False,
@@ -145,16 +180,19 @@ def _verify(root):
         require(sha(root / name) == expected, "prior evidence snapshot changed")
     prior = json.loads((root / "prior-model-controls.json").read_text())
     binding = json.loads((root / "prior-model-binding.json").read_text())
-    _prior_controls(prior, binding)
+    _prior_controls(prior, binding, protocol=protocol)
     require(controls.get("expectedModelBinding") == binding, "expected answering deployment changed")
     require(not (REPO / "src/fli_demo/context_budget.py").exists(), "context repair is separately attributable")
     return controls
 
 
-def run_models(state, *, index, agent_id, actual_client, deployment, model_binding, deadline, api_controls):
-    """Run exactly two fresh normal-agent turns; preserve every failed attempt."""
+def run_models(
+    state, *, index, agent_id, actual_client, deployment, model_binding, deadline, api_controls, protocol="two-turn-v1"
+):
+    """Run the allowlisted sealed protocol; preserve every failed attempt."""
+    selected = protocol_settings(protocol)
     root = private_path(state)
-    controls = _verify(root)
+    controls = _verify(root, protocol=protocol)
     require(index.evidence_view == "compact" and index.selector_mode == "handles", "normal presentation differs")
     require(
         api_controls.get("searchMode") == "vector" and api_controls.get("contextAccounting") == "legacy-v1",
@@ -180,14 +218,14 @@ def run_models(state, *, index, agent_id, actual_client, deployment, model_bindi
             "startedAt": datetime.now(UTC).isoformat(),
         },
     )
-    meter = Meter(root / "provider", METER_LIMITS, context=CONTEXT, output=OUTPUT)
+    meter = Meter(root / "provider", selected["meter"], context=CONTEXT, output=OUTPUT)
     summaries, active = [], None
     try:
         before = _source_snapshot(index, controls["sourceBindings"])
         save_new(root / "sources-before.json", before)
         for active in controls["cases"]:
             pacer.remaining()
-            _verify(root)
+            _verify(root, protocol=protocol)
             require(_source_snapshot(index, controls["sourceBindings"]) == before, "source changed before model turn")
             directory = root / active["case"]
             directory.mkdir(mode=0o700)
@@ -223,7 +261,7 @@ def run_models(state, *, index, agent_id, actual_client, deployment, model_bindi
                 root / "status.json",
                 {"status": "running", "completedTurns": len(summaries), "provider": meter_summary(meter.path)},
             )
-        _verify(root)
+        _verify(root, protocol=protocol)
         after = _source_snapshot(index, controls["sourceBindings"])
         require(after == before, "source snapshot changed at model exit")
         save_new(root / "sources-after.json", after)

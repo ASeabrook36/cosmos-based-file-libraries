@@ -7,6 +7,7 @@ import asyncio
 import json
 import logging
 import os
+import re
 import subprocess
 import time
 from dataclasses import replace
@@ -27,6 +28,13 @@ from scripts.qualify_granular_navigation import REPO, require, sha
 from scripts.retrieval_controls import private_path
 
 BASELINE = "83168a8"
+OUTLINE_BASELINE = "d332d1d"
+OUTLINE_RUNTIME_PATHS = {
+    "src/fli/tool.py",
+    "src/fli/selector_hints.py",
+    "src/fli/reading.py",
+    "src/fli/presentation.py",
+}
 SCOPE_LIMITS = {"libraries": 1, "documents": 1, "generations": 1, "chunks": 16}
 LIMITS = {
     **SCOPE_LIMITS,
@@ -53,9 +61,14 @@ class FollowupLedger(OwnedLedger):
         super()._change(kind, details, bounded)
 
 
-def runtime_baseline():
+def protocol_limits(protocol="two-turn-v1"):
+    require(protocol in {"two-turn-v1", "outline-v1"}, "unknown qualification protocol")
+    return {**LIMITS, "modelTurns": 1} if protocol == "outline-v1" else dict(LIMITS)
+
+
+def runtime_baseline(revision=BASELINE):
     paths = [*REPO.glob("src/**/*.py"), *REPO.glob("cosmos/*.json"), REPO / "requirements-local.lock"]
-    tracked = subprocess.check_output(["git", "ls-tree", "-r", "--name-only", BASELINE], cwd=REPO, text=True)
+    tracked = subprocess.check_output(["git", "ls-tree", "-r", "--name-only", revision], cwd=REPO, text=True)
     expected = {
         name
         for name in tracked.splitlines()
@@ -66,36 +79,87 @@ def runtime_baseline():
     require({str(path.relative_to(REPO)) for path in paths} == expected, "candidate runtime inventory changed")
     for path in paths:
         relative = str(path.relative_to(REPO))
-        frozen = subprocess.check_output(["git", "show", BASELINE + ":" + relative], cwd=REPO)
+        frozen = subprocess.check_output(["git", "show", revision + ":" + relative], cwd=REPO)
         require(path.read_bytes() == frozen, "follow-up cannot change candidate runtime: " + relative)
     require(not (REPO / "src/fli_demo/context_budget.py").exists(), "context repair remains separate")
 
 
-def prepare(state, prior, canary, *, prior_manifest):
+def verify_runtime(protocol, runtime_revision=None):
+    protocol_limits(protocol)
+    if protocol == "two-turn-v1":
+        require(runtime_revision is None, "original follow-up runtime cannot be overridden")
+        runtime_baseline()
+        return
+    require(
+        isinstance(runtime_revision, str) and re.fullmatch(r"[a-f0-9]{40}", runtime_revision),
+        "exact reviewed runtime commit required",
+    )
+    require(
+        subprocess.run(["git", "merge-base", "--is-ancestor", OUTLINE_BASELINE, runtime_revision], cwd=REPO).returncode
+        == 0,
+        "reviewed runtime does not extend outline baseline",
+    )
+    changed = set(
+        subprocess.check_output(
+            [
+                "git",
+                "diff",
+                "--name-only",
+                OUTLINE_BASELINE,
+                runtime_revision,
+                "--",
+                "src",
+                "cosmos",
+                "requirements-local.lock",
+            ],
+            cwd=REPO,
+            text=True,
+        ).splitlines()
+    )
+    require(changed and changed <= OUTLINE_RUNTIME_PATHS, "outline runtime scope exceeds reviewed contract files")
+    runtime_baseline(revision=runtime_revision)
+
+
+def prepare(state, prior, canary, *, prior_manifest, protocol="two-turn-v1", runtime_revision=None):
     """Local only: freeze original bytes and controls, without touching prior evidence."""
-    runtime_baseline()
+    verify_runtime(protocol, runtime_revision)
+    limits = protocol_limits(protocol)
     root, prior, canary = private_path(state), private_path(prior), private_path(canary)
     require(not root.exists(), "fresh follow-up state required")
     require(not root.is_relative_to(prior) and not prior.is_relative_to(root), "prior evidence overlaps state")
-    completed = prior / "continuation-2"
+    outline = protocol == "outline-v1"
+    completed = prior if outline else prior / "continuation-2"
     prior_result = json.loads((completed / "execution-result.json").read_text())
-    require(prior_result["cleanup"]["passed"] and prior_result["models"]["completedTurns"] == 6, "prior run incomplete")
-    public = json.loads((REPO / "records/granular-navigation-live-qualification-20261104.json").read_text())
+    require(
+        prior_result["cleanup"]["passed"] and prior_result["models"]["completedTurns"] == (2 if outline else 6),
+        "prior run incomplete",
+    )
+    public_path = (
+        REPO
+        / "records"
+        / (
+            "granular-navigation-followup-20261104.json"
+            if outline
+            else "granular-navigation-live-qualification-20261104.json"
+        )
+    )
+    public = json.loads(public_path.read_text())
     prior_manifest = private_path(prior_manifest)
     require(
         sha(prior_manifest) == public["privateArchives"]["reviewedFinal"]["manifestSha256"],
         "prior private archive manifest differs",
     )
     archived = json.loads(prior_manifest.read_text())["files"]
+    prefix = "" if outline else "continuation-2/"
     for name in (
         "fixtures/source.docx",
-        "fixtures/plan.json",
+        "preparation.json" if outline else "fixtures/plan.json",
         "environment.json",
         "preflight.json",
         "account.json",
-        "continuation-2/models/controls.json",
-        "continuation-2/answering-binding-before.json",
-        "continuation-2/embedding-binding-before.json",
+        prefix + "models/controls.json",
+        prefix + "answering-binding-before.json",
+        prefix + "embedding-binding-before.json",
     ):
         require(sha(prior / name) == archived[name], "archived prior evidence changed: " + name)
     for name in ("models/controls.json", "execution-result.json", "cleanup-immediate.json", "cleanup-late.json"):
@@ -103,15 +167,19 @@ def prepare(state, prior, canary, *, prior_manifest):
     prior_preflight = json.loads((prior / "preflight.json").read_text())
     require(sha(canary) == prior_preflight["canarySha256"], "prior canary hash differs")
     require(sha(prior / "environment.json") == prior_preflight["environmentSha256"], "prior environment changed")
-    plan = json.loads((prior / "fixtures/plan.json").read_text())
-    source = next(row for row in plan["sources"] if row["role"] == "source.docx")
+    if outline:
+        plan = json.loads((prior / "preparation.json").read_text())
+        source = {"sha256": plan["sourceSha256"], "bytes": (prior / "fixtures/source.docx").stat().st_size}
+    else:
+        plan = json.loads((prior / "fixtures/plan.json").read_text())
+        source = next(row for row in plan["sources"] if row["role"] == "source.docx")
     require(sha(prior / "fixtures/source.docx") == source["sha256"], "original fixture changed")
     prior_controls = json.loads((completed / "models/controls.json").read_text())
     require(
         source["sha256"] == prior_controls["sourceBindings"]["docx"]["sourceSha256"],
         "fixture differs from prior model source",
     )
-    require(source["bytes"] <= LIMITS["sourceBytesEach"], "fixture exceeds byte cap")
+    require(source["bytes"] <= limits["sourceBytesEach"], "fixture exceeds byte cap")
     root.mkdir(parents=True, mode=0o700)
     (root / "fixtures").mkdir(mode=0o700)
     copies = {
@@ -133,22 +201,27 @@ def prepare(state, prior, canary, *, prior_manifest):
     save(
         root / "preparation.json",
         {
-            "baseline": BASELINE,
+            "baseline": OUTLINE_BASELINE if outline else BASELINE,
+            **({"protocol": protocol, "runtimeRevision": runtime_revision} if outline else {}),
             "sourceSha256": source["sha256"],
-            "priorReceiptSha256": sha(REPO / "records/granular-navigation-live-qualification-20261104.json"),
+            "priorReceiptSha256": sha(public_path),
             "copiedFileSha256": {name: sha(root / name) for name in copies},
-            "limits": LIMITS,
+            "limits": limits,
             "cloudCalls": 0,
             "priorEvidenceModified": False,
         },
     )
-    return {"prepared": True, "sourceBytes": source["bytes"], "limits": LIMITS, "cloudCalls": 0}
+    return {"prepared": True, "sourceBytes": source["bytes"], "limits": limits, "cloudCalls": 0}
 
 
-def verify_preparation(root):
-    runtime_baseline()
+def verify_preparation(root, *, protocol="two-turn-v1"):
     prepared = json.loads((root / "preparation.json").read_text())
-    require(prepared["limits"] == LIMITS and prepared["baseline"] == BASELINE, "follow-up limits changed")
+    require(prepared.get("protocol", "two-turn-v1") == protocol, "prepared protocol differs")
+    verify_runtime(protocol, prepared.get("runtimeRevision"))
+    baseline = OUTLINE_BASELINE if protocol == "outline-v1" else BASELINE
+    require(
+        prepared["limits"] == protocol_limits(protocol) and prepared["baseline"] == baseline, "follow-up limits changed"
+    )
     for name, expected in prepared["copiedFileSha256"].items():
         require(sha(root / name) == expected, "frozen follow-up input changed: " + name)
     require(sha(root / "fixtures/source.docx") == prepared["sourceSha256"], "fixture bytes changed")
@@ -164,9 +237,9 @@ def require_prior_bindings(root, answering, embedding):
     )
 
 
-async def check_health(state):
+async def check_health(state, *, protocol="two-turn-v1"):
     root = private_path(state)
-    verify_preparation(root)
+    verify_preparation(root, protocol=protocol)
     result = await preflight(root, root / "account-seed.json", root / "canary.json")
     settings = Settings.from_env()
     answering = await asyncio.to_thread(live.current_model, root, settings, "preflight")
@@ -185,8 +258,8 @@ async def check_health(state):
     return {**result, "samePinnedModelAndEmbedding": True}
 
 
-def execution_controls(root):
-    verify_preparation(root)
+def execution_controls(root, *, protocol="two-turn-v1"):
+    prepared = verify_preparation(root, protocol=protocol)
     require(not (root / "execution-started.json").exists(), "follow-up is single-use; preserve all attempts")
     require(
         not subprocess.check_output(["git", "status", "--porcelain"], cwd=REPO, text=True).strip(),
@@ -203,25 +276,31 @@ def execution_controls(root):
     require(preflight_receipt["environmentSha256"] == sha(root / "environment.json"), "environment changed")
     require(preflight_receipt["protectedSha256"] == sha(root / "protected-before.json"), "protected receipt changed")
     return {
-        "baseline": BASELINE,
+        "baseline": prepared["baseline"],
+        **(
+            {"protocol": protocol, "reviewedRuntimeRevision": prepared["runtimeRevision"]}
+            if protocol == "outline-v1"
+            else {}
+        ),
         "candidateCommit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO, text=True).strip(),
         "sourceSha256": live.code_hashes(),
         "preparationSha256": sha(root / "preparation.json"),
         "matchedPreflightSha256": sha(root / "matched-preflight.json"),
-        "limits": LIMITS,
+        "limits": protocol_limits(protocol),
         "searchMode": "vector",
         "contextAccounting": "legacy-v1",
-        "runtimeUnchangedFromCandidate": True,
+        "runtimeUnchangedFromCandidate": protocol == "two-turn-v1",
     }
 
 
-async def execute(state, archive_root):
+async def execute(state, archive_root, *, protocol="two-turn-v1"):
     from scripts.granular_followup_models import prepare_cases, run_models
 
     root, destination = private_path(state), private_path(archive_root)
     require(not destination.exists(), "use a new archive destination")
     require(not destination.is_relative_to(root) and not root.is_relative_to(destination), "archive overlaps state")
-    controls = execution_controls(root)
+    controls = execution_controls(root, protocol=protocol)
+    limits = controls["limits"]
     save(root / "controls.json", controls)
     os.environ.update(json.loads((root / "environment.json").read_text()))
     settings = replace(Settings.from_env(), ingestion_code_revision=controls["candidateCommit"])
@@ -231,7 +310,7 @@ async def execute(state, archive_root):
     )
     protected = json.loads((root / "protected-before.json").read_text())
     preflight_receipt = json.loads((root / "preflight.json").read_text())
-    deadline = time.monotonic() + LIMITS["executionSeconds"]
+    deadline = time.monotonic() + limits["executionSeconds"]
     save(
         root / "execution-started.json",
         {"startedAt": datetime.now(UTC).isoformat(), "controlsSha256": sha(root / "controls.json")},
@@ -294,6 +373,7 @@ async def execute(state, archive_root):
                         bindings,
                         prior_controls=root / "prior-model-controls.json",
                         prior_model_binding=root / "prior-answering-binding.json",
+                        protocol=protocol,
                     )
                     provider = actual_client(settings.aoai_endpoint)
                     task = asyncio.create_task(
@@ -307,6 +387,7 @@ async def execute(state, archive_root):
                             model_binding=model_binding,
                             deadline=deadline,
                             api_controls={"searchMode": "vector", "contextAccounting": "legacy-v1"},
+                            protocol=protocol,
                         )
                     )
                     try:
@@ -317,14 +398,21 @@ async def execute(state, archive_root):
                                 await asyncio.shield(task)
                         finally:
                             provider.close()
-                    require(result["models"]["completedTurns"] == 2, "two-turn qualification incomplete")
+                    require(
+                        result["models"]["completedTurns"] == limits["modelTurns"],
+                        "qualification turn count incomplete",
+                    )
                     require_prior_bindings(
                         root,
                         await asyncio.to_thread(live.current_model, root, settings, "after"),
                         await asyncio.to_thread(live.current_model, root, settings, "after", embedding=True),
                     )
                     require(live.code_hashes() == controls["sourceSha256"], "code changed during execution")
-                    result["status"] = "two_model_turns_complete_pending_review"
+                    result["status"] = (
+                        "one_outline_turn_complete_pending_review"
+                        if protocol == "outline-v1"
+                        else "two_model_turns_complete_pending_review"
+                    )
                 except BaseException as error:
                     failure = error
                     result.update(status="failed", errorType=type(error).__name__, error=str(error))
@@ -357,7 +445,7 @@ async def execute(state, archive_root):
                         flush=True,
                     )
                     try:
-                        async with asyncio.timeout(LIMITS["cleanupSeconds"]):
+                        async with asyncio.timeout(limits["cleanupSeconds"]):
                             async with httpx.AsyncClient(
                                 transport=httpx.ASGITransport(app=a.app),
                                 base_url="http://qualification.invalid",
@@ -396,6 +484,8 @@ def main():
     parser.add_argument("--canary", type=Path)
     parser.add_argument("--prior-manifest", type=Path)
     parser.add_argument("--archive", type=Path)
+    parser.add_argument("--protocol", choices=("two-turn-v1", "outline-v1"), default="two-turn-v1")
+    parser.add_argument("--runtime-revision")
     args = parser.parse_args()
     logging.basicConfig(level=logging.ERROR)
     if args.action == "prepare":
@@ -403,12 +493,19 @@ def main():
             args.prior is not None and args.canary is not None and args.prior_manifest is not None,
             "prior, canary and prior manifest required",
         )
-        result = prepare(args.state, args.prior, args.canary, prior_manifest=args.prior_manifest)
+        result = prepare(
+            args.state,
+            args.prior,
+            args.canary,
+            prior_manifest=args.prior_manifest,
+            protocol=args.protocol,
+            runtime_revision=args.runtime_revision,
+        )
     elif args.action == "preflight":
-        result = asyncio.run(check_health(args.state))
+        result = asyncio.run(check_health(args.state, protocol=args.protocol))
     else:
         require(args.archive is not None, "archive destination required")
-        result = asyncio.run(execute(args.state, args.archive))
+        result = asyncio.run(execute(args.state, args.archive, protocol=args.protocol))
         result = {"status": result["status"], "cleanupPassed": result.get("cleanup", {}).get("passed")}
     print(json.dumps(result), flush=True)
 
