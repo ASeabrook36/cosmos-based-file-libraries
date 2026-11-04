@@ -1,0 +1,130 @@
+{
+  "schema": "fli.source-context-repair.completion.v1",
+  "status": "accepted-local-qualification",
+  "completedExperimentCommit": "4ad228d05ed2517cda743e95470599e09898d4f9",
+  "coordinatorBranch": "codex/source-context-repair",
+  "validatedImplementationCommit": "4cef2d01bfdca53fd9d68cf146ae65827a8768a7",
+  "tracks": {
+    "source": {
+      "branch": "codex/source-structure-repair",
+      "commit": "33402d3bf66c5ad6ba2d0b12c0c46cba66695aff",
+      "standaloneRepositoryTestsPassed": 1472
+    },
+    "context": {
+      "branch": "codex/context-accounting-repair",
+      "commit": "44708040dce0a6d4cd5b44205a07a5d7e54404a7",
+      "standaloneRepositoryTestsPassed": 1434
+    }
+  },
+  "controls": {
+    "sourceProfile": "microsoft-indexer-source-fidelity-v1",
+    "contextMode": "envelope-v2",
+    "defaultContextMode": "legacy-v1",
+    "applicationDefaultsUnchanged": true,
+    "answeringModelOrTaskInstructionChanges": false,
+    "retrievalPassagesVectorsAndQuerySemanticsUnchanged": true,
+    "noCombinedQualityConclusion": true
+  },
+  "publishedReceiptSha256": {
+    "source-fidelity-qualification-20261104.json": "d0d0e7bfc3dfc4b18e8bdef25c98ac85cc7f4ad72e1acbcc81761ba0a2fa0e52",
+    "context-accounting-qualification-20261104.json": "4db78864b45d47a4b0731ac0ad9f67a1d6d8db683d2427b9cc1ec904746a4bd1",
+    "context-accounting-validation-20261104.json": "d23046a41799513cc3ab7f24fc3901b36dd19384bb1c03c1f4c6144ec6b5c29e"
+  },
+  "implementationSha256": {
+    "src/fli/source_fidelity.py": "f147b4dab7ee5f44c305c4a320a0e7c229b2e2cbab4fd157853d61f05910b0c8",
+    "src/fli/ingestion.py": "08b5c39ce84a892787a6af7810c860bce9ad0e9a509f270400fdeb7592bc74f9",
+    "src/fli/reading.py": "f9815d6a56289d1b9c74965bcd5cf6d6767041e99279a3bf0530511a58697abf",
+    "src/fli/presentation.py": "e75c932108101a5f608a6120aa5e3cdebce40c9508acb5603861f49f374bee59",
+    "src/fli/worker/handlers.py": "0c9441899a488f3de81fcb5e2683a02f1d59fffcb70971b9d6da16cb09adb32e",
+    "src/fli/search.py": "5401e0e922befd1a9581386b56d0fc774fef1db591be953bc44a550708e2f2bf",
+    "scripts/qualify_source_fidelity.py": "4b9b06e9a2ea7882588f236936f4cabdb2991429914f36862d7e836dd8f15d54",
+    "src/fli_demo/agent.py": "ffff6d686822712cfcd9253fc9089848fa48b81f0a4d92b8e6c39a5b9b0f7c52",
+    "src/fli_demo/context_budget.py": "2fb7ceb4c4f02bd15914e34d1fb680d4985476a9ba87d5eebe6383ae1ca5dbc7",
+    "scripts/evaluate_agent_retrieval.py": "1142b33c93ff565243f0e3d381b38773b200e00aff3501d288cc7ed8a5fcb959",
+    "scripts/qualify_context_envelope.py": "609f3ea3417cd6a7ed8e6e02bdabee06cfa62de9c7fb2bbcb0a4d619c219421d",
+    "tests/test_context_budget.py": "b005d22e1756b620fbc29443e1e22ef07b83176d3438d74e9e3d5f2ab4780a1f",
+    "tests/test_context_qualification.py": "b35ac6a68807d48ade5d14489e503b895e5383e44b12d8b1a8cd102823d25c38"
+  },
+  "validation": {
+    "schema": "fli.source-context-repair.local-validation.v1",
+    "status": "accepted-local-qualification",
+    "validatedImplementationCommit": "4cef2d01bfdca53fd9d68cf146ae65827a8768a7",
+    "repositoryTestsPassed": 1507,
+    "warnings": 14,
+    "seconds": 189.32,
+    "sourceStandaloneTestsPassed": 1472,
+    "contextStandaloneTestsPassed": 1434,
+    "lintAndFormatPassed": true,
+    "referencePrivacyPassed": true,
+    "privateDenyValuesChecked": 118,
+    "diffCheckPassed": true,
+    "logSha256": {
+      "combined-tests.log": "c64fd0ddfb9017d85c7d2cb68f1ca6335f7670054105032344594551bc270c0f",
+      "lint.log": "0bdfef58c941855f9187059b07d48541fc04d39c43e8cbf45c388a3ad356603e",
+      "privacy.json": "b98ca524f4bb239963781b4b25d6cc664773e80d1d16620622fea0cabf03f881"
+    },
+    "independentIntegrationReviewSha256": "cf4e8010ee8bbba543d47389170fd77bf2c90871a4684fee262bfc02794d0986",
+    "frozenPreservationSha256": "1033e9c82ae1f85213b65c99b38ba0a802f172e07665fb58cb9d2c101051a860",
+    "cloudCalls": 0,
+    "modelCalls": 0,
+    "newConfirmationQuestions": 0,
+    "largerConfirmationLaunched": false
+  },
+  "independentReviewSha256": {
+    "integration-review.json": "cf4e8010ee8bbba543d47389170fd77bf2c90871a4684fee262bfc02794d0986",
+    "source-independent-original-audit-v2.json": "0d00fb3ac2317777798bc4923b5f38e57855da62a343b72e988c76d3eda40d33",
+    "source-independent-atomic-read.json": "11c870e59ac3891be6acea600206f30f0e9fd697da79a1760526c52621b6d0ed",
+    "native-target-baseline.json": "a1110a03f77acd8fba64c2be693e8a35b0bfe332e846bcc5534b9f5c749c40ba",
+    "context-independent-archive-audit-v4.json": "3c6f865a3924429bea0561ffe3ea9d9fc7ce384def58686831d402c42d902bcd",
+    "context-independent-checks-v4.json": "fc0171d2ae6c258b0d430faad8925707d22488ab653893027aa2b0067f2919f9",
+    "context-grounding-resolved-v4.json": "b99188b134c9b62a06d0d3cdad964745306b033a2062255938a7f66ca4a5adf2"
+  },
+  "frozenPreservation": {
+    "baselineReceiptSha256": "d72c15289d63b550b67e5075b3b73b47a34bfbfc9920b99b01b0fad2ef851b70",
+    "finalPrivateReceiptSha256": "1033e9c82ae1f85213b65c99b38ba0a802f172e07665fb58cb9d2c101051a860",
+    "producerFilesChecked": 112,
+    "publishedArtifactsChecked": 13,
+    "completedWorktreeClean": true,
+    "completedArchiveSha256": {
+      "pre-cleanup.tar.gz": "17f9789e7c4ef30a8a3209c543d6c4bd6b5784e14b4ab7367c8b11188e3c1237",
+      "pre-cleanup-manifest.json": "47c85de0ec141fb833383749d8d011a93a5110277a34d81febadc17ac2deba01",
+      "post-cleanup.tar.gz": "dba9c7494ef61fdf331197658215d5f75c02af1fafa0a6ca44c43f3e70e54b53",
+      "post-cleanup-manifest.json": "7f1385bb7c873b9c3c569f93a2b26dedce5edb20c3ada1a83e3ada00750b2a8d"
+    },
+    "mainHeadUnchanged": true
+  },
+  "privateArchive": {
+    "archiveSha256": "8d3103ac072c43213745c44265786476f3f9954acdfaa2c360c0955ee5c27564",
+    "manifestSha256": "b04cde47e91e9243c0b02e448f6b93ba1cb9210a983da833091ceb0329308519",
+    "archiveBytes": 5791965,
+    "fileCount": 153,
+    "sourceBytes": 30109339,
+    "everyMemberAndSourceHashVerified": true,
+    "knownCredentialValuesAndPatternsScanned": true,
+    "selfContainedOfflineQualificationInputs": true,
+    "relocatedSourceQualificationIdentical": true,
+    "relocatedContextQualificationIdentical": true,
+    "restoreVerificationSha256": "41cbbec4d83bc2437eb325273b84d58ab8829071874bf03c788992f969997839",
+    "localDurableNotOffsite": true,
+    "phaseLabelMeaning": "Inherited pre-cleanup archive mode; no resources were created or needed cleanup."
+  },
+  "usage": {
+    "cloudCalls": 0,
+    "modelCalls": 0,
+    "newIngestions": 0,
+    "newEmbeddingCalls": 0,
+    "newConfirmationQuestions": 0,
+    "newCloudOrModelSpend": 0
+  },
+  "mainMerged": false,
+  "applicationDeployed": false,
+  "largerConfirmationLaunched": false,
+  "untestedGates": [
+    "Live new-profile provider acceptance, immutable publication and distributed lifecycle against Azure.",
+    "Real-model context admission, recovery, final answer quality, citations, useful latency and usage under separately frozen controls.",
+    "Provider-native context-token equivalence and adequate common capacity for the proposed study.",
+    "General resumed multi-file recovery after an unscoped withholding marker; current mode requires a fresh retrieval session.",
+    "Broader DOCX constructs, printed ordinals, complete custom hierarchy, direct passage-to-cell mapping and semantic qualifier interpretation."
+  ],
+  "recommendedNextStep": "A bounded live qualification with source-only and context-only tracks under new controls; no larger confirmation launch."
+}

@@ -1,5 +1,16 @@
 # Build plan
 
+**Source and context repairs locally qualified, 2026-11-04 (E68):** the
+[separate repair report](source-context-repair.md) records opt-in DOCX structure
+preservation with unchanged retrieval vectors and opt-in complete-envelope context
+admission. The retained qualifier boundary and archived context stops are reproduced
+without new model/cloud calls. The completed SDK/model comparison stays frozen.
+Next is a bounded, separately controlled live qualification of each repair, including
+granular reads and actual model recovery; the larger proposed confirmation remains
+unlaunched. Printed ordinals, full custom hierarchy and direct passage-to-cell
+expansion are not implemented by this narrow repair. Application defaults and main
+remain unchanged.
+
 **Hybrid quality comparison complete, 2026-11-03 (E67):** the
 [accepted result](hybrid-quality-results-20261103.md) completes 96 direct searches
 and 192 fixed-model answer turns without rebasing onto main. Hybrid improves

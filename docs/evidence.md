@@ -1556,3 +1556,38 @@ The earlier failed scope remains fenced, its cleanup unresolved. Scheduled orpha
 discovery, production authentication/redelivery/concurrency/lifecycle, large-index
 engagement and library-spanning-range merge gates remain open. Ordinary cleanup
 is not exceptional per-chunk-absence-before-blob ordering or indefinite absence.
+
+## E68 — Separate source-structure and context-accounting repairs (2026-11-04) · Local validation
+
+The [coordinated report](source-context-repair.md) and
+[completion receipt](../records/source-context-repair-20261104.json) qualify two
+explicit opt-ins from the completed SDK/model experiment at `4ad228d`. Independent
+implementation branches, reviews and receipts keep representation and consuming-agent
+changes attributable. No cloud/model calls, new confirmation tasks, application
+deployment, default change or main merge occurred. Completed results remain frozen.
+
+The [source repair](source-structure-repair.md) preserves all 682 main-body paragraphs,
+474 table cells and 47 numbering definitions in the retained DOCX, plus five distinct
+provider-only paragraphs. The known cell retains ten paragraphs, eight numbered,
+and the separate unnumbered qualifier. Original passage text, locations and vectors
+are exact matches. Local publication/read tests and independent atomic-read checks
+exercise permissions, metadata, replacement, retry, deletion and stale-source guards.
+This is a counterfactual local profile rebind, not a new provider execution. Printed
+ordinals, semantic qualifier ownership, direct passage-to-cell mapping and the full
+custom authored hierarchy remain unresolved. Whole compact source is 86,603 local
+serialization tokens versus 876 for the selected target; full-source adequacy at
+64k is not established.
+
+The [context repair](context-accounting-repair.md) reproduces all 18 historical
+stops and checks complete enclosing messages before admission. Six cases permit a
+bounded next continuation; twelve still cannot fit minimum replies. For hq-38,
+refusing the oversized new search body while retaining the outline changes the local
+guard from 64,843 to 33,703 against 64,000, including the unchanged 8,000 output reserve.
+No actual answer changes or recovery are measured. Default `legacy-v1` behavior
+remains; `envelope-v2` is opt-in, and resumed multi-file histories with an unscoped
+refusal conservatively require a fresh retrieval session.
+
+The next gate is bounded live qualification of each repair under separate new
+controls, followed by a decision about representation/context for the larger study.
+Live provider behavior, distributed lifecycle, model recovery, answer quality and
+broader source coverage remain untested. The larger confirmation is not launched.

@@ -14,6 +14,15 @@ quality gain under matched large-context controls. Both arms expose a source-str
 fidelity limitation. The pack is consumed; broader quality and production gates
 remain open. Application defaults and architecture are unchanged.
 
+The [separate source/context repairs](source-context-repair.md) (E68) add two
+explicit opt-ins. `microsoft-indexer-source-fidelity-v1` preserves supported DOCX
+main-body paragraph/list/table structure in the hash-bound source artifact while
+retaining the existing Microsoft retrieval passages and vectors. It is not the full
+custom authored hierarchy. `envelope-v2` changes only the consuming agent's local
+context admission; `legacy-v1` remains its default. Both have local qualification,
+with live publication, model recovery and answer-quality gates still open. These
+repairs do not amend completed experiment results or authorize the larger study.
+
 ## 1. Scope
 
 The File Library Index (the **index**) replaces Azure AI Search as the store and search engine behind the platform's file libraries. It:
