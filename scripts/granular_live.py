@@ -923,7 +923,10 @@ async def execute(state, archive_root):
                                 "errorType": type(error).__name__,
                                 "ownership": ledger.summary(),
                                 "cleanupAttempted": False,
-                                "reason": "API handlers are not proven stopped; retain durable ownership evidence and resources.",
+                                "reason": (
+                                    "API handlers are not proven stopped; "
+                                    "retain durable ownership evidence and resources."
+                                ),
                             },
                         )
                         raise
