@@ -212,6 +212,16 @@ capacity and actual reserve requirements. Context refusals remain a distinct
 outcome, not an index-quality failure. A second model across the full study would
 double the matrix and needs explicit scope/cost authorization.
 
+The completed [matched pilot](hybrid-client-model-pilot-results.md) provisionally
+favors Sol `gpt-6.1-sol/2026-09-29` as that primary model: the descriptive joint
+completion/support/citation/relationship count was 36/38 of 40 for vector/hybrid,
+versus mini's 26/29. This is a choice for reliable measurement, not a general model
+ranking. The pilot's 64k setting was a matched operating point, not demonstrated
+adequacy: 17 mini turns and one Sol turn stopped at the local guard. Five of mini's
+nine answerable hybrid wins avoided vector-arm context stops. Qualify actual
+source-read and enclosing tool-message budgets separately before freezing the
+new study; do not attribute a simultaneous budget fix to source hierarchy.
+
 Use one full balanced, serialized pass: **720 answer turns**. Preselect a
 stratified 60-question repeat subset before answering for **240 additional turns**,
 reversing/balancing order. The primary analysis uses the first pass only; repeated
@@ -259,6 +269,26 @@ usage and verify the actual regional Azure tariff/quota before approval. Source
 and query embedding tokens, actual chunk counts and RU must be forecast from the
 new frozen corpus, not extrapolated linearly from 36 old chunks. A true total is
 unavailable until these items have rates and quantities; keep known subtotals.
+
+The [pilot calibration](../records/source-confirmation-pilot-calibration-20261104.json)
+now adds an observed-workload reference while retaining the conservative scenario
+range above. Across 96 turns per model, known successful calls averaged 89,667 input /
+464 output tokens for Sol and 165,292 input /1,755 output for mini. Cached input was
+65.2% and 74.8% respectively; mini also had 113 failed 429 attempts with unknown usage.
+Scaling only those observed successful-token quantities to 960 turns gives:
+
+| Same-workload calibration | Observed cache fraction | No cached-input discount |
+| --- | ---: | ---: |
+| Sol | $69.98 | $176.61 |
+| Mini | $46.52 | $126.59 |
+
+These are public-list-price illustrations, not a new budget or prediction for the
+fresh corpus. Repeated questions over eight sources can exaggerate cache reuse;
+40 new longer documents, source-preserving blocks, different navigation and a
+different question distribution can change token and retry costs. Keep 40 sources /
+180 questions as the provisional coverage/review compromise; the pilot does not
+justify expanding it or freezing a total spend ceiling before source selection.
+No new document or confirmation question was consumed to make this calibration.
 
 Planning manual-equivalent review is roughly **144–201 hours**: 12 minutes to author
 and six minutes to independently validate each gold question; 3–6 minutes per

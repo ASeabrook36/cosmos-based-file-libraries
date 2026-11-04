@@ -200,8 +200,9 @@ actual ARM and API receipts **after** completion, then:
 ```
 
 Review all 192 packets against original source regions, facts, relationship/order
-requirements and citation locators using the existing source-based rubric. Labels
-are hidden and packets sorted by random opaque ID; answer style can still reveal
+requirements and citation locators using the existing source-based rubric. Supply
+the scorer a JSON list of review objects, each with its `reviewId`. Labels are
+hidden and packets sorted by random opaque ID; answer style can still reveal
 a model. Do not credit a qualifier or table relationship merely because matching
 words appeared. Missing-value abstention is a separate stratum; unavailable or
 inapplicable judgments are not passes. Review all paired discrepancies before

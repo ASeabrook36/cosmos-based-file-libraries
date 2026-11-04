@@ -1,5 +1,10 @@
 # Client and answering-model follow-up: prospective protocol
 
+Completed results: [client/model findings](hybrid-client-model-pilot-results.md),
+[SDK comparison](hybrid-sdk-comparison-results.md), and
+[source-fidelity confirmation proposal](source-structure-confirmation-proposal.md).
+This document preserves the prospective protocol.
+
 This new exploratory experiment starts at completed comparison commit
 `8f7d436987724abac1efe633d071db66f8cbf4ea`. Preserve that run, its controls and
 private archives. No main-branch integration, application deployment, application

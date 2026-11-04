@@ -6,7 +6,10 @@
     "documents": 40,
     "evidenceBearing": 30,
     "distractors": 10,
-    "formats": {"docx": 28, "markdown": 12},
+    "formats": {
+      "docx": 28,
+      "markdown": 12
+    },
     "domainFamilies": 5,
     "documentsPerDomainFamily": 8,
     "minimumLongDocumentsAbove20000Tokens": 16,
@@ -32,7 +35,11 @@
       "tableOrFormRelationship": 18,
       "missingAnswer": 30
     },
-    "wordingOverAnswerable": {"exact": 54, "paraphrased": 66, "mixedOrNeutral": 30},
+    "wordingOverAnswerable": {
+      "exact": 54,
+      "paraphrased": 66,
+      "mixedOrNeutral": 30
+    },
     "minimumGranularNavigationOpportunities": 60,
     "freshQuestionTextAuthored": false,
     "oldPacksUse": "development_and_regression_only"
@@ -40,22 +47,44 @@
   "representation": {
     "candidate": "proposed custom-structured-v2-source-fidelity",
     "status": "not_implemented_or_validated",
-    "requiredSourceBlocks": ["heading", "paragraph", "list_item", "table", "table_row", "table_cell"],
+    "requiredSourceBlocks": [
+      "heading",
+      "paragraph",
+      "list_item",
+      "table",
+      "table_row",
+      "table_cell"
+    ],
     "hierarchy": "authored DOCX Heading1-9 and Markdown ATX only; no generated headings or summary vectors",
     "nativeDocxScope": "main body; preserve numbering properties, paragraph/list/table order and original coordinates",
     "passageRecipe": "retain versioned custom 500-token target/50-token overlap; measure actual distribution before freeze",
-    "frozenIdenticallyAcrossNavigationCells": ["extraction", "source_blocks", "passage_text", "vectors", "filters", "metadata", "generation", "query_controls"],
-    "navigationArms": ["flat_block_navigation", "authored_hierarchy_navigation"],
-    "searchArms": ["vector", "hybrid"],
+    "frozenIdenticallyAcrossNavigationCells": [
+      "extraction",
+      "source_blocks",
+      "passage_text",
+      "vectors",
+      "filters",
+      "metadata",
+      "generation",
+      "query_controls"
+    ],
+    "navigationArms": [
+      "flat_block_navigation",
+      "authored_hierarchy_navigation"
+    ],
+    "searchArms": [
+      "vector",
+      "hybrid"
+    ],
     "sameSourceLibraryPerMatchedSet": true,
     "microsoftOneCanonicalSectionIsPrimaryComparator": false,
     "completeStrategyProviderComparison": false
   },
   "answering": {
     "primaryModels": 1,
-    "primaryModelDecision": "select and pin before source/task freeze using this session's matched model pilot; no per-task model switching",
+    "primaryModelDecision": "provisional Sol gpt-6.1-sol/2026-09-29 from matched pilot; verify availability and freeze explicitly after source/context qualification; no per-task switching",
     "proposedContextAllowance": 64000,
-    "toolOutputAttemptLimits": "bind the selected pilot's final supported controls identically; unresolved until pilot completion",
+    "toolOutputAttemptLimits": "Pilot baseline:64k operating context,medium reasoning,8k output,12 tool rounds,13 logical calls,3 attempts; qualify source reads and envelope overhead before final common freeze.",
     "firstPassRepeats": 1,
     "prospectiveSecondRepeatQuestions": 60,
     "secondRepeatSelection": "stratified by primary task stratum and source/domain cluster before any answering",
@@ -64,14 +93,29 @@
   },
   "costScenarios": {
     "perAnswerTurn": {
-      "low": {"cumulativeInputTokens": 40000, "outputTokens": 500},
-      "central": {"cumulativeInputTokens": 100000, "outputTokens": 1000},
-      "high": {"cumulativeInputTokens": 200000, "outputTokens": 2000}
+      "low": {
+        "cumulativeInputTokens": 40000,
+        "outputTokens": 500
+      },
+      "central": {
+        "cumulativeInputTokens": 100000,
+        "outputTokens": 1000
+      },
+      "high": {
+        "cumulativeInputTokens": 200000,
+        "outputTokens": 2000
+      }
     },
     "inputMeaning": "sum over all model calls within a turn, not a single-call context size",
     "referenceUncachedUsdPerMillionTokens": {
-      "sol": {"input": 2.0, "output": 10.0},
-      "mini": {"input": 0.75, "output": 4.5}
+      "sol": {
+        "input": 2.0,
+        "output": 10.0
+      },
+      "mini": {
+        "input": 0.75,
+        "output": 4.5
+      }
     },
     "referencePricingSources": {
       "sol": "https://developers.openai.com/api/docs/models/gpt-6.1-sol",
@@ -102,11 +146,40 @@
     "prerequisites": [
       "review client/model pilot and name one new explicit implementation baseline",
       "qualify source-fidelity repair independently against original bytes and rendering",
+      "independently qualify tool-envelope context accounting and adequate common context on representative long sources; no context sensitivity was established by the pilot",
       "implement flat/hierarchical read controls with identical frozen passage rows and permission/lifecycle checks",
       "select licensed authentic source files and independent fresh source-based gold",
       "freeze model/context/tool limits and balanced full schedule before answering",
       "capture account quota and full resource/cost ceiling; obtain larger-study launch authorization",
       "verify canary, readiness, owned-scope cleanup and protected-resource schedule"
+    ]
+  },
+  "pilotCalibration": {
+    "pilotScorecardSha256": "e8805c8060ca959de792a0297b4f0d502e51851dc6f51511c440e451ae9828b6",
+    "status": "observed_workload_calibration_not_budget_or_launch_authorization",
+    "observedTurnsPerModel": 96,
+    "illustratedConfirmationTurns": 960,
+    "usageScope": "known successful Responses;113 failed mini attempts have unknown usage",
+    "models": {
+      "sol": {
+        "meanKnownInputTokensPerTurn": 89667.09375,
+        "meanKnownOutputTokensPerTurn": 463.5520833333333,
+        "observedCachedInputFraction": 0.6519625080782027,
+        "sameWorkload960TurnsWithObservedCacheUsd": 69.98064,
+        "sameKnownTokens960TurnsWithoutCacheUsd": 176.61092
+      },
+      "budget": {
+        "meanKnownInputTokensPerTurn": 165292.0,
+        "meanKnownOutputTokensPerTurn": 1755.0104166666667,
+        "observedCachedInputFraction": 0.7475417241407126,
+        "sameWorkload960TurnsWithObservedCacheUsd": 46.523277,
+        "sameKnownTokens960TurnsWithoutCacheUsd": 126.591885
+      }
+    },
+    "limitations": [
+      "Reused small pack can overstate cache reuse. New40-document source inventory, repaired representation and960-turn navigation matrix can change tokens and retries.",
+      "Not an Azure bill or ceiling; excludes reviewer, extraction, embedding, storage, database, hosting and unknown failed-request charges.",
+      "Keep conservative low/central/high scenarios; freeze actual resource and spend ceilings only after new source/representation preflight."
     ]
   }
 }
