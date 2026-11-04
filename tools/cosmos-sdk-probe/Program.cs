@@ -29,12 +29,16 @@ static class Probe
     };
     internal static string Hash(byte[] bytes) => Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
     internal static void Require(bool condition, string message) { if (!condition) throw new InvalidOperationException(message); }
-    internal static Dictionary<string, string> Headers(HttpRequestMessage request) => RequestHeaders
-        .Where(k => request.Headers.Contains(k) || request.Content?.Headers.Contains(k) == true)
-        .ToDictionary(k => k, k => string.Join(",", request.Headers.TryGetValues(k, out var v) ? v : request.Content!.Headers.GetValues(k)));
-    internal static Dictionary<string, string> Headers(HttpResponseMessage response) => ResponseHeaders
-        .Where(k => response.Headers.Contains(k) || response.Content.Headers.Contains(k))
-        .ToDictionary(k => k, k => string.Join(",", response.Headers.TryGetValues(k, out var v) ? v : response.Content.Headers.GetValues(k)));
+    // Enumerate first: querying a response-only header on HttpContent.Headers throws,
+    // even when the header is absent. Capture must not turn successful IO into failure.
+    internal static Dictionary<string, string> SelectHeaders(IEnumerable<KeyValuePair<string, IEnumerable<string>>> headers, string[] allowed) => headers
+        .Where(pair => allowed.Contains(pair.Key, StringComparer.OrdinalIgnoreCase))
+        .GroupBy(pair => pair.Key, StringComparer.OrdinalIgnoreCase)
+        .ToDictionary(group => group.Key.ToLowerInvariant(), group => string.Join(",", group.SelectMany(pair => pair.Value)));
+    internal static Dictionary<string, string> Headers(HttpRequestMessage request) => SelectHeaders(
+        request.Headers.Concat(request.Content?.Headers ?? Enumerable.Empty<KeyValuePair<string, IEnumerable<string>>>()), RequestHeaders);
+    internal static Dictionary<string, string> Headers(HttpResponseMessage response) => SelectHeaders(
+        response.Headers.Concat(response.Content.Headers), ResponseHeaders);
     internal static void Private(string path)
     {
         var full = Path.GetFullPath(path);
@@ -77,7 +81,16 @@ static class Probe
             using var request = new HttpRequestMessage(HttpMethod.Get, "https://private.invalid/");
             request.Headers.Add("Authorization", "Bearer secret"); request.Headers.Add("x-ms-start-epk", "bound");
             Require(Headers(request).Count == 1 && Headers(request)["x-ms-start-epk"] == "bound", "credential header exposed");
-            Console.WriteLine("{\"status\":\"passed\",\"tests\":8,\"cloudCalls\":0}"); return 0;
+            request.Content = new StringContent("{}");
+            Require(Headers(request).Count == 1, "request content header enumeration failed");
+            using var response = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent("{}") };
+            Require(Headers(response).Count == 0, "empty response header enumeration failed");
+            response.Headers.Add("Retry-After", "10");
+            response.Headers.Add("x-ms-request-charge", "3.5");
+            response.Headers.Add("Set-Cookie", "secret");
+            var selected = Headers(response);
+            Require(selected.Count == 2 && selected["retry-after"] == "10" && selected["x-ms-request-charge"] == "3.5", "response header allowlist failed");
+            Console.WriteLine("{\"status\":\"passed\",\"tests\":11,\"cloudCalls\":0}"); return 0;
         }
         Require(args.Length == 1, "Expected private runtime config path");
         Private(args[0]);

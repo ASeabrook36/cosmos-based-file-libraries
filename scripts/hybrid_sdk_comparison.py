@@ -768,11 +768,12 @@ def logical_wire_summary(events):
         "dataQueryRequests": len(data),
         "queryPlanRequests": len(plans),
         "metadataRequests": len(metadata),
-        "knownWireRequestCharge": sum(charges),
+        "knownWireRequestCharge": sum(charges) if charges else None,
         "responsesWithCharge": len(charges),
         "responsesWithoutCharge": len(events) - len(charges),
         "totalBilledRu": None,
         "visibleDataRangeIdsPrivate": sorted(ranges),
+        "successfulDataResponses": sum(200 <= e.get("httpStatus", 0) < 300 for e in data),
         "successfulDataResponsesWithoutRange": missing_range,
         "dataRequestsWithLogicalPartitionHeader": sum(
             "x-ms-documentdb-partitionkey" in e["requestHeaders"] for e in data
@@ -841,6 +842,31 @@ def document_coverage(ids, known, source_map, task):
     return len(found & expected) / len(expected) if task["answerable"] and expected else None
 
 
+def optional_sum(values):
+    present = [value for value in values if value is not None]
+    return sum(present) if present else None
+
+
+def optional_mean(values):
+    present = [value for value in values if value is not None]
+    return statistics.mean(present) if present else None
+
+
+def optional_median(values):
+    present = [value for value in values if value is not None]
+    return statistics.median(present) if present else None
+
+
+def pair_agreement(a, b):
+    complete = a is not None and b is not None and len(a) == len(b) == TOP
+    return {
+        "bothCompleteTop16": complete,
+        "top16SetOverlap": len(set(a) & set(b)) / TOP if complete else None,
+        "exactOrderAgreement": a == b if complete else None,
+        "agreementIsExactHybridOracle": False,
+    }
+
+
 def summary(state, output):
     root = private_path(state)
     final = read(root / "finalization.json")
@@ -882,7 +908,9 @@ def summary(state, output):
         )
         wire = logical_wire_summary(wires[result["sdk"], result["id"]])
         ranges = set(wire.pop("visibleDataRangeIdsPrivate"))
-        private_ids[result["sdk"], result["route"], result["case"], result["repeat"]] = ids
+        complete = result["status"] == "complete"
+        evaluated = complete and valid
+        private_ids[result["sdk"], result["route"], result["case"], result["repeat"]] = ids if evaluated else None
         rows.append(
             {
                 "case": result["case"],
@@ -890,31 +918,38 @@ def summary(state, output):
                 "route": result["route"],
                 "repeat": result["repeat"],
                 "status": result["status"],
-                "cardinalityAndSourceIsolationPassed": valid,
+                "cardinalityAndSourceIsolationPassed": valid if complete else None,
                 "topCandidates": [
                     {"source": controls["sourceMap"][known[key]["documentId"]], "chunkIndex": known[key]["chunkIndex"]}
                     for key in ids
                     if key in known
-                ],
+                ]
+                if evaluated
+                else None,
                 "expectedDocumentCoverage": {
                     str(k): document_coverage(ids[:k], known, controls["sourceMap"], tasks[result["case"]])
                     for k in (8, 16)
-                },
-                "candidateRankListSha256": digest(ids),
+                }
+                if evaluated
+                else None,
+                "candidateRankListSha256": digest(ids) if evaluated else None,
                 "vectorAt8": vector_accuracy(ids, scores[result["case"]], 8)
-                if result["route"] == "vector-prefix" and valid
+                if result["route"] == "vector-prefix" and evaluated
                 else None,
                 "vectorAt16": vector_accuracy(ids, scores[result["case"]], 16)
-                if result["route"] == "vector-prefix" and valid
+                if result["route"] == "vector-prefix" and evaluated
                 else None,
                 "exactHybridRankingCorrectness": None,
-                "instrumentedLogicalMs": result["totalMs"],
-                "sdkPageRequestCharge": result.get("sdkPageRequestCharge"),
-                "visibleDataRangeCount": len(ranges),
+                "instrumentedLogicalMs": result["totalMs"] if complete else None,
+                "failedLogicalAttemptMs": None if complete else result["totalMs"],
+                "sdkPageRequestCharge": result.get("sdkPageRequestCharge") if complete else None,
+                "visibleDataRangeCount": len(ranges) if ranges else None,
                 "positiveContactsOutsideKnownLibraryRanges": len(ranges - known_library_ranges)
-                if placement_complete
+                if placement_complete and ranges
                 else None,
-                "rangeVisibilityCompleteForSuccessfulDataResponses": wire["successfulDataResponsesWithoutRange"] == 0,
+                "rangeVisibilityCompleteForSuccessfulDataResponses": wire["successfulDataResponsesWithoutRange"] == 0
+                if wire["successfulDataResponses"]
+                else None,
                 **wire,
             }
         )
@@ -941,10 +976,7 @@ def summary(state, output):
                         "repeat": repeat,
                         "left": "/".join(left),
                         "right": "/".join(right),
-                        "bothCompleteTop16": len(a) == len(b) == TOP,
-                        "top16SetOverlap": len(set(a) & set(b)) / TOP,
-                        "exactOrderAgreement": a == b,
-                        "agreementIsExactHybridOracle": False,
+                        **pair_agreement(a, b),
                     }
                 )
     cells = {}
@@ -953,25 +985,38 @@ def summary(state, output):
         cells[sdk + "/" + route] = {
             "queries": len(group),
             "completeQueries": sum(r["status"] == "complete" for r in group),
-            "sourceIsolationPasses": sum(r["cardinalityAndSourceIsolationPassed"] for r in group),
+            "sourceIsolationPasses": sum(r["cardinalityAndSourceIsolationPassed"] is True for r in group),
+            "sourceIsolationEvaluatedQueries": sum(r["cardinalityAndSourceIsolationPassed"] is not None for r in group),
             "distinctRankListsByRepeat": {
-                str(rep): len({r["candidateRankListSha256"] for r in group if r["repeat"] == rep}) for rep in (1, 2)
-            },
-            "allQueriesSameRankingByRepeat": {
-                str(rep): len({r["candidateRankListSha256"] for r in group if r["repeat"] == rep}) == 1
+                str(rep): len(
+                    {r["candidateRankListSha256"] for r in group if r["repeat"] == rep and r["candidateRankListSha256"]}
+                )
+                or None
                 for rep in (1, 2)
             },
-            "knownWireRu": sum(r["knownWireRequestCharge"] for r in group),
+            "allQueriesSameRankingByRepeat": {
+                str(rep): len(
+                    {r["candidateRankListSha256"] for r in group if r["repeat"] == rep and r["candidateRankListSha256"]}
+                )
+                == 1
+                if all(r["candidateRankListSha256"] for r in group if r["repeat"] == rep)
+                else None
+                for rep in (1, 2)
+            },
+            "knownWireRu": optional_sum(r["knownWireRequestCharge"] for r in group),
             "totalBilledRu": None,
-            "meanKnownWireRu": statistics.mean(r["knownWireRequestCharge"] for r in group),
-            "logicalMsMedian": statistics.median(r["instrumentedLogicalMs"] for r in group),
-            "logicalMsMean": statistics.mean(r["instrumentedLogicalMs"] for r in group),
+            "meanKnownWireRu": optional_mean(r["knownWireRequestCharge"] for r in group),
+            "logicalMsMedian": optional_median(r["instrumentedLogicalMs"] for r in group),
+            "failedAttemptMsMedian": optional_median(r["failedLogicalAttemptMs"] for r in group),
+            "logicalMsMean": optional_mean(r["instrumentedLogicalMs"] for r in group),
             "wireRequests": sum(r["wireRequests"] for r in group),
             "queryPlanRequests": sum(r["queryPlanRequests"] for r in group),
             "visible429Responses": sum(r["visibleThrottleResponses"] for r in group),
             "positiveOutsideLibraryRangeQueries": sum(
                 bool(r["positiveContactsOutsideKnownLibraryRanges"]) for r in group
-            ),
+            )
+            if any(r["positiveContactsOutsideKnownLibraryRanges"] is not None for r in group)
+            else None,
             "meanVectorRecallAt16": statistics.mean(r["vectorAt16"]["tieAwareRecall"] for r in group if r["vectorAt16"])
             if route == "vector-prefix" and any(r["vectorAt16"] for r in group)
             else None,
@@ -993,6 +1038,8 @@ def summary(state, output):
     exported = {
         "schema": SCHEMA + ".summary",
         "status": "complete_candidate_for_review",
+        "summaryProducerSha256": sha(Path(__file__)),
+        "failedQueriesExcludedFromQualityAndSuccessLatency": True,
         "completedBaselineCommit": BASE,
         "scope": {
             "queries": 48,

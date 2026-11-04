@@ -263,3 +263,24 @@ def test_frozen_benchmark_hash_guard():
     h.verify_benchmark(controls)
     with pytest.raises(ValueError, match="benchmark files changed"):
         h.verify_benchmark({**controls, "tasksSha256": "different"})
+
+
+def test_missing_charge_is_unknown_but_observed_zero_is_known():
+    assert h.logical_wire_summary([event()])["knownWireRequestCharge"] is None
+    assert h.logical_wire_summary([event(response={"x-ms-request-charge": "0"})])["knownWireRequestCharge"] == 0
+    assert h.logical_wire_summary([event(method="GET")])["successfulDataResponses"] == 0
+
+
+def test_failed_pair_has_no_ranking_agreement_or_recall_claim():
+    result = h.pair_agreement(None, list(range(16)))
+    assert result["bothCompleteTop16"] is False
+    assert result["top16SetOverlap"] is result["exactOrderAgreement"] is None
+    assert h.pair_agreement([], [])["exactOrderAgreement"] is None
+    assert h.pair_agreement(list(range(16)), list(range(16)))["top16SetOverlap"] == 1
+
+
+def test_nullable_aggregates_keep_missing_measurements_distinct_from_zero():
+    for aggregate in (h.optional_sum, h.optional_mean, h.optional_median):
+        assert aggregate([None, None]) is None
+        assert aggregate([None, 0]) == 0
+        assert aggregate([None, 2]) == 2
