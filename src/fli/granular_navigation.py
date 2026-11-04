@@ -10,6 +10,51 @@ from fli.errors import ApiError
 from fli.granular_source import node_indexes
 from fli.presentation import evidence_json, project
 
+PREVIEW_CHARACTERS = 160
+
+
+def read_scope(node, *, subtree=False):
+    if node["kind"] in {"section", "chapter"}:
+        return "authored_subtree" if subtree else "own_content_excluding_authored_subsections"
+    if node["kind"] == "document":
+        return "whole_document"
+    return "complete_source_subtree" if node["kind"] in {"table", "tableCell"} else "complete_source_atom"
+
+
+def node_context(tree, identifier):
+    """Source-authored ancestry; coordinate labels are never inferred headings."""
+    nodes = {n["id"]: n for n in tree["nodes"]}
+    node = nodes[identifier]
+    ancestors, cursor = [], node
+    while cursor:
+        if cursor["kind"] in {"section", "chapter"}:
+            ancestors.append({"nodeId": cursor["id"], "title": cursor["title"]})
+        cursor = nodes.get(cursor["parentId"])
+    return {
+        "nodeId": identifier,
+        "kind": node["kind"],
+        "title": node["title"],
+        "authoredPath": list(reversed(ancestors)),
+    }
+
+
+def selection_summary(tree, scope, atom_count):
+    """Describe requested scope; only the response's completeness flags assert delivery."""
+    return {
+        "sourceAtomCount": atom_count,
+        "nodes": [
+            {
+                **node_context(tree, identifier),
+                "readScope": read_scope(
+                    next(n for n in tree["nodes"] if n["id"] == identifier),
+                    subtree=scope.get("nodeScope", "subtree") == "subtree",
+                ),
+            }
+            for identifier in scope.get("nodeIds", [])
+        ],
+        "selectionUnit": "requested_nodes" if scope.get("nodeIds") else "source_atoms_not_container_completeness",
+    }
+
 
 def node_fields(node):
     return {
@@ -17,6 +62,7 @@ def node_fields(node):
         "navigationKind": node["kind"],
         "parentNodeId": node["parentId"],
         "containingSectionId": node.get("containingSectionId"),
+        "readScope": read_scope(node),
         **{k: node[k] for k in ("headingLevel", "headingOrigin") if k in node},
     }
 
@@ -49,6 +95,21 @@ def outline_entries(sections, tree, root, after, limit, tokenizer):
                 "contentKind": "navigation",
             }
         )
+        if node["kind"] in {"paragraph", "sourceBlock"}:
+            # A preview is navigation, never the body returned by a source read.
+            # Work from validated original text, not XML wrappers or a summary.
+            section = sections[node["sectionIndexes"][0]]
+            structure = section["sourceStructure"]
+            paragraph = structure.get("paragraphs", [None])[0]
+            source = paragraph["text"] if paragraph is not None else section["text"]
+            entries[-1]["navigationPreview"] = {
+                "prefix": source[:PREVIEW_CHARACTERS],
+                "characters": min(len(source), PREVIEW_CHARACTERS),
+                "sourceCharacters": len(source),
+                "truncated": len(source) > PREVIEW_CHARACTERS,
+            }
+            if paragraph is not None and paragraph.get("authoredHeading"):
+                entries[-1]["paragraphRole"] = "authored_heading"
     return entries, len(children)
 
 

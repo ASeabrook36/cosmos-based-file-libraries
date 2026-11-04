@@ -362,6 +362,16 @@ async def read_documents(
         "More context increases input cost, latency and attention demands; "
         "no fixed dollar or time estimate is implied.",
     ]
+    if (library.get("ingestionProfile") or {}).get("id") == "custom-granular-v1":
+        notes = [
+            "Supported original source atoms and authored hierarchy; processingCoverage states source limitations.",
+            "navigationPreview is an exact bounded source prefix for navigation only, even when truncated=false. "
+            "Copy readSelector to obtain source evidence and its citation before answering.",
+            "selectionComplete=true means all requested source atoms were delivered, not the whole document. "
+            "For tables/cells, nodeScope=subtree is already the default: repeating the same nodes with explicit "
+            "subtree or a larger budget does not expand a complete selection. Use another returned selector "
+            "to change scope.",
+        ]
     for document_id, expected in selections:
         doc = await searcher.documents.get(library_id, document_id, raw_response_hook=cost)
         if doc is None or doc.get("status") == "deleting":
@@ -515,6 +525,10 @@ async def read_documents(
             public["image"] = await searcher.image(library_id, document_id, generation, section)
             public_sections.append(public)
         item = {**manifest(doc), "representation": representation, "sections": public_sections}
+        if tree and mode == "selected":
+            from fli.granular_navigation import selection_summary
+
+            item["selectionSummary"] = selection_summary(tree, selected_scope, len(sections))
         if view != "raw":
             descriptor = doc.get("fullText") or {}
             item["documentTokens"] = descriptor.get("compactSectionsTokenCount", descriptor.get("tokenCount"))
@@ -551,8 +565,11 @@ async def read_documents(
             if mode == "outline":
                 item["outline"] = item.pop("sections")
                 if granular_outline is not None:
+                    from fli.granular_navigation import node_context
+
                     item["outline"] = granular_outline
                     item["outlineRootNodeId"] = selected_scope.get("outlineNodeId", "n0")
+                    item["outlineContext"] = node_context(tree, item["outlineRootNodeId"])
                     item["outlineScope"] = "immediate_children; use each outlineSelector to drill down"
                     item["outlineChildCount"] = outline_count
                 item["hasMore"] = after_section + section_limit < outline_count

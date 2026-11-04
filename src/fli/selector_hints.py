@@ -58,7 +58,8 @@ def add_hints(evidence):
             or ("charStart" in location and "charEnd" in location)
         )
         granular = (value.get("processingCoverage") or {}).get("sourceStructure") == "fli.granular-source.v1"
-        if granular and field == "evidenceIds":
+        granular_passage = granular and bool(value.get("evidenceId"))
+        if granular_passage:
             usable = bool(location.get("sourceAtomId"))
             value["passageToSourceMapping"] = "recorded_containing_source_atom" if usable else "unavailable"
             value["passageMappingVerification"] = "publication_bound; revalidated_on_expansion"
@@ -69,10 +70,12 @@ def add_hints(evidence):
             "evidenceExpansion": "selected_handle" if handle and usable else "outline_required",
             "sourceLocationPrecision": "stored_extraction_only",
         }
-        if granular and field == "evidenceIds":
+        if granular_passage:
             value["readCapabilities"]["sourceLocationPrecision"] = (
                 "recorded_containing_source_atom_not_exact_passage_offsets" if usable else "unavailable"
             )
+        if granular and "documentId" in value and not handle:
+            value["fullSelector"] = {"mode": "full", "documents": [scope]}
         if handle and usable:
             value["readSelector"] = {"mode": "selected", "documents": [{**scope, field: [handle]}]}
         if node := value.get("navigationNodeId"):
@@ -132,7 +135,7 @@ def inspection_hints(evidence, read_selector):
     result["nextAction"] = (
         "This was a size/coverage inspection (includeText=false), not a source or outline read. "
         "Copy readSelector with includeText=true to receive the same scope. In mode=outline this returns "
-        "navigation entries without body text. The same maxTokens and snapshot checks apply; "
+        "navigation entries and labeled previews, not a source read. The same maxTokens and snapshot checks apply; "
         "if the content does not fit, narrow scope or paginate."
     )
     result["notes"] = [*(result.get("notes") or []), "includeText=false returned no source bodies or outline entries."]

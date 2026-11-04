@@ -24,9 +24,9 @@ def tools(profile):
 # Captured through IndexClient.tools before the granular-only guidance mitigations.
 BASELINE_OTHER_PROFILES = "2a2680c2db8c34cc0cc3dbe0bd9d6bc295e17dd894a6c6ead8f2cbfc338ad605"
 BASELINE_GRANULAR_OTHER_TOOLS = "e0df6b3ce5d8e01ac383097c013bf45edb354c41ec6aa9305c3db5bb5e8428eb"
-# Only the granular includeText parameter's description changed: false is an
-# inspection without outline entries; true/default is required to receive them.
-GRANULAR_READ_SCHEMA = "e566bf72254ddf4b52bd4a5c4a7002122f4a627a3c954fae4073eca0746c5d56"
+# Only the granular includeText parameter's description changed: true/default
+# delivers an outline with labeled navigation previews; false remains inspection.
+GRANULAR_READ_SCHEMA = "3a0114e445c6145084231a34904314e206e3acf011e9070d098ad0630ff5ba74"
 
 
 @pytest.mark.parametrize(
@@ -58,8 +58,9 @@ def test_normal_client_exposes_granular_guidance_without_changing_other_tools():
     assert read_tool["function"]["parameters"]["properties"]["includeText"] == {
         "type": "boolean",
         "description": (
-            "True (default): deliver source text in full/selected mode, or navigation entries without body text "
-            "in outline mode. False: size/coverage inspection only, with no source text or outline entries."
+            "True (default): deliver source text in full/selected mode, or outline entries with bounded navigation "
+            "previews (not source evidence). False: size/coverage inspection only, "
+            "with no source text or outline entries."
         ),
     }
     assert digest(read_tool["function"]["parameters"]) == GRANULAR_READ_SCHEMA
@@ -100,10 +101,13 @@ async def test_leading_docx_paragraph_uses_document_root_fallback_without_invent
     document.save(source)
     env = await ready(source=source.getvalue(), name="preamble.docx")
     leading = read(env)["documents"][0]["sections"][0]
-    paragraph = read(env, leading["readSelector"])["documents"][0]["sections"][0]
+    selected = read(env, leading["readSelector"])
+    paragraph = selected["documents"][0]["sections"][0]
     assert paragraph["text"] == "<p>Prefatory source text.</p>"
     assert paragraph["containingSectionId"] == "n0"
     assert paragraph["containingSectionScope"] == "document_root_no_containing_authored_section"
     assert paragraph["containingSectionSelector"]["documents"][0]["nodeIds"] == ["n0"]
     assert paragraph["sectionId"].startswith("ev1.") and paragraph["sectionId"] != "n0"
-    assert text_of(read(env, paragraph["containingSectionSelector"])) == text_of(read(env, paragraph["fullSelector"]))
+    assert text_of(read(env, paragraph["containingSectionSelector"])) == text_of(
+        read(env, selected["documents"][0]["fullSelector"])
+    )

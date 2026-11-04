@@ -141,14 +141,16 @@ async def test_docx_paragraph_cell_section_subtree_and_document_preserve_source_
     assert QUALIFIER in subtree and CHILD_TEXT in subtree and CLOSING not in subtree
     containing = text_of(read(env, qualifier["containingSectionSelector"]))
     assert containing == subtree
-    full = read(env, qualifier["fullSelector"])
+    full = read(env, paragraph["documents"][0]["fullSelector"])
     assert full["complete"] and all(part in text_of(full) for part in (OPENING, QUALIFIER, CHILD_TEXT, CLOSING))
     assert all(key not in json.dumps(full) for key in ('"sourceNavigation"', '"runs"', '"numberingDefinitions"'))
     assert qualifier["containingSectionScope"] == "complete_authored_subtree"
     for entry in (operating, eligibility, table, cell, qualifier, section):
-        for key in ("readSelector", "outlineSelector", "containingSectionSelector", "fullSelector"):
-            for selection in entry[key]["documents"]:
+        assert "readSelector" in entry and "containingSectionSelector" in entry
+        for key in ("readSelector", "outlineSelector", "containingSectionSelector", "subtreeSelector"):
+            for selection in entry.get(key, {}).get("documents", []):
                 assert all(selection[k] == v for k, v in env.pin.items())
+        assert "fullSelector" not in entry
 
 
 async def test_outline_paginates_only_immediate_children_and_keeps_body_out_of_outline():
@@ -300,13 +302,14 @@ async def test_pre_heading_content_discloses_document_root_instead_of_inventing_
         document.save(stream)
         source = stream.getvalue()
     env = await ready(source=source, name="preamble." + file_type)
-    entry = next(row for row in outline(env)["outline"] if row["navigationKind"] in {"paragraph", "sourceBlock"})
+    document = outline(env)
+    entry = next(row for row in document["outline"] if row["navigationKind"] in {"paragraph", "sourceBlock"})
     assert entry["containingSectionScope"] == "document_root_no_containing_authored_section"
     assert "Prefatory source text." in text_of(read(env, entry["readSelector"]))
     assert "Authored section text." not in text_of(read(env, entry["readSelector"]))
     expanded = text_of(read(env, entry["containingSectionSelector"]))
     assert "Authored section text." in expanded and "Prefatory source text." in expanded
-    assert expanded == text_of(read(env, entry["fullSelector"]))
+    assert expanded == text_of(read(env, document["fullSelector"]))
 
 
 async def test_pages_and_unpinned_hierarchy_requests_fail_without_returning_source():
@@ -578,7 +581,7 @@ async def test_normal_agent_uses_returned_granular_handles_and_platform_library_
             return invoke(state["paragraph"]["containingSectionSelector"])
         if calls == 10:
             assert QUALIFIER in text_of(evidence) and CHILD_TEXT in text_of(evidence)
-            return invoke(state["paragraph"]["fullSelector"])
+            return invoke(evidence["documents"][0]["fullSelector"])
         assert calls == 11 and evidence["complete"]
         assert all(part in text_of(evidence) for part in (OPENING, QUALIFIER, CHILD_TEXT, CLOSING))
         return Reply(

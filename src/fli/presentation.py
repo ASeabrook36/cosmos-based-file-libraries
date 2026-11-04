@@ -1,7 +1,8 @@
 """Versioned REST evidence/attachment presentation. No retrieval or permission decisions.
 
-Only call after retrieval's authorization, integrity and lifecycle checks. Source strings
-are never shortened or rewritten. Attachment URLs are bearer capabilities for the platform.
+Only call after retrieval's authorization, integrity and lifecycle checks. Source bodies
+are never shortened or rewritten; navigation prefixes are separately labeled previews.
+Attachment URLs are bearer capabilities for the platform.
 """
 
 from __future__ import annotations
@@ -142,6 +143,45 @@ def project(response):
     return evidence, list(attachments.values())
 
 
+def granular_compact(evidence):
+    """Remove redundant navigation hints only; original bodies and raw provenance stay intact."""
+    if evidence.get("mode") not in {"full", "selected", "outline"}:
+        return evidence
+    for document in evidence.get("documents", []):
+        if (document.get("processingCoverage") or {}).get("sourceStructure") != "fli.granular-source.v1":
+            continue
+        # A document manifest is not a passage with an unavailable source mapping.
+        if capabilities := document.get("readCapabilities"):
+            capabilities.pop("evidenceExpansion", None)
+            capabilities.pop("sourceLocationPrecision", None)
+        if document.get("compactDocumentTokens") == document.get("documentTokens"):
+            for field in (
+                "compactDocumentTokens",
+                "compactDocumentTokenEstimateScope",
+                "compactDocumentTokenTokenizer",
+            ):
+                document.pop(field, None)
+        for row in [*document.get("outline", []), *document.get("sections", [])]:
+            if not row.get("navigationNodeId"):
+                continue
+            # Document-level selectors retain the same pins. Leaves cannot drill
+            # down; a table/cell/atom's read and subtree selectors are identical.
+            row.pop("documentSelector", None)
+            row.pop("fullSelector", None)
+            if row.get("navigationKind") in {"paragraph", "sourceBlock"}:
+                row.pop("outlineSelector", None)
+            if row.get("subtreeSelector") == row.get("readSelector"):
+                row.pop("subtreeSelector", None)
+            if row.get("parentSelector") == row.get("containingSectionSelector"):
+                row.pop("parentSelector", None)
+            row.pop("readCapabilities", None)
+            if row.get("sourceStructure") in ({"scope": "original-main-body"}, {"scope": "markdown-utf8-text"}):
+                row.pop("sourceStructure", None)
+            if row.get("image") is None:
+                row.pop("image", None)
+    return evidence
+
+
 def compact_response(
     response,
     max_tokens=DEFAULT_EVIDENCE_TOKENS,
@@ -156,6 +196,7 @@ def compact_response(
     evidence, attachments = project(response)
     if selectors == "handles":
         evidence = add_hints(evidence)
+    evidence = granular_compact(evidence)
     encode = pack if view == "references" else lambda value: value
     tokenizer = default_tokenizer()
     required = len(tokenizer.encode(evidence_json(encode(evidence))))

@@ -301,7 +301,10 @@ def tool_definitions(library: Mapping[str, Any]) -> list[dict[str, Any]]:
         read["function"]["description"] = common + (
             "\nRead supported DOCX main-body structure or exact Markdown ATX source blocks. "
             "mode=outline returns immediate children: authored sections/subsections, tables, cells and paragraphs "
-            "(Markdown: headings and blocks), without body text. Use includeText=true (the default) to receive "
+            "(Markdown: headings and blocks), with navigationPreview source prefixes of at most 160 Unicode "
+            "characters. These previews are navigation hints, not evidence or complete reads, even when "
+            "truncated=false; copy readSelector for the source and citation before answering. authoredPath "
+            "and readScope distinguish containing headings and scope. Use includeText=true (the default) to receive "
             "outline entries. includeText=false is size/coverage inspection only: it returns neither source text "
             "nor outline entries in any mode. After inspection, copy the returned readSelector with includeText=true "
             "to receive the inspected scope under the same budget. Copy outlineSelector to drill down; "
@@ -312,7 +315,11 @@ def tool_definitions(library: Mapping[str, Any]) -> list[dict[str, Any]]:
             "parentSelector. Search hits or bulk paragraph selections do not prove cell completeness. "
             "containingSectionSelector expands the complete containing authored subtree, or the document root "
             "when no authored section contains the source. "
-            "fullSelector reads the document. Keep generation/contentRevision pins; stale references are refused. "
+            "The document-level fullSelector reads the document; its outlineSelector returns the root outline. "
+            "Leaf nodes have no child outline; their readSelector reads the complete source atom. Table/cell "
+            "readSelector already includes the complete subtree: if selectionComplete=true, repeating it with "
+            "explicit nodeScope=subtree or more maxTokens cannot add content. Change scope using a returned "
+            "selector instead. Keep generation/contentRevision pins; stale references are refused. "
             "sectionId identifies a versioned evidence unit; containingSectionId identifies its containing authored "
             "section node, or the document root when no containing authored section exists. "
             "Never substitute these IDs. "
@@ -327,8 +334,9 @@ def tool_definitions(library: Mapping[str, Any]) -> list[dict[str, Any]]:
             "maximum 200000) without clipping. Narrow or paginate after refusal; disclose omissions."
         )
         read["function"]["parameters"]["properties"]["includeText"]["description"] = (
-            "True (default): deliver source text in full/selected mode, or navigation entries without body text "
-            "in outline mode. False: size/coverage inspection only, with no source text or outline entries."
+            "True (default): deliver source text in full/selected mode, or outline entries with bounded navigation "
+            "previews (not source evidence). False: size/coverage inspection only, "
+            "with no source text or outline entries."
         )
         properties = read["function"]["parameters"]["properties"]["documents"]["items"]["properties"]
         properties.update(

@@ -41,6 +41,21 @@ outline entries in outline mode. Granular inspection responses carry a pinned,
 same-scope `readSelector` with true and the unchanged budget. Real-model outline
 delivery is a separately bounded qualification; full-document fallback does not pass.
 
+The granular navigation refinement adds exact original paragraph/Markdown-block
+prefixes of at most 160 Unicode characters to outline leaves, with source length
+and truthful truncation flags. These are explicitly navigation previews, not
+source evidence or complete reads, even when the whole short atom fits. The caller
+must copy the returned selector to read and cite the source. Authored breadcrumbs
+and node scope summaries distinguish atoms, complete table/cell subtrees, section
+own content and authored subtrees. In granular compact/references reads only,
+document-level selectors replace redundant per-row document/full expansion hints;
+leaf child-outlines and duplicate subtree/parent selectors are omitted. Original
+source bodies, raw provenance, citations, snapshot pins and lifecycle checks stay
+intact. Inspections and budget refusals return no preview or source body, and
+preview delivery cannot satisfy the agent's source-grounding check. This is a
+presentation/navigation change requiring no re-ingestion, and does not establish
+real-model route or efficiency improvements without a separately bounded test.
+
 The File Library Index (the **index**) replaces Azure AI Search as the store and search engine behind the platform's file libraries. It:
 
 - accepts files into libraries, extracts their text and image content, embeds it, and stores it in Azure Cosmos DB;
