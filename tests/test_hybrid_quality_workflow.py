@@ -5,11 +5,29 @@ from datetime import UTC, datetime
 
 import pytest
 
+from scripts import hybrid_quality_workflow as workflow
 from scripts.hybrid_quality_workflow import CHECKS, audit, digest, route
 
 
 @pytest.fixture
-def captures():
+def frozen_recipe_fingerprints(monkeypatch):
+    # These cloud captures are synthetic. Control their matching local source
+    # fingerprints too; a new opt-in implementation is not the frozen deployment.
+    hashes = {
+        workflow.REPO / "src/fli/ingestion.py": workflow.BASELINE_RECIPE_SHA256,
+        workflow.REPO / "src/fli/config.py": workflow.BASELINE_CONFIG_SHA256,
+    }
+    actual_sha = workflow.sha
+
+    def observed_sha(path):
+        return hashes[path] if path in hashes else actual_sha(path)
+
+    monkeypatch.setattr(workflow, "sha", observed_sha)
+    return hashes
+
+
+@pytest.fixture
+def captures(frozen_recipe_fingerprints):
     env = {
         "ENVIRONMENT": "prod",
         "MICROSOFT_WORKFLOW_ENDPOINT": "https://workflow.example.invalid/api/recovery/triggers/request/invoke",
@@ -125,6 +143,13 @@ def test_matching_actual_captures_pass(captures):
     assert all(checks.values())
     assert len(mounted) == 5
     assert model["model"]["version"] == "1"
+
+
+@pytest.mark.parametrize("name", ["ingestion.py", "config.py"])
+def test_changed_recipe_or_configuration_cannot_inherit_frozen_deployment(captures, frozen_recipe_fingerprints, name):
+    frozen_recipe_fingerprints[workflow.REPO / "src/fli" / name] = "0" * 64
+    checks, _, _ = audit(**captures)
+    assert not checks["profileRecipeUnchanged"]
 
 
 def test_mounted_parameter_drift_cannot_inherit_package_receipt(captures):
