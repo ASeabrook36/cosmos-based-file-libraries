@@ -1582,4 +1582,30 @@ errors and conflicting passage-to-source pointers. Search distinguishes recorded
 mapping from expansion-time artifact validation. The validation receipt and
 prepared live plan distinguish fake-service mechanics, local token estimates,
 unavailable cloud counters and still-unmeasured real-model quality. No live or
-larger confirmation outcome is claimed.
+larger confirmation outcome was claimed at that preparation checkpoint.
+
+**Bounded live follow-through:** the
+[reviewed result](granular-navigation-live-qualification.md) at `821ea25` passed all
+ten source publication/navigation/lifecycle gates, with 1,730 local tests. A
+qualification-harness defect initially treated Cosmos's two `0.0` to `0` timing
+normalizations as an unknown write; cleanup stopped safely. Exact independent
+reconciliation and an append-only, same-scope continuation preserved every prior
+attempt and usage counter. Final owned absence passed twice, 67.77 seconds apart;
+all 14 protected libraries/48 documents remained unchanged.
+
+Six actual GPT-5-mini turns preserved core source facts and human citations. One
+obtained cell text through paragraph handles without a complete-cell selector;
+another falsely labeled an evidence-unit `sectionId` as `containingSectionId`.
+Mechanics and core facts therefore do not establish complete navigation/answer
+quality. A subsequent granular read-tool description clarifies cell completeness,
+authored-section/document-root identity and citation handling without changing
+schemas, sources, other profiles or context accounting. Local tests establish its
+delivery and compatibility, not corrected model behavior; hold integration for
+two targeted real-model checks in a fresh bounded window. No larger study ran.
+
+The 25 model calls reported 251,828 input/12,403 output tokens; 19 instrumented
+tool operations reported 136.97 RU. Local unique tool payloads measured 84,949
+evidence-JSON tokens versus 2,086 rendered-source tokens, with 36,216 selector-removal
+delta tokens. These non-additive local serialization measurements are not provider
+tokens or a complete bill. Substantial response overhead remains; this small pack
+does not establish retrieval recall, a provider winner or large-context fit.

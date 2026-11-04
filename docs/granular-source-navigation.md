@@ -98,7 +98,14 @@ Old snapshots/citations keep their stored representation. Python retries preserv
 immutable publication and avoid duplicate chunks but may re-embed; no embedding
 cache guarantee is added.
 
-## Validation and prepared live gate
+## Local validation and live follow-through
+
+The subsequent [bounded live result](granular-navigation-live-qualification.md)
+records all ten mechanics gates passed at `821ea25`, six actual model turns and
+verified isolated cleanup. All six preserved core source facts/human citations;
+complete-cell selection and internal-ID reporting require two targeted model
+checks after a local guidance mitigation. Integration remains on hold for those
+checks. The preparation and local evidence below are retained as prior checkpoints.
 
 The [validation receipt](../records/granular-source-navigation-20261104.json)
 records actual local checks and review corrections. API/client and scripted-agent
@@ -127,7 +134,9 @@ sh scripts/dev check -q
 
 The helper freezes candidate/profile hashes, three small authored mechanics
 fixtures, private response captures and a live plan. It rejects reuse, drift and
-`--live`: a live mutation/cleanup runner is not implemented here. Fake-service
+`--live`: this local helper does not execute cloud mutations. The separate reviewed
+`scripts/granular_live.py` runner and bounded continuation subsequently completed
+the linked live qualification. Fake-service
 RU/provider usage remains unavailable. These fixtures do not consume the larger
 confirmation corpus.
 
@@ -141,11 +150,12 @@ handles/metadata and show substantial remaining envelope overhead. They are not
 provider tokens, model-quality results, latency or billing. Broader long-document
 fit and presentation efficiency remain unqualified.
 
-Before live execution, announce the cloud window under existing isolated-resource
-authorization and verify identity, resource policies/incarnation, current health,
+The prepared live gate required announcing the cloud window under existing isolated-resource
+authorization and verifying identity, resource policies/incarnation, current health,
 deployment versions and protected scopes. Prior temporary models/evaluation scope
 were deleted; old receipts do not prove present availability. New containers require
-the repository canary. No current cloud access/capacity check was performed here.
+the repository canary. Access/capacity checks and the announced live window are
+now recorded in the linked follow-through; none ran during the local preparation.
 
 The plan caps work at three libraries, four documents, five ingestion generations,
 64 chunks, 50k source embedding tokens and 20 logical embedding calls. A separately
@@ -154,12 +164,12 @@ context/8k output allowances, and 2M input/200k output reservation ceilings. Kee
 reservations, unknown failed-attempt usage and measured provider counters separate.
 Execution/cleanup windows are 30/10 minutes.
 
-The proposed no-deployment runner composes candidate API/worker code locally with
+The no-deployment runner composes candidate API/worker code locally with
 real Cosmos/Blob/embedding services and an exact-owned private message ledger.
 Review write-ahead ownership and cleanup before use. Then qualify immutable
 publication, independent-client races, navigation and actual model answers/citations;
 archive and verify owned absence twice, 60 seconds apart. Preserve shared queues
 and protected scopes. Hosted execution, broker redelivery, production auth,
 broader scale/concurrency and the known scheduled orphan-container defect remain
-separate gates. No cloud calls, application deployment, main merge or larger study
-occurred for this candidate.
+separate gates. The bounded cloud calls are now complete; application deployment,
+main merge and the larger study have not occurred.

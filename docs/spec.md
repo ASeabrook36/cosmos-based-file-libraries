@@ -27,6 +27,12 @@ artifact, and existing reads accept pinned outline-node and section/subtree
 selectors. Source scope, unsupported formats, passage/embedding changes and
 re-ingestion requirements are versioned in that contract. Existing recipes,
 default ingestion, query policy and context accounting retain their behavior.
+Its [bounded live qualification](granular-navigation-live-qualification.md) passed
+source publication, navigation and lifecycle gates. Granular tool guidance now
+requires a cell selector to establish cell completeness, distinguishes versioned
+evidence-unit IDs from containing authored-section/root IDs, and directs human
+citations to the returned citation field. These are locally tested responses to
+two observed model gaps; targeted behavioral requalification remains pending.
 
 The File Library Index (the **index**) replaces Azure AI Search as the store and search engine behind the platform's file libraries. It:
 

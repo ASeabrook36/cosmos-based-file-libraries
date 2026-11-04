@@ -6,8 +6,13 @@ and the source-only repair, adding opt-in DOCX paragraph/cell/section/subtree
 navigation with authored hierarchy and Markdown ATX support. The new recipe
 intentionally changes paragraph-level passages/embeddings; old recipes and
 completed experiments remain intact. Context repair and index versioning stay
-separate. Local qualification and a bounded live plan are prepared; live execution,
-deployment and larger confirmation remain pending.
+separate. The [bounded live qualification](granular-navigation-live-qualification.md)
+passed ten ingestion/navigation/lifecycle gates and verified owned cleanup. Six
+actual model turns preserved core facts/citations but exposed incomplete cell-scope
+selection and one internal-ID reporting error. Hold integration pending two
+targeted model checks of the locally tested guidance mitigation. Source runtime
+baseline `821ea25` passed 1,730 local tests; the post-run guidance is separately
+attributable. Deployment and the larger confirmation remain pending.
 
 **Normal-agent selector integration, 2026-11-02 (E66 follow-through):** the
 [merge candidate](i1-selector-integration.md) enables handles in the normal client
