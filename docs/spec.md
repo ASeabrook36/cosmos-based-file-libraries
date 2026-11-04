@@ -32,7 +32,11 @@ source publication, navigation and lifecycle gates. Granular tool guidance now
 requires a cell selector to establish cell completeness, distinguishes versioned
 evidence-unit IDs from containing authored-section/root IDs, and directs human
 citations to the returned citation field. These are locally tested responses to
-two observed model gaps; targeted behavioral requalification remains pending.
+two observed model gaps. The [two-turn follow-up](granular-navigation-followup.md)
+demonstrates complete-cell reading and exact named-field reporting, but exposes
+ineffective size-only outline inspections followed by full-document recovery.
+Clarifying the granular tool's `includeText` contract and qualifying real outline
+delivery remain pending; runtime behavior is unchanged by the follow-up.
 
 The File Library Index (the **index**) replaces Azure AI Search as the store and search engine behind the platform's file libraries. It:
 

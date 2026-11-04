@@ -12,7 +12,14 @@ actual model turns preserved core facts/citations but exposed incomplete cell-sc
 selection and one internal-ID reporting error. Hold integration pending two
 targeted model checks of the locally tested guidance mitigation. Source runtime
 baseline `821ea25` passed 1,730 local tests; the post-run guidance is separately
-attributable. Deployment and the larger confirmation remain pending.
+attributable. The [two-turn follow-up](granular-navigation-followup.md) now
+demonstrates complete-cell selection and exact ID reporting, with verified cleanup.
+The full frozen rubric still fails: two size-only outline inspections delivered
+no entries before a full-document fallback, and the cell answer included unnecessary
+Word numbering metadata. Hold unconditional integration sign-off for a narrow
+outline-inspection contract fix and one targeted model check. Product runtime is
+unchanged from `83168a8`; no further model reruns occurred. Response overhead remains
+the next presentation-efficiency issue. Deployment and the larger confirmation remain pending.
 
 **Normal-agent selector integration, 2026-11-02 (E66 follow-through):** the
 [merge candidate](i1-selector-integration.md) enables handles in the normal client

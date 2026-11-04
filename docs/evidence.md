@@ -1609,3 +1609,27 @@ evidence-JSON tokens versus 2,086 rendered-source tokens, with 36,216 selector-r
 delta tokens. These non-additive local serialization measurements are not provider
 tokens or a complete bill. Substantial response overhead remains; this small pack
 does not establish retrieval recall, a provider winner or large-context fit.
+
+**Two-turn behavior follow-up:** the
+[separately authorized result](granular-navigation-followup.md), executed at
+`753d8b2` with product runtime identical to `83168a8`, demonstrates actual complete-
+cell selection and exact named identifier reporting with correct qualifiers and
+human citations. It is not two clean frozen-rubric passes: the cell answer includes
+unrequested source numbering IDs, and the identifier task performs two
+`includeText=false` outline inspections that return no entries, then recovers by
+reading the whole document. The granular description omits the ordinary tool's
+size-inspection explanation. Hold unconditional integration sign-off for a narrow
+contract clarification and actual outline-delivery check; no provider, query or
+storage decision follows. Keep response overhead as the next efficiency issue.
+
+Manual review also found that a helper counted outline requests without delivered
+entries. Its original observation and manual override are preserved; post-run
+`6159ec3` corrects that evaluator and passes 78 local tests without new model calls
+or runtime changes. The executed runner passed 194 focused tests. Eight provider
+calls used 77,268 input/4,436 output tokens; six instrumented tool operations used
+42.80 RU, separately from 1,007.45 chunk-write RU and two embedding requests/102
+tokens. Unique tool payloads measured 26,613 local JSON tokens versus 725 rendered-
+source tokens; these are not provider billing quantities. Owned absence passed
+twice 65.31 seconds apart; 14 protected libraries/48 documents and all 999 prior
+private evidence files are unchanged. The two turns are consumed; no rerun,
+deployment, merge or larger study occurred.

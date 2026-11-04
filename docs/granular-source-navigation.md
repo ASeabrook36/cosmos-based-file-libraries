@@ -104,8 +104,12 @@ The subsequent [bounded live result](granular-navigation-live-qualification.md)
 records all ten mechanics gates passed at `821ea25`, six actual model turns and
 verified isolated cleanup. All six preserved core source facts/human citations;
 complete-cell selection and internal-ID reporting require two targeted model
-checks after a local guidance mitigation. Integration remains on hold for those
-checks. The preparation and local evidence below are retained as prior checkpoints.
+checks after a local guidance mitigation. The subsequent
+[two-turn follow-up](granular-navigation-followup.md) demonstrates those core
+behaviors, while failing the additional frozen outline-navigation/identifier-
+omission criteria. Integration remains on hold for the specific outline-inspection
+contract issue, with response overhead retained as the next presentation-efficiency
+work. The preparation and local evidence below are retained as prior checkpoints.
 
 The [validation receipt](../records/granular-source-navigation-20261104.json)
 records actual local checks and review corrections. API/client and scripted-agent

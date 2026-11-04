@@ -1,0 +1,341 @@
+{
+  "schema": "fli.granular-navigation.two-turn-followup.v1",
+  "date": "2026-11-04",
+  "branch": "codex/granular-source-navigation",
+  "decision": "hold_unconditional_integration_for_outline_inspection_contract_clarification_and_focused_model_check",
+  "coreRequestedChecksPassed": true,
+  "allFrozenCriteriaPassed": false,
+  "status": "two_real_model_turns_complete_reviewed_and_owned_cleanup_verified",
+  "provenance": {
+    "requestedCandidate": "83168a87244815cf9ac4797dcebc32295119ef6e",
+    "executedRunnerCommit": "753d8b2442d86a6d855d51e15f17e812cda18156",
+    "runtimeByteIdenticalToRequestedCandidate": true,
+    "postLiveEvaluatorCorrectionCommit": "6159ec31810e00e6b64d9df171548eb309fe8dca",
+    "postLiveProductChanges": false,
+    "previousRunReceipt": "granular-navigation-live-qualification-20261104.json",
+    "previousRunReceiptSha256": "5b721d8894a01573486b41c8d5be203d9afe61bd19f4e5f0431a6ccc221a8cff",
+    "mainPreserved": "1ddc4386361446a5122ce936cdb3ba28aa4e5919",
+    "contextRepairIncluded": false,
+    "indexVersioningIncluded": false,
+    "priorPrivateEvidenceFilesRehashedUnchanged": 999,
+    "earlierExperimentsAndReceiptsPreserved": true
+  },
+  "attempts": {
+    "executedCloudAttempts": 1,
+    "modelTurns": 2,
+    "modelReruns": 0,
+    "automaticResume": false,
+    "localPreparationRevisionsBeforeCloud": 2,
+    "priorUsageCombined": false
+  },
+  "controls": {
+    "sourceSameOriginalBytes": true,
+    "sourceBytes": 37003,
+    "sourceProfile": "custom-granular-v1",
+    "sourceAtoms": 15,
+    "scopeAndTimeLimits": {
+      "libraries": 1,
+      "documents": 1,
+      "generations": 1,
+      "chunks": 16,
+      "sourceBytesEach": 1048576,
+      "embeddingLogicalCalls": 20,
+      "embeddingAttemptsEach": 3,
+      "embeddingLocalInputTokens": 50000,
+      "modelTurns": 2,
+      "executionSeconds": 1200,
+      "cleanupSeconds": 600,
+      "lateAbsenceCheckSeconds": 60
+    },
+    "modelAttemptAndUsageLimits": {
+      "logicalCalls": 26,
+      "physicalResponsesAttempts": 36,
+      "inputTokensWithUnknownReservations": 2000000,
+      "outputTokensWithUnknownReservations": 200000
+    },
+    "answering": {
+      "model": "gpt-5-mini",
+      "version": "2025-08-07",
+      "sku": "GlobalStandard",
+      "capacity": 50,
+      "automaticUpgrade": "disabled"
+    },
+    "embedding": {
+      "model": "text-embedding-3-large",
+      "version": "1",
+      "sku": "GlobalStandard",
+      "capacity": 150
+    },
+    "perTurn": {
+      "searchMode": "vector",
+      "evidenceView": "compact",
+      "selectors": "handles",
+      "contextAccounting": "legacy-v1",
+      "contextAllowance": 200000,
+      "outputAllowance": 8000,
+      "reasoningEffort": "medium",
+      "maxRounds": 12,
+      "pacingLocalInputPlusMaxOutputPerMinute": 45000,
+      "maximumLocalSerializedRequestInput": 37000
+    },
+    "exactPriorModelAndEmbeddingBindingsMatchedBeforeAndAfter": true,
+    "frozenPriorSourceAndBindingsAnchoredToArchive": true,
+    "newCloudResourcesOrDeployments": false,
+    "sharedQueueAccess": false
+  },
+  "reviewMethod": "Independent manual review of actual calls, evidence present in successful model requests, original source artifact and final answers; mechanical observations are supporting evidence, not semantic grades.",
+  "cases": [
+    {
+      "case": "cell-completeness",
+      "coreRequestedCheckPassed": true,
+      "actualCompleteCellNodeRequested": true,
+      "returnedSourceParagraphs": 4,
+      "selectionComplete": true,
+      "documentComplete": false,
+      "actualCellReplyDeliveredToModel": true,
+      "listMembershipPreserved": true,
+      "separateQualifierPreserved": true,
+      "correctHumanCitations": true,
+      "inventedPrintedListNumbers": false,
+      "frozenIdentifierOmissionClausePassed": false,
+      "remainingPresentationIssue": "Unrequested but accurate Word numbering ID/depth appears in the answer. Application evidence/node IDs were omitted.",
+      "selectorProvenanceCaveat": "The correct target cell ID was constructed from coordinates, not copied from an earlier exposed target-cell selector."
+    },
+    {
+      "case": "source-identifier-fields",
+      "coreRequestedCheckPassed": true,
+      "exactRequestedSectionId": true,
+      "exactRequestedContainingSectionId": true,
+      "exactRequestedCitation": true,
+      "identifierMeaningsCorrect": true,
+      "sourceRuleCorrect": true,
+      "unavailablePageAndChapterDisclosed": true,
+      "outlineInspectionCalls": 2,
+      "actualOutlineEntriesDelivered": 0,
+      "actualAuthoredOutlineBeforeSourceRead": false,
+      "fullSourceRecoverySucceeded": true,
+      "fullSourceAtoms": 15,
+      "frozenOutlineNavigationCriterionPassed": false
+    }
+  ],
+  "remainingDefect": {
+    "observed": "Two includeText=false outline calls returned size-inspection manifests with no outline entries; model recovered through full-document text.",
+    "contractGap": "The granular read-tool description replaces the ordinary description and omits its size-inspection-only explanation; includeText remains an undescribed boolean. Outline entry delivery also requires true/default.",
+    "causalityLimit": "The omitted explanation is a plausible contributor, not an isolated causal proof of this model choice.",
+    "nextAction": "Clarify includeText in the granular tool description/schema; test actual inspection versus outline responses locally, then use one fresh bounded model outline task requiring nonempty authored entries and a focused source read.",
+    "outOfScope": "No provider switch, retrieval tuning, context-accounting merge, index-versioning change, representation compression or larger study."
+  },
+  "evaluatorCorrection": {
+    "observed": "Frozen helper counted a mode=outline request without requiring delivered entries; original observation was true.",
+    "manualReviewBeforeCorrection": "No actual outline delivered; frozen route failed.",
+    "correctedObservation": false,
+    "commit": "6159ec31810e00e6b64d9df171548eb309fe8dca",
+    "productRuntimeChanged": false,
+    "originalReviewAndRawEvidencePreserved": true,
+    "modelReruns": 0
+  },
+  "usage": {
+    "providerMeter": {
+      "logicalCallsStarted": 8,
+      "physicalResponsesAttempts": 8,
+      "knownInputTokens": 77268,
+      "knownOutputTokens": 4436,
+      "unmeteredAttempts": 0,
+      "unmeteredInputReservations": 0,
+      "unmeteredOutputReservations": 0,
+      "limits": {
+        "logicalCalls": 26,
+        "physicalResponsesAttempts": 36,
+        "inputTokensWithUnknownReservations": 2000000,
+        "outputTokensWithUnknownReservations": 200000
+      },
+      "usageComplete": true,
+      "completeInputTokens": 77268,
+      "completeOutputTokens": 4436,
+      "http429Attempts": 0,
+      "otherFailedOrUnfinishedAttempts": 0,
+      "limitation": "Responses create attempts only; excludes Azure credential, embedding and index requests. Unknown attempt reservations are guard allowances, never measured usage or billed cost."
+    },
+    "providerMeasured": {
+      "cacheWriteTokens": 0,
+      "cachedInputTokens": 28032,
+      "inputTokens": 77268,
+      "outputTokens": 4436,
+      "reasoningOutputTokens": 3200,
+      "responseModelNames": [
+        "gpt-5-mini"
+      ],
+      "responses": 8,
+      "responsesWithReportedCacheWriteCounter": 8,
+      "responsesWithoutModelField": 0,
+      "totalTokens": 81704
+    },
+    "embedding": {
+      "limitation": "reportedPromptTokens are captured provider-reported counters; raw embedding response bodies were not independently retained.",
+      "logicalRequests": 2,
+      "physicalRequests": 2,
+      "publicationPromptTokens": 98,
+      "publicationRequests": 1,
+      "queryPromptTokens": 4,
+      "queryRequests": 1,
+      "reportedPromptTokens": 102,
+      "retries": 0,
+      "scope": "New two-turn qualification only; previous run usage not combined.",
+      "throttles": 0,
+      "unmeteredAttempts": 0
+    },
+    "cosmosMeasuredSubtotals": {
+      "agentToolOperations": 6,
+      "agentToolRequestChargeRu": "42.80",
+      "chunkCreateChargeRu": "1007.45",
+      "chunkCreateOperations": 15,
+      "limitation": "These are distinct measured subtotals. Total metadata/preflight/lifecycle/cleanup/blob-operation usage remains unavailable.",
+      "totalQualificationRu": null
+    },
+    "monetaryCost": null,
+    "totalAzureCharges": null,
+    "contextOrPacingRefusals": 0
+  },
+  "localSerializationEstimates": {
+    "envelopeWithoutSourceOrSelectorsTokensLocal": 15127,
+    "evidenceJsonTokensLocal": 26613,
+    "limitation": "Local estimates, not provider billing. Each unique tool-call reply counted once per case; repeated conversation exposure reported separately. Counterfactual selector/source/envelope components are not additive.",
+    "repeatedExposureLocalTotals": {
+      "envelopeWithoutSourceOrSelectorsTokensLocal": 33564,
+      "evidenceJsonTokensLocal": 49658,
+      "selectorSerializationDeltaTokensLocal": 14761,
+      "standaloneSourceTextTokensLocal": 1052,
+      "toolMessageJsonTokensLocal": 52803,
+      "toolMessageWrapperDeltaTokensLocal": 3145
+    },
+    "repeatedModelInputToolMessageExposures": 12,
+    "selectorSerializationDeltaTokensLocal": 10600,
+    "standaloneSourceTextTokensLocal": 725,
+    "tokenizer": "cl100k_base",
+    "toolMessageJsonTokensLocal": 28507,
+    "toolMessageWrapperDeltaTokensLocal": 1894,
+    "uniqueReplyCount": 6
+  },
+  "presentationEfficiencyNext": "Retain measured envelope/selector overhead and unnecessary source-numbering metadata as separate presentation-efficiency work; no compression changes in this qualification.",
+  "cleanup": {
+    "passed": true,
+    "immediate": {
+      "library404": 1,
+      "document404": 1,
+      "chunk404": 15,
+      "emptyQueries": 2,
+      "emptyPrefixes": 1,
+      "protectedUnchanged": true,
+      "verifiedAt": "2026-11-04T20:11:58.294580+00:00"
+    },
+    "late": {
+      "library404": 1,
+      "document404": 1,
+      "chunk404": 15,
+      "emptyQueries": 2,
+      "emptyPrefixes": 1,
+      "protectedUnchanged": true,
+      "verifiedAt": "2026-11-04T20:13:03.602245+00:00"
+    },
+    "limitation": "Current live items only; soft-delete/backups, hosted workers and indefinitely late output are outside this proof.",
+    "protectedLibrariesUnchanged": 14,
+    "protectedDocumentsUnchanged": 48,
+    "secondsBetweenChecks": 65.307665,
+    "finalOwnership": {
+      "eventHeadSha256": "8fc84546e120d99f67052e6e3d55cfb0be1535463306937cd357677fba70d7a2",
+      "eventCount": 179,
+      "reservedLibraries": 1,
+      "reservedDocuments": 1,
+      "reservedGenerations": 1,
+      "reservedChunks": 15,
+      "recordedBlobs": 7,
+      "unresolvedOperations": 0,
+      "unfinishedMessages": 0
+    }
+  },
+  "localValidation": {
+    "preLive": {
+      "testsPassed": 194,
+      "warnings": 5,
+      "seconds": 5.85,
+      "lint": "passed",
+      "format": "passed",
+      "referencePrivacy": "passed"
+    },
+    "postEvaluatorCorrection": {
+      "passed": 78,
+      "warnings": 3,
+      "seconds": 1.86,
+      "receiptSha256": "f955d185bb594aae1f94cab46f4bd2b2e61241dafe4de2757237b70bd1be280b",
+      "lint": "passed",
+      "format": "passed",
+      "referencePrivacy": "passed"
+    },
+    "fullSuiteRerun": false,
+    "previous1730TestResultPreserved": true
+  },
+  "privateEvidenceSha256": {
+    "preparation.json": "93e18cfc21ad498044d9f8e73bd8c19dd44c14ea1c66fe3497e0973a2a448bd4",
+    "preflight.json": "321d06f91fab7f26f4572bc8a3a5e2ad42c674d962a2f1a1bb5224976595ed97",
+    "matched-preflight.json": "32d435039ac42af4d7861efe75bd61e68719fd487934306f36d2e872ef8147a1",
+    "controls.json": "07ffd31b43e18cd346f411f7641a57b33f485700df2b57a624ad9433d45cb3a5",
+    "source-bindings.json": "17d3dd0802d2330d58c4a2d73754c0ccb06791c5a6d0a148a7de02a4273454ba",
+    "models/controls.json": "f7bd66ccc1d6920b0b67d9e9bb4b9d8068fab71b2de6ebd5c5664af7998dd50d",
+    "models/started.json": "aa16afbea547079992e8ff0ae8e8eae9d9c6c2ddf36ce00b9d15902db0b40ac1",
+    "models/results.json": "1dddb1ec99da2c25793133b5e169458e11bcf94f4008b99d068fdbf8d36b5e07",
+    "models/sources-before.json": "5aa9d734e81c152559197a30453d0e7ca50d981f066ad50a6bd3f532e4bd355b",
+    "models/sources-after.json": "5aa9d734e81c152559197a30453d0e7ca50d981f066ad50a6bd3f532e4bd355b",
+    "execution-result.json": "4eadfaf1264f83aa12293d8b65da0d02c1ff001b7b8191e3d7ddf7670cf7e4a8",
+    "embedding-attempts.json": "729f87bfc4045911c19ba834871cbb01b9e60bd6359ed94f16d4743c0d789383",
+    "ownership-final.json": "62271248131035840f1091b704b0fb7089027564cde9a260f3fe915aefc7a4de",
+    "cleanup-inventory.json": "368d1b208f0178832642bc81deb05d7783c3e037cd728e1926397af46d58b402",
+    "cleanup-immediate.json": "ebc4807aeea1af4b561038efe3c8bbbebf26f91b11cd47766223d7cec56bafe8",
+    "cleanup-late.json": "8bcd5028360a98c00cefd5c317d5294b367616fc9b4d686559f2492cb335cf23",
+    "archive-receipts.json": "17f7c26501563c38ffd386b077c9bc3659ffc915df3f3e12c07bc9659a64f178",
+    "model-review.json": "477476d9cea68bb4e6d5d69504c2e46efbfa7e512de5cd4e43364e8d85794e97",
+    "mechanics-review.json": "e51a03c65459be2689713e32976a38d87018effeae8f700ed7f2d2eecfb9bb66",
+    "measurement-review.json": "535fb38ee6188be38e9a45044aad809ddb448843e7ad18b53f17aacfb2524c46",
+    "post-live-helper-correction.json": "908e77abbcc42880ec0ec352866f298a1e955420242cf68fae1287695eafd43d",
+    "prior-evidence-preservation.json": "14f399548e7dd8149d02f97bc512dd823a7a524c5a78d9ee5197fcf56e35d07e",
+    "final-focused-tests.txt": "f76939734593ac04664989e1fb52429459716bea147c742e093853ae94e2f277",
+    "post-live-helper-tests.txt": "f955d185bb594aae1f94cab46f4bd2b2e61241dafe4de2757237b70bd1be280b",
+    "final-report-review.json": "b9b51e2333c2c1d07db402aba015cb9d28f07d8b14a8a73c28c36513f54b58f8"
+  },
+  "applicationDeployed": false,
+  "mainMerged": false,
+  "largerStudyLaunched": false,
+  "limitations": [
+    "One observed model sample per case; no general answer-quality or reliability claim.",
+    "Tiny source; full-file recovery does not establish granular navigation on long documents.",
+    "200k context is an allowance, not demonstrated large-context use.",
+    "Hosted execution, broker redelivery, production authentication and scale remain untested.",
+    "Current-item absence excludes soft-delete retention/backups and indefinitely late writers."
+  ],
+  "privateArchives": {
+    "schema": "fli.granular-followup.archive-verification.v1",
+    "previousArchives": [
+      {
+        "role": "after-cleanup",
+        "files": 300,
+        "manifestSha256": "345657e475214d263390fb68a029899ae36db24ae23b96c1b33ab0da660a117e",
+        "verified": true
+      },
+      {
+        "role": "before-cleanup",
+        "files": 208,
+        "manifestSha256": "ce203c2caf05b8edfb1eeec69b18f5aae3bb8286b7f13c3620f5b39883f9e8f0",
+        "verified": true
+      }
+    ],
+    "reviewedFinal": {
+      "files": 308,
+      "manifestSha256": "3833089851af8e61b411e23c73e1acd538ff46f6cbb919bfbbc433dcba712205",
+      "verified": true
+    },
+    "requiredReviewsAndCleanupIncluded": true,
+    "cloudCalls": 0
+  },
+  "privateArchiveVerificationSha256": "cb33bded95ee53226dd99168b26922bb2063d572078e5a52f117102b87984fa2",
+  "archiveLocation": "Private operator evidence storage outside Git; environment identifiers and locations withheld.",
+  "reportReviewScope": "Independent review binds report and receipt before these additive archive references; substantive results unchanged."
+}

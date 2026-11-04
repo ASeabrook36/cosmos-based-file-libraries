@@ -1,5 +1,11 @@
 # Bounded granular navigation qualification
 
+Subsequent [two-turn follow-up](granular-navigation-followup.md): the original
+cell-completeness and identifier-reporting gaps are corrected in those samples.
+The full frozen follow-up still fails outline acquisition and omission of
+unrequested numbering metadata; its specific remaining gate is documented there.
+The six-turn results and decisions below are preserved as the earlier checkpoint.
+
 ## Decision and tested revisions
 
 **Bounded cloud qualification is complete; hold integration for two focused
