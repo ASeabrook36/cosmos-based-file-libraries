@@ -151,4 +151,115 @@ archive, clean only owned resources and verify independent absence twice at leas
 The combined live check qualifies the revised candidate; it is not a controlled
 causal comparison isolating presentation from pacing, or a fresh quality benchmark.
 No merge, application deployment, resource provisioning or larger study is authorized
-by this protocol. Live results will be recorded only after execution and review.
+by this protocol.
+
+
+## Executed result and integration recommendation
+
+**Ready for integration of the opt-in granular-navigation candidate.** The single
+frozen `outline-v2` turn passed independent source-based review on executed runner
+`eea454df8c773a544b74c19475ca4c3fcf67d776`, with runtime bytes identical to
+`96484734957382b25214077fc10aea30c125e6fe` and pacing from `b9176a3`. No product or
+runner changes followed the live run; the final candidate adds reviewed evidence.
+See the [qualification receipt](../records/granular-refinement-qualification-20261105.json).
+
+The actual model received four nonempty authored outlines, copied the returned
+selector for the relevant paragraph, and then received that complete source atom
+in a successful sixth provider request. The final answer accurately reproduced
+the rule, including its condition, and used the exact human-readable paragraph
+citation. Selection completeness was true while document completeness remained
+false. There were **no table detours, repeated reads, whole-document fallbacks,
+size-only inspections, retries, rate-limit errors or pacing refusals**. Navigation
+previews did not substitute for the required focused source read.
+
+This closes the outstanding outline-to-focused-read check. It does not establish
+general answer quality, retrieval recall or a causal explanation for the earlier
+model choice. Presentation and pacing changed together in this live check; their
+commits and offline measurements remain separate. The earlier failed attempt and
+successful cell/identifier checks were preserved, not replaced or rerun. The new
+turn does not repeat every earlier permission/lifecycle or cell/identifier case;
+local regressions and the earlier live evidence supply that separate coverage.
+
+### Measured usage and pacing
+
+| Request | Provider input | Guarded local input estimate | Provider output |
+| --- | ---: | ---: | ---: |
+| 1 | 3,019 | 4,330 | 200 |
+| 2 | 4,989 | 6,504 | 266 |
+| 3 | 7,203 | 8,850 | 141 |
+| 4 | 9,301 | 11,156 | 120 |
+| 5 | 11,320 | 13,555 | 168 |
+| 6 | 12,844 | 15,417 | 788 |
+
+Six physical requests reported **48,676 input and 1,683 output tokens**. The
+30,976 cached input tokens and 1,024 reasoning output tokens are subsets of those
+totals. No attempt has unknown usage. Exact offline replay matched all six live
+wire requests, including the encrypted reasoning. The full 8k output reservation
+was retained for every request; the largest total reservation was 23,417 tokens.
+The unchanged 45k window imposed 108.159 seconds of measured local waiting within
+a 129.157-second model turn. The conservative policy worked for this sequence;
+service rate-limit headers were not captured, and this is not proof of Azure's
+internal admission formula or a throughput benchmark. The new route's largest raw
+serialized request was 23,395 local tokens, already below the old 37k input
+boundary. This live result therefore does not prove acceptance of the old seventh
+request or isolate the pacing change; that request remains an offline
+counterfactual with unavailable provider usage.
+
+The single embedding request reported 98 input tokens for 15 source atoms, with
+no retry; raw embedding provider bodies are not separately retained. Five source
+read operations reported **23.80 RU**, and 15 chunk writes reported **1,007.45 RU**.
+Their **1,031.25 RU** sum is only an instrumented subtotal. Metadata, publication,
+preflight, source-snapshot and cleanup operations are outside that subtotal, so
+total qualification RU and monetary cost remain unavailable. This navigation
+turn performed no vector search; the fixed vector setting and earlier search
+qualification are separate evidence.
+
+### Representation overhead still to improve
+
+The five unique delivered tool replies contained 8,743 locally estimated evidence
+JSON tokens (9,425 with tool-message wrappers). An ordered JSON-removal analysis
+attributes 2,693 to selector fields, 144 to navigation-preview fields, 15 to source
+body fields, and leaves 5,891 in navigation/protocol metadata. Those four numbers
+sum only under that specified removal order; BPE boundaries make them unsuitable
+as provider billing allocations. The remaining metadata includes useful hierarchy,
+identity, citations and completeness, not simply waste.
+
+Standalone preview text was 27 local tokens, separate from the 11-token focused
+source body. The final focused reply alone was 1,324 evidence JSON tokens, with a
+301-token selector-removal delta and 1,008 tokens after source and selectors were
+removed. These are local serialization estimates. Replayed conversation history
+exposed tool messages 15 times across the six model requests; cached provider
+usage is reported separately above.
+
+The final answer also unnecessarily echoed its internal selector despite the tool
+guidance. That did not invalidate the frozen source-read/citation rubric, but it
+is a concrete remaining presentation issue. Reduce repeated protocol/selector
+material and discourage internal selector display in a separately evaluated
+presentation-efficiency change. Do not infer a general efficiency improvement
+from this one shorter route.
+
+### Safety, evidence and scope
+
+Fresh authenticated preflight and before-execution checks verified the same pinned
+answering and embedding deployments. Answering binding/capacity was checked again
+immediately before the model; both deployment bindings were checked after the run. Source
+snapshots, post-run bindings/capacity and code hashes matched. The runner created
+one owned library, document and generation, 15 chunks and seven blobs, then
+quiesced writers and cleaned its owned scope. Two independent checks 64.120
+seconds apart found the owned library/document/chunks absent and the blob prefix
+empty, with the protected 14 libraries and 48 documents unchanged. The ownership
+ledger ended with zero unresolved operations and unfinished messages.
+
+All 1,621 files in the three earlier private evidence roots were rehashed unchanged.
+Private before-cleanup, after-cleanup and reviewed-final archives retain all new
+attempts, actual tool/model evidence, local failures, reviews and cleanup receipts.
+The public receipt contains hashes and aggregate measurements, with environment
+identifiers and source text withheld. Two-time current absence does not prove
+backup erasure or indefinite future absence.
+
+No further re-ingestion is required for this presentation/pacing refinement when
+the existing granular source representation is present. Older documents without
+that representation still require the already documented granular ingestion path.
+The separate context-accounting repair, index versioning and Microsoft provider
+decision remain excluded. Main is unchanged; no merge, deployment or larger study
+was performed.
