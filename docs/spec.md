@@ -506,6 +506,15 @@ improved, but the real model mixed reference and canonical-selector arguments an
 failed to obtain source text. The candidate's invocation and recovery contract
 needs repair and a fresh focused qualification before adoption.
 
+The [reference-contract follow-up](granular-reference-contract-repair.md) keeps
+that failed comparison intact. Its opt-in tool contract separates explicit pinned
+bootstrap reads from mutually exclusive action-reference reads, rejects action
+values in source-locator fields, and offers executable recovery shapes without
+performing them automatically. Document references are top-level search pins,
+not read actions. New-turn short references remain expired and require authorized
+reacquisition; the bounded comparison includes that cost and retains raw API and
+default behavior.
+
 ## 7. Ingestion
 
 ### 7.1 Queue
