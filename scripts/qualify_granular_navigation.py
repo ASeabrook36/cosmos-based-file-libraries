@@ -376,10 +376,13 @@ async def qualify_local(state):
             index.read_documents(library, "owner", **paragraph["containingSectionSelector"]),
         )
         require(len(containing["documents"][0]["sections"]) > len(cell_parts), "containing section did not expand")
-        whole = capture("granular:whole-document", index.read_documents(library, "owner", **paragraph["fullSelector"]))
+        whole = capture(
+            "granular:whole-document",
+            index.read_documents(library, "owner", **outline["documents"][0]["fullSelector"]),
+        )
         require(whole["complete"], "full expansion did not produce complete versioned source")
         checks.append("paragraph_cell_section_subtree_and_parent_document_expansion")
-        pin = section["documentSelector"]
+        pin = outline["documents"][0]["documentSelector"]
         passages = capture("granular:search", index.search(library, "owner", "sampling", document=pin, top=1))
         hit = passages["results"][0]
         require(hit["passageToSourceMapping"] == "recorded_containing_source_atom", "recorded mapping missing")

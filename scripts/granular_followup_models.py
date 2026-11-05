@@ -74,7 +74,7 @@ def protocol_settings(protocol="two-turn-v1"):
             "priorTurns": 6,
             "scope": "Two separately sealed fresh follow-up turns with platform-provided DOCX document pins.",
         }
-    require(protocol == "outline-v1", "unknown qualification protocol")
+    require(protocol in {"outline-v1", "outline-v2"}, "unknown qualification protocol")
     from scripts.granular_outline_case import cases as outline_cases
 
     return {
@@ -86,9 +86,17 @@ def protocol_settings(protocol="two-turn-v1"):
             "inputTokensWithUnknownReservations": 1000000,
             "outputTokensWithUnknownReservations": 100000,
         },
-        "schema": "fli.granular-outline-models.controls.v1",
-        "priorSchema": "fli.granular-followup-models.controls.v1",
-        "priorTurns": 2,
+        "schema": (
+            "fli.granular-refinement-models.controls.v1"
+            if protocol == "outline-v2"
+            else "fli.granular-outline-models.controls.v1"
+        ),
+        "priorSchema": (
+            "fli.granular-outline-models.controls.v1"
+            if protocol == "outline-v2"
+            else "fli.granular-followup-models.controls.v1"
+        ),
+        "priorTurns": 1 if protocol == "outline-v2" else 2,
         "scope": "One sealed outline-to-focused-read turn; whole-document fallback does not pass.",
     }
 
@@ -118,7 +126,34 @@ def _save_bytes(path, content):
         os.fsync(handle.fileno())
 
 
-def prepare_cases(output, source_bindings, *, prior_controls, prior_model_binding, protocol="two-turn-v1"):
+def _per_turn(protocol, capacity_policy=None, binding=None):
+    controls = copy.deepcopy(PER_TURN_CONTROLS)
+    if protocol == "outline-v2":
+        from scripts.granular_pacing import validate_policy
+
+        validate_policy(capacity_policy)
+        require(
+            binding is not None
+            and capacity_policy["bindingSha256"] == binding.get("bindingSha256")
+            and capacity_policy["capacityBinding"]["model"] == binding.get("model")
+            and capacity_policy["capacityBinding"]["sku"] == binding.get("sku"),
+            "pacing policy differs from expected model binding",
+        )
+        controls["pacing"] = copy.deepcopy(capacity_policy)
+    else:
+        require(capacity_policy is None, "capacity policy belongs to outline-v2 only")
+    return controls
+
+
+def prepare_cases(
+    output,
+    source_bindings,
+    *,
+    prior_controls,
+    prior_model_binding,
+    protocol="two-turn-v1",
+    capacity_receipt=None,
+):
     selected = protocol_settings(protocol)
     root = private_path(output)
     require(not root.exists(), "follow-up model qualification requires a new private directory")
@@ -127,6 +162,8 @@ def prepare_cases(output, source_bindings, *, prior_controls, prior_model_bindin
     binding_bytes = private_path(prior_model_binding).read_bytes()
     prior, binding = json.loads(prior_bytes), json.loads(binding_bytes)
     _prior_controls(prior, binding, protocol=protocol)
+    capacity_bytes = private_path(capacity_receipt).read_bytes() if capacity_receipt is not None else None
+    per_turn = _per_turn(protocol, json.loads(capacity_bytes) if capacity_bytes is not None else None, binding)
     sealed_cases = selected["cases"](source_bindings)
     require(
         len(sealed_cases) == selected["turns"] and len({row["case"] for row in sealed_cases}) == selected["turns"],
@@ -139,7 +176,7 @@ def prepare_cases(output, source_bindings, *, prior_controls, prior_model_bindin
         "codeSha256": code_hashes(),
         "meterLimits": selected["meter"],
         "modelTurns": selected["turns"],
-        **copy.deepcopy(PER_TURN_CONTROLS),
+        **per_turn,
         "expectedModelBinding": binding,
         "priorEvidence": {
             "prior-model-controls.json": hashlib.sha256(prior_bytes).hexdigest(),
@@ -149,9 +186,13 @@ def prepare_cases(output, source_bindings, *, prior_controls, prior_model_bindin
         "priorEvidenceModified": False,
         "largerConfirmation": False,
     }
+    if capacity_bytes is not None:
+        controls["priorEvidence"]["capacity-policy.json"] = hashlib.sha256(capacity_bytes).hexdigest()
     root.mkdir(parents=True, mode=0o700)
     _save_bytes(root / "prior-model-controls.json", prior_bytes)
     _save_bytes(root / "prior-model-binding.json", binding_bytes)
+    if capacity_bytes is not None:
+        _save_bytes(root / "capacity-policy.json", capacity_bytes)
     save_new(root / "controls.json", controls)
     return {"controlsSha256": sha(root / "controls.json"), "cases": selected["turns"], "status": "prepared"}
 
@@ -166,15 +207,18 @@ def _verify(root, *, protocol="two-turn-v1"):
         "sealed follow-up cases changed",
     )
     require(controls.get("codeSha256") == code_hashes(), "follow-up code drift")
+    capacity = json.loads((root / "capacity-policy.json").read_text()) if protocol == "outline-v2" else None
     for key, value in {
         "meterLimits": selected["meter"],
         "modelTurns": selected["turns"],
-        **PER_TURN_CONTROLS,
+        **_per_turn(protocol, capacity, controls.get("expectedModelBinding")),
         "priorEvidenceModified": False,
         "largerConfirmation": False,
     }.items():
         require(controls.get(key) == value, "follow-up control changed: " + key)
     expected_names = {"prior-model-controls.json", "prior-model-binding.json"}
+    if protocol == "outline-v2":
+        expected_names.add("capacity-policy.json")
     require(set(controls.get("priorEvidence", {})) == expected_names, "prior evidence inventory differs")
     for name, expected in controls["priorEvidence"].items():
         require(sha(root / name) == expected, "prior evidence snapshot changed")
@@ -204,7 +248,14 @@ def run_models(
         "runtime model/agent binding unavailable",
     )
     require(model_binding == controls["expectedModelBinding"], "fresh model binding differs from prior qualification")
-    pacer = Pacer(deadline)
+    if protocol == "outline-v2":
+        from scripts.granular_pacing import Pacer as RefinementPacer
+        from scripts.granular_pacing import chat as refinement_chat
+
+        pacer = RefinementPacer(deadline, policy=controls["pacing"])
+        chat_factory = refinement_chat
+    else:
+        pacer, chat_factory = Pacer(deadline), _chat
     pacer.remaining()
     index = copy.copy(index)
     index.http = DeadlineHTTP(index.http, pacer)
@@ -233,7 +284,7 @@ def run_models(
             captured = CapturedIndex(index, directory)
             source = controls["sourceBindings"][active["sourceRole"]]
             agent = {"id": agent_id, "libraryIds": [source["libraryId"]], "instructions": AGENT_INSTRUCTIONS}
-            chat = _chat(
+            chat = chat_factory(
                 actual_client,
                 deployment,
                 meter,

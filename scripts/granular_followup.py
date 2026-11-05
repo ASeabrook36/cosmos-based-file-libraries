@@ -29,12 +29,14 @@ from scripts.retrieval_controls import private_path
 
 BASELINE = "83168a8"
 OUTLINE_BASELINE = "d332d1d"
+REFINEMENT_BASELINE = "9fcc9bc"
 OUTLINE_RUNTIME_PATHS = {
     "src/fli/tool.py",
     "src/fli/selector_hints.py",
     "src/fli/reading.py",
     "src/fli/presentation.py",
 }
+REFINEMENT_RUNTIME_PATHS = OUTLINE_RUNTIME_PATHS | {"src/fli/granular_navigation.py"}
 SCOPE_LIMITS = {"libraries": 1, "documents": 1, "generations": 1, "chunks": 16}
 LIMITS = {
     **SCOPE_LIMITS,
@@ -62,8 +64,12 @@ class FollowupLedger(OwnedLedger):
 
 
 def protocol_limits(protocol="two-turn-v1"):
-    require(protocol in {"two-turn-v1", "outline-v1"}, "unknown qualification protocol")
-    return {**LIMITS, "modelTurns": 1} if protocol == "outline-v1" else dict(LIMITS)
+    require(protocol in {"two-turn-v1", "outline-v1", "outline-v2"}, "unknown qualification protocol")
+    return {**LIMITS, "modelTurns": 1} if protocol != "two-turn-v1" else dict(LIMITS)
+
+
+def protocol_baseline(protocol):
+    return {"two-turn-v1": BASELINE, "outline-v1": OUTLINE_BASELINE, "outline-v2": REFINEMENT_BASELINE}[protocol]
 
 
 def runtime_baseline(revision=BASELINE):
@@ -94,9 +100,9 @@ def verify_runtime(protocol, runtime_revision=None):
         isinstance(runtime_revision, str) and re.fullmatch(r"[a-f0-9]{40}", runtime_revision),
         "exact reviewed runtime commit required",
     )
+    baseline = protocol_baseline(protocol)
     require(
-        subprocess.run(["git", "merge-base", "--is-ancestor", OUTLINE_BASELINE, runtime_revision], cwd=REPO).returncode
-        == 0,
+        subprocess.run(["git", "merge-base", "--is-ancestor", baseline, runtime_revision], cwd=REPO).returncode == 0,
         "reviewed runtime does not extend outline baseline",
     )
     changed = set(
@@ -105,7 +111,7 @@ def verify_runtime(protocol, runtime_revision=None):
                 "git",
                 "diff",
                 "--name-only",
-                OUTLINE_BASELINE,
+                baseline,
                 runtime_revision,
                 "--",
                 "src",
@@ -116,29 +122,56 @@ def verify_runtime(protocol, runtime_revision=None):
             text=True,
         ).splitlines()
     )
-    require(changed and changed <= OUTLINE_RUNTIME_PATHS, "outline runtime scope exceeds reviewed contract files")
+    allowed = REFINEMENT_RUNTIME_PATHS if protocol == "outline-v2" else OUTLINE_RUNTIME_PATHS
+    require(changed and changed <= allowed, "outline runtime scope exceeds reviewed contract files")
     runtime_baseline(revision=runtime_revision)
 
 
-def prepare(state, prior, canary, *, prior_manifest, protocol="two-turn-v1", runtime_revision=None):
+def prepare(
+    state, prior, canary, *, prior_manifest, protocol="two-turn-v1", runtime_revision=None, capacity_receipt=None
+):
     """Local only: freeze original bytes and controls, without touching prior evidence."""
     verify_runtime(protocol, runtime_revision)
     limits = protocol_limits(protocol)
     root, prior, canary = private_path(state), private_path(prior), private_path(canary)
     require(not root.exists(), "fresh follow-up state required")
     require(not root.is_relative_to(prior) and not prior.is_relative_to(root), "prior evidence overlaps state")
-    outline = protocol == "outline-v1"
+    refinement = protocol == "outline-v2"
+    require(refinement or capacity_receipt is None, "capacity policy is only supported by outline-v2")
+    if refinement:
+        from scripts.granular_pacing import validate_policy
+
+        require(capacity_receipt is not None, "fresh capacity policy required")
+        capacity_receipt = private_path(capacity_receipt)
+        capacity_policy = validate_policy(json.loads(capacity_receipt.read_text()))
+    outline = protocol != "two-turn-v1"
     completed = prior if outline else prior / "continuation-2"
     prior_result = json.loads((completed / "execution-result.json").read_text())
-    require(
-        prior_result["cleanup"]["passed"] and prior_result["models"]["completedTurns"] == (2 if outline else 6),
-        "prior run incomplete",
-    )
+    if refinement:
+        prior_status = json.loads((completed / "models/status.json").read_text())
+        require(
+            prior_result.get("status") == "failed"
+            and prior_result.get("errorType") == "PacingRefusal"
+            and prior_result["cleanup"]["passed"]
+            and prior_status.get("status") == "failed"
+            and prior_status.get("errorType") == "PacingRefusal"
+            and prior_status.get("completedTurns") == 0
+            and prior_result["finalOwnership"]["unresolvedOperations"] == 0
+            and prior_result["finalOwnership"]["unfinishedMessages"] == 0,
+            "prior failed outline run is not safely finalized",
+        )
+    else:
+        require(
+            prior_result["cleanup"]["passed"] and prior_result["models"]["completedTurns"] == (2 if outline else 6),
+            "prior run incomplete",
+        )
     public_path = (
         REPO
         / "records"
         / (
-            "granular-navigation-followup-20261104.json"
+            "granular-outline-qualification-20261104.json"
+            if refinement
+            else "granular-navigation-followup-20261104.json"
             if outline
             else "granular-navigation-live-qualification-20261104.json"
         )
@@ -162,8 +195,13 @@ def prepare(state, prior, canary, *, prior_manifest, protocol="two-turn-v1", run
         prefix + "embedding-binding-before.json",
     ):
         require(sha(prior / name) == archived[name], "archived prior evidence changed: " + name)
-    for name in ("models/controls.json", "execution-result.json", "cleanup-immediate.json", "cleanup-late.json"):
+    receipt_names = ["models/controls.json", "execution-result.json", "cleanup-immediate.json", "cleanup-late.json"]
+    if refinement:
+        receipt_names += ["models/status.json", "ownership-final.json", "post-failure-control-verification.json"]
+    for name in receipt_names:
         require(sha(completed / name) == public["privateEvidenceSha256"][name], "prior receipt changed: " + name)
+        if refinement:
+            require(sha(completed / name) == archived[name], "archived failed-prior receipt changed: " + name)
     prior_preflight = json.loads((prior / "preflight.json").read_text())
     require(sha(canary) == prior_preflight["canarySha256"], "prior canary hash differs")
     require(sha(prior / "environment.json") == prior_preflight["environmentSha256"], "prior environment changed")
@@ -175,6 +213,24 @@ def prepare(state, prior, canary, *, prior_manifest, protocol="two-turn-v1", run
         source = next(row for row in plan["sources"] if row["role"] == "source.docx")
     require(sha(prior / "fixtures/source.docx") == source["sha256"], "original fixture changed")
     prior_controls = json.loads((completed / "models/controls.json").read_text())
+    if refinement:
+        require(
+            prior_controls.get("schema") == "fli.granular-outline-models.controls.v1"
+            and prior_controls.get("modelTurns") == 1,
+            "prior outline protocol differs",
+        )
+        require(
+            capacity_policy["bindingSha256"]
+            == json.loads((completed / "answering-binding-before.json").read_text())["bindingSha256"],
+            "capacity policy answering binding differs",
+        )
+        postcheck = json.loads((completed / "post-failure-control-verification.json").read_text())
+        require(
+            postcheck.get("passed") is True
+            and postcheck.get("beforeAndAfterExactPriorBindingsMatched") is True
+            and postcheck.get("executionCodeHashesUnchanged") is True,
+            "failed prior final control verification missing",
+        )
     require(
         source["sha256"] == prior_controls["sourceBindings"]["docx"]["sourceSha256"],
         "fixture differs from prior model source",
@@ -192,6 +248,9 @@ def prepare(state, prior, canary, *, prior_manifest, protocol="two-turn-v1", run
         "fixtures/source.docx": prior / "fixtures/source.docx",
         "prior-archive-manifest.json": prior_manifest,
     }
+    if refinement:
+        copies["capacity-policy.json"] = capacity_receipt
+        copies.update({"prior-" + name.replace("/", "-"): completed / name for name in receipt_names[1:]})
     for name, path in copies.items():
         (root / name).write_bytes(path.read_bytes())
         (root / name).chmod(0o600)
@@ -201,7 +260,7 @@ def prepare(state, prior, canary, *, prior_manifest, protocol="two-turn-v1", run
     save(
         root / "preparation.json",
         {
-            "baseline": OUTLINE_BASELINE if outline else BASELINE,
+            "baseline": protocol_baseline(protocol),
             **({"protocol": protocol, "runtimeRevision": runtime_revision} if outline else {}),
             "sourceSha256": source["sha256"],
             "priorReceiptSha256": sha(public_path),
@@ -218,14 +277,29 @@ def verify_preparation(root, *, protocol="two-turn-v1"):
     prepared = json.loads((root / "preparation.json").read_text())
     require(prepared.get("protocol", "two-turn-v1") == protocol, "prepared protocol differs")
     verify_runtime(protocol, prepared.get("runtimeRevision"))
-    baseline = OUTLINE_BASELINE if protocol == "outline-v1" else BASELINE
+    baseline = protocol_baseline(protocol)
     require(
         prepared["limits"] == protocol_limits(protocol) and prepared["baseline"] == baseline, "follow-up limits changed"
     )
     for name, expected in prepared["copiedFileSha256"].items():
         require(sha(root / name) == expected, "frozen follow-up input changed: " + name)
     require(sha(root / "fixtures/source.docx") == prepared["sourceSha256"], "fixture bytes changed")
+    if protocol == "outline-v2":
+        from scripts.granular_pacing import validate_policy
+
+        require("capacity-policy.json" in prepared["copiedFileSha256"], "unsealed capacity policy")
+        validate_policy(json.loads((root / "capacity-policy.json").read_text()))
     return prepared
+
+
+def require_capacity(root, binding, role):
+    from scripts.granular_pacing import validate_capacity
+
+    return validate_capacity(
+        json.loads((root / "capacity-policy.json").read_text()),
+        json.loads((root / f"answering-{role}.json").read_text()),
+        binding_sha256=binding["bindingSha256"],
+    )
 
 
 def require_prior_bindings(root, answering, embedding):
@@ -245,6 +319,8 @@ async def check_health(state, *, protocol="two-turn-v1"):
     answering = await asyncio.to_thread(live.current_model, root, settings, "preflight")
     embedding = await asyncio.to_thread(live.current_model, root, settings, "preflight", embedding=True)
     require_prior_bindings(root, answering, embedding)
+    if protocol == "outline-v2":
+        require_capacity(root, answering, "preflight")
     save(
         root / "matched-preflight.json",
         {
@@ -273,13 +349,15 @@ def execution_controls(root, *, protocol="two-turn-v1"):
         matched["passed"] and matched["preflightSha256"] == sha(root / "preflight.json"), "matched preflight differs"
     )
     require_prior_bindings(root, matched["answering"], matched["embedding"])
+    if protocol == "outline-v2":
+        require_capacity(root, matched["answering"], "preflight")
     require(preflight_receipt["environmentSha256"] == sha(root / "environment.json"), "environment changed")
     require(preflight_receipt["protectedSha256"] == sha(root / "protected-before.json"), "protected receipt changed")
     return {
         "baseline": prepared["baseline"],
         **(
             {"protocol": protocol, "reviewedRuntimeRevision": prepared["runtimeRevision"]}
-            if protocol == "outline-v1"
+            if protocol != "two-turn-v1"
             else {}
         ),
         "candidateCommit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPO, text=True).strip(),
@@ -291,6 +369,100 @@ def execution_controls(root, *, protocol="two-turn-v1"):
         "contextAccounting": "legacy-v1",
         "runtimeUnchangedFromCandidate": protocol == "two-turn-v1",
     }
+
+
+async def postchecks(root, settings, client, bindings, controls):
+    """Independent bounded observations after any attempted v2 run; never raise over its error.
+
+    Source GETs have a 30s aggregate deadline. The two management reads run in
+    parallel and each underlying subprocess has a 60s timeout; both are joined.
+    This leaves at least 480s of the existing 600s window for owned cleanup.
+    """
+    from scripts.evaluate_agent_retrieval import capture
+
+    started = time.monotonic()
+    checks = {}
+
+    def failed(error):
+        return {"status": "failed", "errorType": type(error).__name__, "error": str(error)[:500]}
+
+    if not bindings:
+        checks["source"] = {"status": "unavailable", "reason": "source publication did not complete"}
+    else:
+        try:
+            async with asyncio.timeout(30):
+                observed = {}
+                for role, source in bindings.items():
+                    library = await client.get(f"/v1/libraries/{source['libraryId']}", timeout=10)
+                    library.raise_for_status()
+                    documents = await client.get(f"/v1/libraries/{source['libraryId']}/documents", timeout=10)
+                    documents.raise_for_status()
+                    matches = [row for row in documents.json()["documents"] if row.get("id") == source["documentId"]]
+                    require(len(matches) == 1, "postcheck source document unavailable")
+                    document, lib = matches[0], library.json()
+                    require(
+                        lib.get("status") == "active"
+                        and lib.get("ingestionProfile", {}).get("id") == "custom-granular-v1"
+                        and document.get("status") == "ready"
+                        and document.get("pendingGeneration") is None
+                        and document.get("activeGeneration") == source["generation"]
+                        and document.get("contentRevision") == source["contentRevision"]
+                        and document.get("sha256") == source["sourceSha256"]
+                        and document.get("fileName") == source["fileName"],
+                        "postcheck source publication pins changed",
+                    )
+                    observed[role] = {"library": capture(lib), "document": capture(document)}
+                save(root / "postchecks-source-after.json", observed)
+                before = root / "models/sources-before.json"
+                if before.exists():
+                    require(observed == json.loads(before.read_text()), "postcheck source snapshot changed")
+                    checks["source"] = {"status": "passed", "comparison": "exact_pre_model_snapshot"}
+                else:
+                    checks["source"] = {
+                        "status": "unavailable",
+                        "reason": "pre-model source snapshot unavailable; publication pins verified only",
+                    }
+        except BaseException as error:
+            checks["source"] = failed(error)
+
+    async def binding_read(embedding):
+        try:
+            binding = await asyncio.to_thread(live.current_model, root, settings, "after", embedding=embedding)
+            role = "embedding" if embedding else "answering"
+            require(binding == json.loads((root / f"prior-{role}-binding.json").read_text()), role + " binding changed")
+            return {"status": "passed", "binding": binding}
+        except BaseException as error:
+            return failed(error)
+
+    reads = asyncio.gather(binding_read(False), binding_read(True))
+    try:
+        answering, embedding = await asyncio.shield(reads)
+    except BaseException:
+        # A caller cancellation cannot leave management threads using closing resources.
+        answering, embedding = await asyncio.shield(reads)
+    checks["answering"], checks["embedding"] = answering, embedding
+    try:
+        require(answering["status"] == "passed", "answering observation unavailable")
+        require_capacity(root, answering["binding"], "after")
+        checks["capacity"] = {"status": "passed"}
+    except BaseException as error:
+        checks["capacity"] = failed(error)
+    try:
+        require(live.code_hashes() == controls["sourceSha256"], "code changed during execution")
+        checks["code"] = {"status": "passed"}
+    except BaseException as error:
+        checks["code"] = failed(error)
+    result = {
+        "passed": all(row["status"] == "passed" for row in checks.values()),
+        "capturedAt": datetime.now(UTC).isoformat(),
+        "elapsedSeconds": time.monotonic() - started,
+        "checks": checks,
+        "limits": {"sourceSeconds": 30, "parallelManagementSecondsEach": 60, "reservedCleanupSeconds": 480},
+        "modelCalls": 0,
+        "dataMutations": 0,
+    }
+    save(root / "postchecks.json", result)
+    return result
 
 
 async def execute(state, archive_root, *, protocol="two-turn-v1"):
@@ -340,6 +512,8 @@ async def execute(state, archive_root, *, protocol="two-turn-v1"):
                     live.current_model, root, settings, "before", embedding=True
                 )
                 require_prior_bindings(root, model_binding, embedding_binding)
+                if protocol == "outline-v2":
+                    require_capacity(root, model_binding, "before")
             async with (
                 live.loopback(a.app) as url,
                 httpx.AsyncClient(
@@ -350,6 +524,7 @@ async def execute(state, archive_root, *, protocol="two-turn-v1"):
             ):
                 index = IndexClient(url, settings.dev_api_key, selector_mode="handles")
                 q = live.Qualification(root, root / "fixtures", ledger, a, b, client, index, deadline)
+                bindings = None
                 try:
                     async with asyncio.timeout(max(1, deadline - time.monotonic())):
                         library = await q.create("shared")
@@ -368,12 +543,17 @@ async def execute(state, archive_root, *, protocol="two-turn-v1"):
                         }
                     }
                     save(root / "source-bindings.json", bindings)
+                    if protocol == "outline-v2":
+                        model_binding = await asyncio.to_thread(live.current_model, root, settings, "model-start")
+                        require_prior_bindings(root, model_binding, embedding_binding)
+                        require_capacity(root, model_binding, "model-start")
                     prepare_cases(
                         root / "models",
                         bindings,
                         prior_controls=root / "prior-model-controls.json",
                         prior_model_binding=root / "prior-answering-binding.json",
                         protocol=protocol,
+                        **({"capacity_receipt": root / "capacity-policy.json"} if protocol == "outline-v2" else {}),
                     )
                     provider = actual_client(settings.aoai_endpoint)
                     task = asyncio.create_task(
@@ -402,21 +582,37 @@ async def execute(state, archive_root, *, protocol="two-turn-v1"):
                         result["models"]["completedTurns"] == limits["modelTurns"],
                         "qualification turn count incomplete",
                     )
-                    require_prior_bindings(
-                        root,
-                        await asyncio.to_thread(live.current_model, root, settings, "after"),
-                        await asyncio.to_thread(live.current_model, root, settings, "after", embedding=True),
-                    )
-                    require(live.code_hashes() == controls["sourceSha256"], "code changed during execution")
+                    if protocol != "outline-v2":
+                        require_prior_bindings(
+                            root,
+                            await asyncio.to_thread(live.current_model, root, settings, "after"),
+                            await asyncio.to_thread(live.current_model, root, settings, "after", embedding=True),
+                        )
+                        require(live.code_hashes() == controls["sourceSha256"], "code changed during execution")
                     result["status"] = (
                         "one_outline_turn_complete_pending_review"
-                        if protocol == "outline-v1"
+                        if protocol != "two-turn-v1"
                         else "two_model_turns_complete_pending_review"
                     )
                 except BaseException as error:
                     failure = error
                     result.update(status="failed", errorType=type(error).__name__, error=str(error))
                 finally:
+                    cleanup_deadline = time.monotonic() + limits["cleanupSeconds"]
+                    if protocol == "outline-v2":
+                        try:
+                            result["postchecks"] = await postchecks(root, settings, client, bindings, controls)
+                            require(
+                                result["postchecks"]["passed"], "one or more final control checks unavailable or failed"
+                            )
+                        except BaseException as error:
+                            result.setdefault(
+                                "postchecks",
+                                {"passed": False, "errorType": type(error).__name__, "error": str(error)[:500]},
+                            )
+                            if failure is None:
+                                failure = error
+                                result.update(status="failed", errorType=type(error).__name__, error=str(error)[:500])
                     try:
                         await url.quiesce()
                     except BaseException as error:
@@ -445,7 +641,12 @@ async def execute(state, archive_root, *, protocol="two-turn-v1"):
                         flush=True,
                     )
                     try:
-                        async with asyncio.timeout(limits["cleanupSeconds"]):
+                        remaining = (
+                            max(1, cleanup_deadline - time.monotonic())
+                            if protocol == "outline-v2"
+                            else limits["cleanupSeconds"]
+                        )
+                        async with asyncio.timeout(remaining):
                             async with httpx.AsyncClient(
                                 transport=httpx.ASGITransport(app=a.app),
                                 base_url="http://qualification.invalid",
@@ -484,8 +685,9 @@ def main():
     parser.add_argument("--canary", type=Path)
     parser.add_argument("--prior-manifest", type=Path)
     parser.add_argument("--archive", type=Path)
-    parser.add_argument("--protocol", choices=("two-turn-v1", "outline-v1"), default="two-turn-v1")
+    parser.add_argument("--protocol", choices=("two-turn-v1", "outline-v1", "outline-v2"), default="two-turn-v1")
     parser.add_argument("--runtime-revision")
+    parser.add_argument("--capacity-receipt", type=Path)
     args = parser.parse_args()
     logging.basicConfig(level=logging.ERROR)
     if args.action == "prepare":
@@ -500,6 +702,7 @@ def main():
             prior_manifest=args.prior_manifest,
             protocol=args.protocol,
             runtime_revision=args.runtime_revision,
+            capacity_receipt=args.capacity_receipt,
         )
     elif args.action == "preflight":
         result = asyncio.run(check_health(args.state, protocol=args.protocol))

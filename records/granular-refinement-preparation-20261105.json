@@ -1,0 +1,340 @@
+{
+  "schema": "fli.granular-refinement.preparation.v1",
+  "date": "2026-11-05",
+  "startingCommit": "9fcc9bc",
+  "branch": "codex/granular-source-navigation",
+  "presentationCommit": "96484734957382b25214077fc10aea30c125e6fe",
+  "pacingCommit": "b9176a38f04418eb0b0a66a7d97b4ebffaa20d03",
+  "runtimeRevision": "96484734957382b25214077fc10aea30c125e6fe",
+  "contextRepairIncluded": false,
+  "indexVersioningIncluded": false,
+  "providerSwitched": false,
+  "sourceOrEmbeddingRecipeChanged": false,
+  "newReingestionRequiredForThisRefinement": false,
+  "pacingAudit": {
+    "rows": [
+      {
+        "request": 1,
+        "priorProviderDispatched": true,
+        "providerInputTokens": 2909,
+        "providerOutputTokens": 133,
+        "oldSerializedEstimateLocal": 3196,
+        "newPacingEstimateLocal": 4220,
+        "semanticJsonTokensLocal": 3196,
+        "opaqueSerializationRemovalDeltaLocal": 0,
+        "boundReasoningReservation": 0,
+        "measuredPrefixAnchorEstimate": null,
+        "uncertaintyReserve": 1024,
+        "outputReservation": 8000,
+        "totalReservationLocal": 12220
+      },
+      {
+        "request": 2,
+        "priorProviderDispatched": true,
+        "providerInputTokens": 5284,
+        "providerOutputTokens": 278,
+        "oldSerializedEstimateLocal": 7306,
+        "newPacingEstimateLocal": 6752,
+        "semanticJsonTokensLocal": 5728,
+        "opaqueSerializationRemovalDeltaLocal": 1578,
+        "boundReasoningReservation": 0,
+        "measuredPrefixAnchorEstimate": 5393,
+        "uncertaintyReserve": 1024,
+        "outputReservation": 8000,
+        "totalReservationLocal": 14752
+      },
+      {
+        "request": 3,
+        "priorProviderDispatched": true,
+        "providerInputTokens": 8361,
+        "providerOutputTokens": 143,
+        "oldSerializedEstimateLocal": 13222,
+        "newPacingEstimateLocal": 10054,
+        "semanticJsonTokensLocal": 8838,
+        "opaqueSerializationRemovalDeltaLocal": 4384,
+        "boundReasoningReservation": 192,
+        "measuredPrefixAnchorEstimate": 8486,
+        "uncertaintyReserve": 1024,
+        "outputReservation": 8000,
+        "totalReservationLocal": 18054
+      },
+      {
+        "request": 4,
+        "priorProviderDispatched": true,
+        "providerInputTokens": 11304,
+        "providerOutputTokens": 129,
+        "oldSerializedEstimateLocal": 17847,
+        "newPacingEstimateLocal": 13359,
+        "semanticJsonTokensLocal": 11952,
+        "opaqueSerializationRemovalDeltaLocal": 5895,
+        "boundReasoningReservation": 192,
+        "measuredPrefixAnchorEstimate": 11430,
+        "uncertaintyReserve": 1215,
+        "outputReservation": 8000,
+        "totalReservationLocal": 21359
+      },
+      {
+        "request": 5,
+        "priorProviderDispatched": true,
+        "providerInputTokens": 14223,
+        "providerOutputTokens": 221,
+        "oldSerializedEstimateLocal": 22331,
+        "newPacingEstimateLocal": 16769,
+        "semanticJsonTokensLocal": 15052,
+        "opaqueSerializationRemovalDeltaLocal": 7279,
+        "boundReasoningReservation": 192,
+        "measuredPrefixAnchorEstimate": 14348,
+        "uncertaintyReserve": 1525,
+        "outputReservation": 8000,
+        "totalReservationLocal": 24769
+      },
+      {
+        "request": 6,
+        "priorProviderDispatched": true,
+        "providerInputTokens": 20393,
+        "providerOutputTokens": 487,
+        "oldSerializedEstimateLocal": 31033,
+        "newPacingEstimateLocal": 24066,
+        "semanticJsonTokensLocal": 21558,
+        "opaqueSerializationRemovalDeltaLocal": 9475,
+        "boundReasoningReservation": 320,
+        "measuredPrefixAnchorEstimate": 20758,
+        "uncertaintyReserve": 2188,
+        "outputReservation": 8000,
+        "totalReservationLocal": 32066
+      },
+      {
+        "request": 7,
+        "priorProviderDispatched": false,
+        "providerInputTokens": null,
+        "providerOutputTokens": null,
+        "oldSerializedEstimateLocal": 42073,
+        "newPacingEstimateLocal": 31653,
+        "semanticJsonTokensLocal": 28071,
+        "opaqueSerializationRemovalDeltaLocal": 14002,
+        "boundReasoningReservation": 704,
+        "measuredPrefixAnchorEstimate": 27192,
+        "uncertaintyReserve": 2878,
+        "outputReservation": 8000,
+        "totalReservationLocal": 39653
+      }
+    ],
+    "wireContinuityPreserved": true,
+    "priorSixRequestsReproducedExactly": true,
+    "seventhProviderUsageAvailable": false,
+    "localPolicyDoesNotRaise45kWindowOrDiscardReasoning": true,
+    "interpretation": "Counterfactual local pacing estimates on a consumed prior trace; not new provider measurements, Azure admission proof or an answer-quality result."
+  },
+  "presentationAudit": {
+    "rows": [
+      {
+        "scope": "root-outline",
+        "oldApiEvidenceTokensLocal": 2144,
+        "refinedApiEvidenceTokensLocal": 1766,
+        "sourceBodyLocationsCitationsIdentifiersAndPinsPreserved": true
+      },
+      {
+        "scope": "first-section-outline",
+        "oldApiEvidenceTokensLocal": 2687,
+        "refinedApiEvidenceTokensLocal": 1941,
+        "sourceBodyLocationsCitationsIdentifiersAndPinsPreserved": true
+      },
+      {
+        "scope": "nested-section-outline",
+        "oldApiEvidenceTokensLocal": 2688,
+        "refinedApiEvidenceTokensLocal": 1950,
+        "sourceBodyLocationsCitationsIdentifiersAndPinsPreserved": true
+      },
+      {
+        "scope": "target-subsection-outline",
+        "oldApiEvidenceTokensLocal": 2678,
+        "refinedApiEvidenceTokensLocal": 1887,
+        "sourceBodyLocationsCitationsIdentifiersAndPinsPreserved": true
+      },
+      {
+        "scope": "table-first-read",
+        "oldApiEvidenceTokensLocal": 5749,
+        "refinedApiEvidenceTokensLocal": 3940,
+        "sourceBodyLocationsCitationsIdentifiersAndPinsPreserved": true
+      },
+      {
+        "scope": "table-repeated-read",
+        "oldApiEvidenceTokensLocal": 5749,
+        "refinedApiEvidenceTokensLocal": 3940,
+        "sourceBodyLocationsCitationsIdentifiersAndPinsPreserved": true
+      }
+    ],
+    "previewMaximumUnicodeCharacters": 160,
+    "previewCanEstablishSourceRead": false,
+    "fullStorageProvenancePreserved": true,
+    "secondPriorTableReplyWasNotDelivered": true,
+    "interpretation": "These are local deterministic presentation counts for the same retained scopes, not model usage, billing, latency, quality, or predicted model behavior. The second table result was never delivered to a successful prior model call; it remains separately identified. Preview text is navigation only and cannot satisfy source grounding. Any live route improvement requires the newly authorized bounded qualification."
+  },
+  "freshCapacity": {
+    "capturedAt": "2026-11-04T23:48:50.229266+00:00",
+    "passed": true,
+    "deployments": {
+      "answering": {
+        "model": {
+          "format": "OpenAI",
+          "name": "gpt-5-mini",
+          "version": "2025-08-07"
+        },
+        "sku": {
+          "capacity": 50,
+          "name": "GlobalStandard"
+        },
+        "rateLimits": [
+          {
+            "count": 50,
+            "key": "request",
+            "renewalPeriod": 60
+          },
+          {
+            "count": 50000,
+            "key": "token",
+            "renewalPeriod": 60
+          }
+        ],
+        "versionUpgradeOption": "NoAutoUpgrade",
+        "exactPriorBindingFieldsUnchanged": true,
+        "receiptSha256": "8e71d0ccca79f80f1602425df69fe773b27935e82f549acad16af31b3997a905"
+      },
+      "embedding": {
+        "model": {
+          "format": "OpenAI",
+          "name": "text-embedding-3-large",
+          "version": "1"
+        },
+        "sku": {
+          "capacity": 150,
+          "name": "GlobalStandard"
+        },
+        "rateLimits": [
+          {
+            "count": 150,
+            "key": "request",
+            "renewalPeriod": 10
+          },
+          {
+            "count": 150000,
+            "key": "token",
+            "renewalPeriod": 60
+          }
+        ],
+        "versionUpgradeOption": "NoAutoUpgrade",
+        "exactPriorBindingFieldsUnchanged": true,
+        "receiptSha256": "590a95559735d2ba2480c5be7c3806a35e67c80b31d21e3e27efa19b453b4985"
+      }
+    },
+    "modelCalls": 0,
+    "resourceChanges": 0
+  },
+  "pacingPolicy": {
+    "schema": "fli.granular-pacing.v1",
+    "protocol": "outline-v2",
+    "bindingSha256": "555c642d2611a43094885de4df7bc6cc8336f59fe262a58eb2060b423b171a89",
+    "capacityBinding": {
+      "model": {
+        "format": "OpenAI",
+        "name": "gpt-5-mini",
+        "version": "2025-08-07"
+      },
+      "sku": {
+        "name": "GlobalStandard",
+        "capacity": 50
+      },
+      "versionUpgradeOption": "NoAutoUpgrade",
+      "rateLimits": [
+        {
+          "key": "request",
+          "count": 50,
+          "renewalPeriod": 60
+        },
+        {
+          "key": "token",
+          "count": 50000,
+          "renewalPeriod": 60
+        }
+      ]
+    },
+    "capacityBindingSha256": "1dabeb2db820b48b0ff3e10315f090b5cd6928027ca6853ddf79f012fd072e5b",
+    "windowSeconds": 60,
+    "localInputPlusMaxOutputCeiling": 45000,
+    "localRequestsPerWindowCeiling": 45,
+    "minimumRequestSpacingSeconds": 1.3333333333333333,
+    "outputReservation": 8000,
+    "harnessContextAllowance": 200000,
+    "uncertaintyReserveMinimum": 1024,
+    "uncertaintyReservePercent": 10,
+    "estimator": "max(semantic_json_plus_bound_reasoning,exact_prefix_measured_anchor)_plus_uncertainty",
+    "unknownEncryptedItemPolicy": "refuse",
+    "missingReasoningCounterPolicy": "reserve_entire_measured_output",
+    "observedReservationPolicy": "raise_only;retain_failed_attempt_reservations",
+    "interpretation": "Local pacing estimates, not provider usage, billing, model-context accounting, or Azure's exact rate-limit formula. Full output reservation and uncertainty margin are deliberate operational headroom, not a statistically calibrated bound. Ciphertext is preserved on the wire."
+  },
+  "qualification": {
+    "protocol": "outline-v2",
+    "questionAndSourceUnchanged": true,
+    "modelTurnsAttemptedMaximum": 1,
+    "modelLogicalCallsMaximum": 13,
+    "modelPhysicalAttemptsMaximum": 18,
+    "modelInputWithUnknownReservationsMaximum": 1000000,
+    "modelOutputWithUnknownReservationsMaximum": 100000,
+    "contextAllowance": 200000,
+    "maxOutputTokens": 8000,
+    "reasoningEffort": "medium",
+    "maxRounds": 12,
+    "searchMode": "vector",
+    "evidenceView": "compact",
+    "selectors": "handles",
+    "contextAccounting": "legacy-v1",
+    "ownedLibrariesMaximum": 1,
+    "ownedDocumentsMaximum": 1,
+    "ownedGenerationsMaximum": 1,
+    "ownedChunksMaximum": 16,
+    "independentAbsenceCheckSpacingSeconds": 60,
+    "fullContentFallbackPasses": false,
+    "requiredScope": "Relevant source paragraph or its immediate authored section, using a selector from an earlier delivered nonempty outline; then correct answer and citation.",
+    "selectiveRerunAllowed": false,
+    "limits": "Fresh meter and owned scopes. Postchecks retain failures; all attempts are archived. No application deployment or larger study.",
+    "executionAdmissionDeadlineSeconds": 1200,
+    "postchecksAndCleanupDeadlineSeconds": 600,
+    "deadlineInterpretation": "Configured admission/cleanup deadlines, not a hard total wall-clock guarantee: joining in-flight work, quiescence and archival may overrun to preserve safety; actual elapsed time is reported."
+  },
+  "independentReviews": {
+    "pacing-final-review.json": "dfc768d32952ba43131ba8fa433c87026f7e3ff95c1ab51804d1a148ec266cec",
+    "pacing-independent-review.json": "3f41c9edf8cd1eb8ec71b307ae27482a013a3ce8ceb6d2fa91d7a8dea1b86c10",
+    "runner-independent-review.json": "194735b8e5f36c5d85481219a5dd95cdc0c9ebe53304c8892c4957e7ec026a01",
+    "pacing-policy-backtest-final.json": "a9bca206711865c9e7af543930106262737c8e42683e626afa56a23edb623591",
+    "navigation-product-audit.json": "dd2e53652f3d2d978e0c7ab3e1091adb7cc1810f28edc3acc04b32c4cadece27",
+    "prior-evidence-snapshot.json": "fe1fcb7a6ff5dfdb99c1c8ddc82bddab87a3e9d3c69392fa775655f7496f7387",
+    "helper-compatibility-review.json": "8982d527e36d1ab080dbcf5e92a1cbdcb77f76b8401bdcea9726ddd03fd55165"
+  },
+  "priorEvidenceFilesProtected": {
+    "sixTurn": 999,
+    "twoTurn": 313,
+    "failedOutline": 309
+  },
+  "localValidation": {
+    "fullRegression": {
+      "passed": 1965,
+      "failed": 0,
+      "warnings": 23,
+      "elapsedSeconds": 206.29,
+      "logSha256": "445291577034deff04e31177428f2eb9d0b315bf8d285299723863ad319a653c"
+    },
+    "lint": "passed",
+    "format": "325 files formatted",
+    "privacy": "passed, including private deny list",
+    "earlierAttemptsPreserved": {
+      "firstFullRun": {
+        "passed": 1960,
+        "failed": 5,
+        "diagnosis": "Four localhost socket sandbox denials and one outdated document-selector helper. Five helper accesses updated to authorized root-document selectors; 62 affected tests then passed before the final full run."
+      },
+      "initialModelFixtureRun": "Seven new fixture setup errors, corrected locally before the 52-case passing run. No provider calls."
+    }
+  },
+  "executionReady": true
+}

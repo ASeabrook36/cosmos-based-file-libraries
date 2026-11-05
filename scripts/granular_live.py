@@ -530,7 +530,7 @@ class Qualification:
             ("section", section["readSelector"]),
             ("subtree", section["subtreeSelector"]),
             ("containing", paragraph["containingSectionSelector"]),
-            ("whole", paragraph["fullSelector"]),
+            ("whole", root["documents"][0]["fullSelector"]),
         ):
             selected[role] = await self.read(shared, **selector)
             self.record("scope:" + role, selected[role])
@@ -572,7 +572,7 @@ class Qualification:
             shared,
             "owner",
             "cold storage vessel steps",
-            document=section["documentSelector"],
+            document=root["documents"][0]["documentSelector"],
             top=3,
         )
         require(hits["results"], "real vector retrieval empty")
@@ -581,7 +581,7 @@ class Qualification:
             expanded = await self.read(shared, **hit["readSelector"])
             require(expanded["selectionComplete"], "search expansion incomplete")
         self.passed("real_vector_search_to_verified_source_expansion")
-        pin = section["documentSelector"]
+        pin = root["documents"][0]["documentSelector"]
         page = await self.request(
             "POST",
             f"/v1/libraries/{shared}/documents:read",
