@@ -501,6 +501,10 @@ diagnostics remain available through an authorized same-scope `details=true`
 read. Unknown/stale/session-crossing references never rebind; restored prose
 requires fresh authorized acquisition. Full prior tool transcripts cannot restore
 the registry implicitly. Existing response/context budget behavior is unchanged.
+The bounded presentation comparison is held for integration: local serialization
+improved, but the real model mixed reference and canonical-selector arguments and
+failed to obtain source text. The candidate's invocation and recovery contract
+needs repair and a fresh focused qualification before adoption.
 
 ## 7. Ingestion
 

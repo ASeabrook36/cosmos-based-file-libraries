@@ -1667,3 +1667,30 @@ separate post-failure read-only check verified exact model/embedding bindings an
 executed code hashes. The [receipt](../records/granular-outline-qualification-20261104.json)
 keeps this failed attempt, local estimates and partial usage counters distinct.
 No model rerun, merge, deployment or larger study occurred.
+
+## Granular presentation comparison, 2026-11-05
+
+The [opt-in reference candidate](granular-reference-presentation.md) keeps exact
+selectors in an application-held, turn-local registry, with ordinary access and
+snapshot checks at every use. It changes no ingestion, ranking, context-budget
+policy or default. Exact historical reconstruction reduced the 1,324-token
+paragraph reply to 620 local JSON tokens and the complete scripted route from
+50,592 to 36,010, including instructions, schemas and repeated history. Source
+markup remains 11 tokens (7 for the plain sentence). These are local estimates;
+history refresh and expired-reference reacquisition costs are recorded separately.
+
+**Hold integration.** In the single bounded real-model pair, compact completed
+outline-to-paragraph navigation with the correct citation. Navigation received
+only its first outline, made five malformed reads and one unavailable-search
+detour, and ended with a grounded refusal. Review found schema/resolver
+inconsistency and recovery guidance naming replaced selector fields. The trace
+does not establish the cause of each choice. Safer reference binding and lower
+serialization do not establish model usability or completed-task efficiency.
+
+The [receipt](../records/granular-reference-presentation-20261105.json) records
+14 provider calls, 90,620 input/5,343 output tokens, no pacing refusals, retries
+or unknown usage, and 2,065 passing local tests. Source stores were local: cloud
+retrieval RU and fresh cloud lifecycle behavior were not measured. All earlier
+evidence remains unchanged. Private archives and resource closure were verified;
+no cloud data resources were created. No rerun, merge, deployment or larger
+study occurred. Align reference invocation and recovery before a fresh check.

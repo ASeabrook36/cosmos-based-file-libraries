@@ -8,6 +8,15 @@ granular reads. Ingestion, chunk sizes, source artifacts, embeddings, query
 ranking, application defaults, answering model and context accounting are unchanged.
 The separate context-budget repair is not included.
 
+**Recommendation: hold integration of this presentation candidate.** The bounded
+implementation reduces local serialization substantially and passes regression
+tests, but the one matched real-model pair exposed an invocation/recovery contract
+problem: compact completed the task; navigation never obtained its source text.
+No selective rerun or post-run product fix was made. The existing integrated
+granular-navigation baseline and all defaults remain unchanged. The
+[reviewed receipt](../records/granular-reference-presentation-20261105.json)
+separates these outcomes from the local estimates below.
+
 ## Representation and reference contract
 
 Call the existing `run_turn` with `presentation="navigation"` and a normal
@@ -43,8 +52,9 @@ Readable JSON keeps ordinary `documents`, `outline` and `sections` lists. It
 does not encode source text in a positional matrix. Original markup, Unicode,
 whitespace, list identity/depth, cells, qualifiers and citations stay intact.
 Known duplicate machine identifiers are omitted only from the new model view;
-unknown features and unsupported/mixed/media replies fall back to canonical
-compact evidence before changing registry state. Diagnostic evidence and the raw
+unknown fields are retained, while unsupported payload/selector shapes and
+mixed/media replies fall back to canonical compact evidence before changing
+registry state. Diagnostic evidence and the raw
 API remain available. Source previews still do not establish source grounding.
 
 ## Lifetime and restoration
@@ -89,7 +99,7 @@ presentation would fit. No larger backend budget or text clipping is used to
 manufacture a presentation gain. The roughly 5,000-source-token case is a
 measurement workload, not a new default read limit.
 
-## Bounded measurement and model plan
+## Bounded measurement and model controls
 
 Reproduce the historical five replies and all six recorded model requests before
 comparison. The final paragraph was 1,324 model-evidence JSON tokens, 1,447 with
@@ -131,5 +141,204 @@ replacement/deletion and history-refresh behavior are locally tested, not claims
 from this one live outline task. This consumed fixture is a development check,
 not a new quality benchmark, broad recall study or default-change justification.
 
-Results and the integration recommendation are recorded after the bounded checks.
-No merge, application deployment or larger study is part of this candidate.
+## Local comparison results
+
+Product commit `31137cb1372ba3a24c24c150f82fa038be6a1090` and comparison/runner
+commit `f88f4f22423b421c8f2b7b19bd48571b536d826d` were frozen before execution.
+The runtime and runner were not changed afterward. All measurements below are
+local `cl100k_base` JSON serialization counts, **not provider token usage**.
+
+The exact original-source reconstruction reproduces every compact model callback
+and all five replies from the retained qualification. The scripted comparison
+uses the same source, choices and six callback boundaries, changing presentation
+and its associated instructions/schema only:
+
+| Exact original route | Compact | Existing references | Navigation candidate |
+| --- | ---: | ---: | ---: |
+| Final paragraph reply | 1,324 | 1,246 | 620 |
+| Five unique reply payloads | 8,743 | 7,931 | 4,685 |
+| Cumulative input messages plus tools | 50,592 | 48,108 | 36,010 |
+
+The candidate reduces the paragraph reply by **53.17%**, the five unique payloads
+by **46.41%**, and cumulative input serialization by **28.82%**. The cumulative
+measure includes instructions, tool schemas, wrappers, reference setup and each
+repeated exposure of retained history. These are matched scripted choices, not
+evidence that a model takes the same route. Source markup remains 11 tokens;
+the plain sentence remains 7. The earlier illustrative 615-token candidate
+capture is preserved; random application-generated reference namespaces tokenize
+slightly differently. The final comparison uses its sealed 620-token capture.
+An earlier comparison that reserialized assistant argument whitespace is also
+retained; the final version preserves original argument strings exactly.
+
+An ordered removal decomposition distinguishes selected source fields, per-unit
+metadata, per-document metadata and the response envelope. For that paragraph:
+
+| Allocation | Compact | Existing references | Navigation |
+| --- | ---: | ---: | ---: |
+| Source-field contribution | 15 | 15 | 15 |
+| Per-source-unit fields | 241 | 209 | 112 |
+| Per-document fields | 774 | 712 | 379 |
+| Response envelope | 294 | 310 | 114 |
+
+These allocations sum to each response but depend on JSON removal order and BPE
+boundaries. The 15-token field contribution is not the 11-token standalone source
+body. Non-body fields include useful scope, citation and limitations, not only
+removable overhead. The first retained navigation reply introduces documentInfo
+(235 standalone tokens; 238 removal-delta tokens); later replies retain labels,
+scope, citation and applicable limitations without that stable block. The private
+decomposition includes 42 responses and 30 first/last metadata comparisons.
+
+The expanded local fixture covers the requested source shapes. Each row includes
+the complete scripted interaction, not just the final response:
+
+| Workload | Compact | Existing references | Navigation |
+| --- | ---: | ---: | ---: |
+| Small paragraph | 15,093 | 14,668 | 12,160 |
+| Multiple paragraphs | 17,091 | 16,006 | 13,209 |
+| Complete cell | 18,214 | 16,877 | 13,668 |
+| Complete table | 17,950 | 17,183 | 13,766 |
+| Section own content | 15,483 | 14,955 | 12,261 |
+| Authored subtree | 19,167 | 18,223 | 14,207 |
+| Large selection | 33,485 | 28,891 | 23,030 |
+| Five-response route on expanded fixture | 51,401 | 47,656 | 35,335 |
+| Delayed reference after intervening navigation | 35,944 | 33,858 | 25,652 |
+
+The large selection contains 5,022 plain-source tokens, 5,215 rendered-source
+tokens and 47 source atoms. The expanded fixture's paragraph reply is 1,330
+compact tokens; it is a different capture from the historical 1,324-token target.
+Exact source bodies, citations, pins, relationships and selected scopes match
+across formats in all 27 workload captures.
+
+History checks count refresh and recovery. The shortened-history row includes
+initial acquisition; restored-history rows start at the resumed turn with
+preexisting context, as detailed below:
+
+| History condition | Compact | Existing references | Navigation |
+| --- | ---: | ---: | ---: |
+| Shortened history, same application session | 26,203 | 25,350 | 20,659 |
+| Restored with exact full selector retained | 8,017 | 7,911 | 6,993 |
+| Restored with prose only | 62,043 | 57,309 | 44,654 |
+| Restored with expired short handle | — | — | 49,108 |
+
+Shortening refreshes documentInfo at its first retained use, adding 228 local
+JSON tokens already included above. The prose-only comparison uses the same six
+authorized API calls in each format. The expired-reference route includes one
+local refusal and six successful reacquisition calls. Comparing it directly with
+the retained-full-selector route would compare different retained information;
+the full selector needs only one API read. Routes are specified conservative
+fixtures, not proven minimum-cost recovery paths. All ten history captures retain
+the same selected source/citation. Shortening is a tested renderer boundary;
+automatic conversation compaction is not introduced by this candidate.
+
+The expired-handle acquisition turn is separately captured at 12,220 local input
+tokens, making its recorded acquisition-plus-recovery total **61,328**, rather
+than 49,108. Compatible compact/reference acquisition legs advertising the later
+full selector were separately captured at 15,240/14,703; composing those with
+restoration gives 23,257/22,614. These are composed local scenarios, not continuous
+captured conversations. Navigation's retained raw selector was supplied beforehand;
+its acquisition cost is unavailable, not zero. Prose handoffs are authored fixture
+summaries; model-generated summarization would add unmeasured cost. Acquisition
+fixtures start from a supplied subsection selector, so earlier file discovery is
+outside this measured boundary.
+
+## Real-model result and remaining defect
+
+One fixed-order compact/navigation pair ran against the same verified local
+publication, with the pinned model and controls above. It made 14 physical model
+calls with complete usage reporting, no HTTP 429s, provider retries or unknown
+usage. It was not rerun. Independent review followed actual provider-bound
+messages, successful responses, tool calls and application-resolved selectors.
+Canonical diagnostic transcripts were not mistaken for delivered model evidence.
+
+| Observed result | Compact | Navigation |
+| --- | --- | --- |
+| Model calls | 6 | 8 |
+| Delivered nonempty outlines | 4 | 1 |
+| Focused source body received | Yes | No |
+| Correct rule and human citation | Yes | No; grounded refusal |
+| Provider input tokens | 48,558 | 42,062 |
+| Provider cached-input subset | 31,616 | 31,360 |
+| Provider output tokens | 1,461 | 3,882 |
+| Provider reasoning-output subset | 832 | 2,816 |
+| Actual cumulative local messages plus tools | 50,634 | 38,985 |
+| Unique local tool-reply JSON tokens | 8,743 | 1,864 |
+| Repeated tool-reply exposures | 15 | 28 |
+| Local pacing wait, seconds | 111.306 | 156.285 |
+
+Navigation made five malformed read attempts and one search detour after its
+initial outline. It put action references into outline/node fields, mixed a
+reference with forbidden mode overrides, and once placed documentRef inside a
+document selector. No follow-up reference resolved successfully. The reference
+mixed with mode=selected named the document-root outline, not a full-document
+read; exact action-map review corrected an interim interpretation. No whole-file
+request or source fallback was delivered. Search is explicitly unavailable in this local source-only
+fixture; that detour is not an Azure retrieval failure or a ranking result.
+
+The model's raw final draft honestly declined to state the rule, but displayed an
+unrequested internal document identifier/revision and requested user direction.
+The unchanged grounding guard replaced it with a short, accurate no-source
+refusal. That safety behavior does not make navigation successful. Compact read
+the relevant paragraph, preserved its wording and gave the correct human citation.
+
+Review found concrete inconsistencies in the delivered interface:
+
+- The schema's alternative required fields still permit reference plus mode,
+  although the resolver rejects that combination. The provider uses non-strict
+  tools; schema exclusivity alone would not establish reliable behavior.
+- Nested selector documentation still says to copy outlineSelector, while the
+  candidate presents actions instead.
+- Some invalid-request recovery replies recommend documentSelector/readSelector,
+  which the new presentation has replaced. A usable recovery path must name the
+  actual accepted argument shape and a valid returned action.
+
+This single trace does not establish which inconsistency caused each model
+choice. The next focused change should align reference invocation, retained
+explicit-selector documentation and error recovery, then receive a newly frozen
+bounded check. Do not weaken scope checks, permit silent rebinding, or claim that
+the local token reduction has already improved model usability.
+
+The pair totals **90,620 input / 5,343 output tokens**. Cached input and reasoning
+are subsets, not additional tokens. The candidate's lower input usage is not a
+successful-task efficiency gain: it failed to retrieve the answer and used more
+calls/output. Fixed order, caching and stochastic choices prevent a causal cost
+or latency conclusion. There is no measured Cosmos retrieval charge in this
+local-store check; RU is unavailable, not a claimed zero-cost retrieval result.
+There were no embedding calls or cloud data writes.
+
+The actual local navigation totals include all six error replies, extra model
+calls and repeated history; they contain zero focused-source tokens. They cannot
+be compared as equivalent completed work. Offline Responses reconstruction
+matched all 14 actual requests, including encrypted-reasoning continuity. The
+unchanged pacing policy admitted every request without a refusal, retained its
+8,000-token output reservation and estimated input conservatively above reported
+input by 1,311–2,536 tokens. Its measured waits are operational delays, not model
+context usage, provider usage or production latency.
+
+## Validation, preservation and disposition
+
+The full regression suite passed **2,065 tests** (27 warnings), followed by Ruff
+lint/format and repository privacy checks. Ninety focused checks also passed;
+they overlap the full suite and must not be added to it. Local checks cover exact
+snapshot/library/actor/API-target binding, changed permissions, replacement,
+deletion, expired/cross-session references, closed sessions, compatible unions,
+source text/list/cell semantics, diagnostic reads, fallback, pagination, source
+grounding and unchanged encrypted-reasoning continuity. They did not predict the
+real-model invocation failure. Live cell/list and delayed/restored-history
+usability were not tested; the live pair exercised outline navigation only.
+
+Fresh read-only deployment/capacity checks passed before and after execution;
+code hashes and both local source snapshots remained unchanged. The provider,
+local API contexts and navigation session closed. No cloud data resources were
+created, so there is no owned cloud data scope to delete. Private execution and
+reviewed evidence archives are hash-verified. The automatic execution archive
+captured the command-output file before final stdout was written; its original
+bytes remain unchanged, and the completed output is separately frozen in the
+reviewed archive. All 386 files in the previous
+refinement evidence root remain unchanged. Prior successful cell/identifier
+checks and the failed outline attempt remain historical results, not new passes.
+
+This is a reviewable opt-in implementation and comparison with a **hold**
+recommendation. It needs no re-ingestion or embedding rebuild. Do not merge it or
+change defaults until the invocation/recovery contract is repaired and focused
+model navigation succeeds. No main merge, deployment, context-accounting change,
+retrieval tuning, provider switch or larger confirmation study occurred.
