@@ -38,8 +38,10 @@ ineffective size-only outline inspections followed by full-document recovery.
 The [outline contract clarification](granular-outline-contract.md) now documents
 that `includeText=false` returns size/coverage only, while true/default returns
 outline entries in outline mode. Granular inspection responses carry a pinned,
-same-scope `readSelector` with true and the unchanged budget. Real-model outline
-delivery is a separately bounded qualification; full-document fallback does not pass.
+same-scope `readSelector` with true and the unchanged budget. The later
+[refinement qualification](granular-navigation-refinement.md) passed actual
+outline-to-focused-source navigation and correct citation with a copied selector;
+the earlier failed attempts remain preserved. Full-document fallback does not pass.
 
 The granular navigation refinement adds exact original paragraph/Markdown-block
 prefixes of at most 160 Unicode characters to outline leaves, with source length
@@ -53,8 +55,9 @@ leaf child-outlines and duplicate subtree/parent selectors are omitted. Original
 source bodies, raw provenance, citations, snapshot pins and lifecycle checks stay
 intact. Inspections and budget refusals return no preview or source body, and
 preview delivery cannot satisfy the agent's source-grounding check. This is a
-presentation/navigation change requiring no re-ingestion, and does not establish
-real-model route or efficiency improvements without a separately bounded test.
+presentation/navigation change requiring no re-ingestion for existing granular
+artifacts. Its bounded live qualification passed; broader quality, recall and
+efficiency remain unestablished. The granular profile stays opt-in on integration.
 
 The File Library Index (the **index**) replaces Azure AI Search as the store and search engine behind the platform's file libraries. It:
 

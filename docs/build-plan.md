@@ -1,6 +1,6 @@
 # Build plan
 
-**Granular source navigation candidate, 2026-11-04:** the
+**Granular source navigation integration, 2026-11-04:** the
 [focused implementation](granular-source-navigation.md) combines checked main
 and the source-only repair, adding opt-in DOCX paragraph/cell/section/subtree
 navigation with authored hierarchy and Markdown ATX support. The new recipe
@@ -11,17 +11,19 @@ passed ten ingestion/navigation/lifecycle gates and verified owned cleanup. Six
 actual model turns exposed cell-scope and identifier-reporting gaps; the preserved
 [two-turn follow-up](granular-navigation-followup.md) subsequently demonstrated
 both core checks, while exposing empty outline inspections and unnecessary source
-numbering metadata. The [outline contract repair and one-turn result](granular-outline-contract.md)
-now clarify size-only inspection, deliver usable recovery selectors and demonstrate
-four actual authored outlines. The model instead read and repeated a table, never
-read the required rule scope, and hit the unchanged local 37k serialized-input
-pacing ceiling before a final answer. **Hold integration sign-off:** the focused
-navigation/citation check remains incomplete. Product `752d420`, executed through
-runner `e8326a7`, passes 1,850 regression tests plus separately run final runner/case
-checks. Owned cleanup and prior evidence preservation are verified; no rerun was
-made. Review this failed route and pacing boundary before another separately
-bounded qualification. Response overhead remains separate presentation-efficiency
-work. Deployment and the larger confirmation remain pending.
+numbering metadata. The [outline contract repair and failed qualification](granular-outline-contract.md)
+remain preserved. The subsequent [navigation and pacing refinement](granular-navigation-refinement.md)
+at candidate `1087cb9` passed the outstanding focused-source/citation check: four
+delivered outlines, a copied paragraph selector and a correct answer with its
+condition and citation, without detours, repeated reads or full-document fallback.
+The candidate passed 1,965 regression tests and verified owned cleanup. The user
+authorized integration with existing defaults retained; `custom-granular-v1`
+remains opt-in and requires new ingestion for older representations. Integration
+deduplicates the NumPy development dependency without changing its constraint.
+The successful targeted turn establishes bounded navigation mechanics, not general
+quality or efficiency. Qualification pacing remains separate from application
+context accounting. Response overhead and unsolicited selector display remain
+presentation-efficiency work. Deployment and the larger confirmation remain pending.
 
 **Normal-agent selector integration, 2026-11-02 (E66 follow-through):** the
 [merge candidate](i1-selector-integration.md) enables handles in the normal client
