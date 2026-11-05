@@ -1073,13 +1073,18 @@ def _run_search(
             SearchTrace(call.name, library_id, names.get(library_id, library_id), query, (clock() - started) * 1000,
                         None, 0, None, [], error=str(exc), filters=filters)
         )  # fmt: skip
-        return json.dumps(
+        payload = (
             exc.payload()
             if navigation is not None and hasattr(exc, "payload")
             else error_details(exc)
             if getattr(index, "selector_mode", "legacy") == "handles"
             else {"error": str(exc)}
-        ), []
+        )
+        if navigation is not None and library_id in agent["libraryIds"]:
+            payload = navigation.recovery_payload(
+                payload, library_id, original_arguments, agent_id=agent["id"], target=target_of(index)
+            )
+        return json.dumps(payload), []
     if navigation is not None:
         navigation.record_request(call.id, "search", library_id, original_arguments, arguments)
     latency = (clock() - started) * 1000
@@ -1167,6 +1172,7 @@ def _run_documents(call, index, agent, owners, names, searches, clock, remaining
         else "discover"
     )
     started = clock()
+    original_arguments = None
     try:
         arguments = json.loads(call.arguments or "{}")
         if not isinstance(arguments, dict):
@@ -1219,13 +1225,20 @@ def _run_documents(call, index, agent, owners, names, searches, clock, remaining
                 complete=False,
             )
         )
-        return json.dumps(
+        payload = (
             exc.payload()
             if navigation is not None and hasattr(exc, "payload")
             else error_details(exc)
             if getattr(index, "selector_mode", "legacy") == "handles"
             else {"error": str(exc), "complete": False}
-        ), []
+        )
+        if navigation is not None and library_id in agent["libraryIds"]:
+            from fli_demo.navigation_refs import target_of
+
+            payload = navigation.recovery_payload(
+                payload, library_id, original_arguments, agent_id=agent["id"], target=target_of(index)
+            )
+        return json.dumps(payload), []
     if navigation is not None:
         navigation.record_request(call.id, operation, library_id, original_arguments, {**arguments, "details": details})
     envelope = evidence_response(response)

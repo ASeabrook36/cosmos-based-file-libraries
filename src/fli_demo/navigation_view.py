@@ -17,10 +17,15 @@ from fli_demo.navigation_refs import ReferenceError, validate_reference
 CONTRACT = "fli.navigation.v1"
 INSTRUCTIONS = (
     "Granular navigation replies use readable labels and exact turn-local action references. "
-    "Copy an actions value into the read tool's reference argument; compatible selected-read references "
+    'For a returned actions.outline or actions.read value, send {"reference":"<copy that value>"}, '
+    "replacing the placeholder. That action already contains mode, source snapshot and scope: never add "
+    "mode/documents/paging, never put it in nodeIds/outlineNodeId, and never use documentRef for reads. "
+    "Bootstrap with explicit mode=outline and documents containing every returned snapshot pin. "
+    "Compatible selected-read references "
     "may be combined with references. A paragraph union does not establish whole-cell completeness. "
     "References never authorize access or drop snapshot checks, and expire outside this turn. Rediscover "
-    "after stale/unknown references; never construct a reference. documentRef identifies the pinned document; "
+    "after stale/unknown references; never construct a reference. documentRef is only the top-level search "
+    "alternative to document, never a field inside documents. It identifies the pinned document; "
     "fileName, paths, source coordinates, citations and applicable limitations accompany each response. "
     "documentInfo appears on its first retained occurrence and again if it changes. "
     "For exact original identifiers or full metadata, reread the same reference with details=true. "
