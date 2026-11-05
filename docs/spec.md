@@ -491,6 +491,17 @@ still fails the frozen 20% gate; selectors remain opt-in and no default changes
 revocation remain open. R2's representation experiments remain lab-only and select
 no profile change.
 
+The separate [granular reference presentation candidate](granular-reference-presentation.md)
+adds `run_turn(..., presentation="navigation")` without changing REST/default
+formats. Exact turn-local application references resolve to existing pinned
+requests through normal access/source/lifecycle checks. Readable results keep
+source wording, labels, citations, selected coverage and limitations at use;
+document information refreshes at its first retained occurrence. Canonical
+diagnostics remain available through an authorized same-scope `details=true`
+read. Unknown/stale/session-crossing references never rebind; restored prose
+requires fresh authorized acquisition. Full prior tool transcripts cannot restore
+the registry implicitly. Existing response/context budget behavior is unchanged.
+
 ## 7. Ingestion
 
 ### 7.1 Queue

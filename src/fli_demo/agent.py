@@ -516,6 +516,69 @@ def run_turn(
     image_inputs: bool = True,
     image_tokens: int = 8192,
     evidence_ledger: list[dict[str, Any]] | None = None,
+    presentation: str | None = None,
+    presentation_diagnostics: dict | None = None,
+) -> Turn:
+    """Run the normal loop, optionally rendering turn-local navigation references.
+
+    Restored conversations use their user/assistant prose, as the demo already
+    does. A prior tool transcript cannot restore an expired registry implicitly.
+    Source retrieval and all context-accounting controls remain in the same loop.
+    """
+    if presentation not in (None, "navigation"):
+        raise ValueError("unsupported agent presentation")
+    navigation = None
+    if presentation == "navigation":
+        from fli_demo.navigation_refs import NavigationSession, target_of
+
+        if (
+            getattr(index, "evidence_view", "compact") != "compact"
+            or getattr(index, "selector_mode", "handles") != "handles"
+        ):
+            raise ValueError("navigation presentation requires compact API evidence and pinned selector handles")
+        if any(m.get("role") == "tool" or m.get("tool_calls") for m in history):
+            raise ValueError(
+                "Restored navigation uses user/assistant text only; reacquire source references with tools"
+            )
+        navigation = NavigationSession(agent["id"], agent["libraryIds"], target_of(index))
+    try:
+        return _run_turn(
+            chat,
+            index,
+            agent,
+            history,
+            question,
+            library_names,
+            clock,
+            context_token_budget,
+            max_rounds,
+            image_inputs,
+            image_tokens,
+            evidence_ledger,
+            navigation=navigation,
+        )
+    finally:
+        if navigation is not None:
+            navigation.close()
+            if presentation_diagnostics is not None:
+                presentation_diagnostics.update(navigation.diagnostics())
+
+
+def _run_turn(
+    chat: Chat,
+    index: Index,
+    agent: Mapping[str, Any],
+    history: Sequence[dict[str, Any]],
+    question: str,
+    library_names: Mapping[str, str] | None = None,
+    clock: Callable[[], float] = time.perf_counter,
+    context_token_budget: int = 64_000,
+    max_rounds: int = MAX_ROUNDS,
+    image_inputs: bool = True,
+    image_tokens: int = 8192,
+    evidence_ledger: list[dict[str, Any]] | None = None,
+    *,
+    navigation=None,
 ) -> Turn:
     turn_started = time.perf_counter()
     model_calls: list[dict[str, Any]] = []
@@ -524,6 +587,8 @@ def run_turn(
         return Turn(answer, searches, messages, model_calls, (time.perf_counter() - turn_started) * 1000)
 
     tools, owners = build_tools(index, agent["libraryIds"], agent["id"])
+    if navigation is not None:
+        tools = navigation.tools(tools, owners)
     system = (
         (agent.get("instructions") or "Answer from the attached file libraries.")
         + """
@@ -607,6 +672,10 @@ Answer:
             "\nPrior authorized-source reference hints (revalidate with tools; no current source text): "
             + json.dumps([entry for entry in evidence_ledger[-32:] if entry.get("libraryId") in agent["libraryIds"]])
         )
+    if navigation is not None:
+        from fli_demo.navigation_view import INSTRUCTIONS
+
+        system += "\n" + INSTRUCTIONS
     messages: list[dict[str, Any]] = [{"role": "system", "content": system}, *history]
     messages.append({"role": "user", "content": question})
     searches: list[SearchTrace] = []
@@ -633,6 +702,8 @@ Answer:
         raise ValueError("context_token_budget must be at least 12000; max_rounds and image_tokens must be positive")
 
     def wire_messages():
+        if navigation is not None:
+            return navigation.render(messages, owners)
         return model_messages(messages) if getattr(index, "evidence_view", "compact") == "references" else messages
 
     def local_size():
@@ -715,7 +786,9 @@ Answer:
             if call.name.startswith(
                 ("find_documents_library_", "read_documents_library_", "get_images_library_", "inspect_images_library_")
             ):
-                content, images = _run_documents(call, index, agent, owners, names, searches, clock, remaining)
+                content, images = _run_documents(
+                    call, index, agent, owners, names, searches, clock, remaining, navigation=navigation
+                )
             else:
                 source_received = any(
                     source_documents(payload) or inspected_documents(payload)
@@ -725,7 +798,7 @@ Answer:
                 # consumes the turn. Whole passages are still the indivisible unit.
                 search_budget = remaining if source_received else min(remaining, max(6000, remaining // 2))
                 content, images = _run_search(
-                    call, index, agent, owners, names, searches, clock, search_budget, tokenizer
+                    call, index, agent, owners, names, searches, clock, search_budget, tokenizer, navigation=navigation
                 )
             payload = compact_refusal(json.loads(content))
             # A budget refusal is not a permission to expand scope: recover only within
@@ -932,7 +1005,19 @@ Answer:
 
 
 def _run_search(
-    call, index, agent, owners, names, searches, clock, remaining=None, tokenizer=None, *, top=8, include_neighbors=True
+    call,
+    index,
+    agent,
+    owners,
+    names,
+    searches,
+    clock,
+    remaining=None,
+    tokenizer=None,
+    *,
+    top=8,
+    include_neighbors=True,
+    navigation=None,
 ):
     library_id = owners.get(call.name)
     if library_id is None:
@@ -953,6 +1038,15 @@ def _run_search(
     filters = {k: arguments[k] for k in FILTER_ARGUMENTS if arguments.get(k) not in (None, [], {})}
     started = clock()
     try:
+        original_arguments = arguments
+        if navigation is not None:
+            from fli_demo.navigation_refs import ReferenceError, target_of
+
+            if library_id not in agent["libraryIds"]:
+                raise ReferenceError("Library is no longer attached")
+            arguments = navigation.resolve_arguments(
+                "search", library_id, agent["id"], arguments, target=target_of(index)
+            )
         document = arguments.get("document")
         # A common model schema error has an unambiguous, scope-preserving repair.
         # The API still validates the ID, permission and any snapshot controls.
@@ -980,8 +1074,14 @@ def _run_search(
                         None, 0, None, [], error=str(exc), filters=filters)
         )  # fmt: skip
         return json.dumps(
-            error_details(exc) if getattr(index, "selector_mode", "legacy") == "handles" else {"error": str(exc)}
+            exc.payload()
+            if navigation is not None and hasattr(exc, "payload")
+            else error_details(exc)
+            if getattr(index, "selector_mode", "legacy") == "handles"
+            else {"error": str(exc)}
         ), []
+    if navigation is not None:
+        navigation.record_request(call.id, "search", library_id, original_arguments, arguments)
     latency = (clock() - started) * 1000
     envelope = evidence_response(response)
     payload = envelope["evidence"]
@@ -1047,6 +1147,7 @@ def _run_search(
             tokenizer,
             top=top // 2,
             include_neighbors=False,
+            navigation=navigation,
         )
     # Preserve overall rank for automatic previews: never promote a later image over text.
     first_id = shown[0].get("imageId") if shown else None
@@ -1054,7 +1155,7 @@ def _run_search(
     return json.dumps(payload, ensure_ascii=False), previews
 
 
-def _run_documents(call, index, agent, owners, names, searches, clock, remaining):
+def _run_documents(call, index, agent, owners, names, searches, clock, remaining, *, navigation=None):
     library_id = owners.get(call.name)
     if library_id is None:
         return json.dumps({"error": f"unknown tool {call.name}"}), []
@@ -1070,6 +1171,17 @@ def _run_documents(call, index, agent, owners, names, searches, clock, remaining
         arguments = json.loads(call.arguments or "{}")
         if not isinstance(arguments, dict):
             raise ValueError("tool arguments must be a JSON object")
+        original_arguments = arguments
+        details = False
+        if navigation is not None:
+            from fli_demo.navigation_refs import ReferenceError, target_of
+
+            if library_id not in agent["libraryIds"]:
+                raise ReferenceError("Library is no longer attached")
+            arguments = navigation.resolve_arguments(
+                operation, library_id, agent["id"], arguments, target=target_of(index)
+            )
+            details = arguments.pop("details", False)
         allowed = (
             ("documentId", "generation", "contentRevision", "pages", "imageIds")
             if operation == "images"
@@ -1108,10 +1220,14 @@ def _run_documents(call, index, agent, owners, names, searches, clock, remaining
             )
         )
         return json.dumps(
-            error_details(exc)
+            exc.payload()
+            if navigation is not None and hasattr(exc, "payload")
+            else error_details(exc)
             if getattr(index, "selector_mode", "legacy") == "handles"
             else {"error": str(exc), "complete": False}
         ), []
+    if navigation is not None:
+        navigation.record_request(call.id, operation, library_id, original_arguments, {**arguments, "details": details})
     envelope = evidence_response(response)
     payload = envelope["evidence"]
     response = {**payload, **envelope["metadata"]}
