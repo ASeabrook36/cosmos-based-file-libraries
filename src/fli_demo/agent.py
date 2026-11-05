@@ -518,6 +518,8 @@ def run_turn(
     evidence_ledger: list[dict[str, Any]] | None = None,
     presentation: str | None = None,
     presentation_diagnostics: dict | None = None,
+    bookmark_store=None,
+    conversation_id: str | None = None,
 ) -> Turn:
     """Run the normal loop, optionally rendering turn-local navigation references.
 
@@ -527,6 +529,8 @@ def run_turn(
     """
     if presentation not in (None, "navigation"):
         raise ValueError("unsupported agent presentation")
+    if bookmark_store is not None and presentation != "navigation":
+        raise ValueError("Source bookmarks require explicit navigation presentation")
     navigation = None
     if presentation == "navigation":
         from fli_demo.navigation_refs import NavigationSession, target_of
@@ -540,7 +544,13 @@ def run_turn(
             raise ValueError(
                 "Restored navigation uses user/assistant text only; reacquire source references with tools"
             )
-        navigation = NavigationSession(agent["id"], agent["libraryIds"], target_of(index))
+        navigation = NavigationSession(
+            agent["id"],
+            agent["libraryIds"],
+            target_of(index),
+            bookmark_store=bookmark_store,
+            conversation_id=conversation_id,
+        )
     try:
         return _run_turn(
             chat,
@@ -676,6 +686,7 @@ Answer:
         from fli_demo.navigation_view import INSTRUCTIONS
 
         system += "\n" + INSTRUCTIONS
+        system += navigation.bookmark_hints()
     messages: list[dict[str, Any]] = [{"role": "system", "content": system}, *history]
     messages.append({"role": "user", "content": question})
     searches: list[SearchTrace] = []
@@ -737,7 +748,10 @@ Answer:
             )
             return finish(answer, searches, messages + [{"role": "assistant", "content": answer}])
         sent_local = local_size()
-        reply = chat(wire_messages(), tools)
+        sent_messages = wire_messages()
+        reply = chat(sent_messages, tools)
+        if navigation is not None:
+            navigation.delivered(sent_messages)
         carryover_tokens_estimate = reply.timing.get("contextCarryoverTokensEstimate", 0)
         if type(carryover_tokens_estimate) is not int or carryover_tokens_estimate < 0:
             raise ValueError("invalid context carryover estimate")
@@ -1204,6 +1218,14 @@ def _run_documents(call, index, agent, owners, names, searches, clock, remaining
                 raise ValueError("maxTokens must be an integer from 1 to 200000")
             arguments["maxTokens"] = min(remaining, requested)
             response = index.read_documents(library_id, agent["id"], **arguments)
+            if navigation is not None:
+                navigation.verify_bookmark_source(
+                    original_arguments,
+                    evidence_response(response)["evidence"],
+                    library_id=library_id,
+                    agent_id=agent["id"],
+                    target=target_of(index),
+                )
         elif operation == "images":
             response = index.read_images(library_id, agent["id"], **arguments)
         else:

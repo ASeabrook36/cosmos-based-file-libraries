@@ -145,7 +145,7 @@ def combine(selectors):
 
 
 class NavigationSession:
-    def __init__(self, agent_id, library_ids, target, *, namespace=None):
+    def __init__(self, agent_id, library_ids, target, *, namespace=None, bookmark_store=None, conversation_id=None):
         self.agent_id, self.library_ids, self.target = agent_id, frozenset(library_ids), target
         self.namespace = namespace or secrets.token_hex(6)
         if not isinstance(self.namespace, str) or not self.namespace.isalnum():
@@ -154,6 +154,14 @@ class NavigationSession:
         self.closed = False
         self.granular_libraries = set()
         self.tool_names, self.argument_keys = {}, {}
+        self.bookmark_store, self.conversation_id = bookmark_store, conversation_id
+        self.pending_bookmarks, self.bookmarks_committed = {}, 0
+        if bookmark_store is not None:
+            from fli_demo.source_bookmarks import SourceBookmarkStore
+
+            if not isinstance(bookmark_store, SourceBookmarkStore):
+                raise ValueError("Bookmarks require a trusted application owner, not transcript state")
+            bookmark_store.check_context(conversation_id, agent_id, target)
 
     def _bound(self, library_id, agent_id, target):
         if self.closed or library_id not in self.library_ids or agent_id != self.agent_id or target != self.target:
@@ -181,7 +189,22 @@ class NavigationSession:
         if not isinstance(arguments, dict):
             raise ReferenceError("Tool arguments must be an object")
         result = copy.deepcopy(arguments)
-        if operation == "read" and ("reference" in result or "references" in result):
+        if "bookmark" in result:
+            from fli_demo.source_bookmarks import SourceBookmarkError
+
+            if operation != "read" or self.bookmark_store is None or set(result) - {"bookmark", *TRANSPORT}:
+                raise SourceBookmarkError("Use bookmark alone with optional includeText/maxTokens/details")
+            _controls(result)
+            record = self.bookmark_store.resolve(
+                result["bookmark"],
+                conversation_id=self.conversation_id,
+                actor_id=agent_id,
+                target=self.target,
+                library_id=library_id,
+                library_ids=self.library_ids,
+            )
+            result = {**record["request"], **{k: v for k, v in result.items() if k in TRANSPORT}}
+        elif operation == "read" and ("reference" in result or "references" in result):
             if set(result) - {"reference", "references", *TRANSPORT} or ("reference" in result) == (
                 "references" in result
             ):
@@ -232,8 +255,24 @@ class NavigationSession:
             for field in SOURCE_IDS:
                 values = document.get(field, [])
                 values = [values] if isinstance(values, str) else values
+                if (
+                    self.bookmark_store is not None
+                    and isinstance(values, list)
+                    and any(isinstance(value, str) and re.fullmatch(r"sbm[0-9a-f]{24}", value) for value in values)
+                ):
+                    from fli_demo.source_bookmarks import SourceBookmarkError
+
+                    raise SourceBookmarkError(
+                        "Source bookmark tokens belong in top-level bookmark, never source locator fields"
+                    )
                 if isinstance(values, list) and any(
-                    isinstance(value, str) and re.fullmatch(REFERENCE_PATTERN, value) for value in values
+                    isinstance(value, str)
+                    and (
+                        re.fullmatch(REFERENCE_PATTERN, value)
+                        or self.bookmark_store is not None
+                        and re.fullmatch(r"sbm[0-9a-f]{24}", value)
+                    )
+                    for value in values
                 ):
                     raise ReferenceError("Action references belong in top-level reference, never source locator fields")
         try:
@@ -250,6 +289,7 @@ class NavigationSession:
             "invalid_request",
             "invalid_selector",
             "source_scope_unavailable",
+            "source_bookmark_unavailable",
         }:
             return payload
         try:
@@ -313,13 +353,116 @@ class NavigationSession:
             }
         except ReferenceError:
             pass
+        if self.bookmark_store is not None and "bookmark" in arguments and set(arguments) - {"bookmark", *TRANSPORT}:
+            try:
+                _controls(arguments)
+                if payload.get("errorCategory") == "source_scope_unavailable":
+                    raise ReferenceError("The unchanged failed source scope must not be retried")
+                record = self.bookmark_store.resolve(
+                    arguments["bookmark"],
+                    conversation_id=self.conversation_id,
+                    actor_id=agent_id,
+                    target=target,
+                    library_id=library_id,
+                    library_ids=self.library_ids,
+                )
+                recovery["read"] = {
+                    "tool": names["read"],
+                    "arguments": {
+                        "bookmark": record["token"],
+                        **{k: arguments[k] for k in TRANSPORT if k in arguments},
+                    },
+                    "scope": record["scope"],
+                    "label": record["label"],
+                    "note": "Executable example for this saved source selection only. Conflicting mode/scope "
+                    "arguments were not applied and no read occurred. Use only if this recorded selection is intended.",
+                }
+            except ReferenceError:
+                pass
         return {
             **payload,
             "nextAction": "The call was rejected. If recovery.read matches the intended returned action, copy its "
             "arguments exactly into its named tool. Do not add mode/documents/paging. Otherwise use recovery.discover "
             "and the returned pinned outline route. Do not guess IDs, drop pins or switch source versions silently.",
             "recovery": recovery,
+            **(
+                {
+                    "nextAction": "The bookmark call was rejected. If recovery.read matches the saved selection, "
+                    "copy its arguments exactly into its named tool; omit reference/references/mode/documents/paging. "
+                    "Otherwise use recovery.discover and explicitly choose the current pinned source. "
+                    "Never edit tokens or silently switch source versions."
+                }
+                if self.bookmark_store is not None and "bookmark" in arguments
+                else {}
+            ),
         }
+
+    def bookmark_hints(self):
+        if self.bookmark_store is None:
+            return ""
+        from fli_demo.source_bookmarks import INSTRUCTIONS
+
+        read_tools = {lib: names["read"] for lib, names in self.tool_names.items() if "read" in names}
+        hints = self.bookmark_store.catalogue(self.library_ids & self.granular_libraries, read_tools=read_tools)
+        return (
+            "\n" + INSTRUCTIONS + "\nSaved source selection metadata (not fresh source evidence): " + canonical(hints)
+        )
+
+    def verify_bookmark_source(self, arguments, payload, *, library_id, agent_id, target):
+        if self.bookmark_store is None or not isinstance(arguments, dict) or "bookmark" not in arguments:
+            return
+        record = self.bookmark_store.resolve(
+            arguments["bookmark"],
+            conversation_id=self.conversation_id,
+            actor_id=agent_id,
+            target=target,
+            library_id=library_id,
+            library_ids=self.library_ids,
+        )
+        self.bookmark_store.verify_source(record, payload)
+
+    def _bookmark_view(self, payload, projected, library_id, request):
+        if self.bookmark_store is None or not isinstance(projected, dict) or projected.get("presentation") != CONTRACT:
+            return
+        record, unavailable = self.bookmark_store.prepare(library_id, request, payload)
+        if record is not None:
+            if not self.bookmark_store.is_saved(record["token"]):
+                record = self.pending_bookmarks.get(record["identity"], record)
+                if (
+                    record["identity"] not in self.pending_bookmarks
+                    and len(self.pending_bookmarks) >= self.bookmark_store.available_slots
+                ):
+                    record, unavailable = None, "conversation_bookmark_limit_reached"
+                else:
+                    self.pending_bookmarks[record["identity"]] = record
+            if record is not None:
+                projected["documents"][0]["sourceBookmark"] = {
+                    **self.bookmark_store.visible(record),
+                    "tool": self.tool_names[library_id]["read"],
+                }
+        if unavailable:
+            projected["sourceBookmarkUnavailable"] = unavailable
+            projected["sourceBookmarkNextAction"] = (
+                "This source remains available through current-turn actions. No saved bookmark was created; "
+                "later use a retained explicit pinned selector or rediscover through authorized tools."
+            )
+
+    def delivered(self, messages):
+        """Commit only metadata for bookmark tokens actually sent successfully."""
+        if self.bookmark_store is None:
+            return
+        delivered = set()
+        for message in messages:
+            if message.get("role") == "tool" and isinstance(message.get("content"), str):
+                for doc in json.loads(message["content"]).get("documents", []):
+                    token = ((doc.get("sourceBookmark") or {}).get("read") or {}).get("bookmark")
+                    if isinstance(token, str):
+                        delivered.add(token)
+        records = [record for record in self.pending_bookmarks.values() if record["token"] in delivered]
+        self.bookmark_store.commit(records)
+        self.bookmarks_committed += len(records)
+        for record in records:
+            self.pending_bookmarks.pop(record["identity"], None)
 
     def record_request(self, call_id, operation, library_id, original, resolved):
         self.requests[call_id] = copy.deepcopy(resolved)
@@ -353,13 +496,15 @@ class NavigationSession:
                         (r["library"] for r in self.resolutions if r["callId"] == value.get("tool_call_id")), None
                     )
                 if library in self.granular_libraries:
+                    original = json.loads(value["content"])
                     payload = present(
-                        json.loads(value["content"]),
+                        original,
                         library_id=library,
                         register=self.register,
                         introduced=introduced,
                         request=self.requests.get(value.get("tool_call_id")),
                     )
+                    self._bookmark_view(original, payload, library, self.requests.get(value.get("tool_call_id")))
                     value["content"] = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
             output.append(value)
         return output
@@ -430,6 +575,27 @@ class NavigationSession:
                     _closed_alternative({"references", *TRANSPORT}, ["references"]),
                     _closed_alternative({*READ_KEYS, "details"}, ["mode", "documents"]),
                 ]
+                if self.bookmark_store is not None:
+                    f["description"] = f["description"].replace(
+                        "Two separate call shapes", "Three separate call shapes"
+                    )
+                    props["bookmark"] = {
+                        "type": "string",
+                        "description": "Copy sourceBookmark.read.bookmark; do not add reference/mode/documents/paging.",
+                    }
+                    f["parameters"]["anyOf"].append(_closed_alternative({"bookmark", *TRANSPORT}, ["bookmark"]))
+                    f["description"] += (
+                        ' A saved source selection can be reread with {"bookmark":"<returned bookmark>"}. '
+                    )
+                    f["description"] += (
+                        "Copy sourceBookmark.read exactly. This app-owned bookmark differs from turn-local actions "
+                        "and still revalidates source/access."
+                    )
+                    for field in SOURCE_IDS:
+                        value = document["properties"][field]
+                        value.get("items", value)["pattern"] = (
+                            r"^(?!(?:nav[A-Za-z0-9]+-[1-9][0-9]*|sbm[0-9a-f]{24})$).+"
+                        )
         for tool in result:
             f = tool["function"]
             if owners[f["name"]] in self.granular_libraries:
@@ -454,9 +620,10 @@ class NavigationSession:
 
     def close(self):
         self.closed = True
+        self.pending_bookmarks.clear()
 
     def diagnostics(self):
-        return {
+        result = {
             "contract": CONTRACT,
             "turnLocal": True,
             "closed": self.closed,
@@ -465,3 +632,9 @@ class NavigationSession:
             "resolutions": copy.deepcopy(self.resolutions),
             "restoration": "References expire at the turn boundary; reacquire through authorized tools.",
         }
+        if self.bookmark_store is not None:
+            result["sourceBookmarksCommitted"] = self.bookmarks_committed
+            result["sourceBookmarkOwnerSurvivesTurn"] = (
+                not self.bookmark_store.closed and not self.bookmark_store.expired
+            )
+        return result

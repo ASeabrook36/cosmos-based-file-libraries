@@ -6,6 +6,8 @@ import streamlit as st
 from common import client, guard, registry
 
 from fli_demo.agent import azure_chat, plain_dollars, run_turn
+from fli_demo.conversation import BookmarkSessionError, prepare_conversation, source_bookmark_turn
+from fli_demo.navigation_refs import target_of
 from fli_demo.telemetry import metrics, save_metrics
 
 st.title("Chat")
@@ -33,8 +35,19 @@ agent = st.selectbox("Agent", agents, format_func=lambda a: f"{a['name']} ({a['k
 if not agent["libraryIds"]:
     st.warning("This agent has no libraries attached.")
 
-if "chat" not in st.session_state or st.session_state.get("chat_agent") != agent["id"]:
-    st.session_state.update(chat=[], chat_agent=agent["id"], history=[], image_bytes={}, evidence_ledger=[])
+source_bookmarks = os.environ.get("DEMO_SOURCE_BOOKMARKS") == "1"
+prepare_conversation(
+    st.session_state,
+    agent["id"],
+    target_of(api),
+    enabled=source_bookmarks,
+    new_chat=st.button("New chat"),
+)
+if source_bookmarks:
+    st.caption(
+        "Source bookmarks are enabled for this chat for up to 24 hours. Follow-up reads recheck access and the "
+        "original source version. Starting a new chat or losing this browser session discards its bookmarks."
+    )
 
 
 @st.cache_resource
@@ -163,6 +176,29 @@ def show_performance(data):
         )
 
 
+def chat_turn(question):
+    try:
+        with source_bookmark_turn(
+            st.session_state, agent["id"], target_of(api), enabled=source_bookmarks
+        ) as bookmark_options:
+            return run_turn(
+                model(),
+                api,
+                agent,
+                st.session_state.history,
+                question,
+                names,
+                context_token_budget=int(context_budget),
+                image_tokens=int(os.environ.get("DEMO_IMAGE_TOKENS", "8192")),
+                image_inputs=image_inputs,
+                evidence_ledger=st.session_state.setdefault("evidence_ledger", []),
+                **bookmark_options,
+            )
+    except BookmarkSessionError as exc:
+        st.warning(str(exc))
+        return None
+
+
 for m in st.session_state.chat:
     with st.chat_message(m["role"]):
         show_answer(m["content"], m.get("searches", []))
@@ -174,19 +210,7 @@ if question := st.chat_input("Ask a question"):
     with st.chat_message("user"):
         st.write(plain_dollars(question))
     with st.chat_message("assistant"), st.spinner("Reading libraries…"):
-        turn = guard(
-            run_turn,
-            model(),
-            api,
-            agent,
-            st.session_state.history,
-            question,
-            names,
-            context_token_budget=int(context_budget),
-            image_tokens=int(os.environ.get("DEMO_IMAGE_TOKENS", "8192")),
-            image_inputs=image_inputs,
-            evidence_ledger=st.session_state.setdefault("evidence_ledger", []),
-        )
+        turn = guard(chat_turn, question)
         if turn:
             performance = metrics(turn)
             try:
