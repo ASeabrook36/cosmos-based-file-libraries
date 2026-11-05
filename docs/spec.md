@@ -514,6 +514,11 @@ performing them automatically. Document references are top-level search pins,
 not read actions. New-turn short references remain expired and require authorized
 reacquisition; the bounded comparison includes that cost and retains raw API and
 default behavior.
+Its bounded initial and delayed source tasks now pass with correct citations and
+no internal-ID display. General integration remains on hold: the deliberately
+expired-bookmark workflow used 60.47% more measured input than compact across all
+three turns, despite a 24.88% initial-turn saving. This is one declared recovery
+route, not a universal cost result or a context-budget change.
 
 ## 7. Ingestion
 

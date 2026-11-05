@@ -1694,3 +1694,25 @@ retrieval RU and fresh cloud lifecycle behavior were not measured. All earlier
 evidence remains unchanged. Private archives and resource closure were verified;
 no cloud data resources were created. No rerun, merge, deployment or larger
 study occurred. Align reference invocation and recovery before a fresh check.
+
+**Reference invocation and delayed-turn follow-up:** the
+[contract repair](granular-reference-contract-repair.md), product `20e461f` and
+executed runner `4bb1fb5`, aligns schemas, nested guidance, accepted argument
+shapes and executable recovery. All 2,091 repository tests pass; the earlier
+sandbox socket failures and successful loopback-enabled rerun are preserved.
+The unchanged initial source/question and one declared six-turn comparison
+demonstrate valid navigation actions plus actual expired-reference rejection and
+authorized reacquisition. Navigation's initial and delayed tasks both pass fresh
+focused source, completeness, citation and no-ID criteria. Compact obtains the
+correct source/answer in both tasks but prints unsolicited internal identifiers.
+
+The [receipt](../records/granular-reference-contract-repair-20261105.json) reports
+24 provider calls with complete usage. Initial input falls from 48,677 to 36,564
+(24.88%); including acknowledgment and forced expired-bookmark recovery, navigation
+uses 96,521 input/3,253 output versus compact 60,149/2,822. The 60.47% input increase
+reflects this chosen persistence/recovery route; it is not a general registry cost
+claim. **Hold general integration for cross-turn efficiency**, separately from
+the successful contract repair. Evaluate an explicit pinned follow-up bookmark
+without reviving stale references before adoption. All preceding evidence is
+unchanged; closure and private archives are verified. No new cloud data resources,
+model rerun, merge, deployment, context-accounting change or larger study occurred.
