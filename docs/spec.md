@@ -491,6 +491,35 @@ still fails the frozen 20% gate; selectors remain opt-in and no default changes
 revocation remain open. R2's representation experiments remain lab-only and select
 no profile change.
 
+The separate [granular reference presentation candidate](granular-reference-presentation.md)
+adds `run_turn(..., presentation="navigation")` without changing REST/default
+formats. Exact turn-local application references resolve to existing pinned
+requests through normal access/source/lifecycle checks. Readable results keep
+source wording, labels, citations, selected coverage and limitations at use;
+document information refreshes at its first retained occurrence. Canonical
+diagnostics remain available through an authorized same-scope `details=true`
+read. Unknown/stale/session-crossing references never rebind; restored prose
+requires fresh authorized acquisition. Full prior tool transcripts cannot restore
+the registry implicitly. Existing response/context budget behavior is unchanged.
+The bounded presentation comparison is held for integration: local serialization
+improved, but the real model mixed reference and canonical-selector arguments and
+failed to obtain source text. The candidate's invocation and recovery contract
+needs repair and a fresh focused qualification before adoption.
+
+The [reference-contract follow-up](granular-reference-contract-repair.md) keeps
+that failed comparison intact. Its opt-in tool contract separates explicit pinned
+bootstrap reads from mutually exclusive action-reference reads, rejects action
+values in source-locator fields, and offers executable recovery shapes without
+performing them automatically. Document references are top-level search pins,
+not read actions. New-turn short references remain expired and require authorized
+reacquisition; the bounded comparison includes that cost and retains raw API and
+default behavior.
+Its bounded initial and delayed source tasks now pass with correct citations and
+no internal-ID display. General integration remains on hold: the deliberately
+expired-bookmark workflow used 60.47% more measured input than compact across all
+three turns, despite a 24.88% initial-turn saving. This is one declared recovery
+route, not a universal cost result or a context-budget change.
+
 ## 7. Ingestion
 
 ### 7.1 Queue

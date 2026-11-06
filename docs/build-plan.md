@@ -1,5 +1,17 @@
 # Build plan
 
+**Presentation and source-bookmark integration, 2026-11-06:** the user authorized
+integration of reviewed candidate `34d6fc6`. The
+[qualified presentation and bookmarks](granular-source-bookmarks.md) add shorter
+navigation references and exact source bookmarks that survive turns within a
+trusted application conversation. `DEMO_SOURCE_BOOKMARKS=1` explicitly enables
+the combined demo path; compact presentation remains the default. Every bookmark
+reread uses the normal authorized source API and preserves the original version
+and scope. The bounded comparison used 13.52% less total provider input, while
+its direct follow-up used 8.57% more; broader efficiency remains unestablished.
+The earlier failed results and frozen hybrid comparison remain unchanged.
+No deployment, ingestion/default change or context-budget repair is included.
+
 **Granular source navigation integration, 2026-11-04:** the
 [focused implementation](granular-source-navigation.md) combines checked main
 and the source-only repair, adding opt-in DOCX paragraph/cell/section/subtree

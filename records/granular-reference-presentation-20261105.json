@@ -1,0 +1,994 @@
+{
+  "schema": "fli.granular-reference.presentation-comparison.v1",
+  "dateUtc": "2026-11-05",
+  "branch": "codex/granular-reference-presentation",
+  "decision": "hold_integration_pending_reference_invocation_and_recovery_contract_repair",
+  "status": "bounded_comparison_completed_compact_passed_navigation_failed",
+  "provenance": {
+    "baselineMainCommit": "e8058d7cc07bf8ede9ca93a0a6bafc5f0079feb3",
+    "productCommit": "31137cb1372ba3a24c24c150f82fa038be6a1090",
+    "executedRunnerCommit": "f88f4f22423b421c8f2b7b19bd48571b536d826d",
+    "postLiveProductOrRunnerChanges": false,
+    "priorEvidenceFilesRehashedUnchanged": 386,
+    "historicalCapturesRewritten": false,
+    "contextAccountingRepairIncluded": false,
+    "ingestionEmbeddingsRankingModelsChanged": false,
+    "defaultsChanged": false,
+    "reingestionRequired": false
+  },
+  "contract": {
+    "optIn": "run_turn(presentation=\"navigation\")",
+    "rawApiCompatible": true,
+    "registryOwner": "application",
+    "binding": [
+      "actor",
+      "library",
+      "API target",
+      "exact document generation/revision",
+      "scope"
+    ],
+    "accessRecheckedEachUse": true,
+    "sourceBodyCache": false,
+    "lifetime": "turn-local; new/restored turn must reacquire references",
+    "silentStaleRebinding": false,
+    "fullToolTranscriptRestore": "explicitly unsupported",
+    "shortenedHistoryRefresh": "tested renderer boundary; no automatic shortening introduced",
+    "diagnosticRead": "details=true reruns normal authorized read"
+  },
+  "localCounterInterpretation": "cl100k_base JSON estimates, not provider usage; cumulative input includes instructions, schemas, wrappers, reference setup and repeated retained history at each captured callback",
+  "historicalReconstruction": {
+    "allSixCompactInputsAndFiveRepliesExact": true,
+    "plainSentenceTokensLocal": 7,
+    "markupBodyTokensLocal": 11,
+    "rows": [
+      {
+        "presentation": "compact",
+        "cumulativeMessagesAndToolsTokensLocal": 50592,
+        "cumulativeAgentBudgetSerializationTokensLocal": 52667,
+        "cumulativeSchemaJsonTokensLocal": 11094,
+        "cumulativeSystemInstructionsTextTokensLocal": 7746,
+        "toolReplyExposures": 15,
+        "uniqueToolReplies": 5,
+        "uniqueToolReplyTotals": {
+          "evidenceJsonTokensLocal": 8743,
+          "orderedSelectorRemovalDeltaTokensLocal": 2693,
+          "orderedRemainingNavigationProtocolTokensLocal": 5891,
+          "toolMessageJsonTokensLocal": 9425,
+          "navigationPreviewTextTokensLocal": 27,
+          "orderedPreviewRemovalDeltaTokensLocal": 144,
+          "renderedSourceTextTokensLocal": 11,
+          "orderedSourceRemovalDeltaTokensLocal": 15
+        },
+        "uniqueToolReplyMeasurements": [
+          {
+            "evidenceJsonTokensLocal": 1733,
+            "renderedSourceTextTokensLocal": 0,
+            "navigationPreviewTextTokensLocal": 0,
+            "orderedSelectorRemovalDeltaTokensLocal": 615,
+            "orderedPreviewRemovalDeltaTokensLocal": 0,
+            "orderedSourceRemovalDeltaTokensLocal": 0,
+            "orderedRemainingNavigationProtocolTokensLocal": 1118,
+            "toolMessageJsonTokensLocal": 1867
+          },
+          {
+            "evidenceJsonTokensLocal": 1908,
+            "renderedSourceTextTokensLocal": 0,
+            "navigationPreviewTextTokensLocal": 10,
+            "orderedSelectorRemovalDeltaTokensLocal": 611,
+            "orderedPreviewRemovalDeltaTokensLocal": 49,
+            "orderedSourceRemovalDeltaTokensLocal": 0,
+            "orderedRemainingNavigationProtocolTokensLocal": 1248,
+            "toolMessageJsonTokensLocal": 2046
+          },
+          {
+            "evidenceJsonTokensLocal": 1917,
+            "renderedSourceTextTokensLocal": 0,
+            "navigationPreviewTextTokensLocal": 9,
+            "orderedSelectorRemovalDeltaTokensLocal": 611,
+            "orderedPreviewRemovalDeltaTokensLocal": 48,
+            "orderedSourceRemovalDeltaTokensLocal": 0,
+            "orderedRemainingNavigationProtocolTokensLocal": 1258,
+            "toolMessageJsonTokensLocal": 2061
+          },
+          {
+            "evidenceJsonTokensLocal": 1861,
+            "renderedSourceTextTokensLocal": 0,
+            "navigationPreviewTextTokensLocal": 8,
+            "orderedSelectorRemovalDeltaTokensLocal": 555,
+            "orderedPreviewRemovalDeltaTokensLocal": 47,
+            "orderedSourceRemovalDeltaTokensLocal": 0,
+            "orderedRemainingNavigationProtocolTokensLocal": 1259,
+            "toolMessageJsonTokensLocal": 2004
+          },
+          {
+            "evidenceJsonTokensLocal": 1324,
+            "renderedSourceTextTokensLocal": 11,
+            "navigationPreviewTextTokensLocal": 0,
+            "orderedSelectorRemovalDeltaTokensLocal": 301,
+            "orderedPreviewRemovalDeltaTokensLocal": 0,
+            "orderedSourceRemovalDeltaTokensLocal": 15,
+            "orderedRemainingNavigationProtocolTokensLocal": 1008,
+            "toolMessageJsonTokensLocal": 1447
+          }
+        ]
+      },
+      {
+        "presentation": "references",
+        "cumulativeMessagesAndToolsTokensLocal": 48108,
+        "cumulativeAgentBudgetSerializationTokensLocal": 50183,
+        "cumulativeSchemaJsonTokensLocal": 11094,
+        "cumulativeSystemInstructionsTextTokensLocal": 7746,
+        "toolReplyExposures": 15,
+        "uniqueToolReplies": 5,
+        "uniqueToolReplyTotals": {
+          "evidenceJsonTokensLocal": 7931,
+          "orderedSelectorRemovalDeltaTokensLocal": 1863,
+          "orderedRemainingNavigationProtocolTokensLocal": 5909,
+          "toolMessageJsonTokensLocal": 8701,
+          "navigationPreviewTextTokensLocal": 27,
+          "orderedPreviewRemovalDeltaTokensLocal": 144,
+          "renderedSourceTextTokensLocal": 11,
+          "orderedSourceRemovalDeltaTokensLocal": 15
+        },
+        "uniqueToolReplyMeasurements": [
+          {
+            "evidenceJsonTokensLocal": 1500,
+            "renderedSourceTextTokensLocal": 0,
+            "navigationPreviewTextTokensLocal": 0,
+            "orderedSelectorRemovalDeltaTokensLocal": 425,
+            "orderedPreviewRemovalDeltaTokensLocal": 0,
+            "orderedSourceRemovalDeltaTokensLocal": 0,
+            "orderedRemainingNavigationProtocolTokensLocal": 1075,
+            "toolMessageJsonTokensLocal": 1650
+          },
+          {
+            "evidenceJsonTokensLocal": 1736,
+            "renderedSourceTextTokensLocal": 0,
+            "navigationPreviewTextTokensLocal": 10,
+            "orderedSelectorRemovalDeltaTokensLocal": 423,
+            "orderedPreviewRemovalDeltaTokensLocal": 49,
+            "orderedSourceRemovalDeltaTokensLocal": 0,
+            "orderedRemainingNavigationProtocolTokensLocal": 1264,
+            "toolMessageJsonTokensLocal": 1891
+          },
+          {
+            "evidenceJsonTokensLocal": 1747,
+            "renderedSourceTextTokensLocal": 0,
+            "navigationPreviewTextTokensLocal": 9,
+            "orderedSelectorRemovalDeltaTokensLocal": 423,
+            "orderedPreviewRemovalDeltaTokensLocal": 48,
+            "orderedSourceRemovalDeltaTokensLocal": 0,
+            "orderedRemainingNavigationProtocolTokensLocal": 1276,
+            "toolMessageJsonTokensLocal": 1912
+          },
+          {
+            "evidenceJsonTokensLocal": 1702,
+            "renderedSourceTextTokensLocal": 0,
+            "navigationPreviewTextTokensLocal": 8,
+            "orderedSelectorRemovalDeltaTokensLocal": 383,
+            "orderedPreviewRemovalDeltaTokensLocal": 47,
+            "orderedSourceRemovalDeltaTokensLocal": 0,
+            "orderedRemainingNavigationProtocolTokensLocal": 1272,
+            "toolMessageJsonTokensLocal": 1865
+          },
+          {
+            "evidenceJsonTokensLocal": 1246,
+            "renderedSourceTextTokensLocal": 11,
+            "navigationPreviewTextTokensLocal": 0,
+            "orderedSelectorRemovalDeltaTokensLocal": 209,
+            "orderedPreviewRemovalDeltaTokensLocal": 0,
+            "orderedSourceRemovalDeltaTokensLocal": 15,
+            "orderedRemainingNavigationProtocolTokensLocal": 1022,
+            "toolMessageJsonTokensLocal": 1383
+          }
+        ]
+      },
+      {
+        "presentation": "navigation",
+        "cumulativeMessagesAndToolsTokensLocal": 36010,
+        "cumulativeAgentBudgetSerializationTokensLocal": 38265,
+        "cumulativeSchemaJsonTokensLocal": 8166,
+        "cumulativeSystemInstructionsTextTokensLocal": 9234,
+        "toolReplyExposures": 15,
+        "uniqueToolReplies": 5,
+        "uniqueToolReplyTotals": {
+          "evidenceJsonTokensLocal": 4685,
+          "orderedSelectorRemovalDeltaTokensLocal": 707,
+          "orderedRemainingNavigationProtocolTokensLocal": 3819,
+          "toolMessageJsonTokensLocal": 5138,
+          "navigationPreviewTextTokensLocal": 27,
+          "orderedPreviewRemovalDeltaTokensLocal": 144,
+          "renderedSourceTextTokensLocal": 11,
+          "orderedSourceRemovalDeltaTokensLocal": 15
+        },
+        "uniqueToolReplyMeasurements": [
+          {
+            "evidenceJsonTokensLocal": 1087,
+            "renderedSourceTextTokensLocal": 0,
+            "navigationPreviewTextTokensLocal": 0,
+            "orderedSelectorRemovalDeltaTokensLocal": 176,
+            "orderedPreviewRemovalDeltaTokensLocal": 0,
+            "orderedSourceRemovalDeltaTokensLocal": 0,
+            "orderedRemainingNavigationProtocolTokensLocal": 911,
+            "toolMessageJsonTokensLocal": 1171
+          },
+          {
+            "evidenceJsonTokensLocal": 998,
+            "renderedSourceTextTokensLocal": 0,
+            "navigationPreviewTextTokensLocal": 10,
+            "orderedSelectorRemovalDeltaTokensLocal": 161,
+            "orderedPreviewRemovalDeltaTokensLocal": 49,
+            "orderedSourceRemovalDeltaTokensLocal": 0,
+            "orderedRemainingNavigationProtocolTokensLocal": 788,
+            "toolMessageJsonTokensLocal": 1083
+          },
+          {
+            "evidenceJsonTokensLocal": 1001,
+            "renderedSourceTextTokensLocal": 0,
+            "navigationPreviewTextTokensLocal": 9,
+            "orderedSelectorRemovalDeltaTokensLocal": 161,
+            "orderedPreviewRemovalDeltaTokensLocal": 48,
+            "orderedSourceRemovalDeltaTokensLocal": 0,
+            "orderedRemainingNavigationProtocolTokensLocal": 792,
+            "toolMessageJsonTokensLocal": 1092
+          },
+          {
+            "evidenceJsonTokensLocal": 979,
+            "renderedSourceTextTokensLocal": 0,
+            "navigationPreviewTextTokensLocal": 8,
+            "orderedSelectorRemovalDeltaTokensLocal": 145,
+            "orderedPreviewRemovalDeltaTokensLocal": 47,
+            "orderedSourceRemovalDeltaTokensLocal": 0,
+            "orderedRemainingNavigationProtocolTokensLocal": 787,
+            "toolMessageJsonTokensLocal": 1076
+          },
+          {
+            "evidenceJsonTokensLocal": 620,
+            "renderedSourceTextTokensLocal": 11,
+            "navigationPreviewTextTokensLocal": 0,
+            "orderedSelectorRemovalDeltaTokensLocal": 64,
+            "orderedPreviewRemovalDeltaTokensLocal": 0,
+            "orderedSourceRemovalDeltaTokensLocal": 15,
+            "orderedRemainingNavigationProtocolTokensLocal": 541,
+            "toolMessageJsonTokensLocal": 716
+          }
+        ]
+      }
+    ],
+    "paragraphReductionPercentLocal": 53.17220543806647,
+    "cumulativeInputReductionPercentLocal": 28.82273877371917,
+    "method": "identical source and scripted choices; no new model calls; earlier whitespace-reserialized and namespace-variable captures preserved"
+  },
+  "workloadComparison": {
+    "captures": 27,
+    "longSelectionPlainSourceTokensLocal": 5022,
+    "longSelectionRenderedSourceTokensLocal": 5215,
+    "longSelectionSourceAtoms": 47,
+    "sourceBodyCitationPinsRelationshipsAndScopeMatch": true,
+    "rows": [
+      {
+        "case": "small_paragraph",
+        "selectedSourceAtoms": 1,
+        "renderedSourceTokensLocal": 11,
+        "sourceBodyAndCitationIdentitySha256": "84c743aadca3ddd0f1d661e658218aa690c6d6cc24e49980c5a03be7faf362da",
+        "presentations": {
+          "compact": {
+            "modelInputCaptures": 3,
+            "toolReplyExposures": 3,
+            "uniqueReplies": 2,
+            "finalReplyJsonTokensLocal": 1330,
+            "cumulativeMessagesAndToolsTokensLocal": 15093,
+            "cumulativeAgentBudgetSerializationTokensLocal": 16028,
+            "schemaTokensFirstRequestLocal": 1786,
+            "systemInstructionsTextTokensFirstRequestLocal": 1238,
+            "cumulativeReductionFromCompactPercentLocal": 0.0
+          },
+          "references": {
+            "modelInputCaptures": 3,
+            "toolReplyExposures": 3,
+            "uniqueReplies": 2,
+            "finalReplyJsonTokensLocal": 1234,
+            "cumulativeMessagesAndToolsTokensLocal": 14668,
+            "cumulativeAgentBudgetSerializationTokensLocal": 15603,
+            "schemaTokensFirstRequestLocal": 1786,
+            "systemInstructionsTextTokensFirstRequestLocal": 1238,
+            "cumulativeReductionFromCompactPercentLocal": 2.816
+          },
+          "navigation": {
+            "modelInputCaptures": 3,
+            "toolReplyExposures": 3,
+            "uniqueReplies": 2,
+            "finalReplyJsonTokensLocal": 617,
+            "cumulativeMessagesAndToolsTokensLocal": 12160,
+            "cumulativeAgentBudgetSerializationTokensLocal": 13185,
+            "schemaTokensFirstRequestLocal": 1301,
+            "systemInstructionsTextTokensFirstRequestLocal": 1486,
+            "cumulativeReductionFromCompactPercentLocal": 19.433
+          }
+        }
+      },
+      {
+        "case": "multiple_paragraphs",
+        "selectedSourceAtoms": 2,
+        "renderedSourceTokensLocal": 89,
+        "sourceBodyAndCitationIdentitySha256": "0815bf5a3330ad74791f44d55dcccd522f7f63461012583c79f67528fc25423a",
+        "presentations": {
+          "compact": {
+            "modelInputCaptures": 3,
+            "toolReplyExposures": 3,
+            "uniqueReplies": 2,
+            "finalReplyJsonTokensLocal": 1950,
+            "cumulativeMessagesAndToolsTokensLocal": 17091,
+            "cumulativeAgentBudgetSerializationTokensLocal": 18026,
+            "schemaTokensFirstRequestLocal": 1786,
+            "systemInstructionsTextTokensFirstRequestLocal": 1238,
+            "cumulativeReductionFromCompactPercentLocal": 0.0
+          },
+          "references": {
+            "modelInputCaptures": 3,
+            "toolReplyExposures": 3,
+            "uniqueReplies": 2,
+            "finalReplyJsonTokensLocal": 1772,
+            "cumulativeMessagesAndToolsTokensLocal": 16006,
+            "cumulativeAgentBudgetSerializationTokensLocal": 16941,
+            "schemaTokensFirstRequestLocal": 1786,
+            "systemInstructionsTextTokensFirstRequestLocal": 1238,
+            "cumulativeReductionFromCompactPercentLocal": 6.348
+          },
+          "navigation": {
+            "modelInputCaptures": 3,
+            "toolReplyExposures": 3,
+            "uniqueReplies": 2,
+            "finalReplyJsonTokensLocal": 955,
+            "cumulativeMessagesAndToolsTokensLocal": 13209,
+            "cumulativeAgentBudgetSerializationTokensLocal": 14234,
+            "schemaTokensFirstRequestLocal": 1301,
+            "systemInstructionsTextTokensFirstRequestLocal": 1486,
+            "cumulativeReductionFromCompactPercentLocal": 22.714
+          }
+        }
+      },
+      {
+        "case": "complete_cell",
+        "selectedSourceAtoms": 4,
+        "renderedSourceTokensLocal": 185,
+        "sourceBodyAndCitationIdentitySha256": "473c1306c4bee6d4b2a7b6af8085d11ce57a31442bf088bab40c25d99d184550",
+        "presentations": {
+          "compact": {
+            "modelInputCaptures": 3,
+            "toolReplyExposures": 3,
+            "uniqueReplies": 2,
+            "finalReplyJsonTokensLocal": 2735,
+            "cumulativeMessagesAndToolsTokensLocal": 18214,
+            "cumulativeAgentBudgetSerializationTokensLocal": 19149,
+            "schemaTokensFirstRequestLocal": 1786,
+            "systemInstructionsTextTokensFirstRequestLocal": 1238,
+            "cumulativeReductionFromCompactPercentLocal": 0.0
+          },
+          "references": {
+            "modelInputCaptures": 3,
+            "toolReplyExposures": 3,
+            "uniqueReplies": 2,
+            "finalReplyJsonTokensLocal": 2449,
+            "cumulativeMessagesAndToolsTokensLocal": 16877,
+            "cumulativeAgentBudgetSerializationTokensLocal": 17812,
+            "schemaTokensFirstRequestLocal": 1786,
+            "systemInstructionsTextTokensFirstRequestLocal": 1238,
+            "cumulativeReductionFromCompactPercentLocal": 7.341
+          },
+          "navigation": {
+            "modelInputCaptures": 3,
+            "toolReplyExposures": 3,
+            "uniqueReplies": 2,
+            "finalReplyJsonTokensLocal": 1407,
+            "cumulativeMessagesAndToolsTokensLocal": 13668,
+            "cumulativeAgentBudgetSerializationTokensLocal": 14693,
+            "schemaTokensFirstRequestLocal": 1301,
+            "systemInstructionsTextTokensFirstRequestLocal": 1486,
+            "cumulativeReductionFromCompactPercentLocal": 24.959
+          }
+        }
+      },
+      {
+        "case": "complete_table",
+        "selectedSourceAtoms": 7,
+        "renderedSourceTokensLocal": 287,
+        "sourceBodyAndCitationIdentitySha256": "281324038f76c040d0e00a5f26bcb733cc0a9f69ffb11101860d3791f2d2daa2",
+        "presentations": {
+          "compact": {
+            "modelInputCaptures": 3,
+            "toolReplyExposures": 3,
+            "uniqueReplies": 2,
+            "finalReplyJsonTokensLocal": 3891,
+            "cumulativeMessagesAndToolsTokensLocal": 17950,
+            "cumulativeAgentBudgetSerializationTokensLocal": 18885,
+            "schemaTokensFirstRequestLocal": 1786,
+            "systemInstructionsTextTokensFirstRequestLocal": 1238,
+            "cumulativeReductionFromCompactPercentLocal": 0.0
+          },
+          "references": {
+            "modelInputCaptures": 3,
+            "toolReplyExposures": 3,
+            "uniqueReplies": 2,
+            "finalReplyJsonTokensLocal": 3434,
+            "cumulativeMessagesAndToolsTokensLocal": 17183,
+            "cumulativeAgentBudgetSerializationTokensLocal": 18118,
+            "schemaTokensFirstRequestLocal": 1786,
+            "systemInstructionsTextTokensFirstRequestLocal": 1238,
+            "cumulativeReductionFromCompactPercentLocal": 4.273
+          },
+          "navigation": {
+            "modelInputCaptures": 3,
+            "toolReplyExposures": 3,
+            "uniqueReplies": 2,
+            "finalReplyJsonTokensLocal": 2040,
+            "cumulativeMessagesAndToolsTokensLocal": 13766,
+            "cumulativeAgentBudgetSerializationTokensLocal": 14791,
+            "schemaTokensFirstRequestLocal": 1301,
+            "systemInstructionsTextTokensFirstRequestLocal": 1486,
+            "cumulativeReductionFromCompactPercentLocal": 23.309
+          }
+        }
+      },
+      {
+        "case": "authored_section",
+        "selectedSourceAtoms": 2,
+        "renderedSourceTokensLocal": 18,
+        "sourceBodyAndCitationIdentitySha256": "d4bd20d2d3234457a30ac709b325d39f59ef340137d21bde3837f9986ee28373",
+        "presentations": {
+          "compact": {
+            "modelInputCaptures": 3,
+            "toolReplyExposures": 3,
+            "uniqueReplies": 2,
+            "finalReplyJsonTokensLocal": 1587,
+            "cumulativeMessagesAndToolsTokensLocal": 15483,
+            "cumulativeAgentBudgetSerializationTokensLocal": 16418,
+            "schemaTokensFirstRequestLocal": 1786,
+            "systemInstructionsTextTokensFirstRequestLocal": 1238,
+            "cumulativeReductionFromCompactPercentLocal": 0.0
+          },
+          "references": {
+            "modelInputCaptures": 3,
+            "toolReplyExposures": 3,
+            "uniqueReplies": 2,
+            "finalReplyJsonTokensLocal": 1423,
+            "cumulativeMessagesAndToolsTokensLocal": 14955,
+            "cumulativeAgentBudgetSerializationTokensLocal": 15890,
+            "schemaTokensFirstRequestLocal": 1786,
+            "systemInstructionsTextTokensFirstRequestLocal": 1238,
+            "cumulativeReductionFromCompactPercentLocal": 3.41
+          },
+          "navigation": {
+            "modelInputCaptures": 3,
+            "toolReplyExposures": 3,
+            "uniqueReplies": 2,
+            "finalReplyJsonTokensLocal": 729,
+            "cumulativeMessagesAndToolsTokensLocal": 12261,
+            "cumulativeAgentBudgetSerializationTokensLocal": 13286,
+            "schemaTokensFirstRequestLocal": 1301,
+            "systemInstructionsTextTokensFirstRequestLocal": 1486,
+            "cumulativeReductionFromCompactPercentLocal": 20.81
+          }
+        }
+      },
+      {
+        "case": "authored_subtree",
+        "selectedSourceAtoms": 11,
+        "renderedSourceTokensLocal": 322,
+        "sourceBodyAndCitationIdentitySha256": "30aec4e7e40ea03a895c2c3e89a9a561dbdd73072436d79ca9c4e185641b8cd0",
+        "presentations": {
+          "compact": {
+            "modelInputCaptures": 3,
+            "toolReplyExposures": 3,
+            "uniqueReplies": 2,
+            "finalReplyJsonTokensLocal": 4926,
+            "cumulativeMessagesAndToolsTokensLocal": 19167,
+            "cumulativeAgentBudgetSerializationTokensLocal": 20102,
+            "schemaTokensFirstRequestLocal": 1786,
+            "systemInstructionsTextTokensFirstRequestLocal": 1238,
+            "cumulativeReductionFromCompactPercentLocal": 0.0
+          },
+          "references": {
+            "modelInputCaptures": 3,
+            "toolReplyExposures": 3,
+            "uniqueReplies": 2,
+            "finalReplyJsonTokensLocal": 4322,
+            "cumulativeMessagesAndToolsTokensLocal": 18223,
+            "cumulativeAgentBudgetSerializationTokensLocal": 19158,
+            "schemaTokensFirstRequestLocal": 1786,
+            "systemInstructionsTextTokensFirstRequestLocal": 1238,
+            "cumulativeReductionFromCompactPercentLocal": 4.925
+          },
+          "navigation": {
+            "modelInputCaptures": 3,
+            "toolReplyExposures": 3,
+            "uniqueReplies": 2,
+            "finalReplyJsonTokensLocal": 2473,
+            "cumulativeMessagesAndToolsTokensLocal": 14207,
+            "cumulativeAgentBudgetSerializationTokensLocal": 15232,
+            "schemaTokensFirstRequestLocal": 1301,
+            "systemInstructionsTextTokensFirstRequestLocal": 1486,
+            "cumulativeReductionFromCompactPercentLocal": 25.878
+          }
+        }
+      },
+      {
+        "case": "source_approximately_5000_tokens",
+        "selectedSourceAtoms": 47,
+        "renderedSourceTokensLocal": 5215,
+        "sourceBodyAndCitationIdentitySha256": "046d03f2d924ea529f0267a8d4182693f14a84e6487c3dc8703e08e10e2cf377",
+        "presentations": {
+          "compact": {
+            "modelInputCaptures": 3,
+            "toolReplyExposures": 3,
+            "uniqueReplies": 2,
+            "finalReplyJsonTokensLocal": 18305,
+            "cumulativeMessagesAndToolsTokensLocal": 33485,
+            "cumulativeAgentBudgetSerializationTokensLocal": 34420,
+            "schemaTokensFirstRequestLocal": 1786,
+            "systemInstructionsTextTokensFirstRequestLocal": 1238,
+            "cumulativeReductionFromCompactPercentLocal": 0.0
+          },
+          "references": {
+            "modelInputCaptures": 3,
+            "toolReplyExposures": 3,
+            "uniqueReplies": 2,
+            "finalReplyJsonTokensLocal": 14408,
+            "cumulativeMessagesAndToolsTokensLocal": 28891,
+            "cumulativeAgentBudgetSerializationTokensLocal": 29826,
+            "schemaTokensFirstRequestLocal": 1786,
+            "systemInstructionsTextTokensFirstRequestLocal": 1238,
+            "cumulativeReductionFromCompactPercentLocal": 13.72
+          },
+          "navigation": {
+            "modelInputCaptures": 3,
+            "toolReplyExposures": 3,
+            "uniqueReplies": 2,
+            "finalReplyJsonTokensLocal": 11153,
+            "cumulativeMessagesAndToolsTokensLocal": 23030,
+            "cumulativeAgentBudgetSerializationTokensLocal": 24055,
+            "schemaTokensFirstRequestLocal": 1301,
+            "systemInstructionsTextTokensFirstRequestLocal": 1486,
+            "cumulativeReductionFromCompactPercentLocal": 31.223
+          }
+        }
+      },
+      {
+        "case": "original_outline_route",
+        "selectedSourceAtoms": 1,
+        "renderedSourceTokensLocal": 11,
+        "sourceBodyAndCitationIdentitySha256": "84c743aadca3ddd0f1d661e658218aa690c6d6cc24e49980c5a03be7faf362da",
+        "presentations": {
+          "compact": {
+            "modelInputCaptures": 6,
+            "toolReplyExposures": 15,
+            "uniqueReplies": 5,
+            "finalReplyJsonTokensLocal": 1330,
+            "cumulativeMessagesAndToolsTokensLocal": 51401,
+            "cumulativeAgentBudgetSerializationTokensLocal": 53416,
+            "schemaTokensFirstRequestLocal": 1786,
+            "systemInstructionsTextTokensFirstRequestLocal": 1238,
+            "cumulativeReductionFromCompactPercentLocal": 0.0
+          },
+          "references": {
+            "modelInputCaptures": 6,
+            "toolReplyExposures": 15,
+            "uniqueReplies": 5,
+            "finalReplyJsonTokensLocal": 1234,
+            "cumulativeMessagesAndToolsTokensLocal": 47656,
+            "cumulativeAgentBudgetSerializationTokensLocal": 49671,
+            "schemaTokensFirstRequestLocal": 1786,
+            "systemInstructionsTextTokensFirstRequestLocal": 1238,
+            "cumulativeReductionFromCompactPercentLocal": 7.286
+          },
+          "navigation": {
+            "modelInputCaptures": 6,
+            "toolReplyExposures": 15,
+            "uniqueReplies": 5,
+            "finalReplyJsonTokensLocal": 617,
+            "cumulativeMessagesAndToolsTokensLocal": 35335,
+            "cumulativeAgentBudgetSerializationTokensLocal": 37530,
+            "schemaTokensFirstRequestLocal": 1301,
+            "systemInstructionsTextTokensFirstRequestLocal": 1486,
+            "cumulativeReductionFromCompactPercentLocal": 31.256
+          }
+        }
+      },
+      {
+        "case": "delayed_within_turn",
+        "selectedSourceAtoms": 1,
+        "renderedSourceTokensLocal": 11,
+        "sourceBodyAndCitationIdentitySha256": "84c743aadca3ddd0f1d661e658218aa690c6d6cc24e49980c5a03be7faf362da",
+        "presentations": {
+          "compact": {
+            "modelInputCaptures": 5,
+            "toolReplyExposures": 10,
+            "uniqueReplies": 4,
+            "finalReplyJsonTokensLocal": 1330,
+            "cumulativeMessagesAndToolsTokensLocal": 35944,
+            "cumulativeAgentBudgetSerializationTokensLocal": 37583,
+            "schemaTokensFirstRequestLocal": 1786,
+            "systemInstructionsTextTokensFirstRequestLocal": 1238,
+            "cumulativeReductionFromCompactPercentLocal": 0.0
+          },
+          "references": {
+            "modelInputCaptures": 5,
+            "toolReplyExposures": 10,
+            "uniqueReplies": 4,
+            "finalReplyJsonTokensLocal": 1234,
+            "cumulativeMessagesAndToolsTokensLocal": 33858,
+            "cumulativeAgentBudgetSerializationTokensLocal": 35497,
+            "schemaTokensFirstRequestLocal": 1786,
+            "systemInstructionsTextTokensFirstRequestLocal": 1238,
+            "cumulativeReductionFromCompactPercentLocal": 5.803
+          },
+          "navigation": {
+            "modelInputCaptures": 5,
+            "toolReplyExposures": 10,
+            "uniqueReplies": 4,
+            "finalReplyJsonTokensLocal": 607,
+            "cumulativeMessagesAndToolsTokensLocal": 25652,
+            "cumulativeAgentBudgetSerializationTokensLocal": 27441,
+            "schemaTokensFirstRequestLocal": 1301,
+            "systemInstructionsTextTokensFirstRequestLocal": 1486,
+            "cumulativeReductionFromCompactPercentLocal": 28.633
+          }
+        }
+      }
+    ]
+  },
+  "historyComparison": {
+    "sourceAndCitationEqualAcrossTen": true,
+    "rows": [
+      {
+        "case": "shortened_same_session",
+        "presentation": "compact",
+        "successfulApiCalls": 3,
+        "failedLocalReferenceCalls": 0,
+        "cumulativeMessagesAndToolsTokensLocal": 26203,
+        "documentInfoRefreshJsonDeltaTokensLocal": 0,
+        "sourceBodyAndCitationIdentitySha256": "b62b7122447c2388ad8280d298a112bb3625581c9134d604a892236bf20404f8"
+      },
+      {
+        "case": "restored_retained_selector",
+        "presentation": "compact",
+        "successfulApiCalls": 1,
+        "failedLocalReferenceCalls": 0,
+        "cumulativeMessagesAndToolsTokensLocal": 8017,
+        "documentInfoRefreshJsonDeltaTokensLocal": null,
+        "sourceBodyAndCitationIdentitySha256": "b62b7122447c2388ad8280d298a112bb3625581c9134d604a892236bf20404f8"
+      },
+      {
+        "case": "restored_prose_only",
+        "presentation": "compact",
+        "successfulApiCalls": 6,
+        "failedLocalReferenceCalls": 0,
+        "cumulativeMessagesAndToolsTokensLocal": 62043,
+        "documentInfoRefreshJsonDeltaTokensLocal": null,
+        "sourceBodyAndCitationIdentitySha256": "b62b7122447c2388ad8280d298a112bb3625581c9134d604a892236bf20404f8"
+      },
+      {
+        "case": "shortened_same_session",
+        "presentation": "references",
+        "successfulApiCalls": 3,
+        "failedLocalReferenceCalls": 0,
+        "cumulativeMessagesAndToolsTokensLocal": 25350,
+        "documentInfoRefreshJsonDeltaTokensLocal": 0,
+        "sourceBodyAndCitationIdentitySha256": "b62b7122447c2388ad8280d298a112bb3625581c9134d604a892236bf20404f8"
+      },
+      {
+        "case": "restored_retained_selector",
+        "presentation": "references",
+        "successfulApiCalls": 1,
+        "failedLocalReferenceCalls": 0,
+        "cumulativeMessagesAndToolsTokensLocal": 7911,
+        "documentInfoRefreshJsonDeltaTokensLocal": null,
+        "sourceBodyAndCitationIdentitySha256": "b62b7122447c2388ad8280d298a112bb3625581c9134d604a892236bf20404f8"
+      },
+      {
+        "case": "restored_prose_only",
+        "presentation": "references",
+        "successfulApiCalls": 6,
+        "failedLocalReferenceCalls": 0,
+        "cumulativeMessagesAndToolsTokensLocal": 57309,
+        "documentInfoRefreshJsonDeltaTokensLocal": null,
+        "sourceBodyAndCitationIdentitySha256": "b62b7122447c2388ad8280d298a112bb3625581c9134d604a892236bf20404f8"
+      },
+      {
+        "case": "shortened_same_session",
+        "presentation": "navigation",
+        "successfulApiCalls": 3,
+        "failedLocalReferenceCalls": 0,
+        "cumulativeMessagesAndToolsTokensLocal": 20659,
+        "documentInfoRefreshJsonDeltaTokensLocal": 228,
+        "sourceBodyAndCitationIdentitySha256": "b62b7122447c2388ad8280d298a112bb3625581c9134d604a892236bf20404f8"
+      },
+      {
+        "case": "restored_retained_selector",
+        "presentation": "navigation",
+        "successfulApiCalls": 1,
+        "failedLocalReferenceCalls": 0,
+        "cumulativeMessagesAndToolsTokensLocal": 6993,
+        "documentInfoRefreshJsonDeltaTokensLocal": null,
+        "sourceBodyAndCitationIdentitySha256": "b62b7122447c2388ad8280d298a112bb3625581c9134d604a892236bf20404f8"
+      },
+      {
+        "case": "restored_prose_only",
+        "presentation": "navigation",
+        "successfulApiCalls": 6,
+        "failedLocalReferenceCalls": 0,
+        "cumulativeMessagesAndToolsTokensLocal": 44654,
+        "documentInfoRefreshJsonDeltaTokensLocal": null,
+        "sourceBodyAndCitationIdentitySha256": "b62b7122447c2388ad8280d298a112bb3625581c9134d604a892236bf20404f8"
+      },
+      {
+        "case": "restored_expired_reference",
+        "presentation": "navigation",
+        "successfulApiCalls": 6,
+        "failedLocalReferenceCalls": 1,
+        "cumulativeMessagesAndToolsTokensLocal": 49108,
+        "documentInfoRefreshJsonDeltaTokensLocal": null,
+        "sourceBodyAndCitationIdentitySha256": "b62b7122447c2388ad8280d298a112bb3625581c9134d604a892236bf20404f8"
+      }
+    ],
+    "shortenedSameSessionIncludesAcquisition": true,
+    "restorationRowsMeasureResumedTurnOnly": true,
+    "expiredReferenceEarlierAcquisitionTokensLocal": 12220,
+    "expiredReferenceTwoTurnTotalTokensLocal": 61328,
+    "interpretation": "restoration begins with preexisting retained context; expired-handle and full-selector rows retain different information; prose-only is matched retained information; routes not asserted minimal",
+    "acquisitionBoundary": "supplied subsection selector; earlier file discovery not measured",
+    "navigationRetainedRawSelectorAcquisition": "unavailable; preexisting input not delivered by ordinary navigation acquisition view",
+    "composedAcquisitionPlusRetainedSelectorRestorationLocal": {
+      "compact": 23257,
+      "references": 22614,
+      "navigation": null,
+      "method": "separate compatible captured legs; not continuous observed conversations"
+    },
+    "proseHandoff": "authored fixture summary; model summarization cost unmeasured"
+  },
+  "controls": {
+    "model": {
+      "name": "gpt-5-mini",
+      "version": "2025-08-07"
+    },
+    "transport": "responses",
+    "reasoning": "medium",
+    "contextAllowance": 200000,
+    "outputReservation": 8000,
+    "maxRounds": 12,
+    "pacingWindowSeconds": 60,
+    "pacingReservationCeiling": 45000,
+    "logicalCallsLimit": 26,
+    "physicalAttemptsLimit": 36,
+    "inputLimitIncludingUnknownReservations": 2000000,
+    "outputLimitIncludingUnknownReservations": 200000,
+    "admissionDeadlineSeconds": 1200,
+    "order": [
+      "compact",
+      "navigation"
+    ],
+    "sameQuestionAndVerifiedPublication": true,
+    "sourceBackend": "actual local API with hash-verified retained publication and in-memory stores",
+    "search": "explicitly unavailable in source-only fixture",
+    "codeModelCapacityVerifiedBeforeAndAfter": true
+  },
+  "live": {
+    "attemptedTurns": 2,
+    "executionCompletedTurns": 2,
+    "correctFocusedAnswerAndCitationTurns": 1,
+    "selectiveReruns": 0,
+    "logicalCalls": 14,
+    "physicalAttempts": 14,
+    "providerUsageMeasured": {
+      "inputTokens": 90620,
+      "outputTokens": 5343,
+      "meteredResponses": 14,
+      "cachedInputTokens": 62976,
+      "cachedInputTokensReportedResponses": 14,
+      "reasoningOutputTokens": 3648,
+      "reasoningOutputTokensReportedResponses": 14
+    },
+    "cachedAndReasoningAreSubsets": true,
+    "unknownAttempts": 0,
+    "http429s": 0,
+    "providerRetries": 0,
+    "pacingRefusals": 0,
+    "encryptedContinuityVerifiedByExactRequestReplay": true,
+    "inputEstimateMinusReportedRange": [
+      1311,
+      2536
+    ],
+    "cloudRetrievalRu": null,
+    "cloudRetrievalRuStatus": "unavailable: local source stores; fake charges excluded",
+    "cloudEmbeddingCalls": 0,
+    "cloudDataWrites": 0,
+    "cells": [
+      {
+        "cell": "compact",
+        "logicalCalls": 6,
+        "physicalAttempts": 6,
+        "providerUsageMeasured": {
+          "inputTokens": 48558,
+          "outputTokens": 1461,
+          "meteredResponses": 6,
+          "cachedInputTokens": 31616,
+          "cachedInputTokensReportedResponses": 6,
+          "reasoningOutputTokens": 832,
+          "reasoningOutputTokensReportedResponses": 6
+        },
+        "retries": 0,
+        "turnElapsedMsMeasuredLocal": 129456.10500010662,
+        "providerAttemptElapsedMsSumMeasuredLocal": 17964.32566596195,
+        "pacingWaitSecondsMeasuredLocal": 111.30633233510889,
+        "apiReadAttempts": 5,
+        "successfulApiReads": 5,
+        "apiSearchAttempts": 0,
+        "failedCapturedApiOperations": 0,
+        "deliveredErrorRepliesByCategory": {},
+        "deliveredSourceBodyCount": 1,
+        "sourceSnapshotUnchanged": true,
+        "localInputEstimates": {
+          "cumulativeMessagesAndToolsTokensLocal": 50634,
+          "cumulativeAgentBudgetSerializationTokensLocal": 52709,
+          "cumulativeSchemaJsonTokensLocal": 11094,
+          "cumulativeSystemInstructionsTextTokensLocal": 7746,
+          "toolReplyExposures": 15,
+          "uniqueToolReplies": 5,
+          "uniqueToolReplyTotals": {
+            "evidenceJsonTokensLocal": 8743,
+            "orderedSelectorRemovalDeltaTokensLocal": 2693,
+            "orderedRemainingNavigationProtocolTokensLocal": 5891,
+            "toolMessageJsonTokensLocal": 9431,
+            "navigationPreviewTextTokensLocal": 27,
+            "orderedPreviewRemovalDeltaTokensLocal": 144,
+            "renderedSourceTextTokensLocal": 11,
+            "orderedSourceRemovalDeltaTokensLocal": 15
+          }
+        }
+      },
+      {
+        "cell": "navigation",
+        "logicalCalls": 8,
+        "physicalAttempts": 8,
+        "providerUsageMeasured": {
+          "inputTokens": 42062,
+          "outputTokens": 3882,
+          "meteredResponses": 8,
+          "cachedInputTokens": 31360,
+          "cachedInputTokensReportedResponses": 8,
+          "reasoningOutputTokens": 2816,
+          "reasoningOutputTokensReportedResponses": 8
+        },
+        "retries": 0,
+        "turnElapsedMsMeasuredLocal": 189724.49633292854,
+        "providerAttemptElapsedMsSumMeasuredLocal": 33217.233792413026,
+        "pacingWaitSecondsMeasuredLocal": 156.28459871048108,
+        "apiReadAttempts": 4,
+        "successfulApiReads": 1,
+        "apiSearchAttempts": 1,
+        "failedCapturedApiOperations": 4,
+        "deliveredErrorRepliesByCategory": {
+          "invalid_request": 2,
+          "navigation_reference_unavailable": 2,
+          "retrieval_error": 1,
+          "source_scope_unavailable": 1
+        },
+        "deliveredSourceBodyCount": 0,
+        "sourceSnapshotUnchanged": true,
+        "localInputEstimates": {
+          "cumulativeMessagesAndToolsTokensLocal": 38985,
+          "cumulativeAgentBudgetSerializationTokensLocal": 42120,
+          "cumulativeSchemaJsonTokensLocal": 10888,
+          "cumulativeSystemInstructionsTextTokensLocal": 12312,
+          "toolReplyExposures": 28,
+          "uniqueToolReplies": 7,
+          "uniqueToolReplyTotals": {
+            "evidenceJsonTokensLocal": 1864,
+            "orderedSelectorRemovalDeltaTokensLocal": 156,
+            "orderedRemainingNavigationProtocolTokensLocal": 1708,
+            "toolMessageJsonTokensLocal": 2214
+          }
+        }
+      }
+    ]
+  },
+  "outcome": {
+    "compact": {
+      "outlineDelivered": true,
+      "focusedSourceDelivered": true,
+      "correctCitation": true,
+      "unrequestedInternalIdsInAnswer": false
+    },
+    "navigation": {
+      "outlineDelivered": true,
+      "focusedSourceDelivered": false,
+      "correctRuleOrPassageCitation": false,
+      "malformedReadAttempts": 5,
+      "searchDetours": 1,
+      "successfulFollowupReferenceResolutions": 0,
+      "wholeDocumentAttempts": 0,
+      "wholeDocumentSourceDelivered": false,
+      "rawModelAnswer": "honest refusal; unnecessary internal document identifier/revision displayed; user guidance requested",
+      "deliveredAnswer": "unchanged grounding guard replaced draft with honest no-source refusal",
+      "safetySuccessIsNotNavigationSuccess": true
+    },
+    "interfaceDefects": [
+      "schema allows reference plus mode although resolver rejects it",
+      "nested selector documentation still names outlineSelector absent from navigation responses",
+      "canonical invalid-request recovery still names replaced documentSelector/readSelector fields"
+    ],
+    "nextAction": "align invocation/schema/documentation/recovery without relaxing exact scope or permissions; freeze a fresh focused model check",
+    "singleTraceEstablishesCause": false,
+    "successfulTaskEfficiencyGainDemonstrated": false
+  },
+  "validation": {
+    "fullSuitePassed": 2065,
+    "warnings": 27,
+    "fullSuiteSeconds": 306.33,
+    "focusedPassed": 90,
+    "focusedOverlapsFullSuite": true,
+    "ruffLintPassed": true,
+    "ruffFormatPassed": true,
+    "regressions": [
+      "snapshot and access binding",
+      "replacement and deletion",
+      "session close and stale references",
+      "delayed/shortened/restored history",
+      "paragraph/list/cell semantics",
+      "diagnostics and fallback",
+      "exact unions and pagination",
+      "source grounding",
+      "Responses encrypted continuity"
+    ],
+    "liveCoverage": "one consumed outline-to-focused-read task per format; not cell/history/lifecycle/search quality"
+  },
+  "cleanup": {
+    "cloudDataResourcesCreated": 0,
+    "cloudDataCleanupRequired": false,
+    "providerClosed": true,
+    "localApiContextsClosed": true,
+    "navigationSessionClosed": true,
+    "localSourceSnapshotsUnchanged": true
+  },
+  "privateEvidence": {
+    "archivePolicy": "raw source, question, responses and environment binding kept outside Git; content-free hashes and counters only here",
+    "executionArchive": {
+      "files": 194,
+      "manifestSha256": "6d4e21c313206f3ff31d505bf6164f993f086b5315622cdb779abc9938d02461"
+    },
+    "executionLogCaveat": "automatic archive captured command output before final stdout; archived bytes verified and unchanged; completed output frozen separately for reviewed archive",
+    "receiptSha256": {
+      "final-local-measurement-seal.json": "34277d5ea6c290739db79f919a5c9effcfba4124c027923bcfc1718c33dd7417",
+      "original-source-exact-wire/comparison.json": "2d95da7be8dfe6258dda17b5c467a2dbbfd5afff5941ed7692ee182529d94c51",
+      "response-decomposition.json": "70a4f649ad858ac8cdc7a7087bc114b39540dfb3d43bb3bbb4f4c9ac8e7e9e24",
+      "history-final/receipt.json": "bc41311d78a5de5aaaedd2135db5b12af64873cf2bcd05719331b825520227e1",
+      "bounded-measurement-summary.json": "4536445b8cf58138888c3d467ece0cf29eee0a730acf29c82e2d2a22ec6032bc",
+      "product-review.json": "d651d11cfcc18c6ae6322ac5d284d316ef8dc79a8c176471d262cc6a1453805c",
+      "measurement-review.json": "341eb76e9c794e28d8e545724de0efe0f9b1fcf084aaf74198400135bd3c6248",
+      "runner-review.json": "c0b24e3a2911507e241a6f135b6893cd997f41547394486a4424665e10c31104",
+      "live-accounting-review.json": "9e98d7ac9d1357e2baba7cc70fd58316586653bc85614defcbb2784219ddf20d",
+      "live-execution-review.json": "d6664125cea4f3676f9ec9b6de2582a4c4cb218c32325f38a16ae09a993d4043",
+      "live-pair/live-behavior-review.json": "05155911984a37261f866117ca5cf39489e13f9b019135a6d31da92bdc11a42e",
+      "history-lifetime-supplement.json": "7443e2f2f98feb29eceae2d0fb601ccba233c6d29d3a4c2d2e3b589381a8290d",
+      "final-report-review.json": "dc694ed3b4b087ba3cad7540562a4f336ce21e5ae1e1c25ff754fc755e0ab2be",
+      "final-preservation-check.json": "4e97db12173e0ef3bc272e7a677e18c8364dd1569a1bc28688a63bce7c2afc5b"
+    },
+    "reportReviewScope": "reviewed exact report snapshots; only additive archive/review metadata follows in this public receipt; no circular hash claim",
+    "reviewedFinalArchive": {
+      "files": 291,
+      "manifestSha256": "4b14475af4580dd0ffed2dbf8ca9c42cd2a04daab3336394eb06024a0bc5457c",
+      "verificationSha256": "ccd4681dc47e77d7ab07514bac9ebba560485181476731a5f30eb6ccd912e4d3",
+      "verified": true
+    }
+  },
+  "limitations": [
+    "single consumed development task and fixed arm order, not a quality benchmark",
+    "local token savings assume identical scripted decisions; real navigation arm failed",
+    "source search unavailable in live fixture; no Cosmos RU or cloud lifecycle proof",
+    "live delayed/restored-history and cell/list usability unmeasured",
+    "turn-local references expire across turns; reacquisition can add calls",
+    "full tool transcript restore unsupported",
+    "canonical backend response budget unchanged and may refuse compactable responses",
+    "no merge, deploy, default change or larger study"
+  ]
+}
