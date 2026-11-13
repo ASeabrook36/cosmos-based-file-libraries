@@ -1,0 +1,80 @@
+{
+  "kind": "scale-ablation-large-library-read-only-preflight",
+  "protocolDateLocal": "2026-11-12",
+  "measurementRunStarted": false,
+  "databaseCheck": {
+    "checkedAt": "2026-11-13T01:02:48.238055+00:00",
+    "readOnly": true,
+    "expectedPassages": 244773,
+    "arms": {
+      "split": {
+        "exists": true,
+        "storedPolicyMatchesE68": true,
+        "physicalRanges": 1,
+        "passages": 244773,
+        "countMatchesE68": true,
+        "knownCountQueryRu": 2.9
+      },
+      "unsplit": {
+        "exists": true,
+        "storedPolicyMatchesE68": true,
+        "physicalRanges": 1,
+        "passages": 244773,
+        "countMatchesE68": true,
+        "knownCountQueryRu": 2.9
+      }
+    },
+    "knownCountQueryRu": 5.8,
+    "canContinue": true
+  },
+  "unusedCorpusCheck": {
+    "kind": "E68-large-extension-unused-corpus-gate",
+    "completedAt": "2026-11-13T01:02:23.616379+00:00",
+    "enoughForAllFour": true,
+    "enoughForMandatory": true,
+    "unusedUniqueEligiblePassages": 185000,
+    "consumedPrefixRows": 244773,
+    "consumedPrefixBytes": 16303644419,
+    "consumedPrefixHashVerified": true,
+    "consumedPrefixSha256": "46e97fe18166a048d15e0ce0cc7b22770bc2cbdae5bbd0981aa2daa27e36968d",
+    "selectedUniqueTextCount": 185000,
+    "selectedUniqueSourceIdentityCount": 185000,
+    "validSelectedPublishedVectors": 185000,
+    "vectorDimensions": 3072,
+    "allSelectedVectorsFinite": true,
+    "selectedRawRowsSha256": "94f2c2e3bff9b670c18bab812ae9c1ec354a08960b4f4901414f9b15a562b360",
+    "rowOrdinalManifestSha256": "3c35b2193bf89d4ef08b99613437f34bfa1d0245766a756aaeb8c96b2f79c81c",
+    "rowsRead": 429773,
+    "bytesRead": 28626159682,
+    "elapsedSeconds": 215.021,
+    "diagnosticCounts": {
+      "rowsRead": 429773,
+      "bytesRead": 28626159682,
+      "prefixRows": 244773,
+      "prefixBytes": 16303644419,
+      "prefixDuplicateTexts": 0,
+      "prefixDuplicateSourceIdentities": 0,
+      "prefixMissingSourceIdentities": 0,
+      "prefixInvalidTextRows": 0,
+      "tailRowsScanned": 185000,
+      "tailInvalidJsonRows": 0,
+      "tailInvalidTextRows": 0,
+      "tailMissingSourceIdentities": 0,
+      "tailDuplicateOldTexts": 0,
+      "tailDuplicateOldSourceIdentities": 0,
+      "tailDuplicateSelectedTexts": 0,
+      "tailDuplicateSelectedSourceIdentities": 0,
+      "tailDuplicateRowsRejected": 0,
+      "tailInvalidVectorShapeRows": 0,
+      "tailInvalidVectorValueRows": 0,
+      "selectedRows": 185000
+    },
+    "noEmbeddingOrNetworkCalls": true,
+    "noAzureCalls": true,
+    "noDatabaseWritesOrResourceReservations": true
+  },
+  "costLimitScope": "new extension only; historical E68 charges excluded",
+  "resourcesCreated": false,
+  "databaseWrites": false,
+  "embeddingCalls": false
+}
