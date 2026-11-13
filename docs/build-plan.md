@@ -1,16 +1,102 @@
 # Build plan
 
+**Presentation and source-bookmark integration, 2026-11-06:** the user authorized
+integration of reviewed candidate `34d6fc6`. The
+[qualified presentation and bookmarks](granular-source-bookmarks.md) add shorter
+navigation references and exact source bookmarks that survive turns within a
+trusted application conversation. `DEMO_SOURCE_BOOKMARKS=1` explicitly enables
+the combined demo path; compact presentation remains the default. Every bookmark
+reread uses the normal authorized source API and preserves the original version
+and scope. The bounded comparison used 13.52% less total provider input, while
+its direct follow-up used 8.57% more; broader efficiency remains unestablished.
+The earlier failed results and frozen hybrid comparison remain unchanged.
+No deployment, ingestion/default change or context-budget repair is included.
+
+**Granular source navigation integration, 2026-11-04:** the
+[focused implementation](granular-source-navigation.md) combines checked main
+and the source-only repair, adding opt-in DOCX paragraph/cell/section/subtree
+navigation with authored hierarchy and Markdown ATX support. The new recipe
+intentionally changes paragraph-level passages/embeddings; old recipes and
+completed experiments remain intact. Context repair and index versioning stay
+separate. The [bounded live qualification](granular-navigation-live-qualification.md)
+passed ten ingestion/navigation/lifecycle gates and verified owned cleanup. Six
+actual model turns exposed cell-scope and identifier-reporting gaps; the preserved
+[two-turn follow-up](granular-navigation-followup.md) subsequently demonstrated
+both core checks, while exposing empty outline inspections and unnecessary source
+numbering metadata. The [outline contract repair and failed qualification](granular-outline-contract.md)
+remain preserved. The subsequent [navigation and pacing refinement](granular-navigation-refinement.md)
+at candidate `1087cb9` passed the outstanding focused-source/citation check: four
+delivered outlines, a copied paragraph selector and a correct answer with its
+condition and citation, without detours, repeated reads or full-document fallback.
+The candidate passed 1,965 regression tests and verified owned cleanup. The user
+authorized integration with existing defaults retained; `custom-granular-v1`
+remains opt-in and requires new ingestion for older representations. Integration
+deduplicates the NumPy development dependency without changing its constraint.
+The successful targeted turn establishes bounded navigation mechanics, not general
+quality or efficiency. Qualification pacing remains separate from application
+context accounting. Response overhead and unsolicited selector display remain
+presentation-efficiency work. Deployment and the larger confirmation remain pending.
+
+**Normal-agent selector integration, 2026-11-02 (E66 follow-through):** the
+[merge candidate](i1-selector-integration.md) enables handles in the normal client
+with compact evidence and explicit legacy rollback. Historical replay entry points
+retain explicit controls. Main's independent local-setup documentation is retained.
+This local integration does not rerun consumed confirmation questions, touch the
+hybrid comparison, change ingestion ownership, or include index versioning.
+
+**Hybrid quality comparison complete, 2026-11-03 (E67):** the
+[accepted result](hybrid-quality-results-20261103.md) completes 96 direct searches
+and 192 fixed-model answer turns without rebasing onto main. Hybrid improves
+all-required initial retrieval from 24/40 to 36/40 and expanded retrieval from
+30/40 to 37/40. Final supported completion is 80/80 vector and 79/80 hybrid; the
+single strict difference has a documented lenient sensitivity. Both abstain
+appropriately on 16/16 absent-value turns. No final-answer gain is established.
+Keep defaults, retain hybrid as a quality candidate, and investigate shared source
+structure/numbering fidelity before a broader, newly frozen quality confirmation.
+This pack is consumed; no R3 or efficiency tuning starts. Successful-scope cleanup
+and protected snapshots are verified; the old fenced scope and production/scale
+gates remain open. See the linked report for receipts and exact limitations.
+
+**Hybrid quality restart gates passed, 2026-11-03 (E67):** the same isolated
+container now serves the previously failing reads. Fresh owned real-text
+writes/reads/vector/hybrid queries and exact cleanup passed, as did all 19
+mounted workflow/worker/model binding checks. An executable gate now enforces
+fresh evidence and a partial-ingestion cleanup declaration before uploads.
+At that restart checkpoint the frozen comparison was unchanged and confirmation
+questions were unconsumed. Corpus readiness, source recall and answer quality followed;
+no efficiency tuning or main-branch rebase is included.
+
+**Hybrid quality confirmation prepared, execution blocked, 2026-11-02 (E67):**
+the [controlled comparison](hybrid-quality-comparison.md) freezes eight fresh
+originals and 48 source-labeled questions, plus matched direct/replay tooling.
+The existing account reproduced E17 on scoped queries and an owned chunk point
+read. Two atomic attempts for one replacement target rejected its required vector
+capability. After a billing-limit change, a staged empty account could be created,
+but its vector enablement still failed. Exact owned-scope recovery stopped before
+deletion; source/checkpoint archives remain retained. All 1,205 local tests pass.
+None of the 96 direct searches or 192 answering turns ran. Restore a
+healthy same-policy isolated foundation, then execute the unchanged pack before
+further tuning. No ranking recommendation or R3 comparison follows from these
+operational failures.
+
 **Selector-only I1 complete, 2026-11-02 (E66):** the
 [coordinator result](retrieval-i1.md) records 13 live lifecycle gates passed
 before all 64 reserved held-out turns. Both cells retain reviewed source and
 answer quality; selector handles avoid four recovered scope errors. Provider
 input falls 18.8542783%, below the frozen 20% target. The user accepts this as
 a meaningful improvement and advances selectors to consuming-agent integration.
-Runtime defaults, representation and physical policies are currently unchanged. No R3
+Runtime defaults were unchanged by that decision record; the integration above
+now changes only the consuming client's selector default. No R3
 comparison follows. The held-out set is now consumed; production authentication,
 broker redelivery, broader concurrency/scale and controlled cost/latency remain
 open. The merged suite passes 1,089 tests; isolated cleanup and R0/P1 preservation
 are verified.
+
+**Local setup, 2026-11-02:** [reusable development setup](local-development.md)
+is available on the primary branch for Codex environment discovery. A fresh
+isolated checkout passes all 705 local tests, lint and privacy checks. Setup
+loads no cloud credentials and starts no services; this does not change the
+application or advance the cloud/retrieval milestones below.
 
 **R1/R2/P1 bounded stage complete, 2026-11-01 (E65):** the
 [coordinator decision and integration gates](retrieval-stage1.md) retain current
@@ -403,7 +489,7 @@ Use material you are allowed to use, such as public company reports, public stat
 | Hybrid ranking is worse than vector-only on the evaluation set, or costs too much | Already the case for cost: vector-only is the default (`SEARCH_MODE`, E27). Hybrid stays a setting until the evaluation set and Phase 4's container-size measurement justify it |
 | Throttling during demo-day uploads on serverless | Load the demo corpus beforehand, or run the demo on a provisioned account |
 | A library searched straight after upload scans until the index engages, about 6 minutes in Phase 0 (E25) | Results stay correct; only cost rises. Load demo libraries well before the demo. Measure the lag in a populated container in Phase 4 |
-| DiskANN does not engage on large libraries, or costs more than expected (N11) | Phase 4 still needs graph search within a library. E68 observed DiskANN for the unsplit global control only; its library queries used QuantizedFlat in both arms |
+| Large-library graph costs change or exceed expectations (N11) | E69 observed scoped DiskANN at the tested 10k–100k points in both layouts, including the delayed checks. Material late RU changes leave cost stability unresolved; retain both windows and test background growth, concurrent load and libraries spanning physical ranges before making broader claims |
 | float16 stops working on an account (E17; N10: float16 itself is generally available, E58) | float32 in a new container, rebuilt from stored text (E16), or a new account. Phase 0 measured float16 working |
 | Sharded DiskANN changes or is withdrawn before GA (N5, E58) | A new container rebuilt from stored text (E16). E68 measured routed library searches staying flat without a shard key but costing 70–143 RU against 12–35 RU with it through 244,773 vectors on one physical partition. The large scope-omission penalty was specific to the sharded arm's measured control. Spherical quantization remained unchanged and preview in both arms, so this does not establish an entirely GA fallback; ask Microsoft first |
 | Azure OpenAI quota (embedding tokens per minute) slows bulk loads | Batch, back off on 429, request more quota |

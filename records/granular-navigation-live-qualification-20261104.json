@@ -1,0 +1,553 @@
+{
+  "schema": "fli.granular-navigation.live-qualification.v1",
+  "date": "2026-11-04",
+  "branch": "codex/granular-source-navigation",
+  "decision": "hold_integration_pending_two_targeted_model_checks_of_post_live_guidance",
+  "qualificationStatus": "bounded_execution_and_cleanup_complete_with_model_behavior_gaps",
+  "provenance": {
+    "originalCandidateCommit": "01a934c080e2506f6f94d775286b7baca0067543",
+    "mainPreserved": "1ddc4386361446a5122ce936cdb3ba28aa4e5919",
+    "sourceOnlyRepair": "33402d3bf66c5ad6ba2d0b12c0c46cba66695aff",
+    "reviewedSourceIntegration": "7e9a31b2b73a22d8d53327614e6116a6d442a79f",
+    "firstLiveBaseline": "e12f857fa9740c32fd4a046a3903822eb92e23c6",
+    "successfulLiveBaseline": "821ea2556444fb121953ebe201affa192242fbd2",
+    "contextRepairExcluded": "44708040dce0a6d4cd5b44205a07a5d7e54404a7",
+    "indexVersioningExcluded": "1cf7e935a16a0073093fa0f8214251a1bd252a3c",
+    "sourceRuntimeUnchangedBetweenLiveAttempts": true,
+    "completedExperimentFilesPreserved": true
+  },
+  "attempts": [
+    {
+      "attempt": 1,
+      "baseline": "e12f857",
+      "status": "stopped_on_numeric_normalization_guard_defect",
+      "receipt": "granular-navigation-live-attempt-1-20261104.json",
+      "modelTurns": 0,
+      "embeddingMeasuredTokens": 98,
+      "cleanupAtCheckpoint": "blocked_before_deletion",
+      "finalDisposition": "exact_independent_append_only_reconciliation_then_same_scope_continuation"
+    },
+    {
+      "attempt": 2,
+      "baseline": "821ea25",
+      "status": "bounded_qualification_and_cleanup_complete",
+      "sameScopes": true,
+      "priorCountersRetained": true,
+      "priorExecutionSecondsDeducted": 181,
+      "remainingExecutionSeconds": 1619,
+      "newLibraryAllowance": 0,
+      "modelTurns": 6
+    }
+  ],
+  "preflight": {
+    "passed": true,
+    "newCloudResources": false,
+    "newModelDeployments": false,
+    "currentManagementDataReadsAndBlobCensusPassed": true,
+    "containerPolicyIncarnationAndPriorCanaryVerified": true,
+    "protectedInventoryVerified": true,
+    "deploymentVersionSkuAndCapacityChecked": true,
+    "bindingsUnchangedAfterExecution": true
+  },
+  "controls": {
+    "limits": {
+      "libraries": 3,
+      "documents": 4,
+      "ingestGenerations": 5,
+      "publishedChunks": 64,
+      "sourceBytesEach": 1048576,
+      "sourceEmbeddingTokens": 50000,
+      "logicalEmbeddingRequests": 20,
+      "embeddingAttemptsEach": 3,
+      "modelTurns": 6,
+      "logicalModelCalls": 36,
+      "physicalModelAttempts": 48,
+      "modelContextAllowance": 200000,
+      "modelOutputAllowance": 8000,
+      "inputTokensIncludingUnknownReservations": 2000000,
+      "outputTokensIncludingUnknownReservations": 200000,
+      "executionSeconds": 1800,
+      "cleanupSeconds": 600,
+      "lateAbsenceCheckSeconds": 60
+    },
+    "ingestionProfile": "custom-granular-v1",
+    "answering": {
+      "model": "gpt-5-mini",
+      "version": "2025-08-07",
+      "sku": "GlobalStandard",
+      "capacity": 50,
+      "automaticUpgrade": "disabled",
+      "identityEvidence": "Matching Azure deployment bindings before/after; raw response model field unavailable."
+    },
+    "embedding": {
+      "model": "text-embedding-3-large",
+      "version": "1",
+      "capacity": 150
+    },
+    "searchMode": "vector",
+    "evidenceView": "compact",
+    "selectors": "handles",
+    "contextAccounting": "legacy-v1",
+    "pacing": {
+      "localTokensPerMinuteReservation": 45000,
+      "outputReservationPerRequest": 8000,
+      "maximumLocalSerializedInputPerRequest": 37000,
+      "refusals": 0
+    },
+    "sourcePinsSupplied": true,
+    "largerConfirmationConsumed": false,
+    "reasoningEffort": "medium",
+    "maxRoundsPerTurn": 12
+  },
+  "mechanics": {
+    "passed": [
+      "actual_ingestion_and_immutable_source_publication",
+      "personal_binding_and_development_caller_authentication",
+      "paragraph_cell_section_subtree_and_containing_document_navigation",
+      "markdown_hierarchy_and_exact_character_spans",
+      "real_vector_search_to_verified_source_expansion",
+      "unavailable_page_foreign_scope_and_atomic_budget_refusals",
+      "actual_worker_idempotent_ingestion_retry",
+      "independent_client_metadata_race_and_source_identity",
+      "pending_replacement_inflight_publication_and_stale_selector",
+      "independent_client_deletion_fence_and_idempotent_purge"
+    ],
+    "bounds": {
+      "libraries": 3,
+      "documents": 3,
+      "ingestGenerations": 4,
+      "chunksEverReserved": 49,
+      "blobPathsEverRecorded": 32,
+      "limitsExceeded": false,
+      "priorExecutionSecondsUpperBound": 181,
+      "continuationExecutionAllowance": 1619
+    },
+    "publications": [
+      {
+        "fileType": "docx",
+        "generation": 1,
+        "revision": 2,
+        "atoms": 15,
+        "chunks": 15,
+        "sourceAndArtifactHashVerified": true,
+        "canonicalChunkMappingsVerified": true
+      },
+      {
+        "fileType": "docx",
+        "generation": 2,
+        "revision": 2,
+        "atoms": 15,
+        "chunks": 15,
+        "sourceAndArtifactHashVerified": true,
+        "canonicalChunkMappingsVerified": true
+      },
+      {
+        "fileType": "docx",
+        "generation": 1,
+        "revision": 2,
+        "atoms": 15,
+        "chunks": 15,
+        "sourceAndArtifactHashVerified": true,
+        "canonicalChunkMappingsVerified": true
+      },
+      {
+        "fileType": "md",
+        "generation": 1,
+        "revision": 2,
+        "atoms": 4,
+        "chunks": 4,
+        "sourceAndArtifactHashVerified": true,
+        "canonicalChunkMappingsVerified": true
+      }
+    ],
+    "navigationScopes": {
+      "paragraph": {
+        "sourceAtoms": 1,
+        "selectionComplete": true,
+        "complete": false
+      },
+      "cell": {
+        "sourceAtoms": 4,
+        "selectionComplete": true,
+        "complete": false
+      },
+      "section": {
+        "sourceAtoms": 2,
+        "selectionComplete": true,
+        "complete": false
+      },
+      "subtree": {
+        "sourceAtoms": 13,
+        "selectionComplete": true,
+        "complete": false
+      },
+      "containing": {
+        "sourceAtoms": 9,
+        "selectionComplete": true,
+        "complete": false
+      },
+      "whole": {
+        "sourceAtoms": 15,
+        "selectionComplete": true,
+        "complete": true
+      }
+    },
+    "raceResponses": {
+      "metadata": 409,
+      "replacementPublication": 409,
+      "deletion": 409,
+      "errorCode": "document_changed",
+      "scope": "Three bounded independent-client observations; not a global immediate Session-consistency guarantee."
+    },
+    "refusals": {
+      "library_not_bound_to_agent": 5,
+      "unauthorized": 5,
+      "source_scope_unavailable": 1,
+      "document_not_found": 2,
+      "document_changed": 4
+    },
+    "embedding": {
+      "logicalCallsAcrossBothAttempts": 8,
+      "physicalRequestsAcrossBothAttempts": 8,
+      "measuredPromptTokensAcrossBothAttempts": 374,
+      "priorMeasuredTokensRetained": 98,
+      "localInputTokensEstimate": 374,
+      "unmeteredAttempts": 0,
+      "retries": 0,
+      "throttles": 0,
+      "billingCost": "unavailable",
+      "allServiceRUTotal": "unavailable; operation-specific counters are not a complete service bill"
+    },
+    "sourceChunkWriteChargeRu": 3291.67,
+    "sourceEmbeddingMeasuredTokens": 338,
+    "queryEmbeddingMeasuredTokens": 36,
+    "chunkRecipe": {
+      "targetTokens": 500,
+      "overlapTokens": 50,
+      "boundary": "within_source_atom",
+      "observedDocxChunkTokens": {
+        "min": 3,
+        "max": 14
+      },
+      "observedMarkdownChunkTokens": {
+        "min": 8,
+        "max": 13
+      }
+    }
+  },
+  "modelReview": {
+    "method": "Independent manual source-based review of actual model inputs, tool responses and answers; not blinded or a controlled accuracy benchmark.",
+    "summary": {
+      "coreSourceFactsCorrect": 6,
+      "humanReadableSourceCitationsCorrect": 6,
+      "answersWithNoObservedIncorrectAssertion": 5,
+      "requestedNavigationIntentSatisfied": 5,
+      "navigationPartial": 1,
+      "sourceIdentifierReportingErrors": 1
+    },
+    "cases": [
+      {
+        "case": "paragraph-parent",
+        "coreSourceFactsCorrect": true,
+        "humanCitationsCorrect": true,
+        "noObservedIncorrectAssertion": true,
+        "navigationAssessment": "pass",
+        "sourceRelationshipsCorrect": true,
+        "turnSha256": "08c8d188bd5267625d030ef39de2ee089cae1efda151e74c198bbe6860078cf3"
+      },
+      {
+        "case": "cell-qualifier",
+        "coreSourceFactsCorrect": true,
+        "humanCitationsCorrect": true,
+        "noObservedIncorrectAssertion": true,
+        "navigationAssessment": "partial_complete_content_without_cell_node_selection",
+        "sourceRelationshipsCorrect": true,
+        "turnSha256": "b6c423e4eb1d57df665a241eee3976b6f250184af08d195d18fe02c861eb0be8"
+      },
+      {
+        "case": "section-subtree",
+        "coreSourceFactsCorrect": true,
+        "humanCitationsCorrect": true,
+        "noObservedIncorrectAssertion": true,
+        "navigationAssessment": "pass",
+        "sourceRelationshipsCorrect": true,
+        "turnSha256": "de8cca83fd161407ce9125442955753db40249ac83627e06edf3ee581a6ff9c2"
+      },
+      {
+        "case": "region-document",
+        "coreSourceFactsCorrect": true,
+        "humanCitationsCorrect": true,
+        "noObservedIncorrectAssertion": true,
+        "navigationAssessment": "pass",
+        "sourceRelationshipsCorrect": true,
+        "turnSha256": "f70736ddcc13aaaf2174e0f7a23735a08bf6281cf48effbd2b145a7222020b89"
+      },
+      {
+        "case": "markdown-block",
+        "coreSourceFactsCorrect": true,
+        "humanCitationsCorrect": true,
+        "noObservedIncorrectAssertion": true,
+        "navigationAssessment": "pass",
+        "sourceRelationshipsCorrect": true,
+        "turnSha256": "dd002e0f086d352cace2750a2f159bc21368bd7b8227688a2b8b72a80d08870e"
+      },
+      {
+        "case": "unsupported-locators",
+        "coreSourceFactsCorrect": true,
+        "humanCitationsCorrect": true,
+        "noObservedIncorrectAssertion": false,
+        "navigationAssessment": "pass_broad_subtree",
+        "sourceRelationshipsCorrect": false,
+        "turnSha256": "f977b4a3395ed1d9e5a502ae274b87af2cd57731fe67f43f9d3fcf5591017daf"
+      }
+    ],
+    "remainingGaps": [
+      "Cell task recovered correct paragraphs/qualifier but never selected the complete cell node or obtained cell-scoped completeness.",
+      "Unsupported-locator answer twice mislabeled a sectionId evidence handle as containingSectionId; correct human citation and source fact do not remove that reporting error."
+    ],
+    "broadScopeObservation": "Unsupported-locator turn read a 13-atom subtree; uniformly minimal scopes not demonstrated.",
+    "missingMappingCondition": "Hypothetical prompt condition; not an actual malformed live index entry."
+  },
+  "providerUsage": {
+    "logicalCallsStarted": 25,
+    "physicalResponsesAttempts": 25,
+    "knownInputTokens": 251828,
+    "knownOutputTokens": 12403,
+    "unmeteredAttempts": 0,
+    "unmeteredInputReservations": 0,
+    "unmeteredOutputReservations": 0,
+    "limits": {
+      "logicalCalls": 36,
+      "physicalResponsesAttempts": 48,
+      "inputTokensWithUnknownReservations": 2000000,
+      "outputTokensWithUnknownReservations": 200000
+    },
+    "usageComplete": true,
+    "completeInputTokens": 251828,
+    "completeOutputTokens": 12403,
+    "http429Attempts": 0,
+    "otherFailedOrUnfinishedAttempts": 0,
+    "limitation": "Responses create attempts only; excludes Azure credential, embedding and index requests. Unknown attempt reservations are guard allowances, never measured usage or billed cost.",
+    "cachedInputTokensIncludedInInput": 114048,
+    "reasoningOutputTokensIncludedInOutput": 8192,
+    "maximumProviderInputTokens": 23723,
+    "maximumLocalSerializedRequestInputEstimate": 36145,
+    "contextBudgetRefusals": 0
+  },
+  "retrievalCharges": {
+    "toolOperations": 19,
+    "knownRequestChargeRu": 136.97,
+    "unknownInstrumentedToolCharges": 0,
+    "byCase": [
+      {
+        "case": "paragraph-parent",
+        "logicalModelCalls": 4,
+        "toolOperations": 3,
+        "knownRequestChargeRu": 28.45
+      },
+      {
+        "case": "cell-qualifier",
+        "logicalModelCalls": 4,
+        "toolOperations": 3,
+        "knownRequestChargeRu": 32.3
+      },
+      {
+        "case": "section-subtree",
+        "logicalModelCalls": 5,
+        "toolOperations": 4,
+        "knownRequestChargeRu": 19.04
+      },
+      {
+        "case": "region-document",
+        "logicalModelCalls": 4,
+        "toolOperations": 3,
+        "knownRequestChargeRu": 28.62
+      },
+      {
+        "case": "markdown-block",
+        "logicalModelCalls": 5,
+        "toolOperations": 4,
+        "knownRequestChargeRu": 19.04
+      },
+      {
+        "case": "unsupported-locators",
+        "logicalModelCalls": 3,
+        "toolOperations": 2,
+        "knownRequestChargeRu": 9.52
+      }
+    ],
+    "scope": "Instrumented agent tool operations only. Excludes preflight, tool-bundle/snapshot checks, other Cosmos operations, Blob and storage. Not total Azure charges."
+  },
+  "localRepresentationMeasurements": {
+    "tokenizer": "cl100k_base",
+    "scope": "19 unique actual tool replies, not repeated history in subsequent model calls",
+    "evidenceJsonTokensLocal": 84949,
+    "standaloneSourceTextTokensLocal": 2086,
+    "selectorSerializationDeltaTokensLocal": 36216,
+    "envelopeWithoutSourceOrSelectorsTokensLocal": 46167,
+    "toolMessageJsonTokensLocal": 91132,
+    "paragraphExample": {
+      "tokenizer": "cl100k_base",
+      "evidenceJsonTokensLocal": 1567,
+      "standaloneSourceTextTokensLocal": 11,
+      "selectorSerializationDeltaTokensLocal": 549,
+      "envelopeWithoutSourceOrSelectorsTokensLocal": 1003,
+      "toolMessageJsonTokensLocal": 1696,
+      "toolMessageWrapperDeltaTokensLocal": 129,
+      "interpretation": "Local serialization estimates, not provider tokens or billing. Counterfactual components are not additive."
+    },
+    "interpretation": "Non-additive counterfactual serialization estimates, not provider tokens or billing. Source text includes structural markup."
+  },
+  "cleanup": {
+    "passed": true,
+    "immediate": {
+      "library404": 3,
+      "document404": 3,
+      "chunk404": 49,
+      "emptyQueries": 6,
+      "emptyPrefixes": 3,
+      "protectedUnchanged": true,
+      "verifiedAt": "2026-11-04T19:32:58.345008+00:00"
+    },
+    "late": {
+      "library404": 3,
+      "document404": 3,
+      "chunk404": 49,
+      "emptyQueries": 6,
+      "emptyPrefixes": 3,
+      "protectedUnchanged": true,
+      "verifiedAt": "2026-11-04T19:34:06.116040+00:00"
+    },
+    "observedSecondsBetweenAbsenceChecks": 67.771032,
+    "finalUnresolvedMutations": 0,
+    "finalUnfinishedMessages": 0,
+    "protectedLibrariesUnchangedPerRunner": 14,
+    "protectedDocumentsUnchangedPerRunner": 48,
+    "limitation": "Current live items only. Soft-delete/backups, hosted workers and indefinitely late outputs were not qualified."
+  },
+  "ownership": {
+    "events": 698,
+    "finalHeadSha256": "3450a0fd10d5e9b6aca246335f90e377de1bdfa66ce3ec30ccec66cdceccc516",
+    "original106EventHeadPreserved": true,
+    "unknownMutations": 0,
+    "unfinishedMessages": 0
+  },
+  "localValidation": {
+    "originalCandidate": {
+      "testsPassed": 1613
+    },
+    "firstRunnerBaseline": {
+      "testsPassed": 1674,
+      "warnings": 16,
+      "seconds": 193.39
+    },
+    "successfulLiveBaseline": {
+      "testsPassed": 1730,
+      "warnings": 16,
+      "seconds": 193.7,
+      "lint": "passed",
+      "formatting": "passed",
+      "referencePrivacy": "passed"
+    },
+    "correctedRunnerFocused": {
+      "testsPassed": 117,
+      "warnings": 2,
+      "seconds": 4.57
+    }
+  },
+  "postLiveGuidance": {
+    "commit": "0b120724aafb64ececb9dfe392fb5318b98e57bb",
+    "sourceFiles": [
+      "src/fli/tool.py"
+    ],
+    "testFiles": [
+      "tests/test_granular_guidance.py"
+    ],
+    "scope": "Only custom-granular-v1 read-tool description; cell completeness, evidence/authored-section/root identity and human citation guidance.",
+    "otherProfilesAndSchemasUnchanged": true,
+    "requiresReingestion": false,
+    "localFocusedTestsPassed": 59,
+    "realModelBehaviorRetested": false,
+    "cloudCallsAfterCleanup": 0,
+    "sourceSha256": {
+      "src/fli/tool.py": "f60a8014b5614dd0e883ac1a6eaadd8febf46a15b01fc031666913daeeed86d0",
+      "tests/test_granular_guidance.py": "1eed5339a666d1907c27d0758a3a4ed8b421a93f8c3850d0ca4837a31830fbff"
+    },
+    "localFocusedSeconds": 3.27,
+    "lint": "passed",
+    "formatting": "passed",
+    "referencePrivacy": "passed"
+  },
+  "remainingGates": [
+    "Two fresh bounded real-model checks of complete-cell selection and correct named-ID reporting on the guidance revision.",
+    "Hosted execution, broker redelivery and production Entra API authentication.",
+    "Large-source/context fit, sustained concurrency/scale, ANN engagement and broader quality confirmation.",
+    "Known scheduled orphan-container issue; not changed or requalified here.",
+    "Actual unavailable-mapping tool-response recovery remains outside these six model tasks."
+  ],
+  "nextAction": "Fresh two-turn qualification with the same model/search/context controls: inspect a complete-cell selector plus qualifier/citation fidelity, then verbatim named identifier values plus unavailable-locator disclosure. Stop on failure. No larger-study pack.",
+  "unavailableCounters": [
+    "complete Azure request charges and monetary billing",
+    "unmeasured hosted/broker/production-auth behavior"
+  ],
+  "privateEvidenceSha256": {
+    "controls.json": "8ddb16e4a0d04cff584236bdd291629210fd42d77376e7d163da2b8c1748f6bb",
+    "execution-result.json": "cd583dc46df9833cebe1c232ce6008ddd151bbaab8d0b1e2defa9e9b61d5f905",
+    "checks.json": "435f420b801755092cb2288e999189ee34daabc47f89ca8e5aea18c33325832e",
+    "tool-responses.json": "158bcc33ee62e33de0f826029205737d575ebc0ac77efb617a5fb9cf45c4498f",
+    "embedding-attempts.json": "2f366d1a9a0a9672dcabc25c026deacc60ec3ffebf2f1a671ff1db09f528d08a",
+    "cleanup-immediate.json": "38cf94c547019252a8bef854a0a7a9cb29fb6c305eaff9f49385b965e99e5a75",
+    "cleanup-late.json": "2a0cc29a8a9f31200de08d159d4b9028a7f5046d4853c27b59a397651432b38a",
+    "ownership-final.json": "e2bc8f1e394ad1ca6c2e5aade555c70730f157eaaa76a2425693ca490a231138",
+    "archive-receipts.json": "297fdd192251c9d70ddcd7184afe20d7f965658c29c4350ed3b9adbffc8fa2b6",
+    "mechanics-review.json": "c4771b8a2558523e9622ae0b2887752e04347b663251b725948fc631e072818c",
+    "model-review-hierarchy.json": "9ef0f099755dccaa0db2cf17720df5c3bab2272cb51925c1c52ebd48a4da3123",
+    "models/results.json": "a2ba441b0d8afecaaac3251e2314774544e4a86b390d993ec853e6f7d03894a3",
+    "models/controls.json": "b48d1e6138ac12420db7bcea7b7a4b9fd4e327a801721792630870685ec2ba76",
+    "preflight.json": "5148984a3bdccca0a034555d62bcb2f337ec20e749ee332f0e5405ec7cd0e875",
+    "measurement-review.json": "48572888f30cc833cda0b2b49cbbb8a8d858463b595738865726506e41664722",
+    "guidance-review.json": "be5012a4f520d70c35bf072b77057e24204c579da2be563c0827824fb73bd567",
+    "post-guidance-local-validation.json": "f7d5d2026c00b0ef294efbf0cd2d34f9144ee56854a00caff412a2a4d249f0c0"
+  },
+  "applicationDeployed": false,
+  "mainMerged": false,
+  "largerStudyLaunched": false,
+  "privateArchives": {
+    "schema": "fli.granular-live.final-archive-verification.v1",
+    "priorArchives": [
+      {
+        "role": "after-cleanup",
+        "files": 130,
+        "manifestSha256": "8847b0c86866e9ebf8638999abc0e6ad46cc872210e3571ee8c2bf2d833f5d69",
+        "verified": true
+      },
+      {
+        "role": "before-cleanup",
+        "files": 129,
+        "manifestSha256": "a2db99b017bbbc210c7b8707b892e60fbaa01bdb9a4e43411b79dd41570d9dac",
+        "verified": true
+      },
+      {
+        "role": "continuation-2/after-cleanup",
+        "files": 977,
+        "manifestSha256": "2adcde64f75033058100ce84ddf534eaadf1c2720758834bd6099b8a22d15e9f",
+        "verified": true
+      },
+      {
+        "role": "continuation-2/before-cleanup",
+        "files": 819,
+        "manifestSha256": "36b798897b2ce20017fcbdc38656c38a9ab16c58b7cde5861118f6ac2e0cf080",
+        "verified": true
+      }
+    ],
+    "reviewedFinal": {
+      "files": 986,
+      "manifestSha256": "dd486dfc094b871a35fb7ee6b03de0bc5ae4f67708e2e18c4c97089e021e6733",
+      "verified": true
+    },
+    "requiredReviewsAndCleanupIncluded": true,
+    "cloudCalls": 0,
+    "location": "Private operator evidence storage outside Git; locations and environment identifiers withheld."
+  },
+  "privateArchiveVerificationSha256": "68a7c7739fb311463d422731c5d4193701763a7f782b3d141a0c72b5c2105323"
+}

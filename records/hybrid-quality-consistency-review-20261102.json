@@ -1,0 +1,109 @@
+{
+  "schema": "fli.hybrid-quality.consistency-review.v1",
+  "date": "2026-11-02",
+  "reviewedResultCommit": "b0c9a114bbc36393d3577cd8d397f41faae4fda9",
+  "originalPreparationRecordSha256": "17b4276b31a601c73e5d5675d240c61bf92e0e496c994a50b3ae111bbf32a061",
+  "reviewMethod": "Existing-chat consultation, saved execution history and local artifact/code comparison; no new Azure or evaluation-model calls.",
+  "reviewTracks": [
+    "modular ingestion and successful account recovery",
+    "C1/M1 cost, lifecycle and provider binding",
+    "parallel index versioning and concurrency"
+  ],
+  "deploymentTools": {
+    "historicalCli": "Azure CLI 2.86.0 in saved traces",
+    "currentCli": "Azure CLI 2.86.0",
+    "command": "az deployment group create",
+    "artifact": "compiled ARM JSON",
+    "originalBicepGeneratorVersion": "0.48.1.52935",
+    "newCompilationForAtomicAttempts": false,
+    "templatesEqualAfterNestedDeploymentRenames": true,
+    "changedParameterNames": [
+      "accountName"
+    ],
+    "sameDeclaredCosmosApi": "2025-10-15",
+    "sameNestedDeploymentApi": "2025-04-01",
+    "sameRegion": true,
+    "sameAccountKind": true,
+    "sameCapacityMode": true,
+    "sameCapabilities": true,
+    "sameContainerPolicies": true,
+    "sameIncrementalDeploymentMode": true,
+    "atomicFailureRecordedByAzureResourceProvider": true,
+    "stagedEnablementWasNewRecoveryExperiment": true,
+    "stagedEnablementCapabilities": [
+      "EnableServerless",
+      "EnableNoSQLVectorSearch"
+    ],
+    "limits": [
+      "Per-invocation executable hashes were not captured.",
+      "The outer CLI-selected ARM HTTP API version and staged update wire request were not retained.",
+      "Matching tooling does not establish the backend failure cause."
+    ]
+  },
+  "preservation": {
+    "applicationAndCosmosFilesUnchangedFromBase": true,
+    "workerImageAndEnvironmentMatchPriorRecovery": true,
+    "embeddingDeploymentBindingUnchanged": true,
+    "frozenPlanManifestTasksUnchanged": true,
+    "confirmationQuestionsConsumed": 0
+  },
+  "concurrency": {
+    "m1LiveWorkEndedMoreThanFiveHoursBeforePreparation": true,
+    "indexVersioningCloudCalls": 0,
+    "unrelatedTenantActivityControlled": false,
+    "machineWideProcessExclusivityEstablished": false
+  },
+  "findings": [
+    {
+      "id": "fresh-health-before-ingestion",
+      "severity": "restart prerequisite",
+      "finding": "Inherited canary identity/policy matching did not establish current health; eight uploads preceded a fresh chunk health check.",
+      "action": "Require fresh owned real-chunk write/read/scoped/vector/hybrid health evidence before full-corpus ingestion, including reused containers.",
+      "implementedInExecutableGate": false
+    },
+    {
+      "id": "mounted-workflow-binding",
+      "severity": "restart prerequisite",
+      "finding": "Worker settings were verified, but the mounted workflow package and parameters were not independently reopened as in M1.",
+      "action": "Rebind actual mounted package and parameters before ingestion resumes.",
+      "implementedInExecutableGate": false
+    },
+    {
+      "id": "failed-ingestion-cleanup",
+      "severity": "restart prerequisite",
+      "finding": "Normal scope cleanup assumed all sources ready; failure recovery needed a separately reviewed tool.",
+      "action": "Predeclare partial-ingestion cleanup, quiescence evidence and stop-on-unknown rules before another upload batch."
+    },
+    {
+      "id": "charge-counter-label",
+      "severity": "report correction",
+      "finding": "The existing chunkWriteChargeKnown meter includes collision-verification reads.",
+      "action": "Label 28450.86 RU an instrumented chunk-store subtotal and separate observed broker redelivery from unknown provider retries.",
+      "numbersChanged": false
+    },
+    {
+      "id": "private-staged-handoff-path",
+      "severity": "handoff correction",
+      "finding": "The bound historical README names the preparatory agent directory rather than the coordinator execution directory.",
+      "action": "Preserve the hashed README and provide a corrected private restart note; do not reuse consumed mutation ledgers."
+    }
+  ],
+  "prospectiveIntegration": {
+    "indexVersioningCommit": "1cf7e935a16a0073093fa0f8214251a1bd252a3c",
+    "duplicateEvidenceId": "E67",
+    "frozenCodeHashesRejectChangedFoundation": true,
+    "directCaptureNeedsAdaptationForRequestScopedSearcher": true,
+    "runtimeCompatibilityTestExecuted": false
+  },
+  "accountingAudit": {
+    "workerAttempts": 26,
+    "knownInstrumentedChunkStoreRu": 28450.86,
+    "completeCounterAttempts": 3,
+    "partialCounterAttempts": 21,
+    "missingCounterAttempts": 2,
+    "attemptsWithBrokerDeliveryNumberAboveOne": 18,
+    "providerRetries": null,
+    "totalBilledCost": null
+  },
+  "decision": "No established deployment-tool/configuration cause. Keep the benchmark frozen; enforce the new preparation prerequisites before any restart. No cloud retry, architecture change or ranking recommendation follows from this review."
+}

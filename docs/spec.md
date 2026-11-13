@@ -7,7 +7,57 @@ inputs, source-based scoring and matched diagnostic controls. It changes no
 application architecture, profile recipe, query policy, permission or lifecycle
 contract in this specification. Production and foundation gates remain open.
 
+The [I1 normal-adapter integration](i1-selector-integration.md) enables accepted
+selector handles in the consuming `IndexClient`, with explicit legacy rollback.
+The service's REST defaults, compact evidence format, query policies and ingestion
+profiles retain their existing behavior. This is not a provider or storage choice.
+
+The [hybrid quality experiment](hybrid-quality-comparison.md) (E67) freezes a
+source-recall and answer-quality comparison. Its [completed bounded result](hybrid-quality-results-20261103.md)
+shows improved initial source recall for hybrid, without an established final-answer
+quality gain under matched large-context controls. Both arms expose a source-structure
+fidelity limitation. The pack is consumed; broader quality and production gates
+remain open. Application defaults and architecture are unchanged.
+
 ## 1. Scope
+
+The [granular navigation candidate](granular-source-navigation.md) adds opt-in
+`custom-granular-v1`: source atoms and authored hierarchy share an immutable
+artifact, and existing reads accept pinned outline-node and section/subtree
+selectors. Source scope, unsupported formats, passage/embedding changes and
+re-ingestion requirements are versioned in that contract. Existing recipes,
+default ingestion, query policy and context accounting retain their behavior.
+Its [bounded live qualification](granular-navigation-live-qualification.md) passed
+source publication, navigation and lifecycle gates. Granular tool guidance now
+requires a cell selector to establish cell completeness, distinguishes versioned
+evidence-unit IDs from containing authored-section/root IDs, and directs human
+citations to the returned citation field. These are locally tested responses to
+two observed model gaps. The [two-turn follow-up](granular-navigation-followup.md)
+demonstrates complete-cell reading and exact named-field reporting, but exposes
+ineffective size-only outline inspections followed by full-document recovery.
+The [outline contract clarification](granular-outline-contract.md) now documents
+that `includeText=false` returns size/coverage only, while true/default returns
+outline entries in outline mode. Granular inspection responses carry a pinned,
+same-scope `readSelector` with true and the unchanged budget. The later
+[refinement qualification](granular-navigation-refinement.md) passed actual
+outline-to-focused-source navigation and correct citation with a copied selector;
+the earlier failed attempts remain preserved. Full-document fallback does not pass.
+
+The granular navigation refinement adds exact original paragraph/Markdown-block
+prefixes of at most 160 Unicode characters to outline leaves, with source length
+and truthful truncation flags. These are explicitly navigation previews, not
+source evidence or complete reads, even when the whole short atom fits. The caller
+must copy the returned selector to read and cite the source. Authored breadcrumbs
+and node scope summaries distinguish atoms, complete table/cell subtrees, section
+own content and authored subtrees. In granular compact/references reads only,
+document-level selectors replace redundant per-row document/full expansion hints;
+leaf child-outlines and duplicate subtree/parent selectors are omitted. Original
+source bodies, raw provenance, citations, snapshot pins and lifecycle checks stay
+intact. Inspections and budget refusals return no preview or source body, and
+preview delivery cannot satisfy the agent's source-grounding check. This is a
+presentation/navigation change requiring no re-ingestion for existing granular
+artifacts. Its bounded live qualification passed; broader quality, recall and
+efficiency remain unestablished. The granular profile stays opt-in on integration.
 
 The File Library Index (the **index**) replaces Azure AI Search as the store and search engine behind the platform's file libraries. It:
 
@@ -440,6 +490,35 @@ still fails the frozen 20% gate; selectors remain opt-in and no default changes
 (E66). Production Entra authentication, broker redelivery and broader concurrent
 revocation remain open. R2's representation experiments remain lab-only and select
 no profile change.
+
+The separate [granular reference presentation candidate](granular-reference-presentation.md)
+adds `run_turn(..., presentation="navigation")` without changing REST/default
+formats. Exact turn-local application references resolve to existing pinned
+requests through normal access/source/lifecycle checks. Readable results keep
+source wording, labels, citations, selected coverage and limitations at use;
+document information refreshes at its first retained occurrence. Canonical
+diagnostics remain available through an authorized same-scope `details=true`
+read. Unknown/stale/session-crossing references never rebind; restored prose
+requires fresh authorized acquisition. Full prior tool transcripts cannot restore
+the registry implicitly. Existing response/context budget behavior is unchanged.
+The bounded presentation comparison is held for integration: local serialization
+improved, but the real model mixed reference and canonical-selector arguments and
+failed to obtain source text. The candidate's invocation and recovery contract
+needs repair and a fresh focused qualification before adoption.
+
+The [reference-contract follow-up](granular-reference-contract-repair.md) keeps
+that failed comparison intact. Its opt-in tool contract separates explicit pinned
+bootstrap reads from mutually exclusive action-reference reads, rejects action
+values in source-locator fields, and offers executable recovery shapes without
+performing them automatically. Document references are top-level search pins,
+not read actions. New-turn short references remain expired and require authorized
+reacquisition; the bounded comparison includes that cost and retains raw API and
+default behavior.
+Its bounded initial and delayed source tasks now pass with correct citations and
+no internal-ID display. General integration remains on hold: the deliberately
+expired-bookmark workflow used 60.47% more measured input than compact across all
+three turns, despite a 24.88% initial-turn saving. This is one declared recovery
+route, not a universal cost result or a context-budget change.
 
 ## 7. Ingestion
 

@@ -1,0 +1,130 @@
+{
+  "schema": "fli.hybrid-quality.completion-acceptance.v1",
+  "status": "accepted",
+  "acceptedAt": "2026-11-03T18:23:52.293817+00:00",
+  "measuredImplementationCommit": "0498d0277a45f3d844138b002b95c2efd51ffeee",
+  "applicationBaselineCommit": "3980333ee8453af48c7133cab24522868701d1cc",
+  "resumedCommit": "24e7db95c5a7600ae12c0d641e89df91c180778b",
+  "mainRebaseApplied": false,
+  "applicationArchitectureOrPoliciesChanged": false,
+  "frozenSourceTasksPlanAndDependencyLockChanged": false,
+  "confirmationPackStatus": "consumed",
+  "completedMatrix": {
+    "sources": 8,
+    "publishedChunks": 36,
+    "uniqueQuestions": 48,
+    "answerableQuestions": 40,
+    "missingValueQuestions": 8,
+    "directSearches": 96,
+    "answerTurns": 192,
+    "answerRepeatsPerArm": 2,
+    "answerableTurnsPerArm": 80,
+    "missingValueTurnsPerArm": 16,
+    "independentSamplingUnit": "question; repeats are correlated"
+  },
+  "acceptedArtifacts": [
+    {
+      "path": "records/hybrid-quality-ingestion-20261103.json",
+      "sha256": "46bf4b9c11e6de798b82626f3c144d454ceef5c9d6d3d596be3fdfcf54c71fb8",
+      "accepted": true
+    },
+    {
+      "path": "records/hybrid-quality-direct-20261103.json",
+      "sha256": "9adcc404cdf8b522bae03c9246c1bf67b0867213171542b9626f39dd1474beb2",
+      "accepted": true
+    },
+    {
+      "path": "records/hybrid-quality-answering-20261103.json",
+      "sha256": "a6a3646e44a12eaa17885fd71c39ace7021f456c972a10591afca40a8f1cb122",
+      "accepted": true
+    },
+    {
+      "path": "records/hybrid-quality-traces-20261103.json",
+      "sha256": "779f5719e2094ce84502e2fc3989bfcac55da8149afa2e745e21ceb36e80dc1a",
+      "accepted": true
+    },
+    {
+      "path": "records/hybrid-quality-cleanup-20261103.json",
+      "sha256": "2288c36d3e711935d1e0b6e3d587e8190fc3e839a5a3ffab55d47d33f583fe8c",
+      "accepted": true
+    }
+  ],
+  "acceptanceMeaning": "This receipt accepts the immutable export bytes, including exports whose internal status retains candidate provenance. Answer sourceTraceUsage is supplied by the separate accepted trace artifact.",
+  "frozenHashes": {
+    "manifest.json": "d7d181754e68df84675c077ba6a71ab6df8929d26398982451eafa26ff036c5c",
+    "tasks.json": "f83b892a71efe5ba7fb97843b10fa451cbf8b45e663fef0a7f61a5789968dfff",
+    "plan.json": "a159a3e728ae46382f7982bc4b0e8419b1473aaa848371562670398c67fadfe6"
+  },
+  "privateEvidenceHashes": {
+    "gold": "dc820285a855af9282d4e770134cb8f1a0058d435474c1844fcc323bf106c077",
+    "directAccepted": "cd7834d9724762e043f311efd6db3087aaa53670920da661062a586fdbe61aaf",
+    "finalization": "c82aac8543661c4cdb077b10487467f7fa446802c68e91b0af937af7b9495225",
+    "answerReviews": "cd4a819ca88fba9f6a6dececd23b5bff35810ce6ad2f4fa6b99a96cbd5d3b406",
+    "answerReviewAcceptance": "6f72cc985ce872045e9d277e13a0a97fc3f4b1888bec57bfc107bc6a99a2ef8d",
+    "answerScorecard": "e9f637e5ffc92e2569b5e454eb20e85ccff82ea45d3465336a3c8a62e220ba7a",
+    "independentReportingAudit": "42c406508331e0376e9b2c7d672cd534070a09afda66129b6045c8116cfc615d",
+    "finalSourceArchiveReconciliation": "47c42ed62ec65f98159ea68ae716e84809938f60ec4ca1a7aa5d437889acd2f3"
+  },
+  "review": {
+    "mode": "manual source-based assistant review with opaque arm-hidden packets, independent failure/disagreement adjudication before map unblinding",
+    "answerTurnsReviewed": 192,
+    "parentIndependentlyReviewedCells": 24,
+    "additionalChannelAuditCells": 72,
+    "qualityFailureCellsIndependentlyReviewed": 3,
+    "qualityDisagreementCasesIndependentlyReviewed": 2,
+    "directAuditChecks": 49,
+    "finalIndependentReportingChecks": 9223,
+    "fullyBlindedHumanStudy": false,
+    "strictHq40PrimaryRetained": true,
+    "hq40Sensitivity": {
+      "interpretation": "Lenient completion/fact interpretation of overlapping exclusions; does not repair local qualifier/citation/relationship error or whole-region structure loss.",
+      "hybridTaskCompletionAnswerableTurns": 80,
+      "hybridMeanRequestedFactCoverage": 1.0,
+      "primaryScorecardChanged": false
+    },
+    "sharedCompleteDefinitionRegionUncreditedTurns": 4
+  },
+  "validation": {
+    "fullLocalCheckPassedTests": 1264,
+    "subsequentFocusedPassedTests": 40,
+    "sameTestsNotAddedAsIndependentTotal": true,
+    "lintAndFormatPassed": true,
+    "offlineRescoreByteIdentical": true,
+    "applicationAndPolicyDiffFromBaselineEmpty": true,
+    "frozenPackAndLockDiffFromResumeEmpty": true,
+    "noSelectiveReplay": true,
+    "finalSourceCodeModelRuntimeUnchanged": true
+  },
+  "privateDurableRetention": {
+    "archiveSha256": "f7b928b17f4e9c392b6877c6efdeef91389a2d133efb1289221fc68f1b72f0d6",
+    "fileCount": 3749,
+    "sourceBytes": 598972292,
+    "archiveBytes": 146082410,
+    "allArchiveMembersAndSourcesHashVerified": true,
+    "outsideGit": true,
+    "outsideTemporaryDirectories": true,
+    "beforeOwnedDeletion": true
+  },
+  "decision": {
+    "defaultsChanged": false,
+    "hybridStatus": "bounded_opt_in_source_recall_candidate",
+    "initialSourceRecallImproved": true,
+    "finalAnswerQualityGainEstablished": false,
+    "billedCostOrProductionLatencyGainEstablished": false,
+    "efficiencyThresholdVetoApplied": false,
+    "r3Started": false,
+    "nextStep": "Investigate shared source structure and clause-reference quality separately; freeze broader harder fresh confirmation before changing ranking, representation or baseline."
+  },
+  "openGates": [
+    "fresh Cosmos account/vector capability provisioning",
+    "earlier failed fenced scope cleanup",
+    "M1 scheduled orphan discovery/configured-container defect",
+    "complete original list/table-qualifier fidelity",
+    "broader and more discriminating non-DOCX/image and domain quality",
+    "library spanning physical ranges/global top-k merging",
+    "large-library ANN engagement/crossover, concurrency, hot ranges, split transients and complete telemetry",
+    "production hosted Entra authorization, real broker redelivery, sustained replacement/deletion, cross-instance revocation",
+    "complete billed cost and controlled production latency",
+    "versioned integration onto main and request-scoped search instrumentation compatibility"
+  ]
+}

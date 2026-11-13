@@ -1,0 +1,168 @@
+{
+  "schema": "fli.hybrid-quality.plan.v1",
+  "baseCommit": "3980333ee8453af48c7133cab24522868701d1cc",
+  "arms": [
+    "vector",
+    "hybrid"
+  ],
+  "repeats": 2,
+  "evidenceView": "compact",
+  "selectorMode": "handles",
+  "sourceStrategy": "microsoft-indexer-layout-v1",
+  "manifestSha256": "d7d181754e68df84675c077ba6a71ab6df8929d26398982451eafa26ff036c5c",
+  "tasksSha256": "f83b892a71efe5ba7fb97843b10fa451cbf8b45e663fef0a7f61a5789968dfff",
+  "goldSha256": "dc820285a855af9282d4e770134cb8f1a0058d435474c1844fcc323bf106c077",
+  "cases": [
+    "hq-01",
+    "hq-02",
+    "hq-03",
+    "hq-04",
+    "hq-05",
+    "hq-06",
+    "hq-07",
+    "hq-08",
+    "hq-09",
+    "hq-10",
+    "hq-11",
+    "hq-12",
+    "hq-13",
+    "hq-14",
+    "hq-15",
+    "hq-16",
+    "hq-17",
+    "hq-18",
+    "hq-19",
+    "hq-20",
+    "hq-21",
+    "hq-22",
+    "hq-23",
+    "hq-24",
+    "hq-25",
+    "hq-26",
+    "hq-27",
+    "hq-28",
+    "hq-29",
+    "hq-30",
+    "hq-31",
+    "hq-32",
+    "hq-33",
+    "hq-34",
+    "hq-35",
+    "hq-36",
+    "hq-37",
+    "hq-38",
+    "hq-39",
+    "hq-40",
+    "hq-41",
+    "hq-42",
+    "hq-43",
+    "hq-44",
+    "hq-45",
+    "hq-46",
+    "hq-47",
+    "hq-48"
+  ],
+  "answering": {
+    "contextAllowancePerRun": 200000,
+    "reasoningEffort": "medium",
+    "maxOutputTokens": 8000,
+    "maxAttempts": 3,
+    "transport": "responses",
+    "store": false,
+    "automaticTruncation": false,
+    "model": {
+      "model": "gpt-6.1-sol",
+      "version": "2026-09-29"
+    },
+    "instructions": "Use the attached library to answer the question. Read original source evidence, distinguish source statements from inference, preserve stated conditions and limitations, and cite the correct source file and location. Do not infer an answer from a generated description. If the requested evidence is unavailable, say precisely what could not be verified."
+  },
+  "direct": {
+    "top": 8,
+    "includeNeighbors": true,
+    "repeats": 1,
+    "order": "alternate-arm-first-by-case",
+    "maxEvidenceTokens": 200000,
+    "filters": {}
+  },
+  "queryAudit": {
+    "clientTerms": "query.lower(); regex [0-9A-Za-z]+; first occurrence deduplication; first 16 terms",
+    "clientStopwordRemoval": false,
+    "clientStemming": false,
+    "clientPhraseOrIdentifierPreservation": false,
+    "maximumLexicalTerms": 16,
+    "rrfWeights": "omitted; service defaults",
+    "fullTextPolicy": {
+      "defaultLanguage": "en-US",
+      "fullTextPaths": [
+        {
+          "path": "/text",
+          "language": "en-US"
+        }
+      ]
+    },
+    "vectorRouting": "library prefix partition_key=[libraryId]",
+    "hybridRouting": "omit partition_key; retain exactly one libraryId equality",
+    "fetchAtTop8": 16,
+    "postQuerySelection": "active-generation visibility filter then first 8; neighbors independently expanded",
+    "zeroLexicalTerms": "existing render_search falls back to vector; receipt records effective mode",
+    "querySourceSha256": "bdbea3ca40f7d581f80431df0cd331ccfede09bae5d4354da725745bd782e6a1",
+    "searchSourceSha256": "0213d535f3d0fde0da7202e8fc127d8affac827e03967fc573bef17cb50041a4",
+    "containerDefinitionSha256": "553f3e07f7c133f9d57705f15b4e93a3bfe066d3de43677a9d5643ef56b9b958"
+  },
+  "preparationQueries": [
+    {
+      "id": "prep-security",
+      "question": "Buyer-led Security Assurance: accreditation and protective monitoring of Government Data.",
+      "expectedSourceIds": [
+        "hq-08-1"
+      ]
+    },
+    {
+      "id": "prep-exit",
+      "question": "Exit Management: transfer of supplier contracts and assets to a replacement supplier.",
+      "expectedSourceIds": [
+        "hq-09"
+      ]
+    }
+  ],
+  "corpusAdequacy": {
+    "minimumPublishedChunksExclusive": 16,
+    "minimumDocumentsWithMultipleChunks": 6,
+    "expectedDocuments": 8,
+    "allPublishedAndReady": true
+  },
+  "primaryOutcomes": [
+    "macro required-original-region recall over 40 answerable questions",
+    "macro requested-fact recall over 40 answerable questions",
+    "all-required-evidence delivered per question",
+    "source-reviewed answer completion, support, citation accuracy, required-source coverage and appropriate abstention"
+  ],
+  "secondaryOutcomes": [
+    "useful-hit precision; retain unjudged hits explicitly",
+    "observed provider usage, known RU, latency, visible partition contacts, retries and failures; no fabricated totals"
+  ],
+  "inference": {
+    "unit": "question",
+    "familiesOverlap": true,
+    "repeatsAreIndependentQuestions": false,
+    "promotionRule": "Recall and answer quality first; no automatic threshold or efficiency veto. An inconclusive outcome is valid.",
+    "corpusScope": "Purposeful UK public procurement contract templates; eight originals; no enterprise-wide accuracy estimate."
+  },
+  "execution": {
+    "order": "direct retrieval first; repeat 1 vector then hybrid per question; repeat 2 hybrid then vector per question",
+    "noSelectiveReruns": true,
+    "noOutcomeDrivenTuning": true,
+    "performanceWindows": "coordinator serialized; no other measurement runs",
+    "answeringReceivesGold": false,
+    "newContainersRequireCanary": true,
+    "sameStoredRowsBeforeAndAfter": true
+  },
+  "cleanup": {
+    "ownedScopesOnly": true,
+    "deleteNewEvaluationLibraryAfterFinalCaptures": true,
+    "removeOwnedTemporaryAnsweringDeployment": true,
+    "preserveR0P1I1AndUnrelatedResources": true,
+    "ordinaryRetentionRemains": true,
+    "scheduledReconciliationGateUnclosed": true
+  }
+}

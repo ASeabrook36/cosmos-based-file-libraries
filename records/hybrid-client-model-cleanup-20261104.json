@@ -1,0 +1,80 @@
+{
+  "schema": "fli.hybrid-client-model.resource-closure.v1",
+  "status": "complete",
+  "producerCommit": "8ead7998b175ed5dbc80bd0bdd66516e2b519e18",
+  "ownedModelDeploymentsRemoved": 2,
+  "preExistingDeploymentsUnchanged": 2,
+  "ownedLibraryRemoved": 1,
+  "ownedDocumentsRemoved": 8,
+  "ownedChunksRemoved": 36,
+  "ordinaryCleanupLateRecheckSeconds": 60,
+  "independentAbsence": {
+    "passes": 2,
+    "exactPoint404s": 90,
+    "scopedEmptyQueries": 4,
+    "liveBlobPrefixesEmpty": 2,
+    "lateRecheckSeconds": 60,
+    "dataPlaneRequests": 110,
+    "cloudMutations": 0
+  },
+  "protectedLibrariesUnchanged": 5,
+  "protectedDocumentsUnchanged": 24,
+  "applicationDeployed": false,
+  "applicationDefaultsChanged": false,
+  "mainMerged": false,
+  "ongoingScalingResourcesModified": false,
+  "largerStudyLaunched": false,
+  "knownRuSubtotals": {
+    "acceptedSdkMatrixReferencesWarmupsSnapshots": 26787.33,
+    "invalidSdkCollectionRetained": 11957.61,
+    "ingestionInstrumentedChunkStore": 26005.97,
+    "pilotInstrumentedTools": 29701.34,
+    "sumOfTheseNonOverlappingKnownSubtotals": 94452.25,
+    "completeResourceTotal": null
+  },
+  "privateEvidenceArchives": [
+    {
+      "phase": "pre-cleanup",
+      "archiveSha256": "17f9789e7c4ef30a8a3209c543d6c4bd6b5784e14b4ab7367c8b11188e3c1237",
+      "archiveBytes": 831286653,
+      "fileCount": 14803,
+      "sourceBytes": 3019177318,
+      "allArchiveMembersAndSourcesHashVerified": true,
+      "credentialMaterialExcluded": true,
+      "knownCredentialValuesAndEncodingsScanned": true,
+      "manifestSha256": "47c85de0ec141fb833383749d8d011a93a5110277a34d81febadc17ac2deba01",
+      "separateVerifyPass": true
+    },
+    {
+      "phase": "post-cleanup",
+      "archiveSha256": "dba9c7494ef61fdf331197658215d5f75c02af1fafa0a6ca44c43f3e70e54b53",
+      "archiveBytes": 831425885,
+      "fileCount": 15178,
+      "sourceBytes": 3020198900,
+      "allArchiveMembersAndSourcesHashVerified": true,
+      "credentialMaterialExcluded": true,
+      "knownCredentialValuesAndEncodingsScanned": true,
+      "manifestSha256": "7f1385bb7c873b9c3c569f93a2b26dedce5edb20c3ada1a83e3ada00750b2a8d",
+      "separateVerifyPass": true
+    }
+  ],
+  "evidenceSha256": {
+    "cleanup-acceptance.json": "79cfee25ed1da7bfbf33450cada7db1ec28f65c473fda894e3f14a51e52ed754",
+    "source-audit-after-reviewed.json": "e505b3bc1963385fbc2a15042a3eb149557f990c3751a6ddaaa0cd152adf8a73",
+    "source-before.json": "0be3ff9eadc41932cda70b4bf538f4c6747e391e7dbf1266c1d9b86ea531b4a5",
+    "source-after.json": "0be3ff9eadc41932cda70b4bf538f4c6747e391e7dbf1266c1d9b86ea531b4a5",
+    "owned-scope/cleanup-summary.json": "a9804db137399756402ebbb2ebf535a87a1dc673740bea31b2d04c869dadef0b",
+    "post-cleanup-verification/summary.json": "62c763905f09fe0f06bb2c1bfef352653ab1eb76e94f62bed7f6ccadb9536a9f",
+    "post-cleanup-verification/execution.json": "6af7c1d2b8dad7090c7adee527a6063d97254a55296ee131b42b00c9eeea59cf",
+    "post-cleanup-inputs-v2-corrected.json": "9718f16765545e718b8ebf2c56b7f574a4ee8d82e4b0d6176986913a6b6eccd6",
+    "preservation-after-cleanup.json": "9905162a7986026c2a10fb5dcaae6768e081b4c80b5b7740b9f74187dcf6a9b9",
+    "model-management/sol/cleanup-verified.json": "8de7b34577772436f874a4471cc8262f62cdac902e8bd11d61d9b86b09209580",
+    "model-management/budget/cleanup-verified.json": "371aa6cb6872a6fc5a3eb99ce44f2776dc44da350f4b2e183dd0b3f0a99ff820"
+  },
+  "limitations": [
+    "Durable local private archives, not offsite backups; no raw content or credentials published.",
+    "Live namespace absence only; soft-delete, versions, snapshots/backups and indefinite late output not purged or guaranteed.",
+    "Earlier failed/fenced scopes remain protected; known scheduled-orphan defect remains open.",
+    "Token-price illustrations and RU subtotals are not a complete Azure invoice."
+  ]
+}

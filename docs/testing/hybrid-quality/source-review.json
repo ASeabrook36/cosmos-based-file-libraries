@@ -1,0 +1,56 @@
+{
+  "schema": "fli.hybrid-quality.source-review.v1",
+  "reviewedOn": "2026-11-02",
+  "timing": "Before all retrieval, ingestion evaluation and answering outcomes; no outcome-based selection or tuning",
+  "manifestSha256": "d7d181754e68df84675c077ba6a71ab6df8929d26398982451eafa26ff036c5c",
+  "tasksSha256": "f83b892a71efe5ba7fb97843b10fa451cbf8b45e663fef0a7f61a5789968dfff",
+  "privateGoldSha256": "dc820285a855af9282d4e770134cb8f1a0058d435474c1844fcc323bf106c077",
+  "sourceCount": 8,
+  "sourceRegionCount": 104,
+  "requiredFactCount": 62,
+  "answerableCases": 40,
+  "unanswerableCases": 8,
+  "originalSourceReviews": [
+    {
+      "role": "independent-direct-measurement-implementer",
+      "cases": "hq-01 through hq-24",
+      "sourceCoordinateChecksReported": 51,
+      "originalByteHashesVerified": 8,
+      "blockingFindings": 0
+    },
+    {
+      "role": "independent-answer-replay-implementer",
+      "cases": "hq-25 through hq-48",
+      "sourceCoordinateChecksReported": 61,
+      "originalByteHashesVerified": 8,
+      "blockingFindings": 0
+    }
+  ],
+  "reviewCaveat": "Grade the requested meaning and conditions, not every surrounding sentence in a full gold paragraph. Unlabelled hits remain unjudged.",
+  "prospectiveCorrections": [
+    "Count original OOXML body text once to avoid duplicated merged cells in local token estimates.",
+    "Retain original meaningful upload filenames and freeze source titles in supported metadata tags.",
+    "Correct ICT, Processing Data and Buyer-led Assurance source versions to v1.3, confirmed against original published filenames and footers.",
+    "Each unanswerable task explicitly repeats its requested missing actual value in the abstention criterion."
+  ],
+  "localValidation": {
+    "command": "pytest -q tests/test_hybrid_quality_corpus.py tests/test_retrieval_r0_corpus.py",
+    "passed": 17,
+    "ruffCheck": "passed",
+    "ruffFormatCheck": "passed",
+    "originalVerification": "8 sources, 104 regions, 62 facts; byte and source-anchor hashes matched",
+    "freshPublicReacquisition": "8 original files downloaded to a new private directory; same deterministic gold digest reconstructed",
+    "modelCalls": 0,
+    "cloudResourceCalls": 0
+  },
+  "untestedGates": [
+    "Actual Microsoft layout extraction fidelity and published chunk census",
+    "Cloud retrieval readiness and direct source recall",
+    "Controlled answering quality and costs",
+    "Actual deployment lifecycle cleanup"
+  ],
+  "codeSha256": {
+    "scripts/hybrid_quality_corpus.py": "e11aa8dfeadcd3a0bdbb7c27b9dda7500f3181e9fb4e331b8b0592e0de27ca14",
+    "tests/test_hybrid_quality_corpus.py": "a5dd01a4e330d83b51a23e8052e85269f3aaa24ecbcef67fcfe77f40797ff3f5"
+  }
+}

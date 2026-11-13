@@ -1,0 +1,192 @@
+{
+  "schema": "fli.hybrid-quality.restart-result.v1",
+  "date": "2026-11-03",
+  "startingCommit": "24e7db95c5a7600ae12c0d641e89df91c180778b",
+  "reviewedHelperCommit": "031774d",
+  "mainRebaseApplied": false,
+  "applicationAndContainerPolicyChanges": false,
+  "frozenPlanSha256": "a159a3e728ae46382f7982bc4b0e8419b1473aaa848371562670398c67fadfe6",
+  "status": "restart_prerequisites_passed_confirmation_pending",
+  "smoke": {
+    "startedAt": "2026-11-03T14:49:49.435799+00:00",
+    "completedAt": "2026-11-03T14:50:26.055531+00:00",
+    "status": "passed",
+    "checks": {
+      "writes": {
+        "expectedRows": 14,
+        "completedRows": 14
+      },
+      "pointReads": {
+        "expectedRows": 14,
+        "matchingRows": 14
+      },
+      "scopedQuery": {
+        "expectedChunks": 12,
+        "returnedChunks": 12
+      },
+      "vectorQueries": [
+        {
+          "queryId": "smoke-1",
+          "resultCount": 3,
+          "foreignRows": 0,
+          "route": "library-prefix"
+        },
+        {
+          "queryId": "smoke-2",
+          "resultCount": 3,
+          "foreignRows": 0,
+          "route": "library-prefix"
+        }
+      ],
+      "hybridQueries": [
+        {
+          "queryId": "smoke-1",
+          "resultCount": 3,
+          "foreignRows": 0,
+          "route": "no-partition-key"
+        },
+        {
+          "queryId": "smoke-2",
+          "resultCount": 3,
+          "foreignRows": 0,
+          "route": "no-partition-key"
+        }
+      ],
+      "hybridListsDiffer": true,
+      "cleanup": {
+        "expectedRows": 14,
+        "deletedRows": 14,
+        "point404Count": 14,
+        "scopedRows": 0,
+        "latePoint404Count": 14,
+        "lateScopedRows": 0,
+        "lateRecheckSeconds": 30
+      }
+    },
+    "embeddingUsage": {
+      "requests": 1,
+      "prompt_tokens": 4142,
+      "throttled": 0,
+      "retries": 0,
+      "tokens_reported": true
+    },
+    "sourceDisjointFromConfirmation": true,
+    "embeddingModel": {
+      "format": "OpenAI",
+      "name": "text-embedding-3-large",
+      "version": "1"
+    },
+    "embeddingSku": {
+      "name": "GlobalStandard",
+      "capacity": 150
+    },
+    "indexEngagementClaim": false,
+    "performanceClaim": false,
+    "hybridIntermediateResponses": {
+      "http400Substatus1004": 2,
+      "http200": 6,
+      "interpretation": "Installed SDK handles cross-partition query not servable by selecting partitioned execution; both logical hybrid queries completed.",
+      "e17Float16ConversionObserved": false
+    }
+  },
+  "workflow": {
+    "status": "complete",
+    "managementGets": 12,
+    "checks": {
+      "workerReadyRevisionMatchesTemplate": true,
+      "workerReadyRevisionHealthy": true,
+      "workerImageUsesImmutableDigest": true,
+      "workerConfigurationUnchanged": true,
+      "workerDataTargetsMatchSettings": true,
+      "workerWorkflowTargetMatchesSettings": true,
+      "workerEmbeddingMatchesSettings": true,
+      "workflowEndpointBelongsToCapturedHost": true,
+      "workflowEasyAuthEnabled": true,
+      "workflowRequiresAuthentication": true,
+      "mountedFilesMatchReviewedPackage": true,
+      "mountedFilesMatchPriorM1": true,
+      "mountedEmbeddingBindingMatchesActualDeployment": true,
+      "mountedBlobTargetMatchesSettings": true,
+      "mountedManagedIdentityProviders": true,
+      "mountedDIConnectionMatchesLive": true,
+      "invokedTriggerIsPOSTOnly": true,
+      "profileRecipeUnchanged": true,
+      "actualEmbeddingDeploymentUnchanged": true
+    },
+    "mountedPackageSha256": "3513c6e193eabb4e063c54b7cee3ca74dc499635d91ddcdd0d0d79b90bd921b0",
+    "limits": [
+      "Mounted files were freshly reopened; canonical JSON equality binds all reviewed package members. Exact served byte hashes are retained separately from the ZIP byte hash.",
+      "Document Intelligence implementation is managed. Mounted action/model/API parameters are bound, not a frozen provider implementation build.",
+      "Worker immutable image and ready-revision configuration are bound; executing container bytes were not inspected.",
+      "Authentication configuration is checked. This reader does not invoke the workflow or establish fresh runtime denial behavior.",
+      "Captures are sequential rather than a transactional multi-service snapshot."
+    ]
+  },
+  "preservation": {
+    "capturedAt": "2026-11-03T14:44:22.123122+00:00",
+    "rows": [
+      {
+        "scope": "r0",
+        "libraries": 3,
+        "documents": 15,
+        "unchanged": true
+      },
+      {
+        "scope": "p1",
+        "libraries": 1,
+        "documents": 5,
+        "unchanged": true
+      },
+      {
+        "scope": "i1",
+        "libraries": 1,
+        "documents": 4,
+        "unchanged": true
+      }
+    ],
+    "searches": 0,
+    "mutations": 0
+  },
+  "ingestionGate": {
+    "actualLiveReceiptsValidated": true,
+    "partialCleanupPlanDeclaredBeforeOwnership": true,
+    "maximumNewEvaluationLibraries": 1,
+    "oldFailedLibraryExcludedFromNewOwnership": true,
+    "freshEvidenceRequiredForNewCreateOrUpload": true,
+    "historicalCleanupAndCompletedUploadPollingPreserved": true
+  },
+  "localValidation": {
+    "fullSuitePassed": 1264,
+    "additionalNewRegressionPassed": 1,
+    "finalTargetedRestartTestsPassed": 40,
+    "uniqueTestsPassed": 1265,
+    "fullSuiteExistingWarnings": 14,
+    "lintPassed": true,
+    "formatPassed": true,
+    "privacyPassed": true,
+    "pipCheckPassed": true
+  },
+  "confirmation": {
+    "directSearches": 0,
+    "answeringTurns": 0,
+    "questionsUnconsumed": 48
+  },
+  "privateReceiptHashes": {
+    "smokeHealth": "d0c505b8e7e110a4ecc7bd8e5440b18be40ad1472dffc30368b90c66486644a7",
+    "smokeOwnership": "16fdcc7d686516d832835ff36e352c45e3fa6f283dd6bb07ebd61f3cad8297b3",
+    "workflowBinding": "c2f8cc57e080970a22e11b2600c8202f31dc96ec2a6038327bbb3e9e6afd39ba",
+    "restartPreflight": "bf9c24c78ab3a3aa1cf887cff0e140966a6b46f1986df707ba829bad6d785014",
+    "partialCleanupPlan": "039fdac7fa4c1045c721c47fc6f2253e30debd009c4da8e5099bf175712e5307",
+    "restartLocalValidation": "dffcb4332ccfb598e2c29c7d7f3c0e6b426f8500923b3b80d84accc162c54b96",
+    "protectedPreservation": "3d697ccf745fcad4de70231c67b3abdfc6527633a70dfc90ee7b8b55172cfbcc",
+    "fullLocalCheck": "fd02db89e58597bfd3d6d95916076cd103ff393d6cc9e99b83366e596e347fbc",
+    "finalRestartTests": "57f349ccc61d88b4d124a9fbe61599da3c02265ec21265c669af0e83c9004b63"
+  },
+  "independentReview": {
+    "smokeArtifactReferencesVerified": 92,
+    "workflowInputAndArtifactReferencesVerified": 35,
+    "rawCreatesAndDeletesExactlyOnce": true,
+    "rawSqlParametersAndRoutesVerified": true,
+    "decision": "proceed_with_frozen_ingestion"
+  }
+}

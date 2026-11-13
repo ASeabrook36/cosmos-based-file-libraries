@@ -238,6 +238,10 @@ This project avoids the problem: agents choose libraries by description and sear
 
 ### E21. Hybrid search runs; its quality is unmeasured · Measured (execution only)
 
+Later evidence: [E67 completed quality pilot](hybrid-quality-results-20261103.md),
+2026-11-03, measures source recall and reviewed answers in a separate fixed scope.
+E21 below remains the historical execution-only observation.
+
 Hybrid queries (`ORDER BY RANK RRF(VectorDistance(…), FullTextScore(…))`) executed successfully on a live account. RRF (Reciprocal Rank Fusion) merges the vector and keyword result lists by rank position rather than by score.
 
 Their ranking quality was never measured. The local Cosmos emulator rejects `FullTextScore`, so hybrid can only be tested against a real account.
@@ -478,7 +482,9 @@ These are the honest limits of the evidence. Phase 0 and Phase 4 of `build-plan.
 
 - **N1. ~~This exact configuration has never been built.~~ Built and passing at small scale (Phase 0).** float16, spherical, `indexingSearchListSize` 300, a shard key and hybrid search deployed together, and their stored definitions match `cosmos/*.json`. The canary passed at 1,500 chunks in one library (E8, E12, E25). What remains open is behaviour at scale (N11).
 - **N2. Library-only sharding and prefix routing now have bounded direct measurements.** E68 compared 1,000–5,000-vector library queries across split and unsplit indexes while holding the application filter and partition prefix fixed. E69 extended the retained pair to 10k/25k/50k/100k scopes at 429,773 vectors on one physical range: both arms reported DiskANN and all filtered repeat means met recall@10 ≥0.98. Absolute sharding savings varied across these different libraries, with material RU movement in the twelve-hour sentinels. One library per size, one retained build and one final large-library inventory do not establish a universal size effect, large-scope background-growth flatness or split-library routing correctness.
-- **N3. Hybrid ranking quality is unmeasured** (E21). Until Phase 1 it had never actually run ranked (E27); the source project's one hybrid check recorded only row counts and RU, not whether results were ranked (E57).
+- **N3. Hybrid ranking quality was unmeasured in the original evidence** (E21).
+  The later [E67 quality pilot](hybrid-quality-results-20261103.md) measures a bounded
+  procurement/DOCX scope; broad quality and scale remain open. Until Phase 1 it had never actually run ranked (E27); the source project's one hybrid check recorded only row counts and RU, not whether results were ranked (E57).
 - **N4. A library spanning physical ranges and global top-k merging remain untested.** R1 (E65) verified a two-range container, but its library occupied only one range. Prefix-vector calls stayed on that range in complete visible telemetry; all 60 hybrid calls visibly contacted both. This does not establish split-library ranking, many-range behavior or absence of additional SDK requests where telemetry is incomplete. A split-library reproduction must verify document placement and query winners in different ranges before claiming correct global merging or changing routing/layout.
 - **N5. The configured design uses preview features** (status checked 2026-10-28, E58). **Sharded DiskANN** (`vectorIndexShardKey`, public preview since April 2025, no GA notice at that check) gives each library its own vector index. The direct E68 ablation found lower scoped-search RU with sharding, while both layouts stayed flat as unrelated libraries grew; E2 alone did not establish that library-layout dependency. **Filtered DiskANN** (public preview since May 2025 at that check) routes a filtered search to its shard. The **spherical quantizer** (public preview since May 2026) has a GA fallback, product quantization, at somewhat lower recall (E6). Removing only the shard key leaves spherical quantization unchanged, so E68 does not establish an entirely GA configuration. *Corrected 2026-10-28:* this entry previously named only spherical; E68 subsequently separates measured cost savings from flatness.
 - **N6. Microsoft asks to be contacted, and the route is uncertain.** Microsoft's vector-search (updated 2026-09-29), sharded DiskANN (2026-04-27) and performance-tips (2026-05-08) pages, read 2026-10-28, all ask users of vector search on containers with hierarchical partition keys to email the Cosmos search team so the account can be configured. The source project reports that this address rejected an external message on 2 August 2026, as a group that does not accept external senders (E57); that is not verified here. *Not resolved.* The remaining route is an Azure support request, by inference; no Microsoft page names it for this purpose. Treat Microsoft's confirmation as a production prerequisite.
@@ -1434,6 +1440,282 @@ advances selector handles to consuming-agent integration. The frozen numerical
 This supersedes the earlier efficiency-based recommendation to retain opt-in
 status indefinitely. No runtime default, measurement or architecture changes in
 this decision update.
+
+### E66 normal-agent integration follow-through
+
+The [merge candidate](i1-selector-integration.md) enables the already measured
+selector-handles behavior in the normal consuming client, retaining compact
+evidence and an explicit legacy fallback. Historical replay entry points pin
+their previous selector mode; consumed I1 questions and frozen receipts remain
+unchanged. Local HTTP/adapter tests exercise copied selectors, source pins,
+authorization, deletion, budget refusal and legacy compatibility. They establish
+integration mechanics, not a new answering-quality or efficiency measurement.
+The original 18.8542783% result and unmet 20% target remain unchanged. Live cloud,
+production and broader provider/format gates are not closed by this integration.
+
+## E67 — Hybrid quality confirmation prepared; cloud gates blocked (2026-11-02)
+
+The [coordinator report](hybrid-quality-comparison.md) and
+[sanitized preparation receipt](../records/hybrid-quality-preparation-20261102.json)
+freeze eight fresh complete DOCX sources, 48 questions, 104 original regions and
+62 facts. Independent reviewers checked all questions against originals before
+any measured retrieval or answering. R0/I1 questions remain development evidence;
+this fresh pack had not been consumed at the initial checkpoint. The retained Microsoft layout profile,
+accepted selector handles, compact evidence, exact Sol revision, medium reasoning,
+8k output and 200k context remain fixed. Query tokenization/default RRF weights
+and the required vector-versus-hybrid routing distinction are documented unchanged.
+
+New measurement tools bind query embeddings, original source/generation/metadata,
+stored-row ETags, deployed model versions, actual process settings and loaded code.
+They preserve every attempt, prevent selective replay and separate initial search,
+neighbor expansion, adaptive agent search and complete-file recovery. Source-based
+manual judgments remain distinct from string-match diagnostics. No application or
+container policy changed. The integrated harness and independently reviewed
+failed-scope recovery helper passed 1,205 tests, lint, format and privacy checks.
+
+Preparation reproduced E17's observable failure signature: HTTP 500 converting
+`float16` in the stored vector policy, including an ordinary scoped metadata query.
+Stored policy readback still worked. Cause is not established. Two atomic creation
+attempts for the same replacement target failed with `Invalid capability
+EnableNoSQLVectorSearch`, including a retry after the operator removed a spending
+limit. Actual subscription state was `Enabled` / spending limit `Off`, and ARM
+template validation passed. A documented two-stage attempt created that same
+empty account, but its explicit vector enablement failed with the same error.
+Guarded empty-account deletion completed. Independent authenticated HTTP 404s and
+the later exact-target verifier confirm absence of that account; the planned
+queue and worker are also absent. A different provider-specific 404 format had
+stopped an earlier read-only observer; no deletion was repeated or absence assumed.
+No database/container, new queue/worker, fresh canary or temporary answering
+deployment reached execution. Resource-management delays after subscription
+reactivation are documented, but these observations do not establish the cause.
+
+The record includes all 26 observed failed-run ingestion attempts and the known
+28,450.86 instrumented chunk-store RU across them, including collision-verification
+reads. Three attempts have complete charge visibility, 21 partial and two missing;
+18 attempts have broker delivery numbers above one. Provider embedding/retry
+meters and billed totals remain unavailable. Frozen
+R0/P1/I1 catalogues, source metadata and tools remain unchanged, as do the worker and
+actual embedding deployment, including post-billing checks. The eight uploads
+produced seven completed plans containing 33 possible chunk IDs; three published
+documents reported six chunks, not a verified physical inventory. The reviewed
+exact-scope recovery precheck found two chunks and failed on the third with E17,
+before any delete attempt. Thirty candidates were not reached. The owned library
+remains fenced, with live source/checkpoint data and private archives retained.
+Complete cleanup and late absence checks remain unknown; ordinary worker cleanup
+and scheduled reconciliation are not validated by this exception recovery.
+
+**Quality conclusion at the 2026-11-02 checkpoint: unavailable.** Zero of 96 direct searches and zero of 192
+answering turns executed. There are no paired wins/losses/ties or ranking winner.
+Restore healthy same-policy infrastructure and run the committed, unchanged
+handoff before further efficiency tuning. At that checkpoint the 48 questions remained fresh. R3,
+ordinary healthy-worker cleanup, broker redelivery, broad concurrency/scale,
+production authentication and M1 scheduled orphan discovery remain open.
+
+The subsequent [cross-session review](../records/hybrid-quality-consistency-review-20261102.json)
+verified the same Azure CLI/compiled-ARM deployment path and materially identical
+template/parameters as the successful recovery. It identified missing fresh
+data-plane health before ingestion and weaker mounted-workflow binding than M1.
+Those become explicit restart prerequisites. It found no M1 cloud overlap or
+index-versioning cloud use, and no tool/configuration mismatch explaining the
+Azure failures. Frozen benchmark controls and all numerical observations remain
+unchanged; the chunk-store accounting label above corrects the earlier write-only
+description.
+
+**Restart checkpoint, 2026-11-03:** the [fresh bounded read check](../records/hybrid-quality-health-recheck-20261103.json)
+now succeeds against the same container incarnation and policies, including the
+exact formerly failing chunk. The [restart receipt](../records/hybrid-quality-restart-20261103.json)
+also establishes fresh real-text writes/reads, scoped/vector/hybrid operations,
+exact-owned cleanup and late absence, and 19 actual mounted workflow/worker/model
+binding checks. No provisioning retry or capability enablement was attempted.
+These observations do not establish the cause of recovery or a ranking result.
+The executable ingest gate now requires hash-bound current evidence and a declared
+partial-ingestion cleanup procedure. Frozen controls and protected snapshots remain
+unchanged; the confirmation matrix remains unconsumed at this checkpoint.
+
+
+**Completed confirmation, 2026-11-03:** the [accepted report](hybrid-quality-results-20261103.md)
+and [completion receipt](../records/hybrid-quality-completion-20261103.json) supersede
+only the pending quality status above. The cause of Azure recovery and fresh-account
+capability provisioning remain unestablished; no provisioning retry was needed.
+The same frozen controls produced eight ready originals, 36 chunks, 96 direct
+searches and 192 answer turns. This branch was not rebased onto main.
+
+On 40 answerable questions, all-required initial evidence improved from vector
+24/40 to hybrid 36/40; expanded evidence improved from 30/40 to 37/40. Initial
+macro region recall was 62.08% versus 90.83%, expanded 75.83% versus 93.33%.
+Final answer completion/support was vector 80/80 versus hybrid 79/80; citation
+accuracy 80/80 versus 77/80. Both appropriately abstained in 16/16 missing-value
+turns. Repeats are correlated; this is not 80 independent answerable questions.
+The single strict completion difference has a documented lenient sensitivity.
+Both arms lost complete-region credit where extraction flattened a definition's
+list/qualifier structure; final required-region recall was 99.17% in each arm.
+Opaque manual review, independent adjudication and a 9,223-check reporting audit
+preceded acceptance. Source recall and answer correctness remain distinct outcomes.
+
+Hybrid's recorded answering input was 4.29% lower, but retrieval RU was higher
+and incomplete, and rate-limit waits/caching confound elapsed comparisons. There
+is no established final-answer quality gain, billed-cost saving or production
+latency result. Keep defaults and retain hybrid as a retrieval-quality candidate;
+prioritize source fidelity and a broader newly frozen quality confirmation.
+All 48 questions are now consumed. No R3, physical policy or representation change
+was made; the accepted earlier I1 18.8542783% benefit remains unchanged.
+
+Only the successful evaluation scope and its temporary answering deployment were
+removed, with independent absence checks and protected-scope preservation. Raw
+receipts and sources remain in a hash-verified private archive outside Git.
+The earlier failed scope remains fenced, its cleanup unresolved. Scheduled orphan
+discovery, production authentication/redelivery/concurrency/lifecycle, large-index
+engagement and library-spanning-range merge gates remain open. Ordinary cleanup
+is not exceptional per-chunk-absence-before-blob ordering or indefinite absence.
+
+
+## Granular source navigation follow-through, 2026-11-04
+
+The [candidate](granular-source-navigation.md) reuses the separately qualified
+source-only repair and adds authored hierarchy plus paragraph/cell/section/subtree
+reads in a new custom recipe. This requires new paragraph-level passages and
+embeddings; it does not change the completed experiments or select a provider.
+Context repair and index versioning remain separate. Local tests exercise actual
+API/adapter responses, source relationships, mappings and lifecycle refusal.
+Review found and corrected Markdown chapter selection/citation, malformed-artifact
+errors and conflicting passage-to-source pointers. Search distinguishes recorded
+mapping from expansion-time artifact validation. The validation receipt and
+prepared live plan distinguish fake-service mechanics, local token estimates,
+unavailable cloud counters and still-unmeasured real-model quality. No live or
+larger confirmation outcome was claimed at that preparation checkpoint.
+
+**Bounded live follow-through:** the
+[reviewed result](granular-navigation-live-qualification.md) at `821ea25` passed all
+ten source publication/navigation/lifecycle gates, with 1,730 local tests. A
+qualification-harness defect initially treated Cosmos's two `0.0` to `0` timing
+normalizations as an unknown write; cleanup stopped safely. Exact independent
+reconciliation and an append-only, same-scope continuation preserved every prior
+attempt and usage counter. Final owned absence passed twice, 67.77 seconds apart;
+all 14 protected libraries/48 documents remained unchanged.
+
+Six actual GPT-5-mini turns preserved core source facts and human citations. One
+obtained cell text through paragraph handles without a complete-cell selector;
+another falsely labeled an evidence-unit `sectionId` as `containingSectionId`.
+Mechanics and core facts therefore do not establish complete navigation/answer
+quality. A subsequent granular read-tool description clarifies cell completeness,
+authored-section/document-root identity and citation handling without changing
+schemas, sources, other profiles or context accounting. Local tests establish its
+delivery and compatibility, not corrected model behavior; hold integration for
+two targeted real-model checks in a fresh bounded window. No larger study ran.
+
+The 25 model calls reported 251,828 input/12,403 output tokens; 19 instrumented
+tool operations reported 136.97 RU. Local unique tool payloads measured 84,949
+evidence-JSON tokens versus 2,086 rendered-source tokens, with 36,216 selector-removal
+delta tokens. These non-additive local serialization measurements are not provider
+tokens or a complete bill. Substantial response overhead remains; this small pack
+does not establish retrieval recall, a provider winner or large-context fit.
+
+**Two-turn behavior follow-up:** the
+[separately authorized result](granular-navigation-followup.md), executed at
+`753d8b2` with product runtime identical to `83168a8`, demonstrates actual complete-
+cell selection and exact named identifier reporting with correct qualifiers and
+human citations. It is not two clean frozen-rubric passes: the cell answer includes
+unrequested source numbering IDs, and the identifier task performs two
+`includeText=false` outline inspections that return no entries, then recovers by
+reading the whole document. The granular description omits the ordinary tool's
+size-inspection explanation. Hold unconditional integration sign-off for a narrow
+contract clarification and actual outline-delivery check; no provider, query or
+storage decision follows. Keep response overhead as the next efficiency issue.
+
+Manual review also found that a helper counted outline requests without delivered
+entries. Its original observation and manual override are preserved; post-run
+`6159ec3` corrects that evaluator and passes 78 local tests without new model calls
+or runtime changes. The executed runner passed 194 focused tests. Eight provider
+calls used 77,268 input/4,436 output tokens; six instrumented tool operations used
+42.80 RU, separately from 1,007.45 chunk-write RU and two embedding requests/102
+tokens. Unique tool payloads measured 26,613 local JSON tokens versus 725 rendered-
+source tokens; these are not provider billing quantities. Owned absence passed
+twice 65.31 seconds apart; 14 protected libraries/48 documents and all 999 prior
+private evidence files are unchanged. The two turns are consumed; no rerun,
+deployment, merge or larger study occurred.
+
+**Outline-inspection contract repair:** the
+[focused clarification](granular-outline-contract.md) addresses the observed
+`includeText=false` confusion in the granular tool description, parameter schema
+and returned inspection guidance together. False remains a content-free size/
+coverage inspection in every mode; true/default is required to obtain outline
+entries. Granular inspection replies now provide a same-scope, snapshot-pinned
+next-read selector with true and the effective unchanged budget. No ingestion,
+stored-source, permission, lifecycle, query or context-accounting change is made.
+The next sealed one-turn gate requires actual outline entries, a copied returned
+selector, focused source delivery and a correct citation; whole-file fallback
+cannot substitute. Earlier results and the separate overhead work remain intact.
+
+**One-turn outline qualification:** product `752d420`, runner `e8326a7`, delivered
+four nonempty authored outlines and copied selectors in actual successful model
+requests. The model selected a table, then repeated the same table with explicit
+subtree scope and a larger response allowance. It never read the required rule
+paragraph or immediate section and produced no final answer/citation. The seventh
+logical call hit the existing local pacing refusal before provider dispatch:
+37k serialized input plus 8k reserved output, separate from the 200k context
+allowance. This closes the description/outline-delivery gap, not the complete
+navigation qualification. Hold integration; review the route and pacing boundary
+before a new bounded check, keeping representation compression separate.
+
+Six physical calls measured 62,474 input/1,391 output tokens with no failed
+provider attempts or unknown usage. The product regression passed 1,850 tests;
+the final runner/case set separately passed 103 overlapping tests. Source
+publication and normal owned cleanup passed; independent absence checks were
+65.85 seconds apart, with all 14 protected libraries/48 documents unchanged.
+All 999 original and 313 two-turn private evidence files remain unchanged. A
+separate post-failure read-only check verified exact model/embedding bindings and
+executed code hashes. The [receipt](../records/granular-outline-qualification-20261104.json)
+keeps this failed attempt, local estimates and partial usage counters distinct.
+No model rerun, merge, deployment or larger study occurred.
+
+## Granular presentation comparison, 2026-11-05
+
+The [opt-in reference candidate](granular-reference-presentation.md) keeps exact
+selectors in an application-held, turn-local registry, with ordinary access and
+snapshot checks at every use. It changes no ingestion, ranking, context-budget
+policy or default. Exact historical reconstruction reduced the 1,324-token
+paragraph reply to 620 local JSON tokens and the complete scripted route from
+50,592 to 36,010, including instructions, schemas and repeated history. Source
+markup remains 11 tokens (7 for the plain sentence). These are local estimates;
+history refresh and expired-reference reacquisition costs are recorded separately.
+
+**Hold integration.** In the single bounded real-model pair, compact completed
+outline-to-paragraph navigation with the correct citation. Navigation received
+only its first outline, made five malformed reads and one unavailable-search
+detour, and ended with a grounded refusal. Review found schema/resolver
+inconsistency and recovery guidance naming replaced selector fields. The trace
+does not establish the cause of each choice. Safer reference binding and lower
+serialization do not establish model usability or completed-task efficiency.
+
+The [receipt](../records/granular-reference-presentation-20261105.json) records
+14 provider calls, 90,620 input/5,343 output tokens, no pacing refusals, retries
+or unknown usage, and 2,065 passing local tests. Source stores were local: cloud
+retrieval RU and fresh cloud lifecycle behavior were not measured. All earlier
+evidence remains unchanged. Private archives and resource closure were verified;
+no cloud data resources were created. No rerun, merge, deployment or larger
+study occurred. Align reference invocation and recovery before a fresh check.
+
+**Reference invocation and delayed-turn follow-up:** the
+[contract repair](granular-reference-contract-repair.md), product `20e461f` and
+executed runner `4bb1fb5`, aligns schemas, nested guidance, accepted argument
+shapes and executable recovery. All 2,091 repository tests pass; the earlier
+sandbox socket failures and successful loopback-enabled rerun are preserved.
+The unchanged initial source/question and one declared six-turn comparison
+demonstrate valid navigation actions plus actual expired-reference rejection and
+authorized reacquisition. Navigation's initial and delayed tasks both pass fresh
+focused source, completeness, citation and no-ID criteria. Compact obtains the
+correct source/answer in both tasks but prints unsolicited internal identifiers.
+
+The [receipt](../records/granular-reference-contract-repair-20261105.json) reports
+24 provider calls with complete usage. Initial input falls from 48,677 to 36,564
+(24.88%); including acknowledgment and forced expired-bookmark recovery, navigation
+uses 96,521 input/3,253 output versus compact 60,149/2,822. The 60.47% input increase
+reflects this chosen persistence/recovery route; it is not a general registry cost
+claim. **Hold general integration for cross-turn efficiency**, separately from
+the successful contract repair. Evaluate an explicit pinned follow-up bookmark
+without reviving stale references before adoption. All preceding evidence is
+unchanged; closure and private archives are verified. No new cloud data resources,
+model rerun, merge, deployment, context-accounting change or larger study occurred.
 
 ## E68: Library sharding lowers scoped RU; both scoped paths stay flat as unrelated libraries grow (2026-11-11) · Measured
 

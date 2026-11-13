@@ -297,4 +297,60 @@ def tool_definitions(library: Mapping[str, Any]) -> list[dict[str, Any]]:
             },
         },
     }
+    if (library.get("ingestionProfile") or {}).get("id") == "custom-granular-v1":
+        read["function"]["description"] = common + (
+            "\nRead supported DOCX main-body structure or exact Markdown ATX source blocks. "
+            "mode=outline returns immediate children: authored sections/subsections, tables, cells and paragraphs "
+            "(Markdown: headings and blocks), with navigationPreview source prefixes of at most 160 Unicode "
+            "characters. These previews are navigation hints, not evidence or complete reads, even when "
+            "truncated=false; copy readSelector for the source and citation before answering. authoredPath "
+            "and readScope distinguish containing headings and scope. Use includeText=true (the default) to receive "
+            "outline entries. includeText=false is size/coverage inspection only: it returns neither source text "
+            "nor outline entries in any mode. After inspection, copy the returned readSelector with includeText=true "
+            "to receive the inspected scope under the same budget. Copy outlineSelector to drill down; "
+            "paginate with afterSection/sectionLimit "
+            "until hasMore=false. Source-size estimates exclude response overhead and do not guarantee a fit. "
+            "Copy readSelector for a paragraph/cell or a section's own content. Copy subtreeSelector to include "
+            "all authored subsections. For a complete table cell, copy that cell's readSelector or a cell paragraph's "
+            "parentSelector. Search hits or bulk paragraph selections do not prove cell completeness. "
+            "containingSectionSelector expands the complete containing authored subtree, or the document root "
+            "when no authored section contains the source. "
+            "The document-level fullSelector reads the document; its outlineSelector returns the root outline. "
+            "Leaf nodes have no child outline; their readSelector reads the complete source atom. Table/cell "
+            "readSelector already includes the complete subtree: if selectionComplete=true, repeating it with "
+            "explicit nodeScope=subtree or more maxTokens cannot add content. Change scope using a returned "
+            "selector instead. Keep generation/contentRevision pins; stale references are refused. "
+            "sectionId identifies a versioned evidence unit; containingSectionId identifies its containing authored "
+            "section node, or the document root when no containing authored section exists. "
+            "Never substitute these IDs. "
+            "In answers cite the returned citation string. Omit internal "
+            "IDs unless asked; when asked, copy each named field and value verbatim. "
+            "Use search evidenceIds to expand verified containing source atoms, not guessed character offsets. "
+            "If mapping is unavailable, use the outline. DOCX numbering identity/depth is retained but printed "
+            "ordinals are unresolved; source coordinates are not printed clause numbers. No rendered pages, "
+            "inferred chapters, visual selection or generated summaries are offered by this profile. "
+            "Full reads are all-or-nothing, complete=true only for full source representation. Selected reads "
+            "report selectionComplete with documentComplete=false. All modes enforce maxTokens (default 32000, "
+            "maximum 200000) without clipping. Narrow or paginate after refusal; disclose omissions."
+        )
+        read["function"]["parameters"]["properties"]["includeText"]["description"] = (
+            "True (default): deliver source text in full/selected mode, or outline entries with bounded navigation "
+            "previews (not source evidence). False: size/coverage inspection only, "
+            "with no source text or outline entries."
+        )
+        properties = read["function"]["parameters"]["properties"]["documents"]["items"]["properties"]
+        properties.update(
+            outlineNodeId={
+                "type": "string",
+                "description": "Copy from outlineSelector; outline-only, with snapshot pins.",
+            },
+            nodeScope={
+                "type": "string",
+                "enum": ["section", "subtree"],
+                "description": "With nodeIds: section excludes authored subsections; subtree includes descendants.",
+            },
+        )
+        properties.pop("pages")
+        properties.pop("slides")
+        return [search, catalogue, read]
     return [search, catalogue, read, images]

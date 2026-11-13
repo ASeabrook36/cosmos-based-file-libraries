@@ -1,0 +1,47 @@
+{
+  "schema": "fli.source-structure-probe.receipt.v1",
+  "status": "complete",
+  "sourceId": "hq-05",
+  "locator": {
+    "table": 0,
+    "row": 90,
+    "column": 1
+  },
+  "normalizedTextSha256": "e25afd76ed96eadad2c0890672a3629cfe0392afeb89de64e988b95a0239ecc6",
+  "inputSha256": {
+    "original": "0970916cdf0ca2ffb314a282e9a2d308f41dc048ead33df0d4ec1825305d4dad",
+    "extraction": "28df53d5bc42cd59f16a28b1a476b37d6454cbdc0b1dd070e003403220e9655d",
+    "result": "f01d59cabd1c1b8967ba83792b4608756c0feb916abadd6a2f6a8e82952960e8",
+    "sections": "a3eda43509ede0075e612055525a554405d40e7ecc316ec2dc7840c1402cf82b"
+  },
+  "probeSourceSha256": "bc5fccf86098f8bfca0f67ef3337fe8f98b7992a557e2d75aa1a6a206c606ff7",
+  "observations": {
+    "originalParagraphs": 10,
+    "originalNumberedParagraphs": 8,
+    "originalUnnumberedParagraphs": 2,
+    "numberedParagraphLevels": [
+      0,
+      4
+    ],
+    "providerParagraphsMappedExactlyInOrder": 10,
+    "providerParagraphSpansAddressExactText": true,
+    "providerCellNormalizedTextMatchesOriginal": true,
+    "providerCellInternalBoundaryTagCount": 0,
+    "providerCellListTagCount": 0,
+    "publishedSections": 1,
+    "publishedCanonicalTextEqualsProviderContent": true,
+    "publishedSectionHasNodeId": false,
+    "paragraphBoundaryLossReproduced": true,
+    "publishedCellHasNoListTags": true,
+    "semanticQualifierScopeAutomaticallyGraded": false
+  },
+  "cloudCalls": 0,
+  "modelCalls": 0,
+  "applicationChanges": false,
+  "limits": [
+    "One already-consumed DOCX cell; no generalized extraction-quality claim.",
+    "Text equality and paragraph mapping do not establish semantic qualifier scope.",
+    "Original numbering properties retained privately, not expanded into guessed ordinal labels.",
+    "No repair applied to provider text, application representation or frozen comparison."
+  ]
+}

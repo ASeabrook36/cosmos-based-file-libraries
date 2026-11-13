@@ -1,0 +1,395 @@
+{
+  "schema": "fli.granular-navigation.outline-qualification.v1",
+  "date": "2026-11-04",
+  "branch": "codex/granular-source-navigation",
+  "decision": "hold_integration_signoff_required_focused_source_and_citation_not_demonstrated",
+  "status": "one_attempted_turn_incomplete_local_pacing_refusal_reviewed_owned_cleanup_verified",
+  "provenance": {
+    "priorCandidate": "d332d1d",
+    "reviewedProductCommit": "752d420d2197bf8c03bd87b9db26140d3a31ed8d",
+    "executedRunnerCommit": "e8326a7f3cb665c80c55fbe85e07bbe0364546a5",
+    "runtimeByteIdenticalToReviewedProduct": true,
+    "postLiveProductChanges": false,
+    "previousRunReceipt": "granular-navigation-followup-20261104.json",
+    "previousRunReceiptSha256": "da5fd95ef99848e26070bcb2319af45c96bf77e0ec975ee994f740b1c22d240c",
+    "mainPreserved": "1ddc4386361446a5122ce936cdb3ba28aa4e5919",
+    "contextRepairIncluded": false,
+    "indexVersioningIncluded": false,
+    "providerSwitch": false,
+    "priorPrivateEvidenceFilesRehashedUnchanged": {
+      "sixTurn": 999,
+      "twoTurn": 313
+    },
+    "earlierExperimentsAndReceiptsPreserved": true
+  },
+  "attempts": {
+    "executedCloudAttempts": 1,
+    "modelTurnsAttempted": 1,
+    "modelTurnsCompleted": 0,
+    "modelReruns": 0,
+    "automaticResume": false,
+    "priorUsageCombined": false
+  },
+  "controls": {
+    "sourceSameOriginalBytes": true,
+    "sourceBytes": 37003,
+    "sourceProfile": "custom-granular-v1",
+    "sourceAtoms": 15,
+    "scopeAndTimeLimits": {
+      "libraries": 1,
+      "documents": 1,
+      "generations": 1,
+      "chunks": 16,
+      "sourceBytesEach": 1048576,
+      "embeddingLogicalCalls": 20,
+      "embeddingAttemptsEach": 3,
+      "embeddingLocalInputTokens": 50000,
+      "modelTurns": 1,
+      "executionSeconds": 1200,
+      "cleanupSeconds": 600,
+      "lateAbsenceCheckSeconds": 60
+    },
+    "modelAttemptAndUsageLimits": {
+      "inputTokensWithUnknownReservations": 1000000,
+      "logicalCalls": 13,
+      "outputTokensWithUnknownReservations": 100000,
+      "physicalResponsesAttempts": 18
+    },
+    "answering": {
+      "model": "gpt-5-mini",
+      "version": "2025-08-07",
+      "sku": "GlobalStandard",
+      "capacity": 50,
+      "automaticUpgrade": "disabled"
+    },
+    "embedding": {
+      "model": "text-embedding-3-large",
+      "version": "1",
+      "sku": "GlobalStandard",
+      "capacity": 150
+    },
+    "perTurn": {
+      "searchMode": "vector",
+      "evidenceView": "compact",
+      "selectors": "handles",
+      "contextAccounting": "legacy-v1",
+      "contextAllowance": 200000,
+      "outputAllowance": 8000,
+      "reasoningEffort": "medium",
+      "maxRounds": 12,
+      "pacingLocalInputPlusMaxOutputPerMinute": 45000,
+      "maximumLocalSerializedRequestInput": 37000
+    },
+    "exactPriorModelAndEmbeddingBindingsMatchedBeforeAndAfter": true,
+    "frozenPriorSourceAndBindingsAnchoredToArchive": true,
+    "newCloudResourcesOrDeployments": false,
+    "sharedQueueAccess": false,
+    "postTurnAutomaticBindingChecksCompleted": false,
+    "postFailureReadOnlyBindingChecksPassed": true
+  },
+  "contractRepair": {
+    "includeTextFalse": "size_and_coverage_only_no_source_bodies_or_outline_entries",
+    "outlineEntriesRequire": "includeText_true_or_default",
+    "inspectionRecovery": "same_scope_snapshot_pins_paging_and_effective_budget_with_includeText_true",
+    "otherProfileBehaviorUnchanged": true,
+    "newReingestionRequiredForThisFix": false
+  },
+  "reviewMethod": "Independent review of actual API responses, inputs paired with successful provider results, verified publication and final-answer availability. No model input is counted as delivered without a successful paired result.",
+  "outcome": {
+    "outlineContractDeliveryDemonstrated": true,
+    "nonemptyOutlineRepliesDelivered": 4,
+    "outlineEntriesPerDeliveredReply": [
+      2,
+      3,
+      3,
+      3
+    ],
+    "copiedReturnedSelectorDemonstrated": true,
+    "copiedSelectorScope": "table_not_required_rule_scope",
+    "targetParagraphOrImmediateSectionRead": false,
+    "targetSourceDelivered": false,
+    "fullContentRequests": 0,
+    "fullSizeInspections": 0,
+    "answerAvailable": false,
+    "answerCorrect": null,
+    "citationCorrect": null,
+    "qualificationPassed": false,
+    "firstTableSelectedScopeComplete": true,
+    "tableSourceAtomsPerRead": 7,
+    "tableReadTwiceWithIdenticalSourceAtoms": true,
+    "repeatedTableReplyDelivered": false,
+    "inspectionRecoveryExercisedLive": false,
+    "inspectionRecoveryVerifiedLocally": true
+  },
+  "remainingDefect": {
+    "observed": "Model navigated four outline levels, selected a table, then redundantly requested that same table with explicit subtree scope and a larger response budget. The required rule source was never read and no final answer exists.",
+    "stopReason": "PacingRefusal at logical call seven before provider dispatch: local serialized input plus output reservation exceeded unchanged qualification pacing ceiling.",
+    "notObserved": [
+      "Azure rejection",
+      "provider context exhaustion",
+      "retrieval API budget refusal",
+      "whole-document fallback"
+    ],
+    "causalityLimit": "A single interrupted sample does not establish why the model chose or repeated the table, or whether a larger pacing limit would yield correct navigation.",
+    "nextAction": "Review redundant table routing and the qualification pacer counting opaque encrypted-reasoning serialization; define any changed pacing control separately before authorizing a fresh bounded qualification. Keep source-response compression and context-accounting repair separately attributable."
+  },
+  "usage": {
+    "providerMeter": {
+      "completeInputTokens": 62474,
+      "completeOutputTokens": 1391,
+      "http429Attempts": 0,
+      "knownInputTokens": 62474,
+      "knownOutputTokens": 1391,
+      "limitation": "Responses create attempts only; excludes Azure credential, embedding and index requests. Unknown attempt reservations are guard allowances, never measured usage or billed cost.",
+      "limits": {
+        "inputTokensWithUnknownReservations": 1000000,
+        "logicalCalls": 13,
+        "outputTokensWithUnknownReservations": 100000,
+        "physicalResponsesAttempts": 18
+      },
+      "logicalCallsStarted": 7,
+      "otherFailedOrUnfinishedAttempts": 0,
+      "physicalResponsesAttempts": 6,
+      "unmeteredAttempts": 0,
+      "unmeteredInputReservations": 0,
+      "unmeteredOutputReservations": 0,
+      "usageComplete": true
+    },
+    "providerMeasured": {
+      "cacheWriteTokens": 0,
+      "cacheWriteTokensReportedResponses": 6,
+      "cachedInputTokens": 36864,
+      "cachedInputTokensReportedResponses": 6,
+      "knownInputTokens": 62474,
+      "knownOutputTokens": 1391,
+      "meteredResponses": 6,
+      "reasoningOutputTokens": 704,
+      "reasoningOutputTokensReportedResponses": 6
+    },
+    "embedding": {
+      "localInputTokenEstimate": 98,
+      "logicalRequests": 1,
+      "physicalRequests": 1,
+      "reportedPromptTokensKnown": 98,
+      "retries": 0,
+      "throttles": 0,
+      "unmeteredAttempts": 0
+    },
+    "cosmosMeasuredSubtotals": {
+      "agentToolChargeRuKnown": "28.56",
+      "agentToolOperations": 6,
+      "agentToolUnknownCharges": 0,
+      "chunkCreateChargeRuKnown": "1007.45",
+      "chunkCreateOperations": 15,
+      "chunkCreateUnknownCharges": 0,
+      "source": "Six raw successful API tool-response metadata counters; no completed TurnResult trace was produced.",
+      "totalQualificationRu": null
+    },
+    "monetaryCost": null,
+    "totalAzureCharges": null,
+    "localPacingRefusals": 1,
+    "providerContextRefusals": 0,
+    "apiReadBudgetRefusals": 0
+  },
+  "localSerializationEstimates": {
+    "envelopeWithoutSourceOrSelectorsTokensLocal": 7058,
+    "evidenceJsonTokensLocal": 16221,
+    "interpretation": "Same definition as prior follow-up: unique tool-call replies counted once; repeated conversation exposure reported separately. Local estimates, not provider billing. Selector/source/stripped envelope counterfactual measurements are not an additive decomposition.",
+    "repeatedExposureLocalTotals": {
+      "envelopeWithoutSourceOrSelectorsTokensLocal": 19032,
+      "evidenceJsonTokensLocal": 41462,
+      "selectorSerializationDeltaTokensLocal": 22101,
+      "standaloneSourceTextTokensLocal": 287,
+      "toolMessageJsonTokensLocal": 44328,
+      "toolMessageWrapperDeltaTokensLocal": 2866
+    },
+    "repeatedModelInputToolMessageExposures": 15,
+    "selectorSerializationDeltaTokensLocal": 8834,
+    "standaloneSourceTextTokensLocal": 287,
+    "tokenizer": "cl100k_base",
+    "toolMessageJsonTokensLocal": 17415,
+    "toolMessageWrapperDeltaTokensLocal": 1194,
+    "uniqueReplyCount": 5
+  },
+  "locallyGeneratedToolReplies": {
+    "count": 6,
+    "envelopeWithoutSourceOrSelectorsTokensLocal": 9262,
+    "evidenceJsonTokensLocal": 22025,
+    "selectorSerializationDeltaTokensLocal": 12105,
+    "standaloneSourceTextTokensLocal": 574,
+    "toolMessageJsonTokensLocal": 23724,
+    "toolMessageWrapperDeltaTokensLocal": 1699
+  },
+  "undeliveredToolReplyEstimates": {
+    "count": 1,
+    "envelopeWithoutSourceOrSelectorsTokensLocal": 2204,
+    "evidenceJsonTokensLocal": 5804,
+    "selectorSerializationDeltaTokensLocal": 3271,
+    "standaloneSourceTextTokensLocal": 287,
+    "toolMessageJsonTokensLocal": 6309,
+    "toolMessageWrapperDeltaTokensLocal": 505
+  },
+  "localUndispatchedRequestReconstruction": {
+    "finalRepeatedToolOutputSerializationDeltaLocal": 6309,
+    "inputAndToolsTokensLocalReconstructed": 42073,
+    "interpretation": "Reconstructed local serialization counters, not a counter saved during live dispatch or provider-measured input. Encrypted strings can inflate this estimate. Counterfactual removal is diagnostic only.",
+    "method": "Local-only normal Responses adapter fed six archived successful inputs and raw responses; all six reconstructed requests matched archived live request bytes semantically exactly. The seventh request was captured by a non-network fake callback that raised a sentinel; no model rerun occurred.",
+    "modelContextAllowance": 200000,
+    "opaqueEncryptedReasoningSerializationDeltaLocal": 14002,
+    "outputReservationLocal": 8000,
+    "overageTokensLocal": 5073,
+    "pacingInputCeilingLocal": 37000,
+    "pacingTotalCeilingLocal": 45000,
+    "priorLiveRequestsMatched": 6,
+    "requestSha256": "b0deb68d70239b9a383a25f6755c1edf40bce511a66a253d85a332773ca2594a",
+    "seventhRequestEverDispatched": false,
+    "totalPacingReservationLocal": 50073,
+    "withoutEncryptedReasoningFieldTokensLocal": 28071,
+    "withoutFinalRepeatedToolOutputTokensLocalCounterfactual": 35764
+  },
+  "presentationEfficiencyNext": "Retain selector/envelope overhead and redundant scopes as separate presentation-efficiency work; no compression or context-accounting changes in this candidate.",
+  "cleanup": {
+    "passed": true,
+    "immediate": {
+      "library404": 1,
+      "document404": 1,
+      "chunk404": 15,
+      "emptyQueries": 2,
+      "emptyPrefixes": 1,
+      "protectedUnchanged": true,
+      "verifiedAt": "2026-11-04T20:51:59.914415+00:00"
+    },
+    "late": {
+      "library404": 1,
+      "document404": 1,
+      "chunk404": 15,
+      "emptyQueries": 2,
+      "emptyPrefixes": 1,
+      "protectedUnchanged": true,
+      "verifiedAt": "2026-11-04T20:53:05.764722+00:00"
+    },
+    "limitation": "Current live items only; soft-delete/backups, hosted workers and indefinitely late output are outside this proof.",
+    "protectedLibrariesUnchanged": 14,
+    "protectedDocumentsUnchanged": 48,
+    "secondsBetweenChecks": 65.850307,
+    "finalOwnership": {
+      "eventHeadSha256": "0a9235b7979aa1db22b145a4db4a55411a54709b31256e77368c81d84920ce8a",
+      "eventCount": 179,
+      "reservedLibraries": 1,
+      "reservedDocuments": 1,
+      "reservedGenerations": 1,
+      "reservedChunks": 15,
+      "recordedBlobs": 7,
+      "unresolvedOperations": 0,
+      "unfinishedMessages": 0
+    }
+  },
+  "normalCompletedTurnSourceSnapshotAfterAvailable": false,
+  "postFailureReadOnlyControlVerification": {
+    "beforeAndAfterExactPriorBindingsMatched": true,
+    "dataMutations": 0,
+    "executionCodeHashesUnchanged": true,
+    "modelCalls": 0,
+    "passed": true,
+    "precheckLocalImportAttemptFailedBeforeCloud": true,
+    "reason": "Automatic post-turn checks were skipped by PacingRefusal; separate read-only verification after owned cleanup.",
+    "verifiedAt": "2026-11-04T20:53:52.834379+00:00"
+  },
+  "localValidation": {
+    "productRegression": {
+      "testsPassed": 1850,
+      "warnings": 21,
+      "seconds": 247.93,
+      "lint": "passed",
+      "format": "passed",
+      "referencePrivacy": "passed"
+    },
+    "finalRunnerAndCaseChecks": {
+      "testsPassed": 103,
+      "warnings": 5,
+      "seconds": 7.91,
+      "lint": "passed",
+      "format": "passed"
+    },
+    "countsAreOverlappingNotAdditive": true,
+    "fullSuiteCollectionPrecededFinalOutlineCaseAdditions": true,
+    "finalReportChecks": {
+      "lint": "passed",
+      "format": "passed",
+      "referencePrivacyWithPrivateDenyFile": "passed",
+      "diffWhitespace": "passed"
+    }
+  },
+  "applicationDeployed": false,
+  "mainMerged": false,
+  "largerStudyLaunched": false,
+  "limitations": [
+    "Answer meaning and citation correctness remain manual review; route observations do not grade those.",
+    "One turn was attempted, zero turns completed and no final answer was produced. PacingRefusal stopped logical call7 before provider dispatch, not at the200k model context limit.",
+    "The normal source-snapshot-after and automatic after-binding checks were skipped by the exception. Separate post-failure read-only checks establish deployment/runtime bindings; cleanup/source-publication checks remain separate from an unavailable completed-turn source snapshot.",
+    "One targeted fixture turn is not a general accuracy, recall, latency or efficiency benchmark.",
+    "Cached input and reasoning output are subsets of their respective token totals, not additional usage.",
+    "RU subtotals omit metadata/preflight/source-snapshot/lifecycle/cleanup and other uninstrumented operations.",
+    "Embedding reported token counters are retained, but raw embedding provider bodies are not independently captured.",
+    "No monetary cost calculated; two-time cleanup absence does not prove backup erasure or indefinite future absence."
+  ],
+  "archiveLocation": "Private operator evidence storage outside Git; environment identifiers and locations withheld.",
+  "privateEvidenceSha256": {
+    "preparation.json": "b07140631808c4fc1a391cbbeea4bdc529ab45da864f637f8e76e689ddbe1b24",
+    "preflight.json": "f6a7d5ebf7fd2a0b6575b294de5e5207f9511f107d5f3b3e576f9528bd9a6cfd",
+    "matched-preflight.json": "af3726ef233c8310e9b6ba458503c52115b769bd7fe19b56fcf73b04699cb192",
+    "controls.json": "422d604a5e7f1d9644a1fbd3772a0059a09800170babc112681f54322988e04b",
+    "source-bindings.json": "97c227416a8b326071952f6b6a09d7856b56145b4a244db9ca1cd61035c82baa",
+    "models/controls.json": "6b2b7b5da35868587739314066593b454ad827b7b3680d99686b95d203975ddf",
+    "models/started.json": "cf579d2482de9ec48a417121dcf8ef498bfd8b8dc37dfdab2245c88a87a10834",
+    "models/status.json": "b39b24bee28591f466ae980aa841ca7a8c36a773580f54dc121b9f2625044ec5",
+    "models/provider/ledger.json": "0231ea4d50d68e8d1036e8c024e4a95b62659e0c1f161b0050f280dc8aeb3bb3",
+    "models/sources-before.json": "052d82295ead9fccb12e6153a4c3bc866c10b09d93e0c8d00f5433f9f8ac51a6",
+    "execution-result.json": "8bb7f9e593698e7822fe0418fbe329e6670ade9d866f29fa92da0d673e67ac85",
+    "embedding-attempts.json": "b8a5e07295ad2d60a625547ae4ed667a4f4bb372988a2c72754fdb33bebf447c",
+    "ownership-final.json": "f30a3bf4e8b68644268035303cffa07364f9bdd0bfb366cef20c97b5605f81c4",
+    "cleanup-inventory.json": "3db469e921cc6e950fb99ab0c22db8b776a7a4d5023107b45de438619614e79f",
+    "cleanup-immediate.json": "9126aeee04b389f19ad532e8a237e3087fa4ac8df0016d59d489764b2bcc3ebe",
+    "cleanup-late.json": "a37e09bcbbfeaa34ba1c8cbd119f6aa3c8037fb8f7ceb5f900a4c944a7d200dc",
+    "archive-receipts.json": "7faf8abb81f67c154f3d44fe6d1def136ef4009fd1a58346888a39c0a4800988",
+    "model-review-hierarchy.json": "293406531f8e06df55fe72c8fc042a899228d8786126784c0a575418650d9dbf",
+    "mechanics-review.json": "b9434f2dd275f9228d5f49745920e3afe6df341b9a2b7a51dc1c017ca8cc9139",
+    "outline-analysis.json": "bf980d473a569d58cdf448c16b2fe802c52c0491d4c374b996b7c8f82465f91f",
+    "review_outline.py": "2f0c3785e478ab7def148ecf1965f45623091dc3f54bce9c2e2f2c0d9df5977b",
+    "post-failure-control-verification.json": "792086e702631192c8019b26e797a6869d9679b43bde39c1a7602cd077517e90",
+    "prior-evidence-snapshot.json": "28ee171725c5981315e1196d962f4dd8b42a642fad955177ace0ae13bcc845bf",
+    "full-local-check.txt": "ae03b209d2d3e3c7034c19377b9397aa436905bb7650e6f606e2f333a4dc10cc",
+    "final-focused-check.txt": "9a814622a048773e9582f8ae774f271a100b199675ebfafd04776c82a6d429d3",
+    "verified-source-publication": "78ee60a9cb692d855fd60026af5c5ae99d1c5eed49a7dced1ffe037fc04ba7fa",
+    "model-review-hierarchy-supplement.json": "65c9182f9453f3895a0f4403c6696952210b130981e001fbde081266bca37333",
+    "final-privacy-check.txt": "b98ca524f4bb239963781b4b25d6cc664773e80d1d16620622fea0cabf03f881",
+    "private-archive-verification.json": "0f100ac19c6792ab9a50087c070c0cea35dc2bdd5e3b0e0d7a20cb7a41a3533b",
+    "final-report-review.json": "1277d9d76e83255fd2d5f83b34d972c26e46e150863a23aab19dbbe5c282faa5",
+    "prior-evidence-preservation.json": "62c57f2383af1d0b89f697c1c15a4fcad91c3c9cfe0211ef3e7e01ae6255aa81"
+  },
+  "privateArchives": {
+    "schema": "fli.granular-outline.archive-verification.v1",
+    "previousArchives": [
+      {
+        "role": "before-cleanup",
+        "files": 193,
+        "manifestSha256": "b75a70a6cfb2dc48a2acdbf8ff174104d7191cc8257f73c3232dbca00be6070d",
+        "verified": true
+      },
+      {
+        "role": "after-cleanup",
+        "files": 285,
+        "manifestSha256": "ecff6c94f4d24d007eb886b504798e37336d276ae1523582bfa7974dbe7161f7",
+        "verified": true
+      }
+    ],
+    "reviewedFinal": {
+      "files": 305,
+      "manifestSha256": "c68fd8ea6e6d932e3d0de024924bb349e34bfead817493918a250bddb566283d",
+      "verified": true
+    },
+    "requiredReviewsAndCleanupIncluded": true,
+    "cloudCalls": 0
+  },
+  "reportReviewScope": "Independent review binds report and receipt before these additive archive references; substantive results unchanged. Exact reviewed copies are included in the final private archive."
+}

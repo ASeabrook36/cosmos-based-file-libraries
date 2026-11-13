@@ -1,0 +1,542 @@
+{
+  "schema": "fli.granular-reference.contract-repair-qualification.v1",
+  "dateUtc": "2026-11-05",
+  "branch": "codex/granular-reference-presentation",
+  "decision": "hold_general_integration_for_cross_turn_efficiency",
+  "decisionBasis": "Navigation A and B pass the frozen source/no-ID criteria. The complete declared forced-expiry interaction uses 60.47% more measured input than compact; integration hold is a product judgment, not a retroactive quality threshold.",
+  "provenance": {
+    "startingCommit": "13986b6d58b2fe5112edebb00ade21109bea8c6d",
+    "productCommit": "20e461f10dc2189b6e50f41efee0bcbe3bbe609d",
+    "executedCommit": "4bb1fb5d4b84530e4a0b8dc2fb23a7a10b363344",
+    "priorFailedComparison": "granular-reference-presentation-20261105.json",
+    "priorPrivateFilesUnchanged": 292,
+    "postLiveProductRunnerChanges": false,
+    "rawApiDefaultsIngestionEmbeddingsRankingContextAccountingUnchanged": true
+  },
+  "interface": {
+    "bootstrap": "explicit returned full-pinned document selector plus mode",
+    "readAction": "reference or compatible references, exclusive of mode/documents/paging",
+    "documentRef": "top-level search pin only, exclusive of document",
+    "malformedKnownActionRecovery": "explicit exact executable example with bound mode; no automatic correction/read",
+    "unknownExpiredReferenceRecovery": "authorized discovery and returned pinned outline route",
+    "genuineSourceScopeFailure": "preserved error category; no unchanged failed-action retry",
+    "lifetime": "turn-local; no stale rebinding or hidden restored dictionary",
+    "noReferenceAuthority": "ordinary access, exact version/scope and lifecycle checks at every API read"
+  },
+  "controls": {
+    "model": {
+      "format": "OpenAI",
+      "name": "gpt-5-mini",
+      "version": "2025-08-07"
+    },
+    "transport": "responses",
+    "reasoning": "medium",
+    "contextAllowance": 200000,
+    "outputReservation": 8000,
+    "order": [
+      "compact/A",
+      "compact/acknowledgment",
+      "compact/B",
+      "navigation/A",
+      "navigation/acknowledgment",
+      "navigation/B"
+    ],
+    "sourceRoundLimit": 12,
+    "acknowledgmentRoundLimit": 3,
+    "limits": {
+      "logicalCalls": 60,
+      "physicalResponsesAttempts": 80,
+      "inputTokensWithUnknownReservations": 4000000,
+      "outputTokensWithUnknownReservations": 400000
+    },
+    "admissionSeconds": 1800,
+    "pacingWindowSeconds": 60,
+    "reservationCeiling": 45000,
+    "sameInitialQuestionAndPublishedSourceAsPrior": true,
+    "retention": "exact prior user prompts and delivered assistant text, plus one actually model-delivered bookmark visibly included in B; no tool transcript, registry or evidence ledger restored",
+    "bookmark": "exact first source-row read action in last successfully delivered source response; fallback scope explicit; both observed bookmarks were the correct paragraph",
+    "delayedPolicy": "attempt visible prior bookmark once, then authorized reacquisition if rejected; same policy with different representation lifetime",
+    "interpretation": "deliberately forced-expiry lifetime tradeoff, not matched prose-only or minimum recovery",
+    "sourceBackend": "normal local API using hash-verified retained source publication; search explicitly unavailable",
+    "controlsSha256": "f9d69a7a94ad49223c6a814044bc98457b0c06b96e5a8aaf8476fee00de76169"
+  },
+  "attempts": {
+    "executions": 1,
+    "declaredTurns": 6,
+    "completedTurns": 6,
+    "sourceTurns": 4,
+    "acknowledgments": 2,
+    "logicalCalls": 24,
+    "physicalAttempts": 24,
+    "selectiveReruns": 0,
+    "retries": 0,
+    "http429s": 0,
+    "unknownUsageAttempts": 0,
+    "pacingRefusals": 0
+  },
+  "quality": {
+    "navigationA": {
+      "allFrozenCriteriaPassed": true,
+      "nonemptyOutlinesDelivered": 4,
+      "freshFocusedSource": true,
+      "correctRuleAndCitation": true,
+      "unnecessaryInternalIds": false
+    },
+    "navigationB": {
+      "allFrozenCriteriaPassed": true,
+      "newSessionAuthorizedReacquisition": true,
+      "sameSourceSnapshot": true,
+      "discoveryCalls": 1,
+      "nonemptyOutlinesDelivered": 4,
+      "focusedReadCalls": 1,
+      "freshFocusedSource": true,
+      "correctRuleAndCitation": true,
+      "unnecessaryInternalIds": false,
+      "expiredReferenceAttemptedAndRejectedBeforeReadApi": true
+    },
+    "compactA": {
+      "allFrozenCriteriaPassed": false,
+      "coreSourceAndCitationPassed": true,
+      "unnecessaryInternalIds": [
+        "section identifier",
+        "full pinned selector including document identifier"
+      ]
+    },
+    "compactB": {
+      "allFrozenCriteriaPassed": false,
+      "coreSourceAndCitationPassed": true,
+      "directRetainedSelectorRead": true,
+      "unnecessaryInternalIds": [
+        "section identifier"
+      ]
+    },
+    "allSourceTurns": {
+      "sourceBodiesExactlyEqual": true,
+      "selectionComplete": true,
+      "documentComplete": false,
+      "wholeDocumentRequests": 0,
+      "searchDetours": 0,
+      "repeatedAcceptedScopesWithinTurn": 0
+    },
+    "acknowledgments": "brief, no source tools",
+    "rawAndGuardedAnswers": "inspected separately; ID leakage present in both compact raw/delivered answers; neither navigation answer replaced by grounding guard",
+    "actualProviderPairsReviewed": 24,
+    "actualToolReplyExposuresVerified": 59,
+    "generalQualityOrRankingWinnerEstablished": false
+  },
+  "providerUsageMeasured": {
+    "knownSubtotals": {
+      "inputTokens": 156670,
+      "outputTokens": 6075,
+      "cachedInputTokens": 109184,
+      "reasoningOutputTokens": 3968
+    },
+    "unavailableCountersByAttempt": {},
+    "physicalAttempts": 24,
+    "usageComplete": true
+  },
+  "completeInteractionByPresentation": {
+    "compact": {
+      "providerUsageMeasured": {
+        "knownSubtotals": {
+          "inputTokens": 60149,
+          "outputTokens": 2822,
+          "cachedInputTokens": 39552,
+          "reasoningOutputTokens": 1856
+        },
+        "unavailableCountersByAttempt": {},
+        "physicalAttempts": 9,
+        "usageComplete": true
+      },
+      "allStagesInputSerializationTokensLocal": 63013,
+      "allStagesAgentBudgetSerializationTokensLocal": 66067,
+      "allStagesWaitSecondsMeasuredLocal": 159.6837144170422,
+      "completedAgentLoops": 3
+    },
+    "navigation": {
+      "providerUsageMeasured": {
+        "knownSubtotals": {
+          "inputTokens": 96521,
+          "outputTokens": 3253,
+          "cachedInputTokens": 69632,
+          "reasoningOutputTokens": 2112
+        },
+        "unavailableCountersByAttempt": {},
+        "physicalAttempts": 15,
+        "usageComplete": true
+      },
+      "allStagesInputSerializationTokensLocal": 99469,
+      "allStagesAgentBudgetSerializationTokensLocal": 105859,
+      "allStagesWaitSecondsMeasuredLocal": 318.46991891553625,
+      "completedAgentLoops": 3
+    }
+  },
+  "relativeInputObservations": {
+    "initialNavigationReductionPercent": 24.884442344433715,
+    "completeNavigationIncreasePercent": 60.46983324743554,
+    "comparisonLimitedTo": "one fixed-order consumed source task under explicit bookmark-expiry policy; no dollar-cost/production-latency/general-registry inference"
+  },
+  "turns": [
+    {
+      "presentation": "compact",
+      "stage": "A",
+      "providerUsageMeasured": {
+        "knownSubtotals": {
+          "inputTokens": 48677,
+          "outputTokens": 1733,
+          "cachedInputTokens": 30592,
+          "reasoningOutputTokens": 1024
+        },
+        "unavailableCountersByAttempt": {},
+        "physicalAttempts": 6,
+        "usageComplete": true
+      },
+      "modelInputs": 6,
+      "pacingWaitSeconds": 109.6876068750862,
+      "elapsedMsLocal": 132467.7286669612,
+      "localInput": {
+        "cumulativeMessagesAndToolsTokensLocal": 50628,
+        "cumulativeAgentBudgetSerializationTokensLocal": 52703,
+        "cumulativeSchemaJsonTokensLocal": 11094,
+        "cumulativeSystemInstructionsTextTokensLocal": 7746,
+        "toolReplyExposures": 15,
+        "uniqueToolReplies": 5,
+        "uniqueToolReplyTotals": {
+          "evidenceJsonTokensLocal": 8743,
+          "orderedSelectorRemovalDeltaTokensLocal": 2693,
+          "orderedRemainingNavigationProtocolTokensLocal": 5891,
+          "toolMessageJsonTokensLocal": 9430,
+          "navigationPreviewTextTokensLocal": 27,
+          "orderedPreviewRemovalDeltaTokensLocal": 144,
+          "renderedSourceTextTokensLocal": 11,
+          "orderedSourceRemovalDeltaTokensLocal": 15
+        },
+        "repeatedToolReplyExposureTotals": {
+          "evidenceJsonTokensLocal": 27094,
+          "renderedSourceTextTokensLocal": 11,
+          "navigationPreviewTextTokensLocal": 83,
+          "orderedSelectorRemovalDeltaTokensLocal": 8763,
+          "orderedPreviewRemovalDeltaTokensLocal": 434,
+          "orderedSourceRemovalDeltaTokensLocal": 15,
+          "orderedRemainingNavigationProtocolTokensLocal": 17882
+        }
+      },
+      "priorProseRemovalDeltaLocalNonAdditive": 0,
+      "bookmarkRemovalDeltaLocalNonAdditive": 0,
+      "standaloneDeliveredSourceTokensLocal": 11,
+      "deliveredToolReplies": 5,
+      "deliveredErrorReplies": {},
+      "firstToolReplyError": null
+    },
+    {
+      "presentation": "compact",
+      "stage": "acknowledgment",
+      "providerUsageMeasured": {
+        "knownSubtotals": {
+          "inputTokens": 3170,
+          "outputTokens": 67,
+          "cachedInputTokens": 2944,
+          "reasoningOutputTokens": 0
+        },
+        "unavailableCountersByAttempt": {},
+        "physicalAttempts": 1,
+        "usageComplete": true
+      },
+      "modelInputs": 1,
+      "pacingWaitSeconds": 4.5890919864177704e-07,
+      "elapsedMsLocal": 1420.0101250316948,
+      "localInput": {
+        "cumulativeMessagesAndToolsTokensLocal": 3469,
+        "cumulativeAgentBudgetSerializationTokensLocal": 3782,
+        "cumulativeSchemaJsonTokensLocal": 1849,
+        "cumulativeSystemInstructionsTextTokensLocal": 1291,
+        "toolReplyExposures": 0,
+        "uniqueToolReplies": 0,
+        "uniqueToolReplyTotals": {},
+        "repeatedToolReplyExposureTotals": {}
+      },
+      "priorProseRemovalDeltaLocalNonAdditive": 245,
+      "bookmarkRemovalDeltaLocalNonAdditive": 0,
+      "standaloneDeliveredSourceTokensLocal": 0,
+      "deliveredToolReplies": 0,
+      "deliveredErrorReplies": {},
+      "firstToolReplyError": null
+    },
+    {
+      "presentation": "compact",
+      "stage": "B",
+      "providerUsageMeasured": {
+        "knownSubtotals": {
+          "inputTokens": 8302,
+          "outputTokens": 1022,
+          "cachedInputTokens": 6016,
+          "reasoningOutputTokens": 832
+        },
+        "unavailableCountersByAttempt": {},
+        "physicalAttempts": 2,
+        "usageComplete": true
+      },
+      "modelInputs": 2,
+      "pacingWaitSeconds": 49.99610708304681,
+      "elapsedMsLocal": 60490.87466695346,
+      "localInput": {
+        "cumulativeMessagesAndToolsTokensLocal": 8916,
+        "cumulativeAgentBudgetSerializationTokensLocal": 9582,
+        "cumulativeSchemaJsonTokensLocal": 3698,
+        "cumulativeSystemInstructionsTextTokensLocal": 2582,
+        "toolReplyExposures": 1,
+        "uniqueToolReplies": 1,
+        "uniqueToolReplyTotals": {
+          "evidenceJsonTokensLocal": 1324,
+          "renderedSourceTextTokensLocal": 11,
+          "orderedSelectorRemovalDeltaTokensLocal": 301,
+          "orderedSourceRemovalDeltaTokensLocal": 15,
+          "orderedRemainingNavigationProtocolTokensLocal": 1008,
+          "toolMessageJsonTokensLocal": 1446
+        },
+        "repeatedToolReplyExposureTotals": {
+          "evidenceJsonTokensLocal": 1324,
+          "renderedSourceTextTokensLocal": 11,
+          "navigationPreviewTextTokensLocal": 0,
+          "orderedSelectorRemovalDeltaTokensLocal": 301,
+          "orderedPreviewRemovalDeltaTokensLocal": 0,
+          "orderedSourceRemovalDeltaTokensLocal": 15,
+          "orderedRemainingNavigationProtocolTokensLocal": 1008
+        }
+      },
+      "priorProseRemovalDeltaLocalNonAdditive": 572,
+      "bookmarkRemovalDeltaLocalNonAdditive": 134,
+      "standaloneDeliveredSourceTokensLocal": 11,
+      "deliveredToolReplies": 1,
+      "deliveredErrorReplies": {},
+      "firstToolReplyError": null
+    },
+    {
+      "presentation": "navigation",
+      "stage": "A",
+      "providerUsageMeasured": {
+        "knownSubtotals": {
+          "inputTokens": 36564,
+          "outputTokens": 1012,
+          "cachedInputTokens": 20224,
+          "reasoningOutputTokens": 576
+        },
+        "unavailableCountersByAttempt": {},
+        "physicalAttempts": 6,
+        "usageComplete": true
+      },
+      "modelInputs": 6,
+      "pacingWaitSeconds": 159.08099254174158,
+      "elapsedMsLocal": 173171.15012509748,
+      "localInput": {
+        "cumulativeMessagesAndToolsTokensLocal": 38898,
+        "cumulativeAgentBudgetSerializationTokensLocal": 41321,
+        "cumulativeSchemaJsonTokensLocal": 10770,
+        "cumulativeSystemInstructionsTextTokensLocal": 9714,
+        "toolReplyExposures": 15,
+        "uniqueToolReplies": 5,
+        "uniqueToolReplyTotals": {
+          "evidenceJsonTokensLocal": 4637,
+          "orderedSelectorRemovalDeltaTokensLocal": 664,
+          "orderedRemainingNavigationProtocolTokensLocal": 3814,
+          "toolMessageJsonTokensLocal": 5093,
+          "navigationPreviewTextTokensLocal": 27,
+          "orderedPreviewRemovalDeltaTokensLocal": 144,
+          "renderedSourceTextTokensLocal": 11,
+          "orderedSourceRemovalDeltaTokensLocal": 15
+        },
+        "repeatedToolReplyExposureTotals": {
+          "evidenceJsonTokensLocal": 14851,
+          "renderedSourceTextTokensLocal": 11,
+          "navigationPreviewTextTokensLocal": 83,
+          "orderedSelectorRemovalDeltaTokensLocal": 2219,
+          "orderedPreviewRemovalDeltaTokensLocal": 434,
+          "orderedSourceRemovalDeltaTokensLocal": 15,
+          "orderedRemainingNavigationProtocolTokensLocal": 12183
+        }
+      },
+      "priorProseRemovalDeltaLocalNonAdditive": 0,
+      "bookmarkRemovalDeltaLocalNonAdditive": 0,
+      "standaloneDeliveredSourceTokensLocal": 11,
+      "deliveredToolReplies": 5,
+      "deliveredErrorReplies": {},
+      "firstToolReplyError": null
+    },
+    {
+      "presentation": "navigation",
+      "stage": "acknowledgment",
+      "providerUsageMeasured": {
+        "knownSubtotals": {
+          "inputTokens": 3283,
+          "outputTokens": 245,
+          "cachedInputTokens": 3200,
+          "reasoningOutputTokens": 192
+        },
+        "unavailableCountersByAttempt": {},
+        "physicalAttempts": 1,
+        "usageComplete": true
+      },
+      "modelInputs": 1,
+      "pacingWaitSeconds": 4.1583552956581116e-07,
+      "elapsedMsLocal": 3187.3559579253197,
+      "localInput": {
+        "cumulativeMessagesAndToolsTokensLocal": 3646,
+        "cumulativeAgentBudgetSerializationTokensLocal": 4029,
+        "cumulativeSchemaJsonTokensLocal": 1795,
+        "cumulativeSystemInstructionsTextTokensLocal": 1619,
+        "toolReplyExposures": 0,
+        "uniqueToolReplies": 0,
+        "uniqueToolReplyTotals": {},
+        "repeatedToolReplyExposureTotals": {}
+      },
+      "priorProseRemovalDeltaLocalNonAdditive": 145,
+      "bookmarkRemovalDeltaLocalNonAdditive": 0,
+      "standaloneDeliveredSourceTokensLocal": 0,
+      "deliveredToolReplies": 0,
+      "deliveredErrorReplies": {},
+      "firstToolReplyError": null
+    },
+    {
+      "presentation": "navigation",
+      "stage": "B",
+      "providerUsageMeasured": {
+        "knownSubtotals": {
+          "inputTokens": 56674,
+          "outputTokens": 1996,
+          "cachedInputTokens": 46208,
+          "reasoningOutputTokens": 1344
+        },
+        "unavailableCountersByAttempt": {},
+        "physicalAttempts": 8,
+        "usageComplete": true
+      },
+      "modelInputs": 8,
+      "pacingWaitSeconds": 159.38892595795915,
+      "elapsedMsLocal": 185731.55070794746,
+      "localInput": {
+        "cumulativeMessagesAndToolsTokensLocal": 56925,
+        "cumulativeAgentBudgetSerializationTokensLocal": 60509,
+        "cumulativeSchemaJsonTokensLocal": 14360,
+        "cumulativeSystemInstructionsTextTokensLocal": 12952,
+        "toolReplyExposures": 28,
+        "uniqueToolReplies": 7,
+        "uniqueToolReplyTotals": {
+          "evidenceJsonTokensLocal": 5752,
+          "orderedRemainingNavigationProtocolTokensLocal": 4758,
+          "toolMessageJsonTokensLocal": 6341,
+          "orderedSelectorRemovalDeltaTokensLocal": 835,
+          "navigationPreviewTextTokensLocal": 27,
+          "orderedPreviewRemovalDeltaTokensLocal": 144,
+          "renderedSourceTextTokensLocal": 11,
+          "orderedSourceRemovalDeltaTokensLocal": 15
+        },
+        "repeatedToolReplyExposureTotals": {
+          "evidenceJsonTokensLocal": 21895,
+          "renderedSourceTextTokensLocal": 11,
+          "navigationPreviewTextTokensLocal": 83,
+          "orderedSelectorRemovalDeltaTokensLocal": 3361,
+          "orderedPreviewRemovalDeltaTokensLocal": 434,
+          "orderedSourceRemovalDeltaTokensLocal": 15,
+          "orderedRemainingNavigationProtocolTokensLocal": 18085
+        }
+      },
+      "priorProseRemovalDeltaLocalNonAdditive": 1472,
+      "bookmarkRemovalDeltaLocalNonAdditive": 192,
+      "standaloneDeliveredSourceTokensLocal": 11,
+      "deliveredToolReplies": 7,
+      "deliveredErrorReplies": {
+        "navigation_reference_unavailable": 1
+      },
+      "firstToolReplyError": "navigation_reference_unavailable"
+    }
+  ],
+  "pacingAndAccounting": {
+    "encryptedWireReplayExactRequests": 24,
+    "opaqueReasoningPreserved": true,
+    "maxSharedWindowReservation": 44792,
+    "windowReservationLimit": 45000,
+    "inputEstimateMinusReportedRange": [
+      1311,
+      2527
+    ],
+    "cachedInputAndReasoningOutputAreSubsets": true,
+    "localCounter": "cl100k_base adapter messages+tools, including schemas/instructions/wrappers/repeated history/bookmark/recovery; not provider billing",
+    "bookmarkRemovalDeltaAcrossBInputsLocalNonAdditive": {
+      "compact": 134,
+      "navigation": 192
+    },
+    "cloudRetrievalRu": null,
+    "cloudRetrievalRuReason": "local source stores; fake-store zero charges excluded",
+    "cloudEmbeddingCalls": 0,
+    "cloudDataWrites": 0,
+    "dollarCost": null
+  },
+  "validation": {
+    "fullSuitePassed": 2091,
+    "warnings": 45,
+    "seconds": 219.32,
+    "firstSandboxAttempt": {
+      "passed": 2087,
+      "failed": 4,
+      "seconds": 217.87,
+      "cause": "sandbox denied local socket binding in lifecycle tests",
+      "preserved": true
+    },
+    "fullRerunWithLoopbackPassedWithoutProductChange": true,
+    "lintFormatPrivacyPassed": true,
+    "focusedIndependentCombinedPassed": 85,
+    "focusedProductGuidanceMeasurementPassed": 96,
+    "focusedCountsOverlapFull": true,
+    "newContractRegressions": 10,
+    "newRunnerRegressions": 16,
+    "compactInitialCallbacksEqualFrozen13986b6Adapter": true,
+    "jsonschemaDevelopmentDependency": "explicit >=4.26,<5; existing lock 4.26.0 unchanged"
+  },
+  "closure": {
+    "providerClosed": true,
+    "localApiContextsClosed": 6,
+    "navigationSessionsClosed": 3,
+    "sourceSnapshotsUnchanged": true,
+    "codeSourceModelCapacityPostchecksPassed": true,
+    "newCloudDataResources": 0,
+    "cloudDataCleanupRequired": false
+  },
+  "limitations": [
+    "fixed-order development check on consumed source; no broad quality study",
+    "forced expired-bookmark attempt and chosen recovery route; valid retained pin could skip catalogue",
+    "actual retained human answers differ; compact retained its volunteered selector",
+    "local source APIs only; no new cloud lifecycle/publication or retrieval RU qualification",
+    "live cell/table/list selection and concurrent permission changes not requalified",
+    "short action references still expire across user turns",
+    "general integration held for complete-work efficiency; no default change"
+  ],
+  "nextAction": "Assess an explicit snapshot-bound cross-turn bookmark for a direct ordinary authorized read while short action references continue to expire; do not revive or silently rebind stale handles. No additional implementation or model calls included in this run.",
+  "privateEvidence": {
+    "executionArchive": {
+      "files": 342,
+      "manifestSha256": "508bc212dd1ab6c4527ec8c5ea0e721b8e6571837bfca623ea7b0b9a3d9c5429"
+    },
+    "receiptsSha256": {
+      "prior-contract-audit.json": "7b3209175ff399076e4071be62373724e7c786ab5c68051e3f063ff3b3e7eb09",
+      "product-repair-validation.json": "240b5cc336822a07fd55e28f05fa8b339f648263a24985cc60c20163579f779b",
+      "product-review.json": "986e7d0a0364a8d5e841ef0f72504f400ae62bd469f1ba5a1a81920f1b736254",
+      "runner-independent-review.json": "a00717bc4f9d14a45e42bc373d0712f61993d4258139e9112989066ec099a344",
+      "local-validation-summary.json": "39d451a7cfa2c789085602f0941f99f2219cbaa6b84208aa98859fde3a7f7fdf",
+      "live-accounting-review.json": "ca0fff14da831c4b030c850108b1205f62775b412347cee05c40a34ac462da8d",
+      "live-accounting-validation-addendum.json": "6ae48eee0c44f429ab0a44b85ada5169266635b78ec32bd81f63c853486af85e",
+      "live-check/live-behavior-review.json": "f35aba80d44c8d8983789cb7c360c41c7d31ac4a09918917a8144e4bc8806f31",
+      "execution-review.json": "1e1968959be8f0aeaa462b8c207960991423eeae2939946fee67b0a6fa7fbc92",
+      "report-accounting-review.json": "138efa3f4d3d74aac70dd85857cea9b6e821da1f08056e4819deb48418fca071",
+      "final-report-review.json": "e6c689a4a5a27b5e256bef0632bffb6dc3e3546973d0c9ece9f4cba3dff6336e",
+      "final-preservation-check.json": "f2ccbfcb5bb2b5c938fd3e37cf79f3a31fc70b4dd254709ed70975452048acb0"
+    },
+    "policy": "raw source/questions/provider requests and responses remain in private hash-verified archives outside Git",
+    "reportReviewScope": "Exact reviewed report snapshots; subsequent public receipt edits add archive/review metadata only, without circular final-receipt hash claims.",
+    "reviewedFinalArchive": {
+      "files": 375,
+      "manifestSha256": "4cd9b8e4dab05309ea406f33bafe860f57621878dec3320d1d3eb0798843dc3b",
+      "verificationSha256": "e7a5a86469cda1e10af165243cf18f7aa4e87a49aea5de3d28b89b090a3a11e0",
+      "verified": true
+    }
+  }
+}

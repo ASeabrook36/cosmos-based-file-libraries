@@ -1,0 +1,100 @@
+{
+  "schema": "fli.i1.selector-integration.v1",
+  "date": "2026-11-02",
+  "branch": "codex/i1-selector-integration",
+  "baseCommit": "3980333ee8453af48c7133cab24522868701d1cc",
+  "integratedMainCommit": "1d66a5f6c02f00f09d85649a27e332c7cf7e7151",
+  "requiredModularCommitPresent": "9738236ce9cb3e5d08624f6dd14f8714be51c0cc",
+  "scope": "Local integration of accepted selector handles into the normal consuming client; cumulative candidate also contains the consolidated I1 work.",
+  "normalClient": {
+    "selectorMode": "handles",
+    "evidenceView": "compact",
+    "explicitRollback": "DEMO_SELECTOR_MODE=legacy; restart the demo process",
+    "explicitFromEnvArgumentOverridesEnvironment": true,
+    "invalidConfigurationFails": true,
+    "runtimeFailureAutomaticallyDowngrades": false
+  },
+  "restDefaultSelectorMode": "legacy",
+  "historicalReplayCliSelectorMode": "explicit legacy",
+  "p1I1CellControls": "unchanged; explicit per cell",
+  "tests": {
+    "command": "sh scripts/dev check -q",
+    "passed": 1108,
+    "warnings": 14,
+    "seconds": 148.59,
+    "warningCategory": "Existing StarletteDeprecationWarning in TestClient calls",
+    "privateLogSha256": "b4b0f6847de9e8a731d92d7f834b44d489a0e8cf035aacfd5c0bae5e11791ed2",
+    "targetedCommand": "sh scripts/dev test -q tests/test_selector_integration.py tests/test_reading.py::test_parallel_full_read_calls_share_the_remaining_turn_budget",
+    "targetedPassed": 20,
+    "targetedSeconds": 0.59,
+    "targetedPrivateLogSha256": "004dc7aeda211a114776c0f85c7712951d20438893a92e030f3155a892907766",
+    "newSelectorTests": 18,
+    "budgetRegressionModes": [
+      "legacy",
+      "handles"
+    ],
+    "budgetFixtureCorrection": "Unequal source lengths leave deterministic recovery headroom after the first full read while the second still refuses. Original 20000-token runtime test budget unchanged; recovered passages must belong to the refused document.",
+    "providers": "in-memory storage, fake providers and scripted model replies"
+  },
+  "checks": {
+    "isolatedEnvironmentAndEditableSource": "passed",
+    "lint": "passed",
+    "format": "passed; 232 Python files",
+    "defaultPrivacyScan": "passed; zero findings",
+    "diffWhitespace": "passed",
+    "protectedPathsMatchBase": true
+  },
+  "testedSourceFilesSha256": {
+    "src/fli_demo/client.py": "227bddd5e5400ffc396d2d3e505fa35bbcb35d61aa564f4e8e65e8494647bf81",
+    "scripts/compare_agent_models.py": "b4a88a296c37a7bb03bdcf9984ae3fce09dc5a2b3596d4ab36ca80cf3d3c6e08",
+    "scripts/evaluate_agent_retrieval.py": "4e4ff127f6b833de454b5e39e33e8043ab0c2f12d94232a8f4e361218dcdfc75",
+    "scripts/retrieval_benchmark.py": "821ffd1935eee3a6d6afff255f0f7f3d206734a0c8a293ca4ef2e7bd955d55b8",
+    "tests/test_reading.py": "5c302026d476d9c29b89fd5caadf781fed30bbaf1f903cdaa677e9749c3faa64",
+    "tests/test_selector_integration.py": "81d1d8e4c7f9fe0be82b31662d2422b12c14d03bb317eef726a1f3772c060750"
+  },
+  "protectedPathsCheckedAgainstBase": [
+    "src/fli",
+    "src/fli_demo/agent.py",
+    "cosmos",
+    "infra",
+    "docs/testing",
+    "scripts/retrieval_i1.py",
+    "scripts/retrieval_p1.py",
+    "records/retrieval-*",
+    "docs/retrieval-i1.md",
+    "docs/retrieval-stage1.md"
+  ],
+  "review": {
+    "independentSelectorReview": "No blocking findings in default wiring, explicit rollback, HTTP route consistency, source/scope/budget tests or compatibility behavior.",
+    "independentIntegrationReview": "Bounded cumulative review and merge conflict resolution; no new blocking selector/API defect. Deployment guidance distinguishes the incremental selector change from adopting the full consolidated candidate.",
+    "scopeLimit": "Not a full new audit of every consolidated change or a live Azure acceptance run.",
+    "mainSetupConflictsResolved": [
+      "README.md",
+      "docs/build-plan.md",
+      "docs/local-development.md",
+      "records/README.md",
+      "scripts/dev"
+    ],
+    "scriptsDev": "Content unchanged; executable permission retained."
+  },
+  "frozenComparisonBranchModified": false,
+  "frozenComparisonResourcesUsed": false,
+  "consumedHeldoutCasesRerun": false,
+  "liveModelReplayPerformed": false,
+  "liveCanaryPerformed": false,
+  "cloudOperationsPerformed": false,
+  "indexVersioningIncluded": false,
+  "ingestionProviderDecisionMade": false,
+  "defaultIngestionProfile": "current-v1",
+  "priorMeasuredProviderInputReductionPercent": 18.8542783,
+  "priorFrozenEfficiencyTargetPercent": 20,
+  "priorFrozenEfficiencyTargetMet": false,
+  "interpretation": "Local mechanics and regression validation only. No new answer-quality, recall, latency or billed-cost claim. Recorded measured commits remain required for frozen replay reproduction.",
+  "openGates": [
+    "Production hosted authentication and real broker redelivery",
+    "Sustained concurrent replacement/deletion, global revocation and large split-library search",
+    "Microsoft provider ownership, quality, cost and broader structural/visual parity",
+    "Known M1 scheduled orphan discovery uses a literal files container; separate lifecycle fix required"
+  ],
+  "rollout": "Client-only selector enablement assumes an API already running I1. Adoption from main requires the compatible consolidated API/adapter and applicable worker/config rollout; no deployment performed here."
+}

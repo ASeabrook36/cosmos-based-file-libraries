@@ -1,0 +1,64 @@
+{
+  "schema": "fli.granular-navigation.live-attempt.v1",
+  "attempt": 1,
+  "candidateCommit": "e12f857fa9740c32fd4a046a3903822eb92e23c6",
+  "status": "stopped_before_navigation_numeric_guard_defect",
+  "scope": {
+    "reservedLibraries": 3,
+    "reservedDocuments": 3,
+    "reservedGenerations": 3,
+    "reservedChunks": 15,
+    "recordedBlobs": 8,
+    "unresolvedOperations": 1
+  },
+  "checksPassed": 0,
+  "modelTurns": 0,
+  "embedding": [
+    {
+      "logicalCall": 1,
+      "localInputTokens": 98,
+      "inputs": 15,
+      "status": "response",
+      "physicalRequests": 1,
+      "retries": 0,
+      "throttles": 0,
+      "reportedPromptTokens": 98,
+      "unmeteredAttempts": 0
+    }
+  ],
+  "cleanup": {
+    "attempted": false,
+    "blockedBeforeDeletion": true,
+    "reason": "unresolved publication response body hash",
+    "ownedResourcesRetained": true
+  },
+  "cause": {
+    "component": "qualification ownership guard",
+    "fieldPaths": [
+      "processingMetrics.visualExtractionMs",
+      "processingMetrics.visionMs"
+    ],
+    "submittedValue": 0.0,
+    "returnedValue": 0,
+    "exactOriginalProposalHashReconstructed": true,
+    "otherFieldsUnchanged": true,
+    "runtimeSourceDefectEstablished": false
+  },
+  "privateEvidenceHashes": {
+    "controls.json": "0fc926a223f04c0fb79b9e1d2c89b2895a59296b5548807e4f66b8191096f9ee",
+    "execution-result.json": "3d0b986e46c3a7553bd47ffc90ff1d855dd4825b91f5c5a6fd2ca03e1cc98ac9",
+    "ownership-final.json": "dbb5be7a675a2da55db28d20789e6c3f1b6a0feb302c45cf0a2147e66a4c833d",
+    "reconciliation-proof.json": "ad93dccc1b04b9b8d3d17fdf966a1fd0071fd83785344ca03393f334555305f6",
+    "reconciliation-independent-review.json": "1c4d871b1780824d7c3dfc876796089b4406186aad8640e2e6a5a149bcc16e09"
+  },
+  "priorFullLocalCheck": {
+    "passed": 1674,
+    "warnings": 16,
+    "seconds": 193.39
+  },
+  "continuation": "reuse exact owned scopes after append-only independently verified reconciliation; preserve all counters and original events",
+  "answerQuality": "unavailable",
+  "applicationDeployed": false,
+  "mainMerged": false,
+  "largerStudyLaunched": false
+}

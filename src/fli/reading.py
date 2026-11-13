@@ -89,6 +89,7 @@ def manifest(doc: Record) -> Record:
     full = doc.get("fullText") or {}
     active = doc.get("activeGeneration")
     return {
+        **({"sourceSha256": doc.get("sha256")} if (doc.get("processingCoverage") or {}).get("sourceStructure") else {}),
         "documentId": doc["id"],
         "fileName": doc.get("fileName"),
         "generation": active,
@@ -105,6 +106,15 @@ def manifest(doc: Record) -> Record:
         "description": doc.get("description"),
         "descriptionSource": "generated-from-opening" if doc.get("description") else None,
         "estimatedTokens": full.get("tokenCount"),
+        **(
+            {
+                "compactDocumentTokens": full.get("compactSectionsTokenCount"),
+                "compactDocumentTokenEstimateScope": full.get("compactSectionsEstimateScope"),
+                "compactDocumentTokenTokenizer": full.get("compactSectionsTokenizer"),
+            }
+            if (doc.get("processingCoverage") or {}).get("sourceStructure")
+            else {}
+        ),
         "tokenizer": full.get("tokenizer"),
         "representation": "extracted_sections" if full.get("generation") == active and active else "indexed_chunks",
         "chunkCount": doc.get("chunkCount"),
@@ -134,6 +144,8 @@ def region_matches(section, location, sections):
     for key in ("page", "slide", "paragraph"):
         if key not in location or key not in here:
             continue
+        if key == "paragraph" and "paragraphOrdinals" in here:
+            return location[key] in here["paragraphOrdinals"]
         if key == "paragraph" and here.get("paragraphEnd") is not None:
             return here[key] <= location[key] <= here["paragraphEnd"]
         if key == "paragraph" and section.get("contentKind", "text") == "text":
@@ -152,19 +164,32 @@ def region_matches(section, location, sections):
 
 async def select_sections(searcher, library_id, doc, sections, scope, cost, assets=None, structure=None):
     selected = set()
+    from fli.granular_source import navigation, node_indexes
+
+    granular_tree = navigation(sections) if sections and "sourceNavigation" in sections[0] else None
     if scope.get("nodeIds"):
-        if not structure:
+        if granular_tree:
+            try:
+                selected.update(
+                    node_indexes(granular_tree, scope["nodeIds"], subtree=scope.get("nodeScope") != "section")
+                )
+            except (KeyError, ValueError) as exc:
+                raise ApiError(409, "source_scope_unavailable", "source node unavailable") from exc
+        elif not structure:
             raise ApiError(409, "source_scope_unavailable", "authored hierarchy unavailable for this generation")
-        nodes = {node["id"]: node for node in structure["nodes"]}
-        chosen = set(scope["nodeIds"])
-        if not chosen <= nodes.keys():
-            raise ApiError(409, "source_scope_unavailable", "source node unavailable")
-        for node in structure["nodes"]:
-            if node["parentId"] in chosen:
-                chosen.add(node["id"])
-        selected.update(
-            i for i, section in enumerate(sections) if (section.get("location") or {}).get("nodeId") in chosen
-        )
+        else:
+            if scope.get("nodeScope") == "section":
+                raise ApiError(409, "source_scope_unavailable", "section-only hierarchy selection unavailable")
+            nodes = {node["id"]: node for node in structure["nodes"]}
+            chosen = set(scope["nodeIds"])
+            if not chosen <= nodes.keys():
+                raise ApiError(409, "source_scope_unavailable", "source node unavailable")
+            for node in structure["nodes"]:
+                if node["parentId"] in chosen:
+                    chosen.add(node["id"])
+            selected.update(
+                i for i, section in enumerate(sections) if (section.get("location") or {}).get("nodeId") in chosen
+            )
     for value in scope.get("sectionIds", []):
         i = resolve_reference(doc, value, "section")
         if i >= len(sections):
@@ -189,12 +214,25 @@ async def select_sections(searcher, library_id, doc, sections, scope, cost, asse
             for index in indexes:
                 if index not in by_index:
                     raise ApiError(409, "evidence_changed", "source passage no longer exists")
-                locations.append(by_index[index].get("location") or {})
+                location = by_index[index].get("location") or {}
+                if granular_tree and not location.get("sourceAtomId"):
+                    raise ApiError(409, "source_scope_unavailable", "verified passage-to-source mapping unavailable")
+                locations.append(location)
     known_paragraphs = [
         s.get("location", {}).get("paragraphEnd", s.get("location", {}).get("paragraph", 0))
         for s in sections + ((assets or {}).get("assets") or [])
     ]
     for location in locations:
+        if granular_tree and location.get("sourceAtomId"):
+            matches = {
+                i
+                for i, s in enumerate(sections)
+                if s.get("location", {}).get("sourceAtomId") == location["sourceAtomId"]
+            }
+            if not matches or any(sections[i].get("location") != location for i in matches):
+                raise ApiError(409, "source_scope_unavailable", "verified source atom unavailable")
+            selected.update(matches)
+            continue
         if location.get("paragraph", 0) > max(known_paragraphs, default=0):
             raise ApiError(409, "source_scope_unavailable", "paragraph extent is unknown; use outline sectionIds")
         matches = {i for i, s in enumerate(sections) if region_matches(s, location, sections)}
@@ -209,6 +247,19 @@ async def select_sections(searcher, library_id, doc, sections, scope, cost, asse
 async def load_sections(searcher, blobs, library_id, doc, cost):
     document_id, generation = doc["id"], doc["activeGeneration"]
     full = doc.get("fullText") or {}
+    work = doc.get("ingestionJob", {})
+    if work is None:
+        work = {}  # Legacy documents may have no job binding.
+    if not isinstance(work, dict) or not isinstance(work.get("profile", {}), dict):
+        raise ApiError(409, "document_text_incomplete", "source job binding is malformed; reprocess")
+    fidelity = work.get("profile", {}).get("id") == "microsoft-indexer-source-fidelity-v1"
+    granular = work.get("profile", {}).get("id") == "custom-granular-v1"
+    if (fidelity or granular) and (
+        full.get("generation") != generation
+        or (doc.get("processingCoverage") or {}).get("sourceStructure")
+        != ("fli.granular-source.v1" if granular else "fli.docx-source-blocks.v1")
+    ):
+        raise ApiError(409, "document_text_incomplete", "source structure descriptor is unavailable; reprocess")
     if full.get("generation") == generation:
         try:
             data = await blobs.download(full["blobPath"])
@@ -225,6 +276,30 @@ async def load_sections(searcher, blobs, library_id, doc, cost):
             or not all(isinstance(s, dict) and isinstance(s.get("text"), str) for s in sections)
         ):
             raise ApiError(409, "document_text_incomplete", "the extracted text artifact is incomplete; reprocess")
+        if (
+            fidelity
+            or granular
+            or (doc.get("processingCoverage") or {}).get("sourceStructure")
+            or any("sourceStructure" in section or "sourceNavigation" in section for section in sections)
+        ):
+            if granular or any(
+                "sourceNavigation" in s
+                or (
+                    isinstance(s.get("sourceStructure"), dict)
+                    and s["sourceStructure"].get("schema") == "fli.granular-source.v1"
+                )
+                for s in sections
+            ):
+                from fli.granular_source import validate_sections
+            else:
+                from fli.source_fidelity import validate_sections
+
+            try:
+                validate_sections(sections, doc)
+            except (KeyError, TypeError, ValueError) as exc:
+                raise ApiError(
+                    409, "document_text_incomplete", "source structure binding is incomplete; reprocess"
+                ) from exc
         representation = "extracted_sections"
     else:
         # Pre-enhancement documents remain usable. Preserve every indexed passage in
@@ -287,6 +362,16 @@ async def read_documents(
         "More context increases input cost, latency and attention demands; "
         "no fixed dollar or time estimate is implied.",
     ]
+    if (library.get("ingestionProfile") or {}).get("id") == "custom-granular-v1":
+        notes = [
+            "Supported original source atoms and authored hierarchy; processingCoverage states source limitations.",
+            "navigationPreview is an exact bounded source prefix for navigation only, even when truncated=false. "
+            "Copy readSelector to obtain source evidence and its citation before answering.",
+            "selectionComplete=true means all requested source atoms were delivered, not the whole document. "
+            "For tables/cells, nodeScope=subtree is already the default: repeating the same nodes with explicit "
+            "subtree or a larger budget does not expand a complete selection. Use another returned selector "
+            "to change scope.",
+        ]
     for document_id, expected in selections:
         doc = await searcher.documents.get(library_id, document_id, raw_response_hook=cost)
         if doc is None or doc.get("status") == "deleting":
@@ -369,6 +454,12 @@ async def read_documents(
         sections, representation = await load_sections(searcher, blobs, library_id, doc, cost)
         all_sections = sections
         selected_scope = (scopes or {}).get(document_id, {})
+        from fli.granular_source import navigation
+
+        tree = navigation(sections) if sections and "sourceNavigation" in sections[0] else None
+        if selected_scope.get("outlineNodeId") and not tree:
+            raise ApiError(409, "source_scope_unavailable", "granular outline unavailable for this generation")
+        granular_outline, outline_count = None, len(sections)
         assets = None
         if mode == "selected" and doc.get("imageAssets"):
             try:
@@ -391,7 +482,21 @@ async def read_documents(
                 searcher, library_id, doc, sections, selected_scope, cost, assets, structure
             )
         elif mode == "outline":
-            sections = sections[after_section : after_section + section_limit]
+            if tree:
+                from fli.granular_navigation import outline_entries
+
+                granular_outline, outline_count = await asyncio.to_thread(
+                    outline_entries,
+                    sections,
+                    tree,
+                    selected_scope.get("outlineNodeId", "n0"),
+                    after_section,
+                    section_limit,
+                    tokenizer,
+                )
+                sections = []
+            else:
+                sections = sections[after_section : after_section + section_limit]
         if representation == "indexed_chunks":
             notes.append("Legacy sections retain overlapping indexed passages and available source precision only.")
         selected_objects = {id(s) for s in sections}
@@ -411,14 +516,25 @@ async def read_documents(
                     }
                 )
                 continue
-            public = {k: v for k, v in section.items() if k not in ("imageRef", "imageMeta")}
+            public = {k: v for k, v in section.items() if k not in ("imageRef", "imageMeta", "sourceNavigation")}
+            if tree:
+                from fli.granular_navigation import section_fields
+
+                public.update(section_fields(section, tree))
             public["sectionId"] = reference(doc, "section", index)
             public["image"] = await searcher.image(library_id, document_id, generation, section)
             public_sections.append(public)
         item = {**manifest(doc), "representation": representation, "sections": public_sections}
+        if tree and mode == "selected":
+            from fli.granular_navigation import selection_summary
+
+            item["selectionSummary"] = selection_summary(tree, selected_scope, len(sections))
         if view != "raw":
-            item["documentTokens"] = (doc.get("fullText") or {}).get("tokenCount")
-            item["documentTokenTokenizer"] = (doc.get("fullText") or {}).get("tokenizer")
+            descriptor = doc.get("fullText") or {}
+            item["documentTokens"] = descriptor.get("compactSectionsTokenCount", descriptor.get("tokenCount"))
+            item["documentTokenTokenizer"] = descriptor.get("compactSectionsTokenizer", descriptor.get("tokenizer"))
+            if "compactSectionsTokenCount" in descriptor:
+                item["documentTokenEstimateScope"] = "projected_sections_only"
         if assets is not None:
             candidates = [
                 a
@@ -448,7 +564,15 @@ async def read_documents(
             )
             if mode == "outline":
                 item["outline"] = item.pop("sections")
-                item["hasMore"] = after_section + section_limit < len(all_sections)
+                if granular_outline is not None:
+                    from fli.granular_navigation import node_context
+
+                    item["outline"] = granular_outline
+                    item["outlineRootNodeId"] = selected_scope.get("outlineNodeId", "n0")
+                    item["outlineContext"] = node_context(tree, item["outlineRootNodeId"])
+                    item["outlineScope"] = "immediate_children; use each outlineSelector to drill down"
+                    item["outlineChildCount"] = outline_count
+                item["hasMore"] = after_section + section_limit < outline_count
                 item["nextAfterSection"] = after_section + section_limit if item["hasMore"] else None
         if doc.get("imageStatus") in ("queued", "processing", "failed"):
             notes.append(
@@ -513,9 +637,33 @@ async def read_documents(
         "usage": {"requestCharge": round(cost.request_charge, 2), "totalMs": elapsed},
         "nextAction": None,
     }
+    inspection_selector = None
+    if not include_text and (library.get("ingestionProfile") or {}).get("id") == "custom-granular-v1":
+        inspection_selector = {
+            "mode": mode,
+            "documents": [
+                {
+                    **(scopes or {}).get(doc["id"], {}),
+                    "documentId": doc["id"],
+                    "generation": doc["activeGeneration"],
+                    "contentRevision": doc.get("contentRevision", 0),
+                }
+                for doc in records
+            ],
+            "includeText": True,
+            "maxTokens": max_tokens,
+        }
+        if mode == "outline":
+            inspection_selector.update(afterSection=after_section, sectionLimit=section_limit)
     if view != "raw":
         result = await asyncio.to_thread(
-            compact_response, response, max_tokens, include_text, view=view, selectors=selectors
+            compact_response,
+            response,
+            max_tokens,
+            include_text,
+            view=view,
+            selectors=selectors,
+            inspection_selector=inspection_selector,
         )
         tokens = result["metadata"]["budget"]["requiredTokens"]
         fits = result["metadata"]["budget"]["fits"]
@@ -546,6 +694,10 @@ async def read_documents(
                 item.pop("outline", None)
                 item.pop("candidateImages", None)
                 item.update(selectionComplete=False, documentComplete=False)
+            if inspection_selector is not None:
+                from fli.selector_hints import inspection_hints
+
+                response = inspection_hints(response, inspection_selector)
     elapsed = round((time.perf_counter() - started) * 1000, 1)
     response["usage"]["totalMs"] = elapsed
     log.info(

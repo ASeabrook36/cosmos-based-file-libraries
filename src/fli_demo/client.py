@@ -28,7 +28,7 @@ class IndexClient:
         *,
         http: httpx.Client | None = None,
         evidence_view="compact",
-        selector_mode="legacy",
+        selector_mode="handles",
     ):
         if evidence_view not in {"compact", "references"} or selector_mode not in {"legacy", "handles"}:
             raise ValueError("unsupported retrieval presentation")
@@ -37,11 +37,17 @@ class IndexClient:
         self.http.headers["Authorization"] = f"Bearer {api_key}"
 
     @classmethod
-    def from_env(cls) -> IndexClient:
+    def from_env(cls, *, selector_mode: str | None = None) -> IndexClient:
+        """Normal agent selectors default to handles; explicit replay controls take precedence."""
         key = os.environ.get("DEV_API_KEY")
         if not key:
             raise RuntimeError("DEV_API_KEY is not set")
-        return cls(os.environ.get("INDEX_API_URL", "http://127.0.0.1:8000"), key)
+        mode = selector_mode if selector_mode is not None else os.environ.get("DEMO_SELECTOR_MODE", "handles")
+        return cls(
+            os.environ.get("INDEX_API_URL", "http://127.0.0.1:8000"),
+            key,
+            selector_mode=mode,
+        )
 
     def _call(self, method: str, path: str, **kwargs: Any) -> Any:
         response = self.http.request(method, path, **kwargs)

@@ -1,5 +1,11 @@
 # Agent evidence tools
 
+The opt-in [granular source profile](granular-source-navigation.md) adds authored
+hierarchy, paragraph/cell reads and section/subtree expansion to the same tools.
+Its outline drills through immediate children with snapshot-bound selectors and
+explicit size estimates. Its tool bundle advertises only supported source reads;
+visual/page selection remains unavailable for this profile.
+
 The natural-test fixes add capabilities over the existing Cosmos/Blob artifacts. The priority is supported user intent, then time, then model/embedding/vision tokens and RU. The [strategy](consults/2026-10-27-agent-retrieval-strategy.md) was authorized for implementation after the original review. [E49](evidence.md) records validation and limits.
 
 ## Four actions per attached library
@@ -39,6 +45,23 @@ Selected regions return up to ten `candidateImages`, caption metadata and `candi
 
 The demo requests the supported [compact REST contract](compact-rest.md) on all four retrieval operations. Its `evidence` distinguishes generated image descriptions from original text and provides a filename/location citation. Signed links and operational metadata stay in `attachments`/`metadata`; internal layout figure locators are removed from model-facing source scopes. Raw REST remains the default. Compact budgets count only evidence JSON; raw budgets retain their original semantics. Captions inferred from adjacency remain qualified. Full/selected read text is never character-clipped.
 
+The normal `IndexClient` now requests `selectors=handles` on the tool bundle and
+every retrieval operation, following the accepted [I1 result](retrieval-i1.md).
+Copy returned `documentSelector`, `outlineSelector` and `readSelector` objects;
+they retain generation/content-revision pins and disclose when an outline is
+needed instead of guessing source coordinates. REST defaults remain legacy, and
+the reference evidence encoding remains an independent opt-in.
+
+For an explicit rollback, set `DEMO_SELECTOR_MODE=legacy` and restart the demo
+process (its client is cached), or construct `IndexClient(...,
+selector_mode="legacy")`. `IndexClient.from_env(selector_mode="legacy")` takes
+precedence over the environment setting. Unsupported settings fail at startup;
+retrieval failures never trigger an automatic legacy downgrade. Custom adapters
+that do not declare a selector mode retain their existing compatibility behavior.
+The historical R0, recovery and model-comparison CLI entry points explicitly
+retain legacy selectors; P1/I1 cells already pin their selected modes. Reproducing
+old measurements still requires their recorded source commits and controls.
+
 Only the leading search image is previewed automatically, preserving protection against promoting a lower-ranked distractor. Full/selected reads expose display attachments and figure candidates; they do not send every figure's pixels. Explicit inspection supplies the selected images subject to model support/context budget. Each tool reply reports `nativeImageDelivery` with requested, supplied, already-supplied and withheld IDs/reason. UI availability alone never means the model saw pixels.
 
 A per-turn extent ledger distinguishes repeated evidence from expanded source text. Two consecutive retrievals without new extents produce actionable recovery guidance, without terminating complex research or relaxing filters. New native inputs count as progress. Overall context and twelve-round bounds remain. This is a signal to change strategy, not a semantic guarantee that every new topic or figure is useful.
@@ -48,8 +71,10 @@ response is a budget refusal, not an empty search. It retries at most four whole
 passage requests (8, 4, 2, then 1 result), dropping neighbors on retries while
 retaining the bound library, caller, document snapshot and filters. Every request
 retains its own charge and latency trace. Passage text is never clipped to fit.
-Malformed document selectors are rejected rather than discarded; a nonblank
-scalar document ID can be repaired to the equivalent object selector.
+Malformed document selectors are rejected rather than discarded. Handles mode
+rejects scalar document IDs and returns sanitized recovery guidance; callers
+must copy the returned object. Only explicit legacy mode repairs a nonblank
+scalar ID to the equivalent object selector. Neither mode drops supplied pins.
 
 Before any original text or native image has arrived, the first passage response
 is limited to half the remaining evidence space or 6,000 tokens, whichever is

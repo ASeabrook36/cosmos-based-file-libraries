@@ -1,0 +1,105 @@
+{
+  "schema": "fli.hybrid-quality.cleanup-acceptance.v1",
+  "status": "accepted",
+  "date": "2026-11-03",
+  "ordinaryCleanup": {
+    "schema": "fli.hybrid-quality.cleanup.v1",
+    "ownedLibrariesDeleted": 1,
+    "protectedLibrariesMutated": 0,
+    "libraryRecordsRemaining": 0,
+    "documentRecordsRemaining": 0,
+    "liveChunksRemaining": 0,
+    "liveBlobPrefixEntriesRemaining": 0,
+    "lateRecheckSeconds": 60.0,
+    "lateRecheckPassed": true,
+    "retentionCaveat": "Live namespace absence only; configured soft-delete/backup retention remains."
+  },
+  "independentReadOnlyVerification": {
+    "schema": "fli.hybrid-quality.independent-post-cleanup.v1",
+    "status": "complete",
+    "readOnly": true,
+    "cloudMutations": 0,
+    "initial": {
+      "libraryPoint404": 1,
+      "documentPoint404": 8,
+      "chunkPoint404": 36,
+      "scopedQueriesEmpty": 2,
+      "liveBlobPrefixEmpty": true
+    },
+    "late": {
+      "libraryPoint404": 1,
+      "documentPoint404": 8,
+      "chunkPoint404": 36,
+      "scopedQueriesEmpty": 2,
+      "liveBlobPrefixEmpty": true
+    },
+    "lateRecheckSeconds": 60,
+    "dataPlaneRequests": 110,
+    "inputsSha256": "326cc776bb2fdbea3a84ee6fdd9ba67957365646e893cbacfe6395a1232e2725",
+    "verifierSha256": "27c41f6d628a58eae6af9fbed067eb5248ed0da4df025067b135d58115c6ce01",
+    "protectedInventoryExclusionVerified": true,
+    "retentionCaveat": "Live namespace absence only; no soft-delete, snapshot or backup purge performed.",
+    "limitation": "Exact retained 36-row point inventory plus owned scoped empty queries; no global inventory or future-lateness guarantee."
+  },
+  "priorVerifierAttempt": {
+    "status": "incomplete",
+    "cloudMutations": 0,
+    "strictOwnedPoint404s": 45,
+    "emptyDocumentQueries": 1,
+    "dataPlaneRequests": 53,
+    "stopCause": "Transport guard rejected HTTP 304 on partition-range metadata, not a failed point read or an empty-result inference.",
+    "failureReceiptSha256": "93ed8da962c5637916a81e65c31995d6e5637246d3daba539a39f298ee616d45",
+    "correctiveScope": "Read-only verifier v2 permits only narrowly checked incremental partition-range metadata 304; point/query/blob 304 and other error guards remain rejected. No DELETE was repeated."
+  },
+  "temporaryAnsweringDeployment": {
+    "verifiedAt": "2026-11-03T18:18:58.451537+00:00",
+    "status": "complete",
+    "ownedTargetAbsent": true,
+    "httpStatus": 404,
+    "existingDeploymentsUnchanged": 2,
+    "sourceSha256": "2dacff7b1b657eccb8d14b0e4ab4caf7ed75d59b546a76ab182c8fd176c3f5a4"
+  },
+  "protectedSnapshots": {
+    "capturedAt": "2026-11-03T18:19:34.578757+00:00",
+    "rows": [
+      {
+        "scope": "r0",
+        "libraries": 3,
+        "documents": 15,
+        "unchanged": true
+      },
+      {
+        "scope": "p1",
+        "libraries": 1,
+        "documents": 5,
+        "unchanged": true
+      },
+      {
+        "scope": "i1",
+        "libraries": 1,
+        "documents": 4,
+        "unchanged": true
+      }
+    ],
+    "searches": 0,
+    "mutations": 0
+  },
+  "oldFailedScope": {
+    "fenced": true,
+    "protectedFromCleanup": true,
+    "completeAbsenceVerified": false
+  },
+  "privateReceiptHashes": {
+    "ordinaryCleanup": "a9804db137399756402ebbb2ebf535a87a1dc673740bea31b2d04c869dadef0b",
+    "independentVerification": "a7a3cfff0f7150fedaf86b8256f16d7f4e0629bd7334bbf07cb3a30fe20c9aee",
+    "deploymentCleanup": "ad864e5e485a14d8400ca844fe1c837fcee46ea9f6aacfdbf53cf34c9416f5e5",
+    "protectedSnapshots": "6353f39baca3e7cdc219f66a49eb79108dac7e6960bfea998e241679ba6c56c6",
+    "finalSourceReconciliation": "47c42ed62ec65f98159ea68ae716e84809938f60ec4ca1a7aa5d437889acd2f3"
+  },
+  "limits": [
+    "Ordinary worker purge followed by independent point verification; not exceptional per-chunk 404-before-blob ordering.",
+    "Finite 60-second late checks do not exclude future redelivery or artifacts.",
+    "Live namespace absence only; soft-delete/version/backup retention is unchanged.",
+    "M1 scheduled orphan discovery defect and earlier failed-scope cleanup remain unresolved."
+  ]
+}

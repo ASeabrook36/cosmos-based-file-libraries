@@ -488,7 +488,7 @@ def main():
     if args.action == "ingest":
         if not args.corpus or not args.output:
             parser.error("ingest requires --corpus and --output")
-        ingest(IndexClient.from_env(), manifest, args.corpus, args.output)
+        ingest(IndexClient.from_env(selector_mode="legacy"), manifest, args.corpus, args.output)
         print("Isolated baseline sources ready")
         return
     tasks = read(args.tasks)
@@ -513,7 +513,7 @@ def main():
         print(
             json.dumps(
                 run_replay(
-                    IndexClient.from_env(),
+                    IndexClient.from_env(selector_mode="legacy"),
                     read(args.config),
                     manifest,
                     tasks,

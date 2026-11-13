@@ -1,5 +1,11 @@
 # records/
 
+`granular-outline-qualification-20261104.json` records the separately bounded
+outline contract check: real outline delivery worked, but the required focused
+source read and final citation were not reached before a local pacing refusal.
+It preserves the failed attempt, measured usage, separate local estimates and
+verified cleanup without revising the earlier two successful core checks.
+
 Canary records written by `scripts/canary.py`, one per run, named `canary-<UTC timestamp>.json`. Commit them: a passing record is the Phase 0 exit check (`docs/build-plan.md`).
 
 Phase 1 exit-check records written by `scripts/phase1_exit.py`, named `phase1-exit-<UTC timestamp>.json`:
@@ -97,6 +103,23 @@ The current held-out answers cannot guide tuning and then be counted as fresh
 confirmation. Private captures are required for offline scoring from the exact
 measured implementation; the single-execution ledger remains consumed.
 
+`i1-selector-integration-20261102.json` records subsequent normal-client adoption,
+local regression checks and merge integration. It is not a new cloud/model replay
+or an amendment of I1's measured scores or frozen controls.
+
+`local-environment-primary-20261102.json` records setup-only delivery to the primary
+local checkout, fresh and repeated dependency installation, 705 passing tests and
+the portable logging-test correction. The user subsequently confirmed that the
+environment appears in the local picker; automatic cloud setup is excluded.
+
+
+`granular-source-navigation-20261104.json` records the dedicated main-plus-source-only
+baseline, focused navigation implementation, actual local validation and source
+invariance checks. The linked preparation and local-qualification receipts freeze
+new mechanics fixtures and real tool serializations with in-memory services;
+cloud/model counters remain unavailable and live qualification remains pending.
+Completed comparison and repair receipts are not rewritten.
+
 `scale-ablation-20261111.json` records E68's fresh paired E59 shard-key ablation:
 two canary-validated databases, three stages, ten fixed probe libraries, twenty
 shared frozen questions per probe, three ANN repeats, exact references and
@@ -109,3 +132,12 @@ query scoping; the [protocol](../docs/scale-ablation.md) remains frozen. E59's
 original receipt and grades remain unchanged. Both disposable databases are
 retained until the user separately authorizes deletion; runtime bindings, source
 text, vectors, result IDs and corpus locators stay outside Git.
+
+`scale-ablation-large-20261113.json` records E69's extension of the retained pair
+to 429,773 vectors and 1,018 libraries, including 10k/25k/50k/100k probes,
+twenty-question routed and no-prefix measurements, shared global controls,
+verified exact-reference pagination repair and the delayed fixed sentinels.
+The [full tables](../docs/scale-ablation-large-results.md) keep initial
+twenty-question savings separate from material twelve-hour RU changes; they do
+not establish settled steady-state savings. E68's dated receipt and tables
+remain unchanged, and both disposable databases remain retained.

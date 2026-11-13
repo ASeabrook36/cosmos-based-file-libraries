@@ -52,3 +52,27 @@ future worktree is created, and exposes Test, Lint and Check actions. This uses 
 desktop app's [local environment support](https://learn.chatgpt.com/docs/environments/local-environment).
 The commands also work independently of the app. Cloud configuration and
 credentials remain separate, explicitly invoked runtime steps.
+
+## Availability in the desktop project
+
+The environment is named **File Library Index**. Its configuration and supporting
+scripts must exist in the checkout used by the selected local project. Committing
+them only in a separate research worktree does not install them in the project's
+primary checkout. This setup package is also provided on the primary branch so
+new worktrees based on that branch inherit it.
+
+In a new local chat for this project, reopen the Environment picker and choose
+File Library Index. If it still shows only Work without environment, confirm that the selected
+project folder contains `.codex/environments/environment.toml`; then reopen the
+project or its Environment settings and check again. UI discovery has not been
+verified automatically, so report a continuing empty picker rather than assuming
+the configuration has loaded.
+This is a local environment, separate from a published Codex Cloud environment.
+
+The primary-checkout setup package was validated in a fresh isolated worktree;
+existing primary-checkout dependencies and running services were left untouched.
+The environment configuration format and discovery path were checked against the
+installed desktop app. On 2026-11-02, the user confirmed that File Library Index
+appears in the local Environment picker. App-driven automatic worktree setup has
+not been exercised by this validation; the exact setup and action commands passed
+directly. The complete commands can also be run using the instructions above.

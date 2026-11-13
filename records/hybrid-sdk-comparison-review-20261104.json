@@ -1,0 +1,475 @@
+{
+  "schema": "fli.hybrid-sdk-comparison.review.v1",
+  "status": "accepted_after_independent_and_coordinator_review",
+  "experimentDate": "2026-11-04",
+  "comparison": "Microsoft.Azure.Cosmos 3.63.0 vs azure-cosmos 4.17.1",
+  "scope": "consumed exploratory/regression pack; no fresh confirmation",
+  "reviewMethod": [
+    "Rehash all finalized JSON artifacts and frozen inputs independently.",
+    "Compare source and container snapshots before and after measurement.",
+    "Compare original SQL and parameters observed on wire for all 576 logical queries.",
+    "Compare all 9216 returned projected rows, including text and metadata, to complete-document reference payloads.",
+    "Independently classify query plans, component queries, physical range inventories, charges and errors.",
+    "Reconcile SDK page charges with wire charges without double counting and separate preparation from measurement.",
+    "Coordinator rehashed 4685 records and accepted these bounded conclusions before publication."
+  ],
+  "evidenceHashes": {
+    "derivedMatrixSha256": "18c6d7d03c91b226add1741e6b28469a21a2edafa02e04f90c5835960ea45f17",
+    "privateIndependentReviewSha256": "9c9d2c2ed01e93a8a9c001487cc86f196a3c53dc45496a94486ea8af51fc6d38",
+    "controlsSha256": "24a41e230b9810a74000c27f9eb880eaa5f26328f4a54571fb16bff37f2911e6",
+    "finalizationSha256": "9e3e742ac97c60171910e47741fcc4edc5968366407301ccb559186d0641ce2e"
+  },
+  "validation": {
+    "finalizedJsonArtifactsVerified": 4685,
+    "allFrozenInputsVerified": true,
+    "sourceAndContainerIdenticalBeforeAfter": true,
+    "matchedCommandSemanticsAndRoutingVerified": true,
+    "all576OriginalSqlAndParametersObservedOnWire": true,
+    "all9216ReturnedProjectedRowsEqualFullDocumentReferencePayloads": true,
+    "returnedUniqueStoredChunks": 36,
+    "measuredQueries": 576,
+    "exactReferenceQueries": 384,
+    "warmups": 6
+  },
+  "physicalTopology": {
+    "capturedInventoryResponses": 101,
+    "physicalRanges": 1,
+    "fullKeyspace": true,
+    "measuredReturnedRangeIdsEqualInventory": true,
+    "allEightDocumentsObservedOnSameRange": true,
+    "largeContainerRoutingResolved": false
+  },
+  "sourceIsolation": {
+    "all576Top16SourceChecksPassed": true,
+    "globalStatisticsSqlHasNoLibraryFilter": true,
+    "dotnetPrefixRankingComponentsHaveLibraryEpkBounds": true,
+    "globalStatisticsHasNoLibraryEpkBounds": true
+  },
+  "rankAgreement": {
+    "python/vector-prefix vs dotnet/vector-prefix": {
+      "pairs": 96,
+      "exactOrderAgreements": 96,
+      "exactSetAgreements": 96
+    },
+    "python/hybrid-where vs dotnet/hybrid-where": {
+      "pairs": 96,
+      "exactOrderAgreements": 92,
+      "exactSetAgreements": 96
+    },
+    "python/hybrid-prefix vs python/hybrid-where": {
+      "pairs": 96,
+      "exactOrderAgreements": 0,
+      "exactSetAgreements": 0
+    },
+    "dotnet/hybrid-prefix vs dotnet/hybrid-where": {
+      "pairs": 96,
+      "exactOrderAgreements": 96,
+      "exactSetAgreements": 96
+    }
+  },
+  "orderDisagreementCases": [
+    {
+      "case": "hq-19",
+      "repeats": [
+        1,
+        2
+      ],
+      "oneBasedPositions": [
+        8,
+        9
+      ]
+    },
+    {
+      "case": "hq-24",
+      "repeats": [
+        1,
+        2
+      ],
+      "oneBasedPositions": [
+        10,
+        11
+      ]
+    }
+  ],
+  "causeOfOrderSwaps": "unresolved; do not label ties without an independent hybrid score/oracle",
+  "exactHybridRankingCorrectness": null,
+  "documentCoverageNotFactOrPassageRecall": {
+    "python/vector-prefix": {
+      "8": 0.9375,
+      "16": 1.0
+    },
+    "python/hybrid-prefix": {
+      "8": 0.1625,
+      "16": 0.375
+    },
+    "python/hybrid-where": {
+      "8": 0.9875,
+      "16": 1.0
+    },
+    "dotnet/vector-prefix": {
+      "8": 0.9375,
+      "16": 1.0
+    },
+    "dotnet/hybrid-prefix": {
+      "8": 0.9875,
+      "16": 1.0
+    },
+    "dotnet/hybrid-where": {
+      "8": 0.9875,
+      "16": 1.0
+    }
+  },
+  "cellRequestBreakdown": {
+    "python/vector-prefix": {
+      "originalRankedQuery": {
+        "requests": 96,
+        "responsesWithCharge": 96,
+        "knownRu": 1081.64,
+        "meanKnownRuPerQuery": 11.267083,
+        "requestsWithLibraryWhere": 96,
+        "requestsWithEpkBounds": 96,
+        "responseItemCounts": {
+          "16": 96
+        },
+        "hasOrderByItemsProjection": 0,
+        "hasComponentScoresProjection": 0
+      }
+    },
+    "python/hybrid-prefix": {
+      "originalRankedQuery": {
+        "requests": 96,
+        "responsesWithCharge": 96,
+        "knownRu": 929.28,
+        "meanKnownRuPerQuery": 9.68,
+        "requestsWithLibraryWhere": 96,
+        "requestsWithEpkBounds": 96,
+        "responseItemCounts": {
+          "16": 96
+        },
+        "hasOrderByItemsProjection": 0,
+        "hasComponentScoresProjection": 0
+      }
+    },
+    "python/hybrid-where": {
+      "globalStatistics": {
+        "requests": 96,
+        "responsesWithCharge": 96,
+        "knownRu": 399.44,
+        "meanKnownRuPerQuery": 4.160833,
+        "requestsWithLibraryWhere": 0,
+        "requestsWithEpkBounds": 0,
+        "responseItemCounts": {
+          "1": 96
+        },
+        "hasOrderByItemsProjection": 0,
+        "hasComponentScoresProjection": 0
+      },
+      "initialFallback": {
+        "requests": 96,
+        "responsesWithCharge": 0,
+        "knownRu": null,
+        "meanKnownRuPerQuery": null,
+        "requestsWithLibraryWhere": 96,
+        "requestsWithEpkBounds": 0,
+        "responseItemCounts": {
+          "missing": 96
+        },
+        "hasOrderByItemsProjection": 0,
+        "hasComponentScoresProjection": 0
+      },
+      "metadata": {
+        "requests": 96,
+        "responsesWithCharge": 0,
+        "knownRu": null,
+        "meanKnownRuPerQuery": null,
+        "requestsWithLibraryWhere": 0,
+        "requestsWithEpkBounds": 0,
+        "responseItemCounts": {
+          "1": 96
+        },
+        "hasOrderByItemsProjection": 0,
+        "hasComponentScoresProjection": 0
+      },
+      "queryPlan": {
+        "requests": 96,
+        "responsesWithCharge": 0,
+        "knownRu": null,
+        "meanKnownRuPerQuery": null,
+        "requestsWithLibraryWhere": 96,
+        "requestsWithEpkBounds": 0,
+        "responseItemCounts": {
+          "missing": 96
+        },
+        "hasOrderByItemsProjection": 0,
+        "hasComponentScoresProjection": 0
+      },
+      "textComponent": {
+        "requests": 96,
+        "responsesWithCharge": 96,
+        "knownRu": 4670.26,
+        "meanKnownRuPerQuery": 48.648542,
+        "requestsWithLibraryWhere": 96,
+        "requestsWithEpkBounds": 0,
+        "responseItemCounts": {
+          "36": 96
+        },
+        "hasOrderByItemsProjection": 96,
+        "hasComponentScoresProjection": 0
+      },
+      "vectorComponent": {
+        "requests": 96,
+        "responsesWithCharge": 96,
+        "knownRu": 2830.04,
+        "meanKnownRuPerQuery": 29.479583,
+        "requestsWithLibraryWhere": 96,
+        "requestsWithEpkBounds": 0,
+        "responseItemCounts": {
+          "36": 96
+        },
+        "hasOrderByItemsProjection": 96,
+        "hasComponentScoresProjection": 0
+      }
+    },
+    "dotnet/vector-prefix": {
+      "originalRankedQuery": {
+        "requests": 96,
+        "responsesWithCharge": 96,
+        "knownRu": 1101.9,
+        "meanKnownRuPerQuery": 11.478125,
+        "requestsWithLibraryWhere": 96,
+        "requestsWithEpkBounds": 96,
+        "responseItemCounts": {
+          "16": 96
+        },
+        "hasOrderByItemsProjection": 96,
+        "hasComponentScoresProjection": 0
+      },
+      "queryPlan": {
+        "requests": 96,
+        "responsesWithCharge": 0,
+        "knownRu": null,
+        "meanKnownRuPerQuery": null,
+        "requestsWithLibraryWhere": 96,
+        "requestsWithEpkBounds": 96,
+        "responseItemCounts": {
+          "missing": 96
+        },
+        "hasOrderByItemsProjection": 0,
+        "hasComponentScoresProjection": 0
+      }
+    },
+    "dotnet/hybrid-prefix": {
+      "globalStatistics": {
+        "requests": 96,
+        "responsesWithCharge": 96,
+        "knownRu": 399.44,
+        "meanKnownRuPerQuery": 4.160833,
+        "requestsWithLibraryWhere": 0,
+        "requestsWithEpkBounds": 0,
+        "responseItemCounts": {
+          "1": 96
+        },
+        "hasOrderByItemsProjection": 0,
+        "hasComponentScoresProjection": 0
+      },
+      "queryPlan": {
+        "requests": 96,
+        "responsesWithCharge": 0,
+        "knownRu": null,
+        "meanKnownRuPerQuery": null,
+        "requestsWithLibraryWhere": 96,
+        "requestsWithEpkBounds": 96,
+        "responseItemCounts": {
+          "missing": 96
+        },
+        "hasOrderByItemsProjection": 0,
+        "hasComponentScoresProjection": 0
+      },
+      "textComponent": {
+        "requests": 96,
+        "responsesWithCharge": 96,
+        "knownRu": 3667.12,
+        "meanKnownRuPerQuery": 38.199167,
+        "requestsWithLibraryWhere": 96,
+        "requestsWithEpkBounds": 96,
+        "responseItemCounts": {
+          "36": 96
+        },
+        "hasOrderByItemsProjection": 0,
+        "hasComponentScoresProjection": 96
+      },
+      "vectorComponent": {
+        "requests": 96,
+        "responsesWithCharge": 96,
+        "knownRu": 2755.16,
+        "meanKnownRuPerQuery": 28.699583,
+        "requestsWithLibraryWhere": 96,
+        "requestsWithEpkBounds": 96,
+        "responseItemCounts": {
+          "36": 96
+        },
+        "hasOrderByItemsProjection": 0,
+        "hasComponentScoresProjection": 96
+      }
+    },
+    "dotnet/hybrid-where": {
+      "globalStatistics": {
+        "requests": 96,
+        "responsesWithCharge": 96,
+        "knownRu": 399.44,
+        "meanKnownRuPerQuery": 4.160833,
+        "requestsWithLibraryWhere": 0,
+        "requestsWithEpkBounds": 0,
+        "responseItemCounts": {
+          "1": 96
+        },
+        "hasOrderByItemsProjection": 0,
+        "hasComponentScoresProjection": 0
+      },
+      "queryPlan": {
+        "requests": 96,
+        "responsesWithCharge": 0,
+        "knownRu": null,
+        "meanKnownRuPerQuery": null,
+        "requestsWithLibraryWhere": 96,
+        "requestsWithEpkBounds": 0,
+        "responseItemCounts": {
+          "missing": 96
+        },
+        "hasOrderByItemsProjection": 0,
+        "hasComponentScoresProjection": 0
+      },
+      "textComponent": {
+        "requests": 96,
+        "responsesWithCharge": 96,
+        "knownRu": 3631.6,
+        "meanKnownRuPerQuery": 37.829167,
+        "requestsWithLibraryWhere": 96,
+        "requestsWithEpkBounds": 0,
+        "responseItemCounts": {
+          "36": 96
+        },
+        "hasOrderByItemsProjection": 0,
+        "hasComponentScoresProjection": 96
+      },
+      "vectorComponent": {
+        "requests": 96,
+        "responsesWithCharge": 96,
+        "knownRu": 2719.64,
+        "meanKnownRuPerQuery": 28.329583,
+        "requestsWithLibraryWhere": 96,
+        "requestsWithEpkBounds": 0,
+        "responseItemCounts": {
+          "36": 96
+        },
+        "hasOrderByItemsProjection": 0,
+        "hasComponentScoresProjection": 96
+      }
+    }
+  },
+  "queryPlanObservedDifference": {
+    "pythonHybridComponentInfo": {
+      "top": 120,
+      "orderBy": [
+        "Descending"
+      ],
+      "hasNonStreamingOrderBy": true
+    },
+    "dotnetHybridComponentInfo": {
+      "top": null,
+      "orderBy": [],
+      "hasNonStreamingOrderBy": false
+    },
+    "bothExecuteComponentSqlTop": 120,
+    "bothRankingComponentsReturnAllStoredChunks": 36,
+    "pythonComponentRewritesIncludeOrderByItems": true,
+    "dotnetComponentRewritesProjectComponentScores": true,
+    "dotnetSupportedQueryFeaturesHeaderCaptured": false,
+    "allMeasuredPlanBodiesParseable": 384
+  },
+  "wireAccounting": {
+    "wireRequests": 2166,
+    "measuredWireRequests": 1728,
+    "knownMeasuredWireRu": 24584.96,
+    "knownWholeRunWireRu": 26787.33,
+    "billedRu": null,
+    "matrixErrors": 0,
+    "matrix429s": 0,
+    "dotnetPageRuMinusKnownWireRu": {
+      "minimum": -1.4210854715202004e-14,
+      "maximum": 1.4210854715202004e-14,
+      "sum": -2.5579538487363607e-13
+    }
+  },
+  "metadataErrors": [
+    {
+      "sdk": "python",
+      "phase": "policy-before",
+      "sequence": 3,
+      "operation": "account-root-GET",
+      "errorType": "TimeoutError",
+      "httpStatus": null,
+      "elapsedMs": 40002.353582996875,
+      "startedBeforeMatrixSeconds": 42.129496,
+      "finishedBeforeMatrixSeconds": 2.127142,
+      "overlapsMatrixWallClock": false
+    }
+  ],
+  "repeatedPreparationDataSignatures": [
+    [
+      "snapshot-before",
+      "snapshot-after"
+    ]
+  ],
+  "rawBodyLimit": {
+    "dotnetMeasuredDataResponsesNotJsonText": 672,
+    "responsesWithUnicodeReplacementCharacters": 679,
+    "originalBytesHashesPresent": true,
+    "originalBytesRecoverable": false,
+    "sdkParsedReturnedRowsRetainedAndCompared": true,
+    "cause": "UTF8 string capture of non-text data response; binary encoding plausible, not identified from preserved headers"
+  },
+  "usageAcrossBothRuns": {
+    "run-1": {
+      "python": {
+        "wireRequests": 1192,
+        "responsesWithCharge": 893,
+        "knownRu": 11957.61,
+        "captureErrorEvents": 1
+      },
+      "dotnet": {
+        "wireRequests": 292,
+        "responsesWithCharge": 0,
+        "knownRu": null,
+        "captureErrorEvents": 292
+      }
+    },
+    "run-2": {
+      "python": {
+        "wireRequests": 1192,
+        "responsesWithCharge": 893,
+        "knownRu": 11957.61,
+        "captureErrorEvents": 1
+      },
+      "dotnet": {
+        "wireRequests": 974,
+        "responsesWithCharge": 680,
+        "knownRu": 14829.72,
+        "captureErrorEvents": 0
+      }
+    }
+  },
+  "knownRuAcrossBothSdkRuns": 38744.94,
+  "usageScope": "SDK runs only; preflight, ingestion, smoke, models, archive and other services separate; failed run1 .NET metadata charges unavailable, never free",
+  "interpretationLimitations": [
+    "No independent exact RRF oracle",
+    "No large-container efficiency claim from one range",
+    "Known captured RU excludes unreported response charges; not billed cost",
+    "Page RU overlaps wire charges, do not add",
+    "Transport/runtime/instrumentation differences remain; SDK native rewrite is part of comparison",
+    "Original-byte hashes but no recoverable original bytes for non-text .NET data responses"
+  ],
+  "recommendedFutureInstrumentation": "Before another SDK study, preserve non-text response bytes losslessly outside Git, record content/serialization-format and supported-query-feature headers, retain current parsed-row checks; do not change or rerun current frozen results solely for richer diagnostics.",
+  "applicationDefaultsChanged": false,
+  "davidAmesReplicationLimit": "SDK version known; his exact SQL, request options and partition layout unknown."
+}
