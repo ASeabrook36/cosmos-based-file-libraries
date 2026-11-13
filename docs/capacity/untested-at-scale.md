@@ -1,18 +1,18 @@
 # Untested at the high end: per-library throughput and library count
 
-*Version 1.1, 2026-10-28: source figures corrected (`evidence.md` E57), Microsoft's status re-checked (E58), and two scale risks added (sections 5 and 6). Version 1.0, 2026-10-24. Records what this project has **not** tested about very large or very busy deployments, so that the design's claims are read with their limits. Nothing here was measured live. It comes from Microsoft's documentation (checked 2026-10-24), the installed `azure-cosmos` 4.17.1 source, this repository's own measurements (`evidence.md`) and arithmetic on them.*
+*Version 1.2, 2026-11-13: E68/E69 reconcile measured small-library flatness and bounded large-library graph results with the remaining high-end questions. Version 1.1, 2026-10-28: source figures corrected (E57), vendor status checked (E58), and risks added in sections 5–6. Vendor statements retain their recorded check dates; dated measurement updates below come from this repository's live evidence. Earlier analysis also uses the installed azure-cosmos 4.17.1 source and arithmetic on measured costs.*
 
 The companion document, `provisioned-throughput.md`, explains why production should run on provisioned throughput. This one assumes it does, because most of the high-end behaviour below exists only on a provisioned account.
 
 ## Summary
 
-The data design is not expected to hit a hard wall as libraries, users or content grow. It also has not been tested at the high end. Four questions are open:
+The data design is not expected to hit a hard wall as libraries, users or content grow. The bounded one-range results below do not establish high-end throughput or split-library correctness. Five questions remain:
 
 1. **A busy library's search ceiling is about one physical partition: 10,000 RU/s.** Its documents can be split across partitions, because the `chunks` key has a document level under the library. That raises the library's storage and write ceilings. It does little for searches: a search must then visit every partition holding the library, so each of them still works on every search. And **the search code may not merge results correctly from a split library.**
 2. **How many libraries one container can hold is not limited by Cosmos's partitioning, but may be limited by the vector index.** Each library gets its own vector index (shard). Microsoft documents no limit on the number of shards, and the largest number ever measured is 2,000.
-3. **Multi-partition behaviour as a whole is unmeasured** (N4). Every measurement so far ran on one physical partition.
+3. **Split-library multi-partition behavior remains unestablished** (N4). R1 (E65) measured a two-range container with the tested library wholly in one range; E68/E69 each used one physical range per arm. Neither verifies a library spanning ranges or correct global merging for that case.
 4. **Some of the exact configuration is preview or needs Microsoft's involvement** (N5, N6): sharded DiskANN, filtered DiskANN and the spherical quantizer are public preview (E58), and Microsoft's pages contradict each other on whether vector settings can change.
-5. **Whether hybrid search without a partition key fans out as the container grows** (section 5), and **whether small libraries stay cheap to search when there are many of them** (section 6). Both are risks to the claim that a search's cost does not grow with the number of libraries.
+5. **Whether hybrid search without a partition key fans out as the container grows** remains open (section 5). Small-library vector flatness now has direct one-range measurements (E59/E68), and E69's fresh 1k/5k controls retained their RU after the new load. Large-library background-growth flatness and settled graph costs remain open (sections 6–7).
 
 None of these is evidence against the design. Each is a question to settle before production.
 
@@ -98,13 +98,13 @@ Rough cost: tens of dollars, mostly a few hours of elevated throughput while the
 
 - **Partitioning sets no limit.** Distinct partition-key values are unlimited (Vendor).
 - **The vector shard key creates one DiskANN index per library.** Microsoft's [sharded DiskANN announcement](https://devblogs.microsoft.com/cosmosdb/sharded-diskann-focused-vector-search-for-better-performance-and-lower-cost/) recommends sharding by tenant for exactly this kind of isolation and states no limit on the number of shards (Vendor).
-- **Measured scale:** 2,003 owners in one container in the source project (E3), all on one physical partition, at one container size. The number of owners was never varied. Phase 4 plans 1,000 libraries.
+- **Measured scale:** the source project measured 2,003 synthetic owners at one container size (E3). This project varied library count through 1,013 in E59 and 1,014 in E68, then extended the retained pair to 1,018 libraries / 429,773 vectors in E69. These remain bounded one-range measurements, not a shard-count ceiling.
 - Libraries below 1,000 vectors are searched by a scan of their own vectors. Microsoft applies the 1,000-vector minimum before quantized or DiskANN indexes are used, and this project observed `QuantizedFlat` at 1,500 (E12). A small personal library is cheap to search either way.
 
 ### What is untested
 
 1. **Per-shard overhead at tens of thousands of libraries:** memory, index-build work and write cost per shard, and whether any of them grow with the number of shards on a partition. If every user of a large organization had a personal agent, one container could hold 10,000–50,000 shards. Not every user is expected to, but the ceiling is unknown.
-2. **How quickly a new library's index engages in a container that is already full** (N12). It is measured only for a new container: about 6 minutes (E25). A new library scans until then, which costs more but returns correct results.
+2. **New-library readiness at substantially larger inventories** (N12). E25 measured about six minutes in a new container; E59's new 1,500-vector library used its index at the first poll in an approximately 177,000-vector container. This does not settle engagement at a million vectors or vector-specific graph completion.
 3. **The metadata paths that grow with the library count:** the cross-partition library list (`GET /v1/libraries`) and per-library summaries. These are application work, measured in Phase 4 and fixed in Phase 5 (review-response finding 4), not limits of Cosmos.
 4. **Hybrid's cost as content grows.** Hybrid's full-text statistics cover the whole container, not the library (E27), so its cost may rise with total content, against the design's premise. Vector-only, the default, is not affected. Phase 4 measures it.
 
@@ -160,9 +160,17 @@ The measurement is Phase 4 item "hybrid cost as the container grows" (`build-pla
 
 Phase 0 saw Cosmos serve a vector search on one 1,500-vector library through `QuantizedFlat` **sharded on `/libraryId`**, at 15 RU (E12). The source project saw something different on another configuration: an index-served `QuantizedFlat` query cost about **5,450 RU whatever its scope**, even under a partition-key filter of about 1,700 documents, on a million-document container **with no shard key** (E57; one read-only investigation, cause not established). Microsoft's performance-tips page suggests under 40 RU for such searches.
 
-Nothing here contradicts Phase 0, because the configurations differ: Phase 0 had a shard key and one library. But with many libraries in one container, whether a small library's `QuantizedFlat` search stays scoped to that library's shard, rather than reading a shared quantized index, is **untested**. If it does not, a small library's search cost would grow with the container's total content, which is the claim this design most depends on. This is recorded as a risk, not a finding. Phase 4 item "QuantizedFlat scoping at many libraries" (`build-plan.md`) measures it.
+**Original risk, 2026-10-28.** The source and Phase 0 configurations differed, so their contrast did not establish whether small-library costs would grow with total content. E59/E68 subsequently measured that question directly; their dated results and remaining limits follow.
 
 **Measured 2026-10-29 (E59): scoped.** From 10 to 1,013 libraries and from 25,000 to about 245,000 passages on one physical partition, ten probe libraries of 1,000–5,000 vectors kept their cost (within 1%), documents read and recall, and Cosmos reported the `/libraryId` shard throughout. The same search without its library filter grew from 1,204 to 11,777 RU. Several physical partitions and libraries above 5,000 vectors remain open.
+
+**Direct ablation, 2026-11-11 (E68).** At 1,014 libraries / 244,773 vectors, routed 1k–5k searches stayed flat in both layouts, with materially lower RU using library vector sharding. Both scoped paths reported QuantizedFlat. The unsplit global control used DiskANN cheaply, whereas the split global control scanned the container; that control omits both filter and prefix and has an ID-only projection. The SQL filter alone was not isolated. E69's fresh 1k/5k controls then showed zero RU drift after extending the pair to 429,773 vectors. Several physical ranges and larger background-growth tests remain open.
+
+## 7. Large-library graph points and remaining steady-state limits
+
+**Measured 2026-11-13 (E69).** At one fixed 429,773-vector / 1,018-library inventory per arm, routed 10k/25k/50k/100k scopes reported DiskANN in both layouts and all filtered repeat mean recalls met 0.98 or better. Initial sharding savings at 50k/100k were 60.97/28.075 RU, smaller than the final 5k saving of 108.76 RU; optional 10k/25k savings grew. The [full tables](../scale-ablation-large-results.md) preserve the predeclared conservative comparisons, reference repair and global-control recall failure.
+
+Twelve-hour fixed-question checks retained the modes and recall but changed some RU values materially. They do not replace the twenty-question primary measurements or establish the late full-suite advantage. With one nonnested library per size, different content/questions, one retained build and one range, this does not identify size as the cause, a universal graph crossover, large-scope flatness as background grows, concurrency or split-library behavior. The no-prefix diagnostic also retains equality on the first hierarchical-key component and ran last, so it cannot prove absence of implicit pruning or isolate routing latency from phase order. These results do not change the configured defaults or establish an entirely GA configuration.
 
 ## What would make us reconsider the design
 

@@ -477,7 +477,7 @@ The byte threshold is now disabled by default; the pixel threshold and cap remai
 These are the honest limits of the evidence. Phase 0 and Phase 4 of `build-plan.md` are designed to close the first ones.
 
 - **N1. ~~This exact configuration has never been built.~~ Built and passing at small scale (Phase 0).** float16, spherical, `indexingSearchListSize` 300, a shard key and hybrid search deployed together, and their stored definitions match `cosmos/*.json`. The canary passed at 1,500 chunks in one library (E8, E12, E25). What remains open is behaviour at scale (N11).
-- **N2. Library-only sharding is inferred, and so is partition-key routing at scale.** The source measurements cover type plus owner, not owner alone, and none of their queries supplied a partition key (E57). Library alone means one query per search instead of one per document type. Small libraries are scanned either way (E12), so the open question is large shared libraries (10,000–100,000+ chunks). A comparison run on such libraries settles it.
+- **N2. Library-only sharding and prefix routing now have bounded direct measurements.** E68 compared 1,000–5,000-vector library queries across split and unsplit indexes while holding the application filter and partition prefix fixed. E69 extended the retained pair to 10k/25k/50k/100k scopes at 429,773 vectors on one physical range: both arms reported DiskANN and all filtered repeat means met recall@10 ≥0.98. Absolute sharding savings varied across these different libraries, with material RU movement in the twelve-hour sentinels. One library per size, one retained build and one final large-library inventory do not establish a universal size effect, large-scope background-growth flatness or split-library routing correctness.
 - **N3. Hybrid ranking quality is unmeasured** (E21). Until Phase 1 it had never actually run ranked (E27); the source project's one hybrid check recorded only row counts and RU, not whether results were ranked (E57).
 - **N4. A library spanning physical ranges and global top-k merging remain untested.** R1 (E65) verified a two-range container, but its library occupied only one range. Prefix-vector calls stayed on that range in complete visible telemetry; all 60 hybrid calls visibly contacted both. This does not establish split-library ranking, many-range behavior or absence of additional SDK requests where telemetry is incomplete. A split-library reproduction must verify document placement and query winners in different ranges before claiming correct global merging or changing routing/layout.
 - **N5. The configured design uses preview features** (status checked 2026-10-28, E58). **Sharded DiskANN** (`vectorIndexShardKey`, public preview since April 2025, no GA notice at that check) gives each library its own vector index. The direct E68 ablation found lower scoped-search RU with sharding, while both layouts stayed flat as unrelated libraries grew; E2 alone did not establish that library-layout dependency. **Filtered DiskANN** (public preview since May 2025 at that check) routes a filtered search to its shard. The **spherical quantizer** (public preview since May 2026) has a GA fallback, product quantization, at somewhat lower recall (E6). Removing only the shard key leaves spherical quantization unchanged, so E68 does not establish an entirely GA configuration. *Corrected 2026-10-28:* this entry previously named only spherical; E68 subsequently separates measured cost savings from flatness.
@@ -486,7 +486,7 @@ These are the honest limits of the evidence. Phase 0 and Phase 4 of `build-plan.
 - **N8. ~~float16 write cost was not measured separately.~~ Measured in Phase 0:** about 144 RU per chunk, not the 91 measured on float32 builds (E10).
 - **N9. Proposal quality is untested.** Nothing measures how good AI-proposed descriptions and tags are; the review-and-accept step exists for that reason.
 - **N10. ~~float16 is not in Microsoft's documented data types.~~ Corrected 2026-10-28: float16 is generally available (E58).** Azure Updates announced float16 for vector indexes as generally available in November 2025, and the vector-search page (updated 2026-09-29) and `VectorDistance` reference (updated 2026-04-15) list it. This entry said that in October 2026 the vector-indexing documentation listed only `float32`, `int8` and `uint8`. No current page matches that, and the vector-search page listed float16 before this entry was written, so it was most likely out of date when written (Inference). The open float16 risk is operational, not support status: two accounts in the source project stopped serving float16 (E17), with no Microsoft explanation, and the subnormal null-score behaviour (E8) is undocumented. The fallback is still float32 in a new container (E16).
-- **N11. Graph use depends on the query and index layout.** The 1,500-vector canary (E12) and probes through 5,000 vectors (E59) used `QuantizedFlat`. E68's filtered, library-prefix-routed searches also reported `QuantizedFlat` in both layouts, while its unsplit global controls reported `DiskANN`. That observes graph use for a global search, not the crossover or graph cost/recall of a large library on the library-sharded configuration. Those remain unmeasured; Phase 4's large-library work must report the actual index mode.
+- **N11. Scoped DiskANN is observed; crossover and steady-state costs remain bounded.** E12/E59 and E68's 1,000–5,000-vector probes used QuantizedFlat; E68 observed DiskANN only for its unsplit global control. E69 observed DiskANN for every tested 10k/25k/50k/100k library in both layouts, including the library-sharded arm, with filtered repeat mean recall@10 ≥0.98. The first tested graph point was 10k, not an exact or universal crossover. Modes persisted in the twelve-hour sentinels while some RU values changed materially. Fixed inventory, nonnested scopes, one build and one physical range, and one late question per scope limit steady-state and causal claims about size; background-growth, split-library and concurrent-load graph behavior remain open.
 - **N12. ~~Index lag for a new library in a populated container is unmeasured.~~ Measured 2026-10-29 (E59):** a 1,500-passage library added to a container of about 177,000 passages was served through its index at the first poll after writing. At a million chunks it is still unmeasured.
 - **N13. Visibility across Cosmos clients is unproven.** The API and the worker hold separate Cosmos clients, and under Session consistency a client reads another's writes with Eventual consistency (E28). Within one API process, a search sees that process's own deletes. A delete handled by one API instance and a search on another, or a search after the API restarts, may briefly return the deleted document. A commit by the worker may be seen late, which is a miss, not a leak. Test it before running more than one API instance (`build-plan.md` Phase 5).
 - **N14. ~~Proposal quality and cost are unmeasured.~~ Partly measured (E32).** Authors and periods were accurate on a 36-file sample, and the chat cost per document is recorded. The model did not reliably reuse the library's vocabulary. Whether descriptions steer agents well is still untested; the Phase 4 routing report and the Phase 5 evaluation set should show it.
@@ -1544,3 +1544,185 @@ The unsplit global graph observation is not a sharded large-library graph result
 Spherical quantization remains unchanged, so dropping the shard key alone does
 not demonstrate an entirely GA configuration. E59's 12–35 RU result rests on its
 sharded configuration; flatness itself was also observed in the new unsplit arm.
+
+## E69: Initial sharding savings shrank at 50k/100k; late RU changed while DiskANN persisted (2026-11-13) · Measured
+
+At the common final inventory, the initial twenty-question routed measurements
+saved **60.97 RU/search at 50,000 vectors** and **28.075 RU/search at 100,000**
+with library vector sharding. Those absolute savings were 43.94% and 74.19%
+smaller than the 108.76 RU saving at the final 5,000-vector control. Both
+mandatory points met the predeclared conservative **shrunk** criterion. The
+later fixed-question check changed some RU values materially while the observed
+DiskANN modes persisted, so these initial results do not establish settled
+steady-state savings.
+
+Record: [scale-ablation-large-20261113.json](../records/scale-ablation-large-20261113.json).
+[Full measurement tables](scale-ablation-large-results.md),
+[approved protocol](scale-ablation-large-library-protocol.md) and
+[exact-reference repair addendum](scale-ablation-large-reference-repair.md)
+preserve the method, coverage, provenance and limits. E68's entry, receipt,
+tables and protocol remain unchanged.
+
+**Setup and scope.** The retained E68 split and unsplit containers received the
+same 185,000 unused public abstracts and published 3,072-dimension
+vectors per arm: mandatory 50,000- and 100,000-vector libraries, then the optional
+10,000 and 25,000. Assignments used seed 20261029 and ten passages per synthetic
+document. The new libraries are nonnested and have different passages and
+questions. Optional inclusion was decided from load cost/rate forecasts before
+large-library search outcomes were observed. The same frozen twenty questions
+per library and query vectors were shared between arms; the existing 1,000 and
+5,000 probes reused E68's questions. Only the new questions were embedded.
+
+Both arms held **429,773 vectors / 1,018 libraries on one physical range**, with
+the same data and policies apart from the vector-index shard-key property.
+Float16, cosine, spherical quantization, indexingSearchListSize 300 and query
+defaults stayed fixed. Primary requests used the unmodified application candidate
+query for requested top=5: TOP 10, the application projection, library equality
+and the library partition-key prefix. This measures the Cosmos call, excluding
+full API authorization, query embedding and visibility work. Every library had
+twenty questions, three ANN repeats and one forced-exact reference per question
+and arm. All primary library measurements used the same final inventory; separate fresh
+pre-load small controls measured drift. A shared quiet
+period, three stable readiness polls and five minutes of settling preceded them.
+
+**Initial routed results.** RU is the median of each question's three-repeat
+median, across twenty questions. Saving is unsplit minus split RU/search.
+
+| Library vectors | Split RU | Unsplit RU | Saving RU | Unsplit/split | Reported mode, both arms |
+|---|---:|---:|---:|---:|---|
+| 1,000 | 12.22 | 70.51 | 58.29 | 5.770 | QuantizedFlat |
+| 5,000 | 34.50 | 143.26 | 108.76 | 4.152 | QuantizedFlat |
+| 10,000 | 8.68 | 292.08 | 283.40 | 33.650 | DiskANN |
+| 25,000 | 9.17 | 146.73 | 137.56 | 16.001 | DiskANN |
+| 50,000 | 29.89 | 90.86 | 60.97 | 3.040 | DiskANN |
+| 100,000 | 32.53 | 60.605 | 28.075 | 1.863 | DiskANN |
+
+The 5k saving's conservative observed range was 108.760–108.765 RU. For each
+larger point, the protocol subtracts the largest split run median from the
+smallest unsplit run median, and vice versa, then evaluates all four endpoint
+quotients against the 5k range. These are repeat descriptions, not confidence
+intervals or independent index builds.
+
+| Vectors | Saving minus 5k RU | Saving change | Conservative saving/5k range | Predeclared outcome |
+|---|---:|---:|---:|---|
+| 10,000 | +174.64 | +160.57% | 2.573990–2.627023 | grew |
+| 25,000 | +28.80 | +26.48% | 1.215970–1.278181 | grew |
+| 50,000 | −47.79 | −43.94% | 0.534731–0.569373 | shrank |
+| 100,000 | −80.685 | −74.19% | 0.246311–0.272205 | shrank |
+
+The 50k saving range was 58.160–61.925 RU and the 100k range 26.790–29.605 RU;
+both proportional ranges lie wholly below the 0.8 shrink boundary. The optional
+points' ranges lie wholly above the 1.2 growth boundary. This is a nonmonotonic
+set of measured workloads, not proof that increasing the size of one library
+causes its benefit to shrink. The separate twofold cost-ratio bar passed at 50k
+and failed at 100k. The latter still saved 28.075 RU/search; it is neither RU
+equivalence nor absence of an advantage.
+
+Every routed and no-prefix filtered repeat met the mean recall@10 floor of
+0.95; the lowest repeat mean was **0.98**. At 50k the split/unsplit means were
+0.980/0.985; at 100k, 0.995/0.990. Passing the floor does not mean identical
+accuracy or minimum per-question recall. Routed searches retrieved 50 documents
+except the unsplit 1k probe, which retrieved all 1,000. Main client latency
+medians at 50k were 111.85/183.20 ms (split/unsplit), and at 100k,
+122.45/146.75 ms. The full tables retain every size's latency and run ranges.
+
+DiskANN was reported at every tested new 10k–100k scope in both layouts,
+including the library-sharded arm. The old 1k/5k scopes remained QuantizedFlat.
+This observes library-scoped graph use; it does not identify an exact or universal
+crossover. Fresh pre-load versus final RU drift was **0% for both small probes
+in both arms**, with unchanged retrieved counts and accepted recall. Large
+libraries were measured only at the final inventory, so their flatness as
+unrelated background grows remains untested.
+
+**Routing and the shared global control.** The no-prefix phase retained all
+twenty questions for 5k, 50k and 100k in both arms; none of the first-question
+measurements triggered the whole-container-read fallback. With prefix omitted,
+median RU was 33.78/142.54 at 5k, 23.56/86.11 at 50k and 25.675/55.11 at 100k
+(split/unsplit), with 50 documents retrieved and accepted recall throughout.
+These requests retained the same SQL, projection and library equality. They ran
+last, so route latency is confounded with phase order, cache state and index age.
+The equality names the first hierarchical-key component; on one physical range,
+no explicit prefix does not prove no implicit partition pruning.
+
+The one fixed global question cost **20,681.92 RU**, read **429,773 documents**
+and had recall **1.0** with the split configuration; the unsplit control cost
+**23.86 RU**, read **50** and had recall **0.9 in every repeat**. It is one shared
+observation at the final inventory, using an ID-only projection and neither
+library filter nor prefix, with its own eligible answer set. It is not a matched
+global counterpart to every library's twenty questions or a quality-equivalent
+comparison at the 0.95 floor. Available split data reports named no utilized
+vector index, but continuation data headers were partly missing; no exclusive
+mode assertion follows. The unsplit global control reported DiskANN. Partial
+headers and global recall failures remain explicit in the record.
+
+**Exact-reference pagination repair.** The first unsplit 25k forced-exact call
+returned twenty distinct candidates across two HTTP responses despite TOP 10.
+The guard stopped the run; its 1,687.80 RU, 25,000 documents read and 5,215.1 ms
+remain recorded. Taking its first ten would retain only eight of the independently
+calculated nearest ten. The separately bound repair kept every original query,
+route, raw observation, charge, phase order and clock. It exhaustively checked
+**all 322 exact candidate unions**, including those already returning ten, against
+local float16 cosine truth; **86** unions contained more than ten candidates
+(raw counts 10–50). Only exact references received separately derived top-ten
+IDs after complete candidate coverage and an unambiguous boundary were proven.
+ANN results were not repaired or selectively rerun.
+
+Primary truth rounds published corpus values to float16 without corpus FTZ,
+uses the frozen FTZ query cache and float64 cosine arithmetic. The minimum
+primary tenth/eleventh margin was 9.245×10⁻⁶, above the 10⁻¹⁰ guard. Corpus-FTZ
+sensitivity changed none of 121 reference top-ten sets; unrounded float64 changed
+one question's set. Every candidate union covered both sensitivity variants.
+This bounds a precision difference; it does not prove identical floating-point
+arithmetic in every service implementation.
+
+**The delayed observation is separate from the twenty-question result.** Fresh
+late inventory, policy and physical-range checks passed without further writes.
+All **42** delayed queries started **12.0756–12.1296 hours** after the original
+last-write upper bound; the immediate sentinels had started 1.5104–1.5545 hours
+after it. Each set contains the same question ordinal 0 per measured library and
+the fixed global question, three repeats per arm.
+
+| Scope vectors | Split immediate → late RU | Unsplit immediate → late RU |
+|---|---:|---:|
+| 1,000 | 12.23 → 12.23 | 70.52 → 70.52 |
+| 5,000 | 34.51 → 34.51 | 143.17 → 143.27 |
+| 10,000 | 8.53 → 12.19 | 236.49 → 249.67 |
+| 25,000 | 9.23 → 19.00 | 113.43 → 124.19 |
+| 50,000 | 28.41 → 10.18 | 109.20 → 130.40 |
+| 100,000 | 28.71 → 27.47 | 55.09 → 60.79 |
+| Global, shared | 20,681.90 → 20,686.90 | 23.28 → 23.93 |
+
+Observed modes, retrieved counts and recall were unchanged in those sentinels.
+Filtered sentinel recall was 1.0; unsplit global recall stayed 0.9. Split RU moved
+**+42.9% at 10k, +105.9% at 25k and −64.2% at 50k**, with DiskANN still reported.
+Unsplit 50k/100k moved +19.4%/+10.3%. The cause is not established. These material
+changes narrow steady-state claims: the late single-question observations neither
+replace the twenty-question primary medians nor establish the late full-suite
+benefit. A client connectivity or sleep transition was reported between windows,
+which also limits attribution of cross-time client-latency differences to index aging.
+
+**Cost, completion and limits.** The extension recorded **35,008,768.41 known
+RU**, approximately **$8.75** at the illustrative $0.25/million-RU rate, excluding
+E68's earlier cost. Loads accounted for 34,008,343.36 RU across 370,000 new writes.
+This is a request ledger, not the provider bill: query embedding, incremental
+storage and SDK-hidden charges are not fully priced. Initial work took
+**6.397 hours**; total execution including the mandatory wait and late check took
+**16.944 hours**. Independent main and late recomputations passed with zero
+integrity issues, retaining the global quality findings and reference repair.
+The two disposable databases remain retained; application defaults and container
+policies are unchanged.
+
+There is one nonnested library per new size, different question sets, one retained
+build and insertion history per arm, and one physical range at a fixed final
+inventory. Size, selectivity, content and query difficulty are not independently
+varied. This does not establish large-scope background-growth flatness,
+concurrency/throughput, split-library or multi-range correctness, semantic answer
+quality, a universal graph threshold or an entirely GA configuration. Spherical
+quantization remains unchanged; no configuration migration follows from this run.
+
+**Publication sentence.** On one physical range holding 429,773 vectors, the
+initial routed measurements with DiskANN in both arms found library-sharding
+savings of 60.97 RU at the 50,000-vector probe and 28.075 RU at the 100,000-vector
+probe, 43.94% and 74.19% smaller than the final 5,000-vector saving, while material
+RU movement in the twelve-hour sentinels leaves the steady-state advantage
+unsettled.
