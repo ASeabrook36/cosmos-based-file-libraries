@@ -96,3 +96,16 @@ I1 changes no production default or architecture and starts no R3 comparison.
 The current held-out answers cannot guide tuning and then be counted as fresh
 confirmation. Private captures are required for offline scoring from the exact
 measured implementation; the single-execution ledger remains consumed.
+
+`scale-ablation-20261111.json` records E68's fresh paired E59 shard-key ablation:
+two canary-validated databases, three stages, ten fixed probe libraries, twenty
+shared frozen questions per probe, three ANN repeats, exact references and
+three global-control repeats per stage. It preserves numerical RU/latency/read
+drift, every observed vector-index mode, all-repeat recall, matched-question
+omission ratios, policy/source/input hashes, independent recomputation and
+explicitly incomplete cost/telemetry counters. The
+[full tables](../docs/scale-ablation-results.md) distinguish index sharding from
+query scoping; the [protocol](../docs/scale-ablation.md) remains frozen. E59's
+original receipt and grades remain unchanged. Both disposable databases are
+retained until the user separately authorizes deletion; runtime bindings, source
+text, vectors, result IDs and corpus locators stay outside Git.

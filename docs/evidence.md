@@ -87,7 +87,7 @@ One query with an `IN` list over nine shard values cost 71,699 RU. The same sear
 
 On a 112,000-vector type-sharded container, a query that omitted the shard value scanned the whole container for 7,812 RU, on both synthetic and real embeddings. **On real embeddings the scoped query cost 26–28 RU (about 280–300 times less).** On the million-chunk container the same omission cost 57,200 RU and read every document.
 
-**The scan is priced by the whole container, not by one library.** In this project's one-container design, a search missing its library filter would read every library's data, so its cost grows with the whole organization's content. In this project the agent never supplies the library: the platform binds it to the tool, and the index puts it in every query.
+**Those full-container scans were priced by the whole container.** E59 reproduced that growing cost on the library-sharded layout. The direct comparison in E68 shows why this must be qualified by layout: its unsplit global control used DiskANN and retrieved 50 documents instead of scanning every row. Omitting scope therefore does not imply the same cost penalty on every vector-index layout. Library isolation remains mandatory regardless of cost: the platform binds the library to the tool, and the index puts it in every query.
 
 *Corrected 2026-10-28 (E57).* This entry said "about 35 RU with it, roughly 220 times". Those are synthetic-random-vector figures; the real-embedding figures above replace them.
 
@@ -480,13 +480,13 @@ These are the honest limits of the evidence. Phase 0 and Phase 4 of `build-plan.
 - **N2. Library-only sharding is inferred, and so is partition-key routing at scale.** The source measurements cover type plus owner, not owner alone, and none of their queries supplied a partition key (E57). Library alone means one query per search instead of one per document type. Small libraries are scanned either way (E12), so the open question is large shared libraries (10,000–100,000+ chunks). A comparison run on such libraries settles it.
 - **N3. Hybrid ranking quality is unmeasured** (E21). Until Phase 1 it had never actually run ranked (E27); the source project's one hybrid check recorded only row counts and RU, not whether results were ranked (E57).
 - **N4. A library spanning physical ranges and global top-k merging remain untested.** R1 (E65) verified a two-range container, but its library occupied only one range. Prefix-vector calls stayed on that range in complete visible telemetry; all 60 hybrid calls visibly contacted both. This does not establish split-library ranking, many-range behavior or absence of additional SDK requests where telemetry is incomplete. A split-library reproduction must verify document placement and query winners in different ranges before claiming correct global merging or changing routing/layout.
-- **N5. The design depends on preview features** (E58, checked 2026-10-28). **Sharded DiskANN** (`vectorIndexShardKey`, public preview since April 2025, no GA notice) is what gives each library its own vector index; without it a library search becomes a filtered search over the partition's whole index, the layout E2 found much more expensive. **Filtered DiskANN** (public preview since May 2025) is the feature that routes a filtered search to its shard. The **spherical quantizer** (public preview since May 2026) has a GA fallback, product quantization, at somewhat lower recall (E6). *Corrected 2026-10-28:* this entry previously named only spherical.
+- **N5. The configured design uses preview features** (status checked 2026-10-28, E58). **Sharded DiskANN** (`vectorIndexShardKey`, public preview since April 2025, no GA notice at that check) gives each library its own vector index. The direct E68 ablation found lower scoped-search RU with sharding, while both layouts stayed flat as unrelated libraries grew; E2 alone did not establish that library-layout dependency. **Filtered DiskANN** (public preview since May 2025 at that check) routes a filtered search to its shard. The **spherical quantizer** (public preview since May 2026) has a GA fallback, product quantization, at somewhat lower recall (E6). Removing only the shard key leaves spherical quantization unchanged, so E68 does not establish an entirely GA configuration. *Corrected 2026-10-28:* this entry previously named only spherical; E68 subsequently separates measured cost savings from flatness.
 - **N6. Microsoft asks to be contacted, and the route is uncertain.** Microsoft's vector-search (updated 2026-09-29), sharded DiskANN (2026-04-27) and performance-tips (2026-05-08) pages, read 2026-10-28, all ask users of vector search on containers with hierarchical partition keys to email the Cosmos search team so the account can be configured. The source project reports that this address rejected an external message on 2 August 2026, as a group that does not accept external senders (E57); that is not verified here. *Not resolved.* The remaining route is an Azure support request, by inference; no Microsoft page names it for this purpose. Treat Microsoft's confirmation as a production prerequisite.
 - **N7. Not workplace content.** Earlier measurements did not use workplace documents, spreadsheets, emails or image descriptions. E38 adds invented chart/image descriptions, but broad workplace-content validation remains open. The demo corpus (`build-plan.md`) should include all of them.
 - **N8. ~~float16 write cost was not measured separately.~~ Measured in Phase 0:** about 144 RU per chunk, not the 91 measured on float32 builds (E10).
 - **N9. Proposal quality is untested.** Nothing measures how good AI-proposed descriptions and tags are; the review-and-accept step exists for that reason.
 - **N10. ~~float16 is not in Microsoft's documented data types.~~ Corrected 2026-10-28: float16 is generally available (E58).** Azure Updates announced float16 for vector indexes as generally available in November 2025, and the vector-search page (updated 2026-09-29) and `VectorDistance` reference (updated 2026-04-15) list it. This entry said that in October 2026 the vector-indexing documentation listed only `float32`, `int8` and `uint8`. No current page matches that, and the vector-search page listed float16 before this entry was written, so it was most likely out of date when written (Inference). The open float16 risk is operational, not support status: two accounts in the source project stopped serving float16 (E17), with no Microsoft explanation, and the subnormal null-score behaviour (E8) is undocumented. The fallback is still float32 in a new container (E16).
-- **N11. The DiskANN graph has not been observed in use.** At 1,500 vectors, Cosmos used the vector index in its `QuantizedFlat` mode (E12), and it still did at 5,000 (E59). The library size at which it walks the DiskANN graph, and that graph's cost and recall on this configuration, are unmeasured. `build-plan.md` Phase 4's large libraries should report the index type Cosmos used.
+- **N11. Graph use depends on the query and index layout.** The 1,500-vector canary (E12) and probes through 5,000 vectors (E59) used `QuantizedFlat`. E68's filtered, library-prefix-routed searches also reported `QuantizedFlat` in both layouts, while its unsplit global controls reported `DiskANN`. That observes graph use for a global search, not the crossover or graph cost/recall of a large library on the library-sharded configuration. Those remain unmeasured; Phase 4's large-library work must report the actual index mode.
 - **N12. ~~Index lag for a new library in a populated container is unmeasured.~~ Measured 2026-10-29 (E59):** a 1,500-passage library added to a container of about 177,000 passages was served through its index at the first poll after writing. At a million chunks it is still unmeasured.
 - **N13. Visibility across Cosmos clients is unproven.** The API and the worker hold separate Cosmos clients, and under Session consistency a client reads another's writes with Eventual consistency (E28). Within one API process, a search sees that process's own deletes. A delete handled by one API instance and a search on another, or a search after the API restarts, may briefly return the deleted document. A commit by the worker may be seen late, which is a miss, not a leak. Test it before running more than one API instance (`build-plan.md` Phase 5).
 - **N14. ~~Proposal quality and cost are unmeasured.~~ Partly measured (E32).** Authors and periods were accurate on a 36-file sample, and the chat cost per document is recorded. The model did not reliably reuse the library's vocabulary. Whether descriptions steer agents well is still untested; the Phase 4 routing report and the Phase 5 evaluation set should show it.
@@ -776,13 +776,13 @@ Read on 2026-10-28. "Updated" is the page's own last-updated date. Azure Updates
 
 What follows:
 
-- **The design rests on two preview features, not one** (N5). Sharded DiskANN is what makes a library its own vector index. A GA alternative that keeps one container exists only by dropping the shard key, which E2 found much more expensive.
+- **This configuration uses preview features** (N5). Sharded DiskANN gives each library its own vector index; removing its shard key alone leaves the preview spherical quantizer in place. The later direct ablation (E68) separates sharding's measured RU saving from flatness: scoped searches stayed flat in both layouts, at materially higher RU without the shard key. E2's different source layout was indirect evidence for this question.
 - **float16 is supported** (N10 corrected). The risk recorded in E17 is operational, not one of support status.
 - The performance-tips page recommends `quantizedFlat`, not sharded DiskANN, for tenants of up to about 50,000 vectors, and sharded DiskANN with the shard key set to the partition key above that. Most libraries here will be small. Whether a library-sharded DiskANN index serves small libraries as cheaply as Phase 0's `QuantizedFlat` reading suggests, at many libraries, is a Phase 4 measurement (`build-plan.md`).
 
 ## E59: Small-library searches stay scoped from 10 to 1,013 libraries (2026-10-29) · Measured
 
-The first Phase 4 measurement (`build-plan.md`, "`QuantizedFlat` scoping at many libraries"; `capacity/untested-at-scale.md` §6). Record: [`records/scale-probe-20261029.json`](../records/scale-probe-20261029.json). Script: `scripts/scale_probe.py`.
+The first Phase 4 measurement (`build-plan.md`, "`QuantizedFlat` scoping at many libraries"; `capacity/untested-at-scale.md` §6). Record: [`records/scale-probe-20261029.json`](../records/scale-probe-20261029.json). Script: `scripts/scale_probe.py`. E68 subsequently compares fresh split and unsplit arms directly, holding the application query and library-prefix routing fixed. This historical receipt and its original grades remain unchanged.
 
 **Setup.** A disposable database on the serverless demo account, holding the three `cosmos/*.json` containers unchanged (`infra/scale-lab.bicep`), on which the canary passed first. Passages were public DBpedia-entity abstracts with publisher-supplied `text-embedding-3-large` 3,072-dimension vectors, one abstract per passage. Library membership was assigned with a fixed seed, so libraries are not topically coherent. Ten probe libraries of 1,000–5,000 vectors each had 20 questions, each a sentence from one of the library's own passages, embedded fresh. Each search used the API's own query (`render_search`, routed by `partition_key_for` to the library's partition-key prefix) and was run three times per stage, plus once with brute force forced for recall. Only `chunks` was written.
 
@@ -801,7 +801,7 @@ The first Phase 4 measurement (`build-plan.md`, "`QuantizedFlat` scoping at many
 | 3,000 | 23.5 → 23.5 → 23.5 | 50 | 1.0 | about 205 |
 | 5,000 | 34.5 → 34.8 → 34.8 | 50 | 0.995 | about 340 |
 
-(All ten in the record.) Every probe graded **scoped** at stages 2 and 3 by the criteria set before the run: median RU and documents read within 20% (in fact within 1%), Cosmos's index report naming `QuantizedFlat` sharded on `/libraryId`, and recall@10 at or above 0.95. Server latency stayed in 110–170 ms. Run-to-run RU varied by under 0.1 RU.
+(All ten in the record.) Every probe graded **scoped** at stages 2 and 3 by the criteria set before the run: median RU and documents read within 20% (in fact within 1%), Cosmos's index report naming `QuantizedFlat` sharded on `/libraryId`, and recall@10 at or above 0.95. Client elapsed latency stayed in 110–170 ms (the original timer used `perf_counter`, not server execution metrics). Run-to-run RU varied by under 0.1 RU.
 
 **The control.** The same question without the library filter (deliberately breaking invariant 2, in the disposable database only) read every passage: 1,204 RU at 25,000, 8,496 RU at 176,599 and 11,777 RU at 244,773. That measures E5's "priced by the whole container" on this configuration.
 
@@ -1434,3 +1434,113 @@ advances selector handles to consuming-agent integration. The frozen numerical
 This supersedes the earlier efficiency-based recommendation to retain opt-in
 status indefinitely. No runtime default, measurement or architecture changes in
 this decision update.
+
+## E68: Library sharding lowers scoped RU; both scoped paths stay flat as unrelated libraries grow (2026-11-11) · Measured
+
+The direct E59 ablation used two fresh disposable databases on the original
+serverless account. E59's original disposable database was gone, so the split
+arm was rerun alongside the unsplit arm. Record:
+[`scale-ablation-20261111.json`](../records/scale-ablation-20261111.json).
+[Full tables](scale-ablation-results.md) cover every probe, stage, arm, numerical
+RU drift and the matched-control question; the JSON receipt also retains repeat
+medians and ranges for RU, retrieved documents and client latency. The
+[predeclared protocol](scale-ablation.md) remains unchanged.
+
+**Four cases, with the main query held fixed.** The split arm retains
+`vectorIndexShardKey: ["/libraryId"]`; the unsplit arm removes only that property.
+Stored-definition readback verified that single difference. Both filtered arms
+keep `c.libraryId = @libraryId` **and** `partition_key=[libraryId]`. Each arm also
+has a global negative control that omits both. These four cases measure the
+scoped/global contrast within each layout and the shard-key contrast between
+layouts, holding each request shape fixed for the latter comparison.
+
+**Inputs and execution.** Both canaries passed before scale loading and their
+temporary rows were removed. The run reused E59's ordered public abstract/vector
+corpus, seed 20261029, ten probe sizes of 1,000–5,000 vectors and twenty questions
+per probe. E59's private question vectors were unavailable: source-sentence
+selection was reconstructed deterministically, embedded once and shared between
+the fresh arms. Source, question-vector and ordered-input hashes were verified
+unchanged after execution. The old E59 receipt's hash is retained in the new
+record. Python 3.14.3 and `azure-cosmos` 4.17.1 were fixed; embedding model
+`text-embedding-3-large`, revision 1, remained unchanged before and after.
+
+Each arm/stage ran 600 ANN searches, 200 forced-exact references and three global
+controls. That is 3,600 ANN calls, 1,200 exact references and eighteen global calls
+across the pair, with no measured search errors. Recall uses all three ANN
+repeats against the corresponding exact result. Primary SQL is unmodified
+`render_search`, `TOP 10`, float16, routed by `partition_key_for`: the application's
+candidate query for requested `top=5`. E59 additionally projected a distance score;
+its historical control ran once per stage and its published recall used the
+first repeat. The fresh pair avoids treating those historical differences as a
+single-variable comparison. All three stages had one observed physical range
+per arm; measured inventory matched 10/25,000, 413/176,599 and 1,014/244,773
+libraries/vectors, including E59's extra 1,500-vector lag library after stage 2.
+
+**Observed RU, not only a tolerance grade.** Filtered RU ranges below span the ten
+individual probe medians, not a pooled-query median. A probe median is the median
+over questions of their three-repeat medians. Drift compares each probe with its
+own stage-1 median; the factor compares corresponding unsplit/split probe medians.
+
+| Stage | Split filtered RU range | Unsplit filtered RU range | Split RU drift from stage 1 | Unsplit RU drift from stage 1 | Unsplit / split RU factor | Split global RU | Unsplit global RU |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 1: 25,000 vectors | 12.03–34.21 | 70.42–143.03 | reference | reference | 4.18–9.59× | 1,203.87 | 15.38 |
+| 2: 176,599 vectors | 12.22–34.50 | 70.42–143.26 | −1.242% to +1.579% | 0.000% to +0.203% | 4.15–9.71× | 8,501.07 | 20.20 |
+| 3: 244,773 vectors | 12.22–34.50 | 70.42–143.26 | 0.000% to +1.579% | 0.000% to +0.203% | 4.15–9.58× | 11,779.51 | 22.81 |
+
+Both filtered arms stayed flat within the predeclared 20% descriptive band. The
+unsplit arm was materially dearer at every corresponding probe/stage, so the
+observed category is **flat but dearer without sharding**. Every probe's
+twenty-question mean recall@10 in every ANN repeat was **0.995–1.000** in both
+arms. Filtered searches reported **QuantizedFlat in both layouts**, with
+`/libraryId` in the split index's shard report and no shard key in the unsplit
+report. Split probe medians retrieved 50 documents throughout; unsplit medians
+retrieved 50–1,000. Across all stages, per-probe median client elapsed times were
+90.40–137.55 ms split and 106.05–182.75 ms unsplit. These are client timings,
+including retries, not server latency or full API-response time.
+
+**The omission penalty depends on layout.** The split global controls retrieved
+every row; available index headers reported no utilized vector index. The unsplit
+global controls retrieved 50 documents and reported **DiskANN** in all three
+available index headers per stage. Other HTTP responses lacked index headers,
+so global-control diagnostics are partial; an observed mode is retained without
+assigning the missing headers to an inferred request type. Global-control recall
+was not measured. Unsplit global-control median RU rose 15.38 → 20.20 → 22.81
+(+48.309% final-stage drift); the flatness finding concerns the library-scoped
+requests.
+
+For the same first-probe question vector, split global/filtered RU ratios were
+**100.07× → 695.10× → 963.17×**; unsplit ratios were
+**0.218× → 0.286× → 0.323×**. These divide the matched question's three-repeat
+RU medians. The global request also projects ID only, while the filtered request
+uses the application projection, and both equality and partition-prefix routing
+are removed together. This is a comparison of those request shapes within each
+layout, not a SQL-predicate-only effect. It neither relaxes the library-isolation
+invariant nor establishes global-search quality.
+
+**Cost, time and checks.** Recorded loads across both arms wrote 489,546 vectors
+for 44,979,275.12 RU. Total known recorded request charge was 46,023,739.65 RU,
+about **$11.51 at the planning rate of $0.25 per million RU**, not an invoice or
+verified account-specific price. Some canary CRUD/cleanup and SDK-hidden calls,
+plus storage, hosting, bandwidth and model charges are excluded. Timed write
+batches totaled about 5h34m across the pair. Filesystem timestamps place the
+measurement run at about 6h35m and provisioning-through-execution at about 7h;
+these are local timing observations, not provider timestamps. Independent
+recomputation passed for all three stages; source/input hashes and model metadata
+were preserved. Both disposable databases are retained pending the user's
+separate deletion instruction. No production policy or query behavior changed.
+
+**Publication sentence:** For these 1,000–5,000-vector libraries on one physical
+partition, application searches using the library filter and partition-key
+prefix stayed flat through 244,773 vectors in both layouts, but library
+vector-index sharding lowered their RU roughly four- to tenfold and the large
+penalty for the measured global control appeared only with sharding.
+
+**Limits.** One fresh index build per arm and three query repeats do not establish
+build-to-build variation or a confidence interval. Probes were loaded before
+background libraries. This does not isolate SQL filtering from partition-prefix
+routing, test another insertion order, cover libraries larger than 5,000 vectors,
+multiple physical ranges, concurrent load, hybrid growth or semantic relevance.
+The unsplit global graph observation is not a sharded large-library graph result.
+Spherical quantization remains unchanged, so dropping the shard key alone does
+not demonstrate an entirely GA configuration. E59's 12–35 RU result rests on its
+sharded configuration; flatness itself was also observed in the new unsplit arm.

@@ -850,17 +850,59 @@ async def wait_for_index(
         await sleep(INDEX_POLL_SECONDS)
 
 
-async def check_definitions(database: Any, index_container: str = "chunks") -> dict[str, list[str]]:
+def load_chunks_definition(path: Path, index_container: str = "chunks") -> dict[str, Any]:
+    """Accept only the production chunks definition or its one-property shard ablation.
+
+    The explicit file selects an experimental expectation; it cannot relax any other
+    partition, vector or scalar-index setting. Its private location is never recorded.
+    """
+    if index_container != "chunks":
+        raise CanaryError("--chunks-definition requires --index-container chunks")
+    try:
+        expected = json.loads(path.read_text())
+    except (OSError, ValueError) as exc:
+        raise CanaryError("cannot read --chunks-definition as JSON") from exc
+    production = json.loads((REPO / "cosmos" / "chunks.container.json").read_text())
+    unsplit = json.loads(json.dumps(production))
+    del unsplit["indexingPolicy"]["vectorIndexes"][0]["vectorIndexShardKey"]
+    if expected != production and expected != unsplit:
+        raise CanaryError("--chunks-definition may differ only by removing vectorIndexShardKey")
+    return expected
+
+
+async def check_definitions(
+    database: Any,
+    index_container: str = "chunks",
+    *,
+    chunks_definition: dict[str, Any] | None = None,
+) -> dict[str, list[str]]:
     problems: dict[str, list[str]] = {}
     for name in CONTAINERS:
         physical_name = index_container if name == "chunks" else name
-        expected = json.loads((REPO / "cosmos" / f"{physical_name}.container.json").read_text())
+        expected = (
+            chunks_definition
+            if name == "chunks" and chunks_definition is not None
+            else json.loads((REPO / "cosmos" / f"{physical_name}.container.json").read_text())
+        )
         try:
             actual = await database.get_container_client(physical_name).read()
         except Exception as exc:  # noqa: BLE001 — recorded as the check's observation
             problems[name] = [f"read failed: {type(exc).__name__}: {str(exc)[:200]}"]
             continue
         problems[name] = definition_mismatches(expected, actual)
+        if name == "chunks" and chunks_definition is not None:
+            # Normal subset matching tolerates service-added fields. In the ablation,
+            # absence of a shard key is the treatment and must be checked explicitly.
+            unsplit_paths = {
+                index["path"]
+                for index in expected["indexingPolicy"]["vectorIndexes"]
+                if "vectorIndexShardKey" not in index
+            }
+            for index in actual.get("indexingPolicy", {}).get("vectorIndexes", []):
+                if index.get("path") in unsplit_paths and "vectorIndexShardKey" in index:
+                    problems[name].append(
+                        f"/indexingPolicy/vectorIndexes[{index['path']}]/vectorIndexShardKey: expected absent"
+                    )
     return problems
 
 
@@ -957,6 +999,8 @@ async def run(args: argparse.Namespace) -> int:
             raise CanaryError("private capture requires verified text-embedding-3-large model revision 1")
 
     index_container = getattr(args, "index_container", "chunks")
+    definition_path = getattr(args, "chunks_definition", None)
+    chunks_definition = load_chunks_definition(definition_path, index_container) if definition_path else None
     cosmos_endpoint = _require_env("COSMOS_ENDPOINT")
     database_name = os.environ.get("COSMOS_DATABASE") or "fli"
     aoai_endpoint = _require_env("AOAI_ENDPOINT")
@@ -1019,6 +1063,12 @@ async def run(args: argparse.Namespace) -> int:
             "querySource": query_source,
         },
     }
+    if chunks_definition is not None:
+        record["expectedChunksDefinition"] = {
+            "source": "explicit shard-ablation definition",
+            "sha256": hashlib.sha256(json.dumps(chunks_definition, sort_keys=True).encode()).hexdigest(),
+            "vectorIndexShardKey": chunks_definition["indexingPolicy"]["vectorIndexes"][0].get("vectorIndexShardKey"),
+        }
 
     credential = DefaultAzureCredential()
     try:
@@ -1032,8 +1082,10 @@ async def run(args: argparse.Namespace) -> int:
                 dimensions=dimensions,
             )
 
-            log("checking stored container definitions against cosmos/*.json")
-            definition_problems = await check_definitions(database, index_container)
+            log("checking stored container definitions against selected expected policies")
+            definition_problems = await check_definitions(
+                database, index_container, chunks_definition=chunks_definition
+            )
             for name, problems in definition_problems.items():
                 for problem in problems:
                     log(f"definition mismatch in {name}: {problem}")
@@ -1375,6 +1427,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
     parser.add_argument(
         "--index-wait-minutes", type=float, default=20, help="how long to wait for the vector index to engage"
+    )
+    parser.add_argument(
+        "--chunks-definition",
+        type=Path,
+        help="explicit chunks definition, differing only by optional removal of vectorIndexShardKey",
     )
     parser.add_argument("--records-dir", type=Path, default=REPO / "records")
     parser.add_argument(

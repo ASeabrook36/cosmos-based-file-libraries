@@ -22,6 +22,78 @@ import scripts.canary as canary
 REPO = Path(__file__).resolve().parent.parent
 
 
+def unsplit_definition():
+    definition = json.loads((REPO / "cosmos" / "chunks.container.json").read_text())
+    del definition["indexingPolicy"]["vectorIndexes"][0]["vectorIndexShardKey"]
+    return definition
+
+
+def test_chunks_definition_override_allows_only_the_shard_ablation(tmp_path):
+    path = tmp_path / "private-definition.json"
+    definition = unsplit_definition()
+    path.write_text(json.dumps(definition))
+    assert canary.load_chunks_definition(path) == definition
+    with pytest.raises(canary.CanaryError, match="requires --index-container chunks"):
+        canary.load_chunks_definition(path, "lab-passages")
+    definition["partitionKey"]["paths"] = ["/libraryId"]
+    path.write_text(json.dumps(definition))
+    with pytest.raises(canary.CanaryError, match="only by removing"):
+        canary.load_chunks_definition(path)
+    definition = unsplit_definition()
+    definition["indexingPolicy"]["vectorIndexes"][0]["quantizerType"] = "product"
+    path.write_text(json.dumps(definition))
+    with pytest.raises(canary.CanaryError, match="only by removing"):
+        canary.load_chunks_definition(path)
+
+
+@pytest.mark.parametrize("unexpected_shard", [["/libraryId"], [], None])
+def test_unsplit_readback_rejects_even_service_added_empty_shard_key(unexpected_shard):
+    import asyncio
+
+    expected = unsplit_definition()
+    actual = unsplit_definition()
+    actual["indexingPolicy"]["vectorIndexes"][0]["vectorIndexShardKey"] = unexpected_shard
+
+    class Container:
+        def __init__(self, name):
+            self.name = name
+
+        async def read(self):
+            return (
+                actual
+                if self.name == "chunks"
+                else json.loads((REPO / "cosmos" / f"{self.name}.container.json").read_text())
+            )
+
+    database = SimpleNamespace(get_container_client=Container)
+    problems = asyncio.run(canary.check_definitions(database, chunks_definition=expected))
+    assert problems["chunks"] == ["/indexingPolicy/vectorIndexes[/embedding]/vectorIndexShardKey: expected absent"]
+    assert problems["libraries"] == problems["documents"] == []
+
+
+def test_unsplit_definition_keeps_every_non_shard_readback_check():
+    import asyncio
+
+    expected = unsplit_definition()
+    actual = unsplit_definition()
+    actual["vectorEmbeddingPolicy"]["vectorEmbeddings"][0]["dataType"] = "float32"
+
+    class Container:
+        def __init__(self, name):
+            self.name = name
+
+        async def read(self):
+            return (
+                actual
+                if self.name == "chunks"
+                else json.loads((REPO / "cosmos" / f"{self.name}.container.json").read_text())
+            )
+
+    database = SimpleNamespace(get_container_client=Container)
+    problems = asyncio.run(canary.check_definitions(database, chunks_definition=expected))
+    assert any("dataType" in problem for problem in problems["chunks"])
+
+
 def fake_vector(text: str) -> list[float]:
     seed = hashlib.sha256(text.encode()).digest()
     raw = [((seed[i % 32] * (i + 1)) % 251) / 251 - 0.5 for i in range(3072)]
@@ -241,6 +313,46 @@ def test_canary_runs_end_to_end_and_records_metrics_only(fakes, tmp_path, keep):
     store = FakeCosmosClient.last.store
     assert bool(store["chunks"]) is keep and bool(store["libraries"]) is keep
     assert record["cleanedUp"] is not keep
+
+
+def test_unsplit_canary_runs_with_explicit_definition_without_recording_its_path(fakes, tmp_path, monkeypatch):
+    original_read = FakeContainer.read
+
+    async def read(self):
+        result = await original_read(self)
+        if self.name == "chunks":
+            del result["indexingPolicy"]["vectorIndexes"][0]["vectorIndexShardKey"]
+        return result
+
+    monkeypatch.setattr(FakeContainer, "read", read)
+    path = tmp_path / "private-experimental-policy.json"
+    definition = unsplit_definition()
+    path.write_text(json.dumps(definition))
+    assert (
+        canary.main(
+            [
+                "--corpus",
+                str(REPO / "docs"),
+                "--index-wait-minutes",
+                "5",
+                "--records-dir",
+                str(tmp_path),
+                "--chunks-definition",
+                str(path),
+            ]
+        )
+        == 0
+    )
+    [record_path] = tmp_path.glob("canary-*.json")
+    raw = record_path.read_text()
+    record = json.loads(raw)
+    assert record["passed"] is True
+    assert record["expectedChunksDefinition"]["vectorIndexShardKey"] is None
+    assert (
+        record["expectedChunksDefinition"]["sha256"]
+        == hashlib.sha256(json.dumps(definition, sort_keys=True).encode()).hexdigest()
+    )
+    assert path.name not in raw and str(tmp_path) not in raw
 
 
 def test_hybrid_queries_use_rrf_and_vector_queries_declare_float16(fakes, tmp_path):
