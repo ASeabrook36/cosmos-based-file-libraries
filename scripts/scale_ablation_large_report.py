@@ -1051,9 +1051,32 @@ def build_report(state: Path, *, repo: Path = REPO, partial: bool = False, verif
     )
     result["limits"] = [
         "Three repeats describe observed runs, not confidence intervals or independent index builds.",
+        "One physical range and one index build per arm were measured; concurrency and throughput were not tested.",
+        (
+            "Each size has one assigned nonnested library and a different question set at one fixed final total "
+            "inventory. Library size, selectivity, corpus content and query difficulty are not independently varied; "
+            "their separate causal effects cannot be identified."
+        ),
+        (
+            "The fresh small-library controls measure background-growth drift. The new large libraries were measured "
+            "only at the final inventory, so their flatness as unrelated background grows is not established."
+        ),
         "The shared global control is id-only, omits filter and prefix, and has its own eligible answer set.",
         "Five-question diagnostic coverage, when triggered, is compared with the same frozen routed subset.",
+        (
+            "The no-prefix diagnostic ran last in the main sequence; its latency comparison cannot separate request "
+            "shape from phase order, cache state and index age."
+        ),
+        (
+            "The WHERE equality constrains /libraryId, the first hierarchical partition-key component. Omitting the "
+            "explicit prefix does not establish the absence of inferred partition pruning, especially with one "
+            "physical range."
+        ),
         "Late sentinels cover one fixed question per scope, not the full twenty-question suite.",
+        (
+            "A client connectivity or sleep transition was reported between the main and late phases; cross-time "
+            "client-latency changes cannot be attributed solely to index aging."
+        ),
         (
             "Stable scans without vector-specific build completion cannot separate a lasting planner choice "
             "from unfinished graph construction."
@@ -1292,6 +1315,8 @@ def render_tables(report):
         ["Scope vectors", "Arm", "Sentinel", "RU", "Documents read", "Latency ms", "Recall@10", "Index", "Status"],
         sentinels,
     )
+    lines.extend(["", "## Scientific limits", ""])
+    lines.extend("- " + value for value in report["limits"])
     return "\n".join(lines) + "\n"
 
 

@@ -274,6 +274,27 @@ def test_complete_report_recomputes_subset_global_and_absolute_benefit(tmp_path)
     assert "Conservative observed savings intervals" in tables
 
 
+def test_scientific_limits_keep_scope_routing_order_and_client_confounders_visible(tmp_path):
+    state, repo = fake_state(tmp_path)
+    result = reporting.build_report(state, repo=repo)
+    limits = " ".join(result["limits"])
+    assert "One physical range and one index build per arm" in limits
+    assert "one assigned nonnested library and a different question set" in limits
+    assert "one fixed final total inventory" in limits
+    assert "separate causal effects cannot be identified" in limits
+    assert "flatness as unrelated background grows is not established" in limits
+    assert "no-prefix diagnostic ran last" in limits and "phase order, cache state and index age" in limits
+    assert "/libraryId, the first hierarchical partition-key component" in limits
+    assert "does not establish the absence of inferred partition pruning" in limits
+    assert "connectivity or sleep transition" in limits
+    assert "client-latency changes cannot be attributed solely to index aging" in limits
+    assert "PRIVATE_" not in limits and str(state) not in limits and str(repo) not in limits
+    reporting.privacy_guard(limits)
+    tables = reporting.render_tables(result)
+    assert "## Scientific limits" in tables
+    assert all(value in tables for value in result["limits"])
+
+
 @pytest.mark.parametrize(
     "failure",
     [
