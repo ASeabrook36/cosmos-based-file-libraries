@@ -141,3 +141,10 @@ The [full tables](../docs/scale-ablation-large-results.md) keep initial
 twenty-question savings separate from material twelve-hour RU changes; they do
 not establish settled steady-state savings. E68's dated receipt and tables
 remain unchanged, and both disposable databases remain retained.
+
+`scale-ablation-large-late-suite-20261113.json` records E69's separately approved
+726-query full late epoch, with its own ledger and immutable parent binding.
+The [late-suite tables](../docs/scale-ablation-large-late-suite-results.md) compare
+all twenty frozen questions with the initial window, retain the shared global
+control's recall limit and distinguish savings versus each window's 5k control
+from changes over time. The original E68 and E69 receipts remain unchanged.
