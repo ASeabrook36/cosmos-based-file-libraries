@@ -1827,7 +1827,12 @@ Spherical quantization remains unchanged, so dropping the shard key alone does
 not demonstrate an entirely GA configuration. E59's 12–35 RU result rests on its
 sharded configuration; flatness itself was also observed in the new unsplit arm.
 
-## E69: Initial sharding savings shrank at 50k/100k; late RU changed while DiskANN persisted (2026-11-13) · Measured
+## E69: Sharding lowers scoped RU in two windows; savings at 50k/100k stay below 5k (2026-11-13) · Measured
+
+Both full twenty-question windows found lower median routed RU with sharding at
+the tested 50k/100k scopes, with absolute savings below each window's 5k control.
+Both layouts reported DiskANN. The separately approved full late comparison is
+recorded below alongside the initial window and the intervening sentinels.
 
 At the common final inventory, the initial twenty-question routed measurements
 saved **60.97 RU/search at 50,000 vectors** and **28.075 RU/search at 100,000**
@@ -2004,7 +2009,7 @@ concurrency/throughput, split-library or multi-range correctness, semantic answe
 quality, a universal graph threshold or an entirely GA configuration. Spherical
 quantization remains unchanged; no configuration migration follows from this run.
 
-**Publication sentence.** On one physical range holding 429,773 vectors, the
+**Initial-window interpretation.** On one physical range holding 429,773 vectors, the
 initial routed measurements with DiskANN in both arms found library-sharding
 savings of 60.97 RU at the 50,000-vector probe and 28.075 RU at the 100,000-vector
 probe, 43.94% and 74.19% smaller than the final 5,000-vector saving, while material
@@ -2081,5 +2086,5 @@ every parent byte unchanged. No application defaults or container policies chang
 
 **Publication sentence after both windows.** With 429,773 vectors on one physical
 range, both layouts used DiskANN for the tested 50k and 100k libraries, and
-sharding lowered RU in both twenty-question windows while saving fewer RU per
-search than at 5k.
+sharding lowered RU in both twenty-question windows while saving fewer request
+units per search than at 5k.
